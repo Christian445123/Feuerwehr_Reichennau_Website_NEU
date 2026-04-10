@@ -12,7 +12,7 @@ $pageTitle = $isEdit ? 'Mitglied bearbeiten' : 'Neues Mitglied';
 
 $member = [
     'firstname' => '', 'lastname' => '', 'rank' => '',
-    'function' => '', 'group_name' => 'Mannschaft', 'extra_groups' => '',
+    'functions' => '[]', 'group_name' => 'Mannschaft',
     'photo' => '',
     'sort_order' => 0, 'active' => 1,
     'entry_date' => '', 'phone' => '', 'email' => '', 'bio' => ''
@@ -41,16 +41,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $member['firstname'] = trim($_POST['firstname'] ?? '');
     $member['lastname'] = trim($_POST['lastname'] ?? '');
     $member['rank'] = trim($_POST['rank'] ?? '');
-    $member['function'] = trim($_POST['function'] ?? '');
     $member['group_name'] = $_POST['group_name'] ?? 'Mannschaft';
-    $extraGroups = $_POST['extra_groups'] ?? [];
-    $member['extra_groups'] = implode(',', array_filter($extraGroups));
     $member['sort_order'] = (int)($_POST['sort_order'] ?? 0);
     $member['active'] = isset($_POST['active']) ? 1 : 0;
     $member['entry_date'] = trim($_POST['entry_date'] ?? '');
     $member['phone'] = trim($_POST['phone'] ?? '');
     $member['email'] = trim($_POST['email'] ?? '');
     $member['bio'] = trim($_POST['bio'] ?? '');
+
+    // Funktionen als JSON verarbeiten
+    $funcSections = $_POST['func_section'] ?? [];
+    $funcRoles = $_POST['func_role'] ?? [];
+    $validSections = ['Kommando', 'Ausschuss', 'Beauftragter'];
+    $functions = [];
+    for ($i = 0; $i < count($funcSections); $i++) {
+        $sec = trim($funcSections[$i] ?? '');
+        $role = trim($funcRoles[$i] ?? '');
+        if ($sec && $role && in_array($sec, $validSections, true)) {
+            $functions[] = ['section' => $sec, 'role' => $role];
+        }
+    }
+    $member['functions'] = json_encode($functions, JSON_UNESCAPED_UNICODE);
 
     $validGroups = ['Mannschaft', 'Ehrenmitglieder', 'Jugend'];
     if (!in_array($member['group_name'], $validGroups, true)) {
@@ -84,11 +95,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         if ($isEdit) {
-            $stmt = $db->prepare("UPDATE members SET firstname=?, lastname=?, rank=?, function=?, group_name=?, extra_groups=?, photo=?, sort_order=?, active=?, entry_date=?, phone=?, email=?, bio=?, updated_at=CURRENT_TIMESTAMP WHERE id=?");
-            $stmt->execute([$member['firstname'], $member['lastname'], $member['rank'], $member['function'], $member['group_name'], $member['extra_groups'], $photoFilename, $member['sort_order'], $member['active'], $member['entry_date'], $member['phone'], $member['email'], $member['bio'], $id]);
+            $stmt = $db->prepare("UPDATE members SET firstname=?, lastname=?, rank=?, functions=?, group_name=?, photo=?, sort_order=?, active=?, entry_date=?, phone=?, email=?, bio=?, updated_at=CURRENT_TIMESTAMP WHERE id=?");
+            $stmt->execute([$member['firstname'], $member['lastname'], $member['rank'], $member['functions'], $member['group_name'], $photoFilename, $member['sort_order'], $member['active'], $member['entry_date'], $member['phone'], $member['email'], $member['bio'], $id]);
         } else {
-            $stmt = $db->prepare("INSERT INTO members (firstname, lastname, rank, function, group_name, extra_groups, photo, sort_order, active, entry_date, phone, email, bio) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)");
-            $stmt->execute([$member['firstname'], $member['lastname'], $member['rank'], $member['function'], $member['group_name'], $member['extra_groups'], $photoFilename, $member['sort_order'], $member['active'], $member['entry_date'], $member['phone'], $member['email'], $member['bio']]);
+            $stmt = $db->prepare("INSERT INTO members (firstname, lastname, rank, functions, group_name, photo, sort_order, active, entry_date, phone, email, bio) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
+            $stmt->execute([$member['firstname'], $member['lastname'], $member['rank'], $member['functions'], $member['group_name'], $photoFilename, $member['sort_order'], $member['active'], $member['entry_date'], $member['phone'], $member['email'], $member['bio']]);
             $id = $db->lastInsertId();
         }
 
@@ -152,13 +163,6 @@ require_once __DIR__ . '/includes/admin-header.php';
                             <?php endif; ?>
                         </div>
                         <div class="form-group">
-                            <label for="function">Funktion</label>
-                            <input type="text" id="function" name="function" value="<?php echo e($member['function']); ?>" placeholder="z.B. Kommandant, Zugskommandant, ...">
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
                             <label for="group_name">Grundgruppe</label>
                             <select id="group_name" name="group_name">
                                 <option value="Mannschaft" <?php echo $member['group_name'] === 'Mannschaft' ? 'selected' : ''; ?>>Mannschaft</option>
@@ -166,21 +170,36 @@ require_once __DIR__ . '/includes/admin-header.php';
                                 <option value="Jugend" <?php echo $member['group_name'] === 'Jugend' ? 'selected' : ''; ?>>Jugend</option>
                             </select>
                         </div>
-                        <div class="form-group">
-                            <label>Zusätzlich anzeigen in</label>
-                            <?php $currentExtra = explode(',', $member['extra_groups'] ?? ''); ?>
-                            <div class="checkbox-group">
-                                <label class="checkbox-label">
-                                    <input type="checkbox" name="extra_groups[]" value="Kommando" <?php echo in_array('Kommando', $currentExtra) ? 'checked' : ''; ?>>
-                                    <span>Kommando</span>
-                                </label>
-                                <label class="checkbox-label">
-                                    <input type="checkbox" name="extra_groups[]" value="Ausschuss" <?php echo in_array('Ausschuss', $currentExtra) ? 'checked' : ''; ?>>
-                                    <span>Ausschuss</span>
-                                </label>
-                            </div>
-                        </div>
                     </div>
+
+                    <!-- Funktionen / Rollen (JSON) -->
+                    <?php $currentFunctions = json_decode($member['functions'] ?? '[]', true) ?: []; ?>
+                    <div class="form-group">
+                        <label><i class="fas fa-briefcase"></i> Funktionen / Rollen</label>
+                        <p style="font-size:0.82rem;color:var(--gray-600);margin-bottom:10px;">
+                            Weisen Sie dem Mitglied eine oder mehrere Funktionen zu. Jede Funktion bestimmt, in welcher Sektion das Mitglied auf der Website angezeigt wird.
+                        </p>
+                        <div id="functionsContainer">
+                            <?php if (!empty($currentFunctions)): ?>
+                                <?php foreach ($currentFunctions as $i => $func): ?>
+                                    <div class="function-row">
+                                        <select name="func_section[]" class="func-section-select">
+                                            <option value="">-- Sektion --</option>
+                                            <option value="Kommando" <?php echo ($func['section'] ?? '') === 'Kommando' ? 'selected' : ''; ?>>Kommando</option>
+                                            <option value="Ausschuss" <?php echo ($func['section'] ?? '') === 'Ausschuss' ? 'selected' : ''; ?>>Ausschuss</option>
+                                            <option value="Beauftragter" <?php echo ($func['section'] ?? '') === 'Beauftragter' ? 'selected' : ''; ?>>Beauftragter</option>
+                                        </select>
+                                        <input type="text" name="func_role[]" value="<?php echo e($func['role'] ?? ''); ?>" placeholder="Rolle (z.B. Kommandant, Kassier, ...)" class="func-role-input">
+                                        <button type="button" class="btn btn-sm btn-danger func-remove" onclick="this.closest('.function-row').remove()"><i class="fas fa-times"></i></button>
+                                    </div>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-secondary" id="addFunctionBtn" style="margin-top:8px;">
+                            <i class="fas fa-plus"></i> Funktion hinzufügen
+                        </button>
+                    </div>
+
                     <div class="form-row">
                         <div class="form-group">
                             <label for="sort_order">Sortierung</label>
