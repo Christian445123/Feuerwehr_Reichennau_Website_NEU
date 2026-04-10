@@ -7,7 +7,7 @@ echo "Columns: ";
 foreach ($cols as $c) echo $c['name'] . ', ';
 echo "\n\n";
 
-$stmt = $db->query("SELECT DISTINCT rank, rank_badge FROM members WHERE rank IS NOT NULL AND rank != '' ORDER BY rank");
+$stmt = $db->query("SELECT DISTINCT rank FROM members WHERE rank IS NOT NULL AND rank != '' ORDER BY rank");
 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-    echo $row['rank'] . ' | ' . $row['rank_badge'] . PHP_EOL;
+    echo $row['rank'] . PHP_EOL;
 }
