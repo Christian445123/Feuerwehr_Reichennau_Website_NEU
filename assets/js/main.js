@@ -73,6 +73,16 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
+    // --- Vehicle Image Switcher ---
+    // (Ausrüstung page)
+    window.switchVehicleImg = function(thumb) {
+        var card = thumb.closest('.vehicle-card');
+        var mainImg = card.querySelector('.vehicle-main-img');
+        mainImg.src = thumb.src;
+        card.querySelectorAll('.vehicle-thumb').forEach(function(t) { t.classList.remove('active'); });
+        thumb.classList.add('active');
+    };
+
     // --- Scroll-Animation (Intersection Observer) ---
     var observerOptions = {
         threshold: 0.1,

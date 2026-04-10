@@ -251,12 +251,3 @@
         </div>
     </section>
 
-<script>
-function switchVehicleImg(thumb) {
-    var card = thumb.closest('.vehicle-card');
-    var mainImg = card.querySelector('.vehicle-main-img');
-    mainImg.src = thumb.src;
-    card.querySelectorAll('.vehicle-thumb').forEach(function(t) { t.classList.remove('active'); });
-    thumb.classList.add('active');
-}
-</script>
