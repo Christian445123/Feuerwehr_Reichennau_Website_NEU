@@ -14,6 +14,26 @@ $groupDescriptions = [
     'Mannschaft' => 'Unsere aktive Einsatzmannschaft besteht aus engagierten Frauen und Männern, die sich freiwillig für die Sicherheit der Bevölkerung einsetzen.',
     'Ehrenmitglieder' => 'Unsere Ehrenmitglieder haben sich über viele Jahre hinweg besonders um die Freiwillige Feuerwehr Reichenau verdient gemacht.'
 ];
+
+// Collect all members for modal JSON
+$allMembersStmt = $db->query("SELECT id, firstname, lastname, rank, function, group_name, photo, entry_date, phone, email, bio FROM members WHERE active = 1");
+$allMembers = $allMembersStmt->fetchAll();
+$membersJson = [];
+foreach ($allMembers as $am) {
+    $membersJson[$am['id']] = [
+        'name' => $am['firstname'] . ' ' . $am['lastname'],
+        'photo' => $am['photo'] ? 'uploads/' . $am['photo'] : '',
+        'rank' => $am['rank'],
+        'rankName' => $am['rank'] ? getRankName($am['rank']) : '',
+        'rankBadge' => $am['rank'] ? getRankBadgePath($am['rank']) : '',
+        'function' => $am['function'] ?? '',
+        'group' => $am['group_name'],
+        'entry_date' => $am['entry_date'] ?? '',
+        'phone' => $am['phone'] ?? '',
+        'email' => $am['email'] ?? '',
+        'bio' => $am['bio'] ?? '',
+    ];
+}
 ?>
 
     <!-- Page Header -->
@@ -46,7 +66,7 @@ $groupDescriptions = [
                             <?php $gridClass = ($group === 'Kommando') ? 'grid-kommando' : ''; ?>
                             <div class="members-public-grid <?php echo $gridClass; ?>">
                                 <?php foreach ($groupMembers as $m): ?>
-                                    <div class="member-public-card">
+                                    <div class="member-public-card" data-member-id="<?php echo (int)$m['id']; ?>" onclick="showMemberDetail(<?php echo (int)$m['id']; ?>)">
                                         <?php if ($m['photo']): ?>
                                             <img src="uploads/<?php echo htmlspecialchars($m['photo']); ?>"
                                                  alt="<?php echo htmlspecialchars($m['firstname'] . ' ' . $m['lastname']); ?>"
@@ -96,7 +116,7 @@ $groupDescriptions = [
                         <?php if (!empty($jugendMembers)): ?>
                             <div class="members-public-grid">
                                 <?php foreach ($jugendMembers as $m): ?>
-                                    <div class="member-public-card">
+                                    <div class="member-public-card" data-member-id="<?php echo (int)$m['id']; ?>" onclick="showMemberDetail(<?php echo (int)$m['id']; ?>)">
                                         <?php if ($m['photo']): ?>
                                             <img src="uploads/<?php echo htmlspecialchars($m['photo']); ?>"
                                                  alt="<?php echo htmlspecialchars($m['firstname'] . ' ' . $m['lastname']); ?>"
@@ -173,3 +193,106 @@ $groupDescriptions = [
             </div>
         </div>
     </section>
+
+<!-- Member Detail Modal -->
+<div class="member-modal-overlay" id="memberModal">
+    <div class="member-modal">
+        <button class="member-modal-close" onclick="closeMemberModal()" title="Schließen">&times;</button>
+        <div class="member-modal-header">
+            <div id="modalPhotoWrap"></div>
+            <div class="member-modal-name" id="modalName"></div>
+            <div class="member-modal-function" id="modalFunction"></div>
+            <div class="member-modal-rank" id="modalRank" style="display:none;">
+                <img id="modalRankBadge" src="" alt="">
+                <span id="modalRankText"></span>
+            </div>
+        </div>
+        <div class="member-modal-body" id="modalBody"></div>
+    </div>
+</div>
+
+<script>
+var memberData = <?php echo json_encode($membersJson, JSON_HEX_TAG | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE); ?>;
+
+function showMemberDetail(id) {
+    var m = memberData[id];
+    if (!m) return;
+
+    // Photo
+    var photoWrap = document.getElementById('modalPhotoWrap');
+    if (m.photo) {
+        photoWrap.innerHTML = '<img src="' + m.photo + '" alt="' + m.name + '" class="member-modal-photo">';
+    } else {
+        photoWrap.innerHTML = '<div class="member-modal-placeholder"><i class="fas fa-user"></i></div>';
+    }
+
+    // Name & Function
+    document.getElementById('modalName').textContent = m.name;
+    var funcEl = document.getElementById('modalFunction');
+    funcEl.textContent = m['function'] || '';
+    funcEl.style.display = m['function'] ? '' : 'none';
+
+    // Rank
+    var rankEl = document.getElementById('modalRank');
+    if (m.rank) {
+        document.getElementById('modalRankBadge').src = m.rankBadge;
+        document.getElementById('modalRankText').textContent = m.rank + ' – ' + m.rankName;
+        rankEl.style.display = 'inline-flex';
+    } else {
+        rankEl.style.display = 'none';
+    }
+
+    // Body details
+    var body = document.getElementById('modalBody');
+    var html = '';
+    var hasDetails = m.group || m.entry_date || m.phone || m.email || m.bio;
+
+    if (hasDetails) {
+        html += '<ul class="member-modal-details">';
+        if (m.group) {
+            html += '<li><i class="fas fa-users"></i> ' + escHtml(m.group) + '</li>';
+        }
+        if (m.entry_date) {
+            html += '<li><i class="fas fa-calendar-alt"></i> Eintritt: ' + escHtml(m.entry_date) + '</li>';
+        }
+        if (m.phone) {
+            html += '<li><i class="fas fa-phone"></i> <a href="tel:' + escHtml(m.phone) + '">' + escHtml(m.phone) + '</a></li>';
+        }
+        if (m.email) {
+            html += '<li><i class="fas fa-envelope"></i> <a href="mailto:' + escHtml(m.email) + '">' + escHtml(m.email) + '</a></li>';
+        }
+        html += '</ul>';
+        if (m.bio) {
+            html += '<div class="member-modal-bio">' + escHtml(m.bio) + '</div>';
+        }
+    } else {
+        html = '<div class="member-modal-empty"><i class="fas fa-info-circle"></i> Keine weiteren Details hinterlegt.</div>';
+    }
+
+    body.innerHTML = html;
+
+    document.getElementById('memberModal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeMemberModal() {
+    document.getElementById('memberModal').classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+// Close on overlay click
+document.getElementById('memberModal').addEventListener('click', function(e) {
+    if (e.target === this) closeMemberModal();
+});
+
+// Close on Escape key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeMemberModal();
+});
+
+function escHtml(str) {
+    var div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+}
+</script>

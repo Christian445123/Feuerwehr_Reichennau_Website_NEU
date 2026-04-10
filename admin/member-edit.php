@@ -13,7 +13,8 @@ $pageTitle = $isEdit ? 'Mitglied bearbeiten' : 'Neues Mitglied';
 $member = [
     'firstname' => '', 'lastname' => '', 'rank' => '',
     'function' => '', 'group_name' => 'Mannschaft', 'photo' => '',
-    'sort_order' => 0, 'active' => 1
+    'sort_order' => 0, 'active' => 1,
+    'entry_date' => '', 'phone' => '', 'email' => '', 'bio' => ''
 ];
 
 if ($isEdit) {
@@ -43,6 +44,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $member['group_name'] = $_POST['group_name'] ?? 'Mannschaft';
     $member['sort_order'] = (int)($_POST['sort_order'] ?? 0);
     $member['active'] = isset($_POST['active']) ? 1 : 0;
+    $member['entry_date'] = trim($_POST['entry_date'] ?? '');
+    $member['phone'] = trim($_POST['phone'] ?? '');
+    $member['email'] = trim($_POST['email'] ?? '');
+    $member['bio'] = trim($_POST['bio'] ?? '');
 
     $validGroups = ['Kommando', 'Ausschuss', 'Mannschaft', 'Ehrenmitglieder', 'Jugend'];
     if (!in_array($member['group_name'], $validGroups, true)) {
@@ -76,11 +81,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         if ($isEdit) {
-            $stmt = $db->prepare("UPDATE members SET firstname=?, lastname=?, rank=?, function=?, group_name=?, photo=?, sort_order=?, active=?, updated_at=CURRENT_TIMESTAMP WHERE id=?");
-            $stmt->execute([$member['firstname'], $member['lastname'], $member['rank'], $member['function'], $member['group_name'], $photoFilename, $member['sort_order'], $member['active'], $id]);
+            $stmt = $db->prepare("UPDATE members SET firstname=?, lastname=?, rank=?, function=?, group_name=?, photo=?, sort_order=?, active=?, entry_date=?, phone=?, email=?, bio=?, updated_at=CURRENT_TIMESTAMP WHERE id=?");
+            $stmt->execute([$member['firstname'], $member['lastname'], $member['rank'], $member['function'], $member['group_name'], $photoFilename, $member['sort_order'], $member['active'], $member['entry_date'], $member['phone'], $member['email'], $member['bio'], $id]);
         } else {
-            $stmt = $db->prepare("INSERT INTO members (firstname, lastname, rank, function, group_name, photo, sort_order, active) VALUES (?,?,?,?,?,?,?,?)");
-            $stmt->execute([$member['firstname'], $member['lastname'], $member['rank'], $member['function'], $member['group_name'], $photoFilename, $member['sort_order'], $member['active']]);
+            $stmt = $db->prepare("INSERT INTO members (firstname, lastname, rank, function, group_name, photo, sort_order, active, entry_date, phone, email, bio) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
+            $stmt->execute([$member['firstname'], $member['lastname'], $member['rank'], $member['function'], $member['group_name'], $photoFilename, $member['sort_order'], $member['active'], $member['entry_date'], $member['phone'], $member['email'], $member['bio']]);
             $id = $db->lastInsertId();
         }
 
@@ -167,6 +172,31 @@ require_once __DIR__ . '/includes/admin-header.php';
                     </div>
                 </div>
             </div>
+
+            <!-- Details -->
+            <div class="admin-card">
+                <div class="admin-card-header"><h2><i class="fas fa-id-card"></i> Detail-Informationen</h2></div>
+                <div class="admin-card-body">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="entry_date">Eintrittsdatum</label>
+                            <input type="text" id="entry_date" name="entry_date" value="<?php echo e($member['entry_date'] ?? ''); ?>" placeholder="z.B. 2015, März 2018, ...">
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Telefon</label>
+                            <input type="text" id="phone" name="phone" value="<?php echo e($member['phone'] ?? ''); ?>" placeholder="z.B. +43 512 345160">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="email">E-Mail</label>
+                            <input type="email" id="email" name="email" value="<?php echo e($member['email'] ?? ''); ?>" placeholder="z.B. name@feuerwehr.tirol">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="bio">Beschreibung / Info</label>
+                        <textarea id="bio" name="bio" rows="4" placeholder="Persönliche Beschreibung, Ausbildungen, Spezialgebiete, ..."><?php echo e($member['bio'] ?? ''); ?></textarea>
+                    </div>
 
             <!-- Foto -->
             <div class="admin-card">

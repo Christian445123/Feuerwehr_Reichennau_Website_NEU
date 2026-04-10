@@ -82,6 +82,10 @@ function initDatabase(): void {
             photo VARCHAR(255) DEFAULT '',
             sort_order INT DEFAULT 0,
             active TINYINT DEFAULT 1,
+            entry_date VARCHAR(20) DEFAULT '',
+            phone VARCHAR(50) DEFAULT '',
+            email VARCHAR(150) DEFAULT '',
+            bio TEXT DEFAULT NULL,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
@@ -127,6 +131,10 @@ function initDatabase(): void {
             photo TEXT DEFAULT '',
             sort_order INTEGER DEFAULT 0,
             active INTEGER DEFAULT 1,
+            entry_date TEXT DEFAULT '',
+            phone TEXT DEFAULT '',
+            email TEXT DEFAULT '',
+            bio TEXT DEFAULT '',
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
         )");
