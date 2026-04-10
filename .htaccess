@@ -1,0 +1,9 @@
+RewriteEngine On
+RewriteBase /
+
+# Statische Dateien direkt ausliefern
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+# Alles andere an index.php weiterleiten
+RewriteRule ^(.*)$ index.php?page=$1 [QSA,L]
