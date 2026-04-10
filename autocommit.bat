@@ -17,5 +17,5 @@ for /f %%i in ('git status --porcelain') do (
     echo [%date% %time%] Commit erstellt.
     echo.
 )
-timeout /t 30 /nobreak >nul
+ping -n 31 127.0.0.1 >nul
 goto loop
