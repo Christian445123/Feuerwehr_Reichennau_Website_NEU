@@ -86,6 +86,11 @@ require_once __DIR__ . '/includes/admin-header.php';
                         <span class="member-function"><?php echo e($m['function']); ?></span>
                     <?php endif; ?>
                     <span class="member-group badge"><?php echo e($m['group_name']); ?></span>
+                    <?php
+                    $extraG = array_filter(explode(',', $m['extra_groups'] ?? ''));
+                    foreach ($extraG as $eg): ?>
+                        <span class="member-group badge badge-secondary"><?php echo e($eg); ?></span>
+                    <?php endforeach; ?>
                 </div>
                 <div class="member-actions">
                     <a href="member-edit.php?id=<?php echo $m['id']; ?>" class="btn btn-sm btn-icon" title="Bearbeiten"><i class="fas fa-edit"></i></a>
