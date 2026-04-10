@@ -23,7 +23,7 @@
                 <div class="info-card">
                     <div class="info-card-icon"><i class="fas fa-calendar-check"></i></div>
                     <h3>Wann?</h3>
-                    <p>Unsere Jugendgruppe trifft sich <strong>jeden Dienstag ab 19:00 Uhr</strong> zu Übungen, Schulungen und Aktivitäten in der Wache.</p>
+                    <p>Unsere Jugendgruppe trifft sich <strong>jeden Montag ab 19:00 Uhr</strong> zu Übungen, Schulungen und Aktivitäten in der Wache.</p>
                 </div>
 
                 <div class="info-card">
