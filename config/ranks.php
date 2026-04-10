@@ -1,84 +1,55 @@
 <?php
 /**
  * Tiroler Feuerwehr Dienstgrade
- * Nur für das Bundesland Tirol gültig.
- *
- * Jeder Eintrag: [Abkürzung => [Name, Kategorie, Sortierung]]
- * Badge-Bild: assets/images/ranks/{strtolower(abkuerzung)}.png
+ * Werden aus der Datenbank geladen und im Admin-Bereich verwaltet.
  */
 
-define('TIROL_RANKS', [
-    // ── Jugendfeuerwehr ──
-    'JFM'  => ['Jugendfeuerwehrmann', 'Jugend', 5],
+/**
+ * Alle Ränge aus der DB laden (gecacht pro Request)
+ */
+function getAllRanks(): array {
+    static $ranks = null;
+    if ($ranks !== null) return $ranks;
 
-    // ── Mannschaftsdienstgrade ──
-    'PFM'  => ['Probefeuerwehrmann', 'Mannschaft', 10],
-    'FM'   => ['Feuerwehrmann', 'Mannschaft', 20],
-    'OFM'  => ['Oberfeuerwehrmann', 'Mannschaft', 30],
-    'HFM'  => ['Hauptfeuerwehrmann', 'Mannschaft', 40],
-
-    // ── Chargendienstgrade (Löschmeister) ──
-    'LM'   => ['Löschmeister', 'Chargen', 50],
-    'OLM'  => ['Oberlöschmeister', 'Chargen', 60],
-    'HLM'  => ['Hauptlöschmeister', 'Chargen', 70],
-
-    // ── Chargendienstgrade (Brandmeister) ──
-    'BM'   => ['Brandmeister', 'Chargen', 80],
-    'OBM'  => ['Oberbrandmeister', 'Chargen', 90],
-    'HBM'  => ['Hauptbrandmeister', 'Chargen', 100],
-
-    // ── Verwaltungsdienstgrade ──
-    'V'    => ['Verwalter', 'Verwaltung', 110],
-    'OV'   => ['Oberverwalter', 'Verwaltung', 120],
-    'HV'   => ['Hauptverwalter', 'Verwaltung', 130],
-
-    // ── Offiziersdienstgrade ──
-    'BI'   => ['Brandinspektor', 'Offiziere', 140],
-    'OBI'  => ['Oberbrandinspektor', 'Offiziere', 150],
-    'HBI'  => ['Hauptbrandinspektor', 'Offiziere', 160],
-
-    // ── Höhere Offiziersdienstgrade ──
-    'ABI'  => ['Abschnittsbrandinspektor', 'Höhere Offiziere', 170],
-    'BR'   => ['Brandrat', 'Höhere Offiziere', 180],
-    'OBR'  => ['Oberbrandrat', 'Höhere Offiziere', 190],
-
-    // ── Landesdienstgrade ──
-    'LBD-STV' => ['Landesbranddirektor-Stellvertreter', 'Landes', 195],
-    'LBD'     => ['Landesbranddirektor', 'Landes', 198],
-
-    // ── Stabsdienstgrade ──
-    'FARZT' => ['Feuerwehrarzt', 'Stab', 200],
-    'FKUR'  => ['Feuerwehrkurat', 'Stab', 210],
-
-    // ── Ehrendienstgrade ──
-    'EBI'   => ['Ehrenbrandinspektor', 'Ehren', 300],
-    'EOBI'  => ['Ehrenoberbrandinspektor', 'Ehren', 310],
-    'EHBI'  => ['Ehrenhauptbrandinspektor', 'Ehren', 320],
-    'ELM'   => ['Ehrenlöschmeister', 'Ehren', 330],
-    'EOLM'  => ['Ehrenoberlöschmeister', 'Ehren', 340],
-    'EHV'   => ['Ehrenhauptverwalter', 'Ehren', 350],
-]);
+    $db = getDB();
+    $rows = $db->query("SELECT * FROM ranks WHERE active = 1 ORDER BY sort_order, abbr")->fetchAll();
+    $ranks = [];
+    foreach ($rows as $r) {
+        $ranks[$r['abbr']] = [
+            'name' => $r['name'],
+            'category' => $r['category'],
+            'sort_order' => (int)$r['sort_order'],
+            'badge' => $r['badge'],
+        ];
+    }
+    return $ranks;
+}
 
 /**
  * Badge-Bildpfad für einen Dienstgrad
  */
 function getRankBadgePath(string $rank): string {
-    $file = 'assets/images/ranks/' . strtolower($rank) . '.png';
-    return $file;
+    $all = getAllRanks();
+    if (isset($all[$rank]) && $all[$rank]['badge']) {
+        return $all[$rank]['badge'];
+    }
+    return 'assets/images/ranks/' . strtolower($rank) . '.png';
 }
 
 /**
  * Vollständiger Name eines Dienstgrads
  */
 function getRankName(string $rank): string {
-    return TIROL_RANKS[$rank][0] ?? $rank;
+    $all = getAllRanks();
+    return $all[$rank]['name'] ?? $rank;
 }
 
 /**
  * Kategorie eines Dienstgrads
  */
 function getRankCategory(string $rank): string {
-    return TIROL_RANKS[$rank][1] ?? 'Sonstige';
+    $all = getAllRanks();
+    return $all[$rank]['category'] ?? 'Sonstige';
 }
 
 /**
@@ -86,12 +57,12 @@ function getRankCategory(string $rank): string {
  */
 function getRanksGrouped(): array {
     $grouped = [];
-    foreach (TIROL_RANKS as $abbr => $info) {
-        $category = $info[1];
+    foreach (getAllRanks() as $abbr => $info) {
+        $category = $info['category'];
         if (!isset($grouped[$category])) {
             $grouped[$category] = [];
         }
-        $grouped[$category][$abbr] = $info[0];
+        $grouped[$category][$abbr] = $info['name'];
     }
     return $grouped;
 }

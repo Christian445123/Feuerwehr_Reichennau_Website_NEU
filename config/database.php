@@ -112,6 +112,17 @@ function initDatabase(): void {
             FOREIGN KEY (report_id) REFERENCES reports(id) ON DELETE CASCADE
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
+        $db->exec("CREATE TABLE IF NOT EXISTS ranks (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            abbr VARCHAR(20) UNIQUE NOT NULL,
+            name VARCHAR(150) NOT NULL,
+            category VARCHAR(50) NOT NULL DEFAULT 'Mannschaft',
+            sort_order INT DEFAULT 0,
+            badge VARCHAR(255) DEFAULT '',
+            active TINYINT DEFAULT 1,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
     } else {
         // ── SQLite ──
         $db->exec("CREATE TABLE IF NOT EXISTS users (
@@ -161,6 +172,17 @@ function initDatabase(): void {
             sort_order INTEGER DEFAULT 0,
             FOREIGN KEY (report_id) REFERENCES reports(id) ON DELETE CASCADE
         )");
+
+        $db->exec("CREATE TABLE IF NOT EXISTS ranks (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            abbr TEXT UNIQUE NOT NULL,
+            name TEXT NOT NULL,
+            category TEXT NOT NULL DEFAULT 'Mannschaft',
+            sort_order INTEGER DEFAULT 0,
+            badge TEXT DEFAULT '',
+            active INTEGER DEFAULT 1,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )");
     }
 
     // Standard-Admin erstellen falls nicht vorhanden
@@ -170,6 +192,56 @@ function initDatabase(): void {
         $hash = password_hash('admin2024', PASSWORD_DEFAULT);
         $stmt = $db->prepare("INSERT INTO users (username, password, name) VALUES (?, ?, ?)");
         $stmt->execute(['admin', $hash, 'Administrator']);
+    }
+
+    // Standard-Ränge einfügen falls leer
+    seedDefaultRanks($db);
+}
+
+/**
+ * Standard-Dienstgrade einfügen (nur wenn Tabelle leer)
+ */
+function seedDefaultRanks(PDO $db): void {
+    $count = $db->query("SELECT COUNT(*) FROM ranks")->fetchColumn();
+    if ($count > 0) return;
+
+    $defaults = [
+        ['JFM',    'Jugendfeuerwehrmann',              'Jugend',           5],
+        ['PFM',    'Probefeuerwehrmann',                'Mannschaft',      10],
+        ['FM',     'Feuerwehrmann',                     'Mannschaft',      20],
+        ['OFM',    'Oberfeuerwehrmann',                 'Mannschaft',      30],
+        ['HFM',    'Hauptfeuerwehrmann',                'Mannschaft',      40],
+        ['LM',     'Löschmeister',                      'Chargen',         50],
+        ['OLM',    'Oberlöschmeister',                  'Chargen',         60],
+        ['HLM',    'Hauptlöschmeister',                 'Chargen',         70],
+        ['BM',     'Brandmeister',                      'Chargen',         80],
+        ['OBM',    'Oberbrandmeister',                  'Chargen',         90],
+        ['HBM',    'Hauptbrandmeister',                 'Chargen',        100],
+        ['V',      'Verwalter',                         'Verwaltung',     110],
+        ['OV',     'Oberverwalter',                     'Verwaltung',     120],
+        ['HV',     'Hauptverwalter',                    'Verwaltung',     130],
+        ['BI',     'Brandinspektor',                    'Offiziere',      140],
+        ['OBI',    'Oberbrandinspektor',                'Offiziere',      150],
+        ['HBI',    'Hauptbrandinspektor',               'Offiziere',      160],
+        ['ABI',    'Abschnittsbrandinspektor',          'Höhere Offiziere', 170],
+        ['BR',     'Brandrat',                          'Höhere Offiziere', 180],
+        ['OBR',    'Oberbrandrat',                      'Höhere Offiziere', 190],
+        ['LBD-STV','Landesbranddirektor-Stellvertreter','Landes',         195],
+        ['LBD',    'Landesbranddirektor',               'Landes',         198],
+        ['FARZT',  'Feuerwehrarzt',                     'Stab',           200],
+        ['FKUR',   'Feuerwehrkurat',                    'Stab',           210],
+        ['EBI',    'Ehrenbrandinspektor',               'Ehren',          300],
+        ['EOBI',   'Ehrenoberbrandinspektor',           'Ehren',          310],
+        ['EHBI',   'Ehrenhauptbrandinspektor',          'Ehren',          320],
+        ['ELM',    'Ehrenlöschmeister',                 'Ehren',          330],
+        ['EOLM',   'Ehrenoberlöschmeister',             'Ehren',          340],
+        ['EHV',    'Ehrenhauptverwalter',               'Ehren',          350],
+    ];
+
+    $stmt = $db->prepare("INSERT INTO ranks (abbr, name, category, sort_order, badge) VALUES (?, ?, ?, ?, ?)");
+    foreach ($defaults as $r) {
+        $badge = 'assets/images/ranks/' . strtolower($r[0]) . '.png';
+        $stmt->execute([$r[0], $r[1], $r[2], $r[3], $badge]);
     }
 }
 

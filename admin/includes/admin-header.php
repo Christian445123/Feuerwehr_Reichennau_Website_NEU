@@ -32,6 +32,9 @@
             <a href="members.php" class="sidebar-link <?php echo ($activePage ?? '') === 'members' ? 'active' : ''; ?>">
                 <i class="fas fa-users"></i> Mannschaft
             </a>
+            <a href="ranks.php" class="sidebar-link <?php echo ($activePage ?? '') === 'ranks' ? 'active' : ''; ?>">
+                <i class="fas fa-medal"></i> Dienstgrade
+            </a>
 
             <div class="sidebar-divider"></div>
 

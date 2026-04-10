@@ -150,7 +150,7 @@ require_once __DIR__ . '/includes/admin-header.php';
                                     </optgroup>
                                 <?php endforeach; ?>
                             </select>
-                            <?php if ($member['rank'] && isset(TIROL_RANKS[$member['rank']])): ?>
+                            <?php if ($member['rank'] && isset(getAllRanks()[$member['rank']])): ?>
                                 <div class="rank-preview" id="rankPreview">
                                     <img src="../<?php echo e(getRankBadgePath($member['rank'])); ?>" alt="<?php echo e($member['rank']); ?>" class="rank-preview-img">
                                     <span><?php echo e($member['rank']); ?> – <?php echo e(getRankName($member['rank'])); ?></span>
@@ -314,6 +314,22 @@ if (rankSelect && rankPreview) {
         }
     });
 }
+
+// Dynamic function rows
+document.getElementById('addFunctionBtn').addEventListener('click', function() {
+    var container = document.getElementById('functionsContainer');
+    var row = document.createElement('div');
+    row.className = 'function-row';
+    row.innerHTML = '<select name="func_section[]" class="func-section-select">' +
+        '<option value="">-- Sektion --</option>' +
+        '<option value="Kommando">Kommando</option>' +
+        '<option value="Ausschuss">Ausschuss</option>' +
+        '<option value="Beauftragter">Beauftragter</option>' +
+        '</select>' +
+        '<input type="text" name="func_role[]" placeholder="Rolle (z.B. Kommandant, Kassier, ...)" class="func-role-input">' +
+        '<button type="button" class="btn btn-sm btn-danger func-remove" onclick="this.closest(\'.function-row\').remove()"><i class="fas fa-times"></i></button>';
+    container.appendChild(row);
+});
 </script>
 
 <?php require_once __DIR__ . '/includes/admin-footer.php'; ?>

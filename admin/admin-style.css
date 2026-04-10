@@ -171,7 +171,7 @@ img { max-width: 100%; height: auto; }
 
 /* --- Stats Row --- */
 .stats-row {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;
     margin-bottom: 30px;
 }
 
@@ -240,7 +240,7 @@ img { max-width: 100%; height: auto; }
 
 .quick-actions { margin-top: 10px; }
 .quick-actions h3 { font-size: 1rem; font-weight: 700; color: var(--dark); margin-bottom: 16px; }
-.quick-actions-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.quick-actions-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
 
 .quick-action {
     display: flex; flex-direction: column; align-items: center; gap: 10px;
@@ -434,6 +434,59 @@ img { max-width: 100%; height: auto; }
 
 /* --- Text Utils --- */
 .text-muted { color: var(--gray-600); }
+
+/* --- Function Rows (Multi-Role System) --- */
+.function-row {
+    display: flex; align-items: center; gap: 8px; margin-bottom: 8px;
+}
+
+.func-section-select {
+    width: 160px; padding: 8px 10px; border: 1px solid var(--gray-300);
+    border-radius: var(--radius); font-family: var(--font); font-size: 0.85rem;
+    background: var(--white); flex-shrink: 0;
+}
+
+.func-role-input {
+    flex: 1; padding: 8px 10px; border: 1px solid var(--gray-300);
+    border-radius: var(--radius); font-family: var(--font); font-size: 0.85rem;
+}
+
+.func-section-select:focus, .func-role-input:focus {
+    outline: none; border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(192,57,43,0.1);
+}
+
+.func-remove { flex-shrink: 0; }
+
+.badge-secondary {
+    background: rgba(52,152,219,0.1); color: #2471a3;
+}
+
+.badge-kommando { background: rgba(231,76,60,0.1); color: #c0392b; }
+.badge-ausschuss { background: rgba(52,152,219,0.1); color: #2471a3; }
+.badge-beauftragter { background: rgba(39,174,96,0.1); color: #1e8449; }
+
+/* --- Search Filter --- */
+.admin-search {
+    margin-bottom: 16px;
+}
+
+.admin-search input {
+    width: 100%; max-width: 400px; padding: 10px 14px 10px 36px;
+    border: 1px solid var(--gray-300); border-radius: var(--radius);
+    font-family: var(--font); font-size: 0.9rem;
+}
+
+.admin-search input:focus {
+    outline: none; border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(192,57,43,0.1);
+}
+
+.admin-search { position: relative; }
+.admin-search i {
+    position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+    color: var(--gray-400); font-size: 0.9rem;
+}
 
 /* --- Responsive --- */
 @media (max-width: 1024px) {

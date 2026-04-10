@@ -10,6 +10,7 @@ $db = getDB();
 $reportCount = $db->query("SELECT COUNT(*) FROM reports")->fetchColumn();
 $memberCount = $db->query("SELECT COUNT(*) FROM members WHERE active = 1")->fetchColumn();
 $imageCount = $db->query("SELECT COUNT(*) FROM report_images")->fetchColumn();
+$rankCount = $db->query("SELECT COUNT(*) FROM ranks WHERE active = 1")->fetchColumn();
 $recentReports = $db->query("SELECT * FROM reports ORDER BY created_at DESC LIMIT 5")->fetchAll();
 $recentMembers = $db->query("SELECT * FROM members WHERE active = 1 ORDER BY created_at DESC LIMIT 5")->fetchAll();
 
@@ -36,6 +37,13 @@ require_once __DIR__ . '/includes/admin-header.php';
         <div class="admin-stat-info">
             <span class="admin-stat-number"><?php echo $imageCount; ?></span>
             <span class="admin-stat-label">Fotos</span>
+        </div>
+    </div>
+    <div class="admin-stat">
+        <div class="admin-stat-icon" style="background:linear-gradient(135deg,#f39c12,#d68910);"><i class="fas fa-medal"></i></div>
+        <div class="admin-stat-info">
+            <span class="admin-stat-number"><?php echo $rankCount; ?></span>
+            <span class="admin-stat-label">Dienstgrade</span>
         </div>
     </div>
 </div>
@@ -106,6 +114,10 @@ require_once __DIR__ . '/includes/admin-header.php';
         <a href="member-edit.php" class="quick-action">
             <i class="fas fa-user-plus"></i>
             <span>Neues Mitglied</span>
+        </a>
+        <a href="rank-edit.php" class="quick-action">
+            <i class="fas fa-medal"></i>
+            <span>Neuer Dienstgrad</span>
         </a>
         <a href="../index.php" class="quick-action" target="_blank">
             <i class="fas fa-globe"></i>

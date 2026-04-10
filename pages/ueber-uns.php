@@ -16,17 +16,19 @@ $groupDescriptions = [
 ];
 
 // Collect all members for modal JSON
-$allMembersStmt = $db->query("SELECT id, firstname, lastname, rank, function, group_name, photo, entry_date, phone, email, bio FROM members WHERE active = 1");
+$allMembersStmt = $db->query("SELECT id, firstname, lastname, rank, functions, group_name, photo, entry_date, phone, email, bio FROM members WHERE active = 1");
 $allMembers = $allMembersStmt->fetchAll();
 $membersJson = [];
 foreach ($allMembers as $am) {
+    $funcs = json_decode($am['functions'] ?? '[]', true) ?: [];
+    $funcLabels = array_map(fn($f) => $f['role'] . ' (' . $f['section'] . ')', $funcs);
     $membersJson[$am['id']] = [
         'name' => $am['firstname'] . ' ' . $am['lastname'],
         'photo' => $am['photo'] ? 'uploads/' . $am['photo'] : '',
         'rank' => $am['rank'],
         'rankName' => $am['rank'] ? getRankName($am['rank']) : '',
         'rankBadge' => $am['rank'] ? getRankBadgePath($am['rank']) : '',
-        'function' => $am['function'] ?? '',
+        'functions' => $funcLabels,
         'group' => $am['group_name'],
         'entry_date' => $am['entry_date'] ?? '',
         'phone' => $am['phone'] ?? '',
@@ -50,11 +52,12 @@ foreach ($allMembers as $am) {
 
                 <?php foreach ($groups as $group): ?>
                 <?php
-                // Kommando/Ausschuss: members who have this group in extra_groups
+                // Kommando/Ausschuss: members who have this section in their JSON functions
                 // Mannschaft/Ehrenmitglieder: members with this as group_name
                 if (in_array($group, ['Kommando', 'Ausschuss'])) {
-                    $stmt = $db->prepare("SELECT * FROM members WHERE active = 1 AND (extra_groups = ? OR extra_groups LIKE ? OR extra_groups LIKE ? OR extra_groups LIKE ?) ORDER BY sort_order, lastname");
-                    $stmt->execute([$group, $group.',%', '%,'.$group, '%,'.$group.',%']);
+                    $pattern = '%"section":"' . $group . '"%';
+                    $stmt = $db->prepare("SELECT * FROM members WHERE active = 1 AND functions LIKE ? ORDER BY sort_order, lastname");
+                    $stmt->execute([$pattern]);
                 } else {
                     $stmt = $db->prepare("SELECT * FROM members WHERE group_name = ? AND active = 1 ORDER BY sort_order, lastname");
                     $stmt->execute([$group]);
@@ -73,6 +76,17 @@ foreach ($allMembers as $am) {
                             <?php $gridClass = ($group === 'Kommando') ? 'grid-kommando' : ''; ?>
                             <div class="members-public-grid <?php echo $gridClass; ?>">
                                 <?php foreach ($groupMembers as $m): ?>
+                                    <?php
+                                    // Get the role for this specific section
+                                    $funcs = json_decode($m['functions'] ?? '[]', true) ?: [];
+                                    $roleInSection = '';
+                                    foreach ($funcs as $f) {
+                                        if (($f['section'] ?? '') === $group) {
+                                            $roleInSection = $f['role'] ?? '';
+                                            break;
+                                        }
+                                    }
+                                    ?>
                                     <div class="member-public-card" data-member-id="<?php echo (int)$m['id']; ?>" onclick="showMemberDetail(<?php echo (int)$m['id']; ?>)">
                                         <?php if ($m['photo']): ?>
                                             <img src="uploads/<?php echo htmlspecialchars($m['photo']); ?>"
@@ -85,8 +99,8 @@ foreach ($allMembers as $am) {
                                         <?php endif; ?>
                                         <div class="member-public-info">
                                             <strong><?php echo htmlspecialchars($m['firstname'] . ' ' . $m['lastname']); ?></strong>
-                                            <?php if ($m['function']): ?>
-                                                <span class="member-public-function"><?php echo htmlspecialchars($m['function']); ?></span>
+                                            <?php if ($roleInSection): ?>
+                                                <span class="member-public-function"><?php echo htmlspecialchars($roleInSection); ?></span>
                                             <?php endif; ?>
                                             <?php if ($m['rank']): ?>
                                                 <span class="member-public-rank">
@@ -233,11 +247,16 @@ function showMemberDetail(id) {
         photoWrap.innerHTML = '<div class="member-modal-placeholder"><i class="fas fa-user"></i></div>';
     }
 
-    // Name & Function
+    // Name & Functions
     document.getElementById('modalName').textContent = m.name;
     var funcEl = document.getElementById('modalFunction');
-    funcEl.textContent = m['function'] || '';
-    funcEl.style.display = m['function'] ? '' : 'none';
+    if (m.functions && m.functions.length > 0) {
+        funcEl.textContent = m.functions.join(' · ');
+        funcEl.style.display = '';
+    } else {
+        funcEl.textContent = '';
+        funcEl.style.display = 'none';
+    }
 
     // Rank
     var rankEl = document.getElementById('modalRank');
@@ -252,12 +271,15 @@ function showMemberDetail(id) {
     // Body details
     var body = document.getElementById('modalBody');
     var html = '';
-    var hasDetails = m.group || m.entry_date || m.phone || m.email || m.bio;
+    var hasDetails = m.group || m.entry_date || m.phone || m.email || m.bio || (m.functions && m.functions.length > 0);
 
     if (hasDetails) {
         html += '<ul class="member-modal-details">';
         if (m.group) {
             html += '<li><i class="fas fa-users"></i> ' + escHtml(m.group) + '</li>';
+        }
+        if (m.functions && m.functions.length > 0) {
+            html += '<li><i class="fas fa-briefcase"></i> ' + m.functions.map(escHtml).join(', ') + '</li>';
         }
         if (m.entry_date) {
             html += '<li><i class="fas fa-calendar-alt"></i> Eintritt: ' + escHtml(m.entry_date) + '</li>';
