@@ -33,6 +33,7 @@
                         <li><a href="index.php?page=berichte">Berichte</a></li>
                         <li><a href="index.php?page=termine">Termine</a></li>
                         <li><a href="index.php?page=kontakt">Kontakt & Impressum</a></li>
+                        <li><a href="index.php?page=datenschutz">Datenschutzerklärung</a></li>
                     </ul>
                 </div>
 
@@ -47,7 +48,7 @@
             </div>
 
             <div class="footer-bottom">
-                <p>&copy; <?php echo date('Y'); ?> Freiwillige Feuerwehr Reichenau / Innsbruck Stadt. Alle Rechte vorbehalten.</p>
+                <p>&copy; <?php echo date('Y'); ?> Freiwillige Feuerwehr Reichenau / Innsbruck Stadt. Alle Rechte vorbehalten. | <a href="index.php?page=datenschutz">Datenschutz</a></p>
             </div>
         </div>
     </footer>

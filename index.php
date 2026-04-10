@@ -14,7 +14,8 @@ $allowed_pages = [
     'jugend',
     'berichte',
     'termine',
-    'kontakt'
+    'kontakt',
+    'datenschutz'
 ];
 
 // Sicherheitscheck: Nur erlaubte Seiten laden
@@ -37,7 +38,8 @@ $page_titles = [
     'jugend'      => 'Jugend',
     'berichte'    => 'Berichte',
     'termine'     => 'Termine',
-    'kontakt'     => 'Kontakt & Impressum'
+    'kontakt'     => 'Kontakt & Impressum',
+    'datenschutz' => 'Datenschutzerklärung'
 ];
 
 $current_title = $page_titles[$page] ?? 'Startseite';
