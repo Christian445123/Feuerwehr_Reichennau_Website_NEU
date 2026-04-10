@@ -4,10 +4,13 @@
  * Nur für das Bundesland Tirol gültig.
  *
  * Jeder Eintrag: [Abkürzung => [Name, Kategorie, Sortierung]]
- * Badge-Bild: assets/images/ranks/{strtolower(abkuerzung)}.svg
+ * Badge-Bild: assets/images/ranks/{strtolower(abkuerzung)}.png
  */
 
 define('TIROL_RANKS', [
+    // ── Jugendfeuerwehr ──
+    'JFM'  => ['Jugendfeuerwehrmann', 'Jugend', 5],
+
     // ── Mannschaftsdienstgrade ──
     'PFM'  => ['Probefeuerwehrmann', 'Mannschaft', 10],
     'FM'   => ['Feuerwehrmann', 'Mannschaft', 20],
@@ -20,9 +23,9 @@ define('TIROL_RANKS', [
     'HLM'  => ['Hauptlöschmeister', 'Chargen', 70],
 
     // ── Chargendienstgrade (Brandmeister) ──
-    'BM'   => ['Brandmeister', 'Offiziere', 80],
-    'OBM'  => ['Oberbrandmeister', 'Offiziere', 90],
-    'HBM'  => ['Hauptbrandmeister', 'Offiziere', 100],
+    'BM'   => ['Brandmeister', 'Chargen', 80],
+    'OBM'  => ['Oberbrandmeister', 'Chargen', 90],
+    'HBM'  => ['Hauptbrandmeister', 'Chargen', 100],
 
     // ── Verwaltungsdienstgrade ──
     'V'    => ['Verwalter', 'Verwaltung', 110],
@@ -38,6 +41,10 @@ define('TIROL_RANKS', [
     'ABI'  => ['Abschnittsbrandinspektor', 'Höhere Offiziere', 170],
     'BR'   => ['Brandrat', 'Höhere Offiziere', 180],
     'OBR'  => ['Oberbrandrat', 'Höhere Offiziere', 190],
+
+    // ── Landesdienstgrade ──
+    'LBD-STV' => ['Landesbranddirektor-Stellvertreter', 'Landes', 195],
+    'LBD'     => ['Landesbranddirektor', 'Landes', 198],
 
     // ── Stabsdienstgrade ──
     'FARZT' => ['Feuerwehrarzt', 'Stab', 200],
@@ -56,7 +63,7 @@ define('TIROL_RANKS', [
  * Badge-Bildpfad für einen Dienstgrad
  */
 function getRankBadgePath(string $rank): string {
-    $file = 'assets/images/ranks/' . strtolower($rank) . '.svg';
+    $file = 'assets/images/ranks/' . strtolower($rank) . '.png';
     return $file;
 }
 
