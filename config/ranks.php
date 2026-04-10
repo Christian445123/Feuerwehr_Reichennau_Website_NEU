@@ -20,9 +20,9 @@ define('TIROL_RANKS', [
     'HLM'  => ['Hauptlöschmeister', 'Chargen', 70],
 
     // ── Chargendienstgrade (Brandmeister) ──
-    'BM'   => ['Brandmeister', 'Chargen', 80],
-    'OBM'  => ['Oberbrandmeister', 'Chargen', 90],
-    'HBM'  => ['Hauptbrandmeister', 'Chargen', 100],
+    'BM'   => ['Brandmeister', 'Offiziere', 80],
+    'OBM'  => ['Oberbrandmeister', 'Offiziere', 90],
+    'HBM'  => ['Hauptbrandmeister', 'Offiziere', 100],
 
     // ── Verwaltungsdienstgrade ──
     'V'    => ['Verwalter', 'Verwaltung', 110],
