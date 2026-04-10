@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="368" height="368" viewBox="0 0 368 368">
-<rect width="368" height="368" fill="#CC0000"/>
-<line x1="184" y1="68" x2="184" y2="305" stroke="#FFD700" stroke-width="14" stroke-linecap="round"/>
-<circle cx="184" cy="68" r="20" fill="none" stroke="#FFD700" stroke-width="10"/>
-<path d="M184,125 C230,148 140,185 188,215 C230,240 140,275 184,300" fill="none" stroke="#FFD700" stroke-width="11" stroke-linecap="round"/>
-</svg>
