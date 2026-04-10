@@ -1377,6 +1377,51 @@ a:hover {
     margin-top: 16px;
 }
 
+/* Datenschutz / Legal Pages */
+.legal-content .content-card {
+    margin-bottom: 30px;
+}
+
+.legal-content .content-card-body h4 {
+    margin-top: 20px;
+    margin-bottom: 8px;
+    color: var(--color-dark);
+}
+
+.legal-content .content-card-body h4:first-child {
+    margin-top: 0;
+}
+
+.legal-content .content-card-body ul {
+    margin: 10px 0 16px 20px;
+}
+
+.legal-content .content-card-body ul li {
+    margin-bottom: 4px;
+    color: var(--color-gray-600);
+}
+
+.legal-content .content-card-body p {
+    margin-bottom: 12px;
+    line-height: 1.7;
+}
+
+.legal-last-updated {
+    text-align: right;
+    font-size: 0.85rem;
+    color: var(--color-gray-500);
+    margin-top: 10px;
+}
+
+.footer-bottom a {
+    color: rgba(255,255,255,0.7);
+    text-decoration: underline;
+}
+
+.footer-bottom a:hover {
+    color: #fff;
+}
+
 /* --- Footer --- */
 .footer {
     background: var(--color-dark);
