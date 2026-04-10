@@ -12,7 +12,8 @@ $pageTitle = $isEdit ? 'Mitglied bearbeiten' : 'Neues Mitglied';
 
 $member = [
     'firstname' => '', 'lastname' => '', 'rank' => '',
-    'function' => '', 'group_name' => 'Mannschaft', 'photo' => '',
+    'function' => '', 'group_name' => 'Mannschaft', 'extra_groups' => '',
+    'photo' => '',
     'sort_order' => 0, 'active' => 1,
     'entry_date' => '', 'phone' => '', 'email' => '', 'bio' => ''
 ];
@@ -42,6 +43,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $member['rank'] = trim($_POST['rank'] ?? '');
     $member['function'] = trim($_POST['function'] ?? '');
     $member['group_name'] = $_POST['group_name'] ?? 'Mannschaft';
+    $extraGroups = $_POST['extra_groups'] ?? [];
+    $member['extra_groups'] = implode(',', array_filter($extraGroups));
     $member['sort_order'] = (int)($_POST['sort_order'] ?? 0);
     $member['active'] = isset($_POST['active']) ? 1 : 0;
     $member['entry_date'] = trim($_POST['entry_date'] ?? '');
@@ -49,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $member['email'] = trim($_POST['email'] ?? '');
     $member['bio'] = trim($_POST['bio'] ?? '');
 
-    $validGroups = ['Kommando', 'Ausschuss', 'Mannschaft', 'Ehrenmitglieder', 'Jugend'];
+    $validGroups = ['Mannschaft', 'Ehrenmitglieder', 'Jugend'];
     if (!in_array($member['group_name'], $validGroups, true)) {
         $member['group_name'] = 'Mannschaft';
     }
@@ -81,11 +84,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         if ($isEdit) {
-            $stmt = $db->prepare("UPDATE members SET firstname=?, lastname=?, rank=?, function=?, group_name=?, photo=?, sort_order=?, active=?, entry_date=?, phone=?, email=?, bio=?, updated_at=CURRENT_TIMESTAMP WHERE id=?");
-            $stmt->execute([$member['firstname'], $member['lastname'], $member['rank'], $member['function'], $member['group_name'], $photoFilename, $member['sort_order'], $member['active'], $member['entry_date'], $member['phone'], $member['email'], $member['bio'], $id]);
+            $stmt = $db->prepare("UPDATE members SET firstname=?, lastname=?, rank=?, function=?, group_name=?, extra_groups=?, photo=?, sort_order=?, active=?, entry_date=?, phone=?, email=?, bio=?, updated_at=CURRENT_TIMESTAMP WHERE id=?");
+            $stmt->execute([$member['firstname'], $member['lastname'], $member['rank'], $member['function'], $member['group_name'], $member['extra_groups'], $photoFilename, $member['sort_order'], $member['active'], $member['entry_date'], $member['phone'], $member['email'], $member['bio'], $id]);
         } else {
-            $stmt = $db->prepare("INSERT INTO members (firstname, lastname, rank, function, group_name, photo, sort_order, active, entry_date, phone, email, bio) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
-            $stmt->execute([$member['firstname'], $member['lastname'], $member['rank'], $member['function'], $member['group_name'], $photoFilename, $member['sort_order'], $member['active'], $member['entry_date'], $member['phone'], $member['email'], $member['bio']]);
+            $stmt = $db->prepare("INSERT INTO members (firstname, lastname, rank, function, group_name, extra_groups, photo, sort_order, active, entry_date, phone, email, bio) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)");
+            $stmt->execute([$member['firstname'], $member['lastname'], $member['rank'], $member['function'], $member['group_name'], $member['extra_groups'], $photoFilename, $member['sort_order'], $member['active'], $member['entry_date'], $member['phone'], $member['email'], $member['bio']]);
             $id = $db->lastInsertId();
         }
 
@@ -156,15 +159,29 @@ require_once __DIR__ . '/includes/admin-header.php';
 
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="group_name">Gruppe</label>
+                            <label for="group_name">Grundgruppe</label>
                             <select id="group_name" name="group_name">
-                                <option value="Kommando" <?php echo $member['group_name'] === 'Kommando' ? 'selected' : ''; ?>>Kommando</option>
-                                <option value="Ausschuss" <?php echo $member['group_name'] === 'Ausschuss' ? 'selected' : ''; ?>>Ausschuss</option>
                                 <option value="Mannschaft" <?php echo $member['group_name'] === 'Mannschaft' ? 'selected' : ''; ?>>Mannschaft</option>
                                 <option value="Ehrenmitglieder" <?php echo $member['group_name'] === 'Ehrenmitglieder' ? 'selected' : ''; ?>>Ehrenmitglieder</option>
                                 <option value="Jugend" <?php echo $member['group_name'] === 'Jugend' ? 'selected' : ''; ?>>Jugend</option>
                             </select>
                         </div>
+                        <div class="form-group">
+                            <label>Zusätzlich anzeigen in</label>
+                            <?php $currentExtra = explode(',', $member['extra_groups'] ?? ''); ?>
+                            <div class="checkbox-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="extra_groups[]" value="Kommando" <?php echo in_array('Kommando', $currentExtra) ? 'checked' : ''; ?>>
+                                    <span>Kommando</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="extra_groups[]" value="Ausschuss" <?php echo in_array('Ausschuss', $currentExtra) ? 'checked' : ''; ?>>
+                                    <span>Ausschuss</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
                         <div class="form-group">
                             <label for="sort_order">Sortierung</label>
                             <input type="number" id="sort_order" name="sort_order" value="<?php echo (int)$member['sort_order']; ?>">
