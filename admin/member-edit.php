@@ -286,7 +286,7 @@ if (rankSelect && rankPreview) {
         if (val) {
             var img = rankPreview.querySelector('img');
             var span = rankPreview.querySelector('span');
-            img.src = '../assets/images/ranks/' + val.toLowerCase() + '.svg';
+            img.src = '../assets/images/ranks/' + val.toLowerCase() + '.png';
             img.alt = val;
             span.textContent = val + ' – ' + this.options[this.selectedIndex].text.trim();
             rankPreview.style.display = 'flex';

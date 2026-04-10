@@ -50,8 +50,15 @@ foreach ($allMembers as $am) {
 
                 <?php foreach ($groups as $group): ?>
                 <?php
-                $stmt = $db->prepare("SELECT * FROM members WHERE group_name = ? AND active = 1 ORDER BY sort_order, lastname");
-                $stmt->execute([$group]);
+                // Kommando/Ausschuss: members who have this group in extra_groups
+                // Mannschaft/Ehrenmitglieder: members with this as group_name
+                if (in_array($group, ['Kommando', 'Ausschuss'])) {
+                    $stmt = $db->prepare("SELECT * FROM members WHERE active = 1 AND (extra_groups = ? OR extra_groups LIKE ? OR extra_groups LIKE ? OR extra_groups LIKE ?) ORDER BY sort_order, lastname");
+                    $stmt->execute([$group, $group.',%', '%,'.$group, '%,'.$group.',%']);
+                } else {
+                    $stmt = $db->prepare("SELECT * FROM members WHERE group_name = ? AND active = 1 ORDER BY sort_order, lastname");
+                    $stmt->execute([$group]);
+                }
                 $groupMembers = $stmt->fetchAll();
                 ?>
                 <div class="content-card" id="<?php echo strtolower(str_replace(' ', '', $group)); ?>">
