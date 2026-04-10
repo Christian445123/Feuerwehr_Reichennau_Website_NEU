@@ -50,11 +50,11 @@ $photos = [
     '5a24527f1d133.jpg' => '313,52,860,860',
     
     // Ehrenmitglieder
-    '5a64a34e4df71.jpg' => '252,39,873,873',  // Werner Federspiel - using default
-    '59e8e9eaadcd4.jpg' => '252,39,873,873',  // Harald Fröhlich
-    '5a6647771010b.jpg' => '252,39,873,873',  // Anton Larcher
-    '59e8ebca90ec4.jpg' => '252,39,873,873',  // Rudi Krebs
-    '5a663d7222931.jpg' => '252,39,873,873',  // Romuald Niescher
+    '5a64a34e4df71.jpg' => '6,72,514,514',       // Werner Federspiel
+    '59e8e9eaadcd4.jpg' => '197,157,523,523',     // Harald Fröhlich
+    '5a6647771010b.jpg' => '0,0,228,228',         // Anton Larcher
+    '59e8ebca90ec4.jpg' => '',                     // Rudi Krebs (no neckline)
+    '5a663d7222931.jpg' => '187,0,420,420',        // Romuald Niescher
     
     // Jugend
     '61e5bf91ebca7.jpg' => '252,39,873,873',  // Anna Maria Bidner
