@@ -1,8 +1,15 @@
 <?php
 require_once __DIR__ . '/auth.php';
+require_once __DIR__ . '/permissions.php';
 require_once __DIR__ . '/../config/ranks.php';
 require_once __DIR__ . '/../config/badges.php';
 requireLogin();
+requirePermission('members.manage');
+
+// Rang, Verwendungs-/Funktionsabzeichen und Kommando-/Ausschuss-Funktionen sind
+// eine eigene, granularere Berechtigung - nicht jeder, der Mitglieder pflegen
+// darf, soll auch offizielle Funktionen/Rollen vergeben können.
+$canEditFunctions = userHasPermission('members.functions');
 
 $db = getDB();
 $activePage = 'members';
