@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/auth.php';
+require_once __DIR__ . '/permissions.php';
 require_once __DIR__ . '/../config/gate.php';
 requireLogin();
 
@@ -18,6 +19,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? '';
 
     if ($action === 'change_site_password') {
+        if (!userHasPermission('settings.manage')) {
+            flash('error', 'Dir fehlt die Berechtigung, das Zugangspasswort zu ändern.');
+            header('Location: settings.php');
+            exit;
+        }
         $newPw = $_POST['new_site_password'] ?? '';
         $confirmPw = $_POST['confirm_site_password'] ?? '';
 
@@ -61,6 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 require_once __DIR__ . '/includes/admin-header.php';
 ?>
 
+<?php if (userHasPermission('settings.manage')): ?>
 <div class="admin-card" style="max-width: 600px;">
     <div class="admin-card-header"><h2><i class="fas fa-lock"></i> Website-Zugangssperre</h2></div>
     <div class="admin-card-body">
@@ -85,6 +92,7 @@ require_once __DIR__ . '/includes/admin-header.php';
         </form>
     </div>
 </div>
+<?php endif; ?>
 
 <div class="admin-card" style="max-width: 600px; margin-top: 24px;">
     <div class="admin-card-header"><h2><i class="fas fa-key"></i> Passwort ändern</h2></div>
