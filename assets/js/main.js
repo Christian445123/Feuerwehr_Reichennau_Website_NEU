@@ -106,10 +106,21 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // Initiale Filterung beim Laden der Seite (aktiver Tab ist "Alle")
+    // Initiale Filterung beim Laden der Seite. Ein Link auf #archiv
+    // (z.B. aus dem Navigationsmenü) aktiviert direkt den Archiv-Tab.
     if (berichteCards.length > 0) {
-        var initialTab = document.querySelector('.filter-tab.active');
-        applyBerichteFilter(initialTab ? initialTab.getAttribute('data-filter') : 'all');
+        var initialFilter = 'all';
+        if (window.location.hash === '#archiv') {
+            initialFilter = 'archiv';
+        } else {
+            var activeTab = document.querySelector('.filter-tab.active');
+            if (activeTab) initialFilter = activeTab.getAttribute('data-filter');
+        }
+
+        filterTabs.forEach(function (t) {
+            t.classList.toggle('active', t.getAttribute('data-filter') === initialFilter);
+        });
+        applyBerichteFilter(initialFilter);
     }
 
     // --- Vehicle Image Switcher ---

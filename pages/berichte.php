@@ -100,7 +100,7 @@ $archivCutoff = '2024-01-01'; // Alles vor 2024 gilt als Archiv
         </div>
     </section>
 
-    <section class="section">
+    <section class="section" id="archiv">
         <div class="container">
 
             <!-- Filter-Tabs -->
