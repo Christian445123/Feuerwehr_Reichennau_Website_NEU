@@ -8,6 +8,7 @@
  */
 
 require_once __DIR__ . '/env.php';
+require_once __DIR__ . '/migrations.php';
 
 // ── Treiber-Auswahl: 'sqlite' oder 'mysql' (aus .env, Fallback: sqlite) ──
 define('DB_DRIVER', env('DB_DRIVER', 'sqlite'));
