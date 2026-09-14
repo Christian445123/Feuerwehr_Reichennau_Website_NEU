@@ -73,7 +73,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 var isArchiv = card.getAttribute('data-archiv') === '1';
                 var visible;
                 if (filter === 'all') {
-                    visible = true;
+                    // "Alle" zeigt die aktuellen Berichte; Berichte über 2 Jahre
+                    // laufen ausschließlich unter "Archiv".
+                    visible = !isArchiv;
                 } else if (filter === 'archiv') {
                     visible = isArchiv;
                 } else {
