@@ -35,15 +35,19 @@ if (!in_array($category, $validCategories, true)) $category = 'all';
 
 $archivCutoff = '2024-01-01'; // Alles vor 2024 gilt als Archiv
 
+// Archivierte Berichte (vor dem Stichtag) erscheinen ausschließlich unter
+// dem Archiv-Filter, nicht mehr zusätzlich in "Alle" oder ihrer Kategorie.
 if ($category === 'all') {
-    $reports = $db->query("SELECT r.*, COUNT(ri.id) as image_count FROM reports r LEFT JOIN report_images ri ON r.id = ri.report_id GROUP BY r.id ORDER BY r.date DESC, r.created_at DESC")->fetchAll();
+    $stmt = $db->prepare("SELECT r.*, COUNT(ri.id) as image_count FROM reports r LEFT JOIN report_images ri ON r.id = ri.report_id WHERE r.date >= ? GROUP BY r.id ORDER BY r.date DESC, r.created_at DESC");
+    $stmt->execute([$archivCutoff]);
+    $reports = $stmt->fetchAll();
 } elseif ($category === 'archiv') {
     $stmt = $db->prepare("SELECT r.*, COUNT(ri.id) as image_count FROM reports r LEFT JOIN report_images ri ON r.id = ri.report_id WHERE r.date < ? GROUP BY r.id ORDER BY r.date DESC, r.created_at DESC");
     $stmt->execute([$archivCutoff]);
     $reports = $stmt->fetchAll();
 } else {
-    $stmt = $db->prepare("SELECT r.*, COUNT(ri.id) as image_count FROM reports r LEFT JOIN report_images ri ON r.id = ri.report_id WHERE r.category = ? GROUP BY r.id ORDER BY r.date DESC, r.created_at DESC");
-    $stmt->execute([$category]);
+    $stmt = $db->prepare("SELECT r.*, COUNT(ri.id) as image_count FROM reports r LEFT JOIN report_images ri ON r.id = ri.report_id WHERE r.category = ? AND r.date >= ? GROUP BY r.id ORDER BY r.date DESC, r.created_at DESC");
+    $stmt->execute([$category, $archivCutoff]);
     $reports = $stmt->fetchAll();
 }
 
