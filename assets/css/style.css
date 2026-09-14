@@ -256,7 +256,7 @@ a:hover {
     align-items: center;
     justify-content: center;
     text-align: center;
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    background: linear-gradient(135deg, #181818 0%, #1f1f1f 50%, #141414 100%);
     overflow: hidden;
 }
 
@@ -637,7 +637,7 @@ a:hover {
 
 /* --- Page Header --- */
 .page-header {
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    background: linear-gradient(135deg, #181818 0%, #1f1f1f 100%);
     padding: 130px 0 60px;
     text-align: center;
     position: relative;
