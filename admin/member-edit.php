@@ -234,25 +234,32 @@ require_once __DIR__ . '/includes/admin-header.php';
                         <p style="font-size:0.82rem;color:var(--gray-600);margin-bottom:10px;">
                             Weisen Sie dem Mitglied eine oder mehrere Funktionen zu. Jede Funktion bestimmt, in welcher Sektion das Mitglied auf der Website angezeigt wird.
                         </p>
+                        <?php if (!$canEditFunctions): ?>
+                            <p class="permission-note"><i class="fas fa-lock"></i> Dir fehlt die Berechtigung, Funktionen zu ändern.</p>
+                        <?php endif; ?>
                         <div id="functionsContainer">
                             <?php if (!empty($currentFunctions)): ?>
                                 <?php foreach ($currentFunctions as $i => $func): ?>
                                     <div class="function-row">
-                                        <select name="func_section[]" class="func-section-select">
+                                        <select name="func_section[]" class="func-section-select" <?php echo $canEditFunctions ? '' : 'disabled'; ?>>
                                             <option value="">-- Sektion --</option>
                                             <option value="Kommando" <?php echo ($func['section'] ?? '') === 'Kommando' ? 'selected' : ''; ?>>Kommando</option>
                                             <option value="Ausschuss" <?php echo ($func['section'] ?? '') === 'Ausschuss' ? 'selected' : ''; ?>>Ausschuss</option>
                                             <option value="Beauftragter" <?php echo ($func['section'] ?? '') === 'Beauftragter' ? 'selected' : ''; ?>>Beauftragter</option>
                                         </select>
-                                        <input type="text" name="func_role[]" value="<?php echo e($func['role'] ?? ''); ?>" placeholder="Rolle (z.B. Kommandant, Kassier, ...)" class="func-role-input">
-                                        <button type="button" class="btn btn-sm btn-danger func-remove" onclick="this.closest('.function-row').remove()"><i class="fas fa-times"></i></button>
+                                        <input type="text" name="func_role[]" value="<?php echo e($func['role'] ?? ''); ?>" placeholder="Rolle (z.B. Kommandant, Kassier, ...)" class="func-role-input" <?php echo $canEditFunctions ? '' : 'disabled'; ?>>
+                                        <?php if ($canEditFunctions): ?>
+                                            <button type="button" class="btn btn-sm btn-danger func-remove" onclick="this.closest('.function-row').remove()"><i class="fas fa-times"></i></button>
+                                        <?php endif; ?>
                                     </div>
                                 <?php endforeach; ?>
                             <?php endif; ?>
                         </div>
-                        <button type="button" class="btn btn-sm btn-secondary" id="addFunctionBtn" style="margin-top:8px;">
-                            <i class="fas fa-plus"></i> Funktion hinzufügen
-                        </button>
+                        <?php if ($canEditFunctions): ?>
+                            <button type="button" class="btn btn-sm btn-secondary" id="addFunctionBtn" style="margin-top:8px;">
+                                <i class="fas fa-plus"></i> Funktion hinzufügen
+                            </button>
+                        <?php endif; ?>
                     </div>
 
                     <div class="form-row">
