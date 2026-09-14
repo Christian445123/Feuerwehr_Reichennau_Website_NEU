@@ -2201,6 +2201,38 @@ a:hover {
     vertical-align: middle;
 }
 
+.member-badge-inline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 22px;
+    height: 22px;
+    padding: 0 5px;
+    border-radius: 50px;
+    color: var(--color-white);
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    margin-left: 4px;
+    vertical-align: middle;
+    cursor: help;
+}
+
+.member-modal-badges {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.member-badge-modal {
+    height: 24px;
+    min-width: 26px;
+    font-size: 0.68rem;
+    margin-left: 0;
+}
+
 /* Admin rank preview */
 .rank-preview {
     display: flex;
