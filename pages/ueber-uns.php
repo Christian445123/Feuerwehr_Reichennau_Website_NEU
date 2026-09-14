@@ -240,6 +240,7 @@ foreach ($allMembers as $am) {
                 <img id="modalRankBadge" src="" alt="">
                 <span id="modalRankText"></span>
             </div>
+            <div class="member-modal-badges" id="modalBadges"></div>
         </div>
         <div class="member-modal-body" id="modalBody"></div>
     </div>
@@ -279,6 +280,18 @@ function showMemberDetail(id) {
         rankEl.style.display = 'inline-flex';
     } else {
         rankEl.style.display = 'none';
+    }
+
+    // Verwendungs-/Funktionsabzeichen
+    var badgesEl = document.getElementById('modalBadges');
+    if (m.badges && m.badges.length > 0) {
+        badgesEl.innerHTML = m.badges.map(function(b) {
+            return '<span class="member-badge-inline member-badge-modal" style="background:' + b.color + '" title="' + escHtml(b.name) + '">' + escHtml(b.code) + '</span>';
+        }).join('');
+        badgesEl.style.display = 'flex';
+    } else {
+        badgesEl.innerHTML = '';
+        badgesEl.style.display = 'none';
     }
 
     // Body details
