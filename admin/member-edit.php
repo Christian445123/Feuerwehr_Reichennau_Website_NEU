@@ -102,11 +102,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         if ($isEdit) {
-            $stmt = $db->prepare("UPDATE members SET firstname=?, lastname=?, rank=?, functions=?, group_name=?, photo=?, sort_order=?, active=?, entry_date=?, phone=?, email=?, bio=?, updated_at=CURRENT_TIMESTAMP WHERE id=?");
-            $stmt->execute([$member['firstname'], $member['lastname'], $member['rank'], $member['functions'], $member['group_name'], $photoFilename, $member['sort_order'], $member['active'], $member['entry_date'], $member['phone'], $member['email'], $member['bio'], $id]);
+            $stmt = $db->prepare("UPDATE members SET firstname=?, lastname=?, rank=?, functions=?, badge1=?, badge2=?, group_name=?, photo=?, sort_order=?, active=?, entry_date=?, phone=?, email=?, bio=?, updated_at=CURRENT_TIMESTAMP WHERE id=?");
+            $stmt->execute([$member['firstname'], $member['lastname'], $member['rank'], $member['functions'], $member['badge1'], $member['badge2'], $member['group_name'], $photoFilename, $member['sort_order'], $member['active'], $member['entry_date'], $member['phone'], $member['email'], $member['bio'], $id]);
         } else {
-            $stmt = $db->prepare("INSERT INTO members (firstname, lastname, rank, functions, group_name, photo, sort_order, active, entry_date, phone, email, bio) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
-            $stmt->execute([$member['firstname'], $member['lastname'], $member['rank'], $member['functions'], $member['group_name'], $photoFilename, $member['sort_order'], $member['active'], $member['entry_date'], $member['phone'], $member['email'], $member['bio']]);
+            $stmt = $db->prepare("INSERT INTO members (firstname, lastname, rank, functions, badge1, badge2, group_name, photo, sort_order, active, entry_date, phone, email, bio) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+            $stmt->execute([$member['firstname'], $member['lastname'], $member['rank'], $member['functions'], $member['badge1'], $member['badge2'], $member['group_name'], $photoFilename, $member['sort_order'], $member['active'], $member['entry_date'], $member['phone'], $member['email'], $member['bio']]);
             $id = $db->lastInsertId();
         }
 
@@ -175,6 +175,31 @@ require_once __DIR__ . '/includes/admin-header.php';
                                 <option value="Mannschaft" <?php echo $member['group_name'] === 'Mannschaft' ? 'selected' : ''; ?>>Mannschaft</option>
                                 <option value="Ehrenmitglieder" <?php echo $member['group_name'] === 'Ehrenmitglieder' ? 'selected' : ''; ?>>Ehrenmitglieder</option>
                                 <option value="Jugend" <?php echo $member['group_name'] === 'Jugend' ? 'selected' : ''; ?>>Jugend</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="badge1">Verwendungs-/Funktionsabzeichen 1</label>
+                            <select id="badge1" name="badge1">
+                                <option value="">-- Kein Abzeichen --</option>
+                                <?php foreach (getAllBadges() as $code => $b): ?>
+                                    <option value="<?php echo e($code); ?>" <?php echo ($member['badge1'] ?? '') === $code ? 'selected' : ''; ?>>
+                                        <?php echo e($code); ?> – <?php echo e($b['name']); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="badge2">Verwendungs-/Funktionsabzeichen 2</label>
+                            <select id="badge2" name="badge2">
+                                <option value="">-- Kein Abzeichen --</option>
+                                <?php foreach (getAllBadges() as $code => $b): ?>
+                                    <option value="<?php echo e($code); ?>" <?php echo ($member['badge2'] ?? '') === $code ? 'selected' : ''; ?>>
+                                        <?php echo e($code); ?> – <?php echo e($b['name']); ?>
+                                    </option>
+                                <?php endforeach; ?>
                             </select>
                         </div>
                     </div>
