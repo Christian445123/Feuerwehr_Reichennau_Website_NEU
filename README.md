@@ -38,7 +38,7 @@ Die Website bildet die Freiwillige Feuerwehr Reichenau ab mit:
 | Komponente     | Technologie                                  |
 |----------------|----------------------------------------------|
 | **Backend**    | PHP 8.4 (ohne Framework, Plain PHP)          |
-| **Datenbank**  | SQLite (umschaltbar auf MariaDB/MySQL)       |
+| **Datenbank**  | MariaDB/MySQL                                |
 | **Frontend**   | HTML5, CSS3 (Custom Properties), Vanilla JS  |
 | **Schrift**    | Inter (Google Fonts)                         |
 | **Icons**      | Font Awesome 6.5.1 (CDN)                    |
@@ -56,8 +56,12 @@ FFR/
 ├── autocommit.bat             # Git Auto-Commit alle 30 Sek.
 │
 ├── config/
-│   ├── database.php           # DB-Verbindung (SQLite/MySQL), Schema, Uploads
-│   ├── ranks.php              # Tiroler Dienstgrad-Definitionen (30+ Ränge)
+│   ├── database.php           # DB-Verbindung (MySQL), Schema, Uploads
+│   ├── migrations.php         # Automatische DB-Migrationen (laufen bei jedem Request)
+│   ├── ranks.php              # Tiroler Dienstgrad-Definitionen
+│   ├── badges.php             # Verwendungs-/Funktionsabzeichen
+│   ├── env.php                # .env-Loader
+│   ├── gate.php                # Seitensperre (Zugangspasswort)
 │   ├── seed.php               # Datenbank-Seeding
 │   └── reseed.php             # Re-Seeding
 │
@@ -102,12 +106,9 @@ FFR/
 │       ├── sponsors/          # Sponsorenlogos
 │       └── ...                # Weitere Bilder (Geschichte, Schutzgebiet, etc.)
 │
-├── uploads/
-│   ├── members/               # Mitglieder-Fotos
-│   └── reports/               # Berichts-Bilder
-│
-└── data/
-    └── ffr.db                 # SQLite-Datenbank
+└── uploads/
+    ├── members/               # Mitglieder-Fotos
+    └── reports/               # Berichts-Bilder
 ```
 
 ---
