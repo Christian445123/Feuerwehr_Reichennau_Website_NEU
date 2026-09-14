@@ -110,6 +110,7 @@ $archivCutoff = date('Y-m-d', strtotime('-2 years'));
                 <button class="filter-tab" data-filter="uebung">Übung</button>
                 <button class="filter-tab" data-filter="jugend">Jugend</button>
                 <button class="filter-tab" data-filter="sonstige">Sonstige</button>
+                <button class="filter-tab" data-filter="archiv"><i class="fas fa-archive"></i> Archiv</button>
             </div>
 
             <?php
@@ -122,17 +123,28 @@ $archivCutoff = date('Y-m-d', strtotime('-2 years'));
                     <p>Es wurden noch keine Berichte veröffentlicht.</p>
                 </div>
             <?php else: ?>
-                <div class="berichte-grid" id="berichteGrid">
+                <div class="berichte-grid timeline-view" id="berichteGrid">
                     <?php foreach ($reports as $r): ?>
-                        <a href="index.php?page=berichte&id=<?php echo $r['id']; ?>" class="bericht-card bericht-card-link" data-category="<?php echo htmlspecialchars($r['category']); ?>">
+                        <?php $isArchiv = $r['date'] < $archivCutoff; ?>
+                        <a href="index.php?page=berichte&id=<?php echo $r['id']; ?>"
+                           class="bericht-card bericht-card-link"
+                           data-category="<?php echo htmlspecialchars($r['category']); ?>"
+                           data-archiv="<?php echo $isArchiv ? '1' : '0'; ?>"
+                           data-date="<?php echo htmlspecialchars($r['date']); ?>">
                             <?php if ($r['thumb']): ?>
                                 <div class="bericht-thumb">
                                     <img src="uploads/<?php echo htmlspecialchars($r['thumb']); ?>" alt="<?php echo htmlspecialchars($r['title']); ?>">
                                 </div>
                             <?php endif; ?>
-                            <div class="bericht-badge <?php echo $categoryBadges[$r['category']] ?? 'badge-sonstige'; ?>">
-                                <?php echo htmlspecialchars(ucfirst($r['category'])); ?>
-                            </div>
+                            <?php if (!empty($r['subcategory']) && isset($subcategoryLabels[$r['subcategory']])): ?>
+                                <div class="bericht-badge <?php echo $subcategoryBadges[$r['subcategory']]; ?>">
+                                    <?php echo htmlspecialchars($subcategoryLabels[$r['subcategory']]); ?>
+                                </div>
+                            <?php else: ?>
+                                <div class="bericht-badge <?php echo $categoryBadges[$r['category']] ?? 'badge-sonstige'; ?>">
+                                    <?php echo htmlspecialchars(ucfirst($r['category'])); ?>
+                                </div>
+                            <?php endif; ?>
                             <h3><i class="fas <?php echo $categoryIcons[$r['category']] ?? 'fa-newspaper'; ?>"></i> <?php echo htmlspecialchars($r['title']); ?></h3>
                             <p class="bericht-date"><i class="fas fa-calendar"></i> <?php echo htmlspecialchars($r['date']); ?></p>
                             <?php if ($r['content']): ?>
@@ -142,12 +154,6 @@ $archivCutoff = date('Y-m-d', strtotime('-2 years'));
                     <?php endforeach; ?>
                 </div>
             <?php endif; ?>
-
-            <!-- Archiv -->
-            <div class="archiv-section" id="archiv">
-                <h2><i class="fas fa-archive"></i> Archiv</h2>
-                <p>Ältere Berichte und Einsatzberichte finden Sie in unserem Archiv. Bitte kontaktieren Sie uns für weitere Informationen.</p>
-            </div>
         </div>
     </section>
 <?php endif; ?>

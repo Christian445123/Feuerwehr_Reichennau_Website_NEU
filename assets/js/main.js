@@ -54,6 +54,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // --- Berichte Filter ---
     const filterTabs = document.querySelectorAll('.filter-tab');
     const berichteCards = document.querySelectorAll('.bericht-card');
+    const berichteGrid = document.getElementById('berichteGrid');
 
     filterTabs.forEach(function (tab) {
         tab.addEventListener('click', function () {
@@ -64,12 +65,21 @@ document.addEventListener('DOMContentLoaded', function () {
             var filter = tab.getAttribute('data-filter');
 
             berichteCards.forEach(function (card) {
-                if (filter === 'all' || card.getAttribute('data-category') === filter) {
-                    card.classList.remove('hidden');
+                var visible;
+                if (filter === 'all') {
+                    visible = true;
+                } else if (filter === 'archiv') {
+                    visible = card.getAttribute('data-archiv') === '1';
                 } else {
-                    card.classList.add('hidden');
+                    visible = card.getAttribute('data-category') === filter;
                 }
+                card.classList.toggle('hidden', !visible);
             });
+
+            // "Alle" zeigt einen Zeitstrahl, jeder Filter zeigt Kacheln
+            if (berichteGrid) {
+                berichteGrid.classList.toggle('timeline-view', filter === 'all');
+            }
         });
     });
 
