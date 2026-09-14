@@ -408,20 +408,23 @@ wireBadgeSelect(badge1Select, badgePreview1);
 wireBadgeSelect(badge2Select, badgePreview2);
 
 // Dynamic function rows
-document.getElementById('addFunctionBtn').addEventListener('click', function() {
-    var container = document.getElementById('functionsContainer');
-    var row = document.createElement('div');
-    row.className = 'function-row';
-    row.innerHTML = '<select name="func_section[]" class="func-section-select">' +
-        '<option value="">-- Sektion --</option>' +
-        '<option value="Kommando">Kommando</option>' +
-        '<option value="Ausschuss">Ausschuss</option>' +
-        '<option value="Beauftragter">Beauftragter</option>' +
-        '</select>' +
-        '<input type="text" name="func_role[]" placeholder="Rolle (z.B. Kommandant, Kassier, ...)" class="func-role-input">' +
-        '<button type="button" class="btn btn-sm btn-danger func-remove" onclick="this.closest(\'.function-row\').remove()"><i class="fas fa-times"></i></button>';
-    container.appendChild(row);
-});
+var addFunctionBtn = document.getElementById('addFunctionBtn');
+if (addFunctionBtn) {
+    addFunctionBtn.addEventListener('click', function() {
+        var container = document.getElementById('functionsContainer');
+        var row = document.createElement('div');
+        row.className = 'function-row';
+        row.innerHTML = '<select name="func_section[]" class="func-section-select">' +
+            '<option value="">-- Sektion --</option>' +
+            '<option value="Kommando">Kommando</option>' +
+            '<option value="Ausschuss">Ausschuss</option>' +
+            '<option value="Beauftragter">Beauftragter</option>' +
+            '</select>' +
+            '<input type="text" name="func_role[]" placeholder="Rolle (z.B. Kommandant, Kassier, ...)" class="func-role-input">' +
+            '<button type="button" class="btn btn-sm btn-danger func-remove" onclick="this.closest(\'.function-row\').remove()"><i class="fas fa-times"></i></button>';
+        container.appendChild(row);
+    });
+}
 </script>
 
 <?php require_once __DIR__ . '/includes/admin-footer.php'; ?>
