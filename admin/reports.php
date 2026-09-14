@@ -33,7 +33,7 @@ $category = $_GET['category'] ?? 'all';
 $validCategories = ['all', 'einsatz', 'uebung', 'jugend', 'sonstige', 'archiv'];
 if (!in_array($category, $validCategories, true)) $category = 'all';
 
-$archivCutoff = date('Y-m-d', strtotime('-2 years'));
+$archivCutoff = '2024-01-01'; // Alles vor 2024 gilt als Archiv
 
 if ($category === 'all') {
     $reports = $db->query("SELECT r.*, COUNT(ri.id) as image_count FROM reports r LEFT JOIN report_images ri ON r.id = ri.report_id GROUP BY r.id ORDER BY r.date DESC, r.created_at DESC")->fetchAll();

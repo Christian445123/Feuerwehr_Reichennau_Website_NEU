@@ -33,7 +33,7 @@ $subcategoryBadges = [
     'brand' => 'badge-brand', 'technisch' => 'badge-technisch', 'abc' => 'badge-abc',
     'unterstuetzung' => 'badge-unterstuetzung', 'sonstiges' => 'badge-sonstige',
 ];
-$archivCutoff = date('Y-m-d', strtotime('-2 years'));
+$archivCutoff = '2024-01-01'; // Alles vor 2024 gilt als Archiv
 ?>
 
 <?php if ($reportId > 0 && $report): ?>
