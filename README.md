@@ -118,7 +118,7 @@ FFR/
 ### Voraussetzungen
 
 - **PHP 8.0+** (getestet mit PHP 8.4.20) mit aktivierter `pdo_mysql`-Erweiterung
-- Bei `DB_DRIVER=mysql`: laufender MySQL/MariaDB-Server (z.B. über XAMPP) mit den Zugangsdaten aus `.env`
+- Laufender MySQL/MariaDB-Server (z.B. über XAMPP) mit den Zugangsdaten aus `.env`
 - Keine weiteren Abhängigkeiten (kein Composer, kein Node.js)
 
 ### Schnellstart
@@ -147,7 +147,6 @@ cp .env.example .env
 ```
 
 ```env
-DB_DRIVER=mysql        # oder "sqlite"
 DB_HOST=localhost
 DB_PORT=3306
 DB_NAME=ffrdb
@@ -163,21 +162,11 @@ SMTP_FROM_EMAIL=...
 SMTP_TO_EMAIL=reichenau@feuerwehr.tirol
 ```
 
-Fehlt die `.env` oder eine Variable, fällt `config/database.php` automatisch auf SQLite (`data/ffr.db`) zurück.
+### Datenbank & Migrationen
 
-### Datenbank
+Tabellen und der Standard-Admin werden bei jedem Seitenaufruf automatisch durch `config/database.php` → `initDatabase()` angelegt, falls sie noch fehlen. Direkt danach prüft `runMigrations()` (siehe `config/migrations.php`), ob es noch nicht angewendete Schema- oder Datenänderungen gibt, und wendet nur die fehlenden an – erledigt in Millisekunden, wenn ohnehin schon alles aktuell ist. Eine `migrations`-Tabelle merkt sich, was bereits gelaufen ist.
 
-Tabellen und der Standard-Admin werden bei jedem Start automatisch durch `config/database.php` → `initDatabase()` angelegt (egal ob SQLite oder MySQL).
-
-### Von SQLite zu MySQL migrieren
-
-Wurde bisher mit SQLite gearbeitet und soll auf die MySQL-Datenbank aus der `.env` umgestiegen werden:
-
-```bash
-php config/migrate_sqlite_to_mysql.php
-```
-
-Das Skript legt das Schema in MySQL an (falls nicht vorhanden) und überträgt alle Zeilen aus `data/ffr.db` 1:1 in die MySQL-Datenbank (bestehende Zeilen in den Zieltabellen werden dabei ersetzt).
+Das bedeutet: Nach dem Hochladen neuer Dateien per FTP reicht ein einziger Seitenaufruf, damit sich die Datenbank automatisch aktualisiert – kein manueller SQL-Import über phpMyAdmin nötig. Neue Änderungen werden einfach als neuer Eintrag mit eindeutiger ID in `getMigrations()` angehängt.
 
 ---
 
