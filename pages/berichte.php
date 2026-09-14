@@ -1,5 +1,6 @@
 <?php
-// TEMP-TEST-BYPASS
+require_once __DIR__ . '/../config/gate.php';
+requireSiteAccess();
 require_once __DIR__ . '/../config/database.php';
 $db = getDB();
 
