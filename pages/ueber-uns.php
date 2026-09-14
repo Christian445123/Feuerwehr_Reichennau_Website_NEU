@@ -118,6 +118,11 @@ foreach ($allMembers as $am) {
                                                          title="<?php echo htmlspecialchars($m['rank'] . ' – ' . getRankName($m['rank'])); ?>">
                                                 </span>
                                             <?php endif; ?>
+                                            <?php foreach ([$m['badge1'] ?? null, $m['badge2'] ?? null] as $bc): ?>
+                                                <?php if ($bc): ?>
+                                                    <span class="member-badge-inline" style="background: <?php echo htmlspecialchars(getBadgeColor($bc)); ?>" title="<?php echo htmlspecialchars(getBadgeName($bc)); ?>"><?php echo htmlspecialchars($bc); ?></span>
+                                                <?php endif; ?>
+                                            <?php endforeach; ?>
                                         </div>
                                     </div>
                                 <?php endforeach; ?>
