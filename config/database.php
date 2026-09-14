@@ -339,4 +339,5 @@ function handleImageUpload(array $file, string $subdir): ?string {
 
 // Datenbank beim ersten Laden initialisieren
 initDatabase();
+runMigrations(getDB());
 ensureUploadDirs();
