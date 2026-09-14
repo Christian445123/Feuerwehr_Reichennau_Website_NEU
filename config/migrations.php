@@ -167,6 +167,20 @@ function getMigrations(): array {
             },
         ],
 
+        [
+            'id' => '2026_09_14_remove_landes_stab_ranks',
+            'run' => function (PDO $db) {
+                // Landes-/Stabsränge werden für eine einzelne Ortsfeuerwehr nicht benötigt.
+                $toRemove = ['LFARZT', 'LFKUR', 'LBD-STV', 'LBD', 'FARZT', 'FKUR'];
+                $clearMembers = $db->prepare("UPDATE members SET rank = '' WHERE rank = ?");
+                $deleteRank = $db->prepare("DELETE FROM ranks WHERE abbr = ?");
+                foreach ($toRemove as $abbr) {
+                    $clearMembers->execute([$abbr]);
+                    $deleteRank->execute([$abbr]);
+                }
+            },
+        ],
+
     ];
 }
 
