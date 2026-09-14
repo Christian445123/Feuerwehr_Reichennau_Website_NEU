@@ -1146,6 +1146,13 @@ a:hover {
     border-color: var(--color-primary);
 }
 
+.filter-result-count {
+    text-align: center;
+    color: var(--color-gray-600);
+    font-size: 0.85rem;
+    margin-bottom: 24px;
+}
+
 .berichte-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
