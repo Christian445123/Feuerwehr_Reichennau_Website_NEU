@@ -1,7 +1,9 @@
 <?php
 require_once __DIR__ . '/auth.php';
+require_once __DIR__ . '/permissions.php';
 require_once __DIR__ . '/../config/ranks.php';
 requireLogin();
+requirePermission('members.manage');
 
 $pageTitle = 'Mannschaft';
 $activePage = 'members';
