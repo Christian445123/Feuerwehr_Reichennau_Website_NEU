@@ -35,7 +35,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    $username = trim($_POST['username'] ?? '');
+    // Das geschützte Hauptkonto "admin" behält immer Benutzername + Vollzugriff -
+    // eingereichte Änderungen daran werden ignoriert, egal was im Formular stand.
+    $username = $isProtected ? $user['username'] : trim($_POST['username'] ?? '');
     $name = trim($_POST['name'] ?? '');
     $password = $_POST['password'] ?? '';
     $confirmPassword = $_POST['confirm_password'] ?? '';
@@ -44,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $validKeys = array_keys(getAllPermissions());
     $selectedPerms = array_values(array_intersect($selectedPerms, $validKeys));
-    $permissions = $isSuperadmin ? ['*'] : $selectedPerms;
+    $permissions = $isProtected ? ['*'] : ($isSuperadmin ? ['*'] : $selectedPerms);
 
     $errors = [];
     if ($username === '' || $name === '') {
