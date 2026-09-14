@@ -3,6 +3,7 @@ require_once __DIR__ . '/../config/gate.php';
 requireSiteAccess();
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../config/ranks.php';
+require_once __DIR__ . '/../config/badges.php';
 $db = getDB();
 
 $groups = ['Kommando', 'Ausschuss', 'Mannschaft', 'Ehrenmitglieder'];
@@ -18,18 +19,23 @@ $groupDescriptions = [
 ];
 
 // Collect all members for modal JSON
-$allMembersStmt = $db->query("SELECT id, firstname, lastname, rank, functions, group_name, photo, entry_date, phone, email, bio FROM members WHERE active = 1");
+$allMembersStmt = $db->query("SELECT id, firstname, lastname, rank, functions, badge1, badge2, group_name, photo, entry_date, phone, email, bio FROM members WHERE active = 1");
 $allMembers = $allMembersStmt->fetchAll();
 $membersJson = [];
 foreach ($allMembers as $am) {
     $funcs = json_decode($am['functions'] ?? '[]', true) ?: [];
     $funcLabels = array_map(fn($f) => $f['role'] . ' (' . $f['section'] . ')', $funcs);
+    $badgeList = [];
+    foreach ([$am['badge1'] ?? null, $am['badge2'] ?? null] as $bc) {
+        if ($bc) $badgeList[] = ['code' => $bc, 'name' => getBadgeName($bc), 'color' => getBadgeColor($bc)];
+    }
     $membersJson[$am['id']] = [
         'name' => $am['firstname'] . ' ' . $am['lastname'],
         'photo' => $am['photo'] ? 'uploads/' . $am['photo'] : '',
         'rank' => $am['rank'],
         'rankName' => $am['rank'] ? getRankName($am['rank']) : '',
         'rankBadge' => $am['rank'] ? getRankBadgePath($am['rank']) : '',
+        'badges' => $badgeList,
         'functions' => $funcLabels,
         'group' => $am['group_name'],
         'entry_date' => $am['entry_date'] ?? '',
