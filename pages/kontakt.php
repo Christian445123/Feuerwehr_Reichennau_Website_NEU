@@ -1,3 +1,4 @@
+<?php require_once __DIR__ . '/../config/gate.php'; requireSiteAccess(); ?>
     <!-- Page Header -->
     <section class="page-header">
         <div class="container">
@@ -110,7 +111,8 @@
                             <div>
                                 <h4>Verantwortliche</h4>
                                 <p>
-                                    <strong>Kommandant:</strong> HBI Plank Helmut<br>
+                                    <strong>Kommandant:</strong> OBI Danner David<br>
+                                    <strong>Stv. Kommandant &amp; Bezirkskommandant:</strong> BR Plank Helmut<br>
                                     <strong>Schriftführerin:</strong> HV Rippl Nina<br>
                                     <strong>Kassier:</strong> HV Rainalter Martin
                                 </p>

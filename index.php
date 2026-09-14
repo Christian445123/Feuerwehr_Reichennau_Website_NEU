@@ -3,6 +3,9 @@
  * Freiwillige Feuerwehr Reichenau - Hauptrouter
  */
 
+require_once __DIR__ . '/config/gate.php';
+requireSiteAccess();
+
 // Einfaches Routing
 $page = isset($_GET['page']) ? $_GET['page'] : 'home';
 

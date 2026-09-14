@@ -17,16 +17,16 @@ if ($count > 0) {
 
 // ── Kommando ── [Vorname, Nachname, Dienstgrad, Funktion, Gruppe, Sortierung]
 $kommando = [
-    ['Helmut', 'Plank', 'HBI', 'Kommandant', 'Kommando', 1],
-    ['David', 'Danner', 'OBI', 'Kdt.-Stv.', 'Kommando', 2],
+    ['David', 'Danner', 'OBI', 'Kommandant', 'Kommando', 1],
+    ['Helmut', 'Plank', 'BR', 'Kdt.-Stv. & Bezirkskommandant', 'Kommando', 2],
     ['Martin', 'Rainalter', 'HV', 'Kassier', 'Kommando', 3],
     ['Nina', 'Rippl', 'HV', 'Schriftführerin', 'Kommando', 4],
 ];
 
 // ── Ausschuss ──
 $ausschuss = [
-    ['Helmut', 'Plank', 'HBI', 'Kommandant', 'Ausschuss', 1],
-    ['David', 'Danner', 'OBI', 'Kdt.-Stv.', 'Ausschuss', 2],
+    ['David', 'Danner', 'OBI', 'Kommandant', 'Ausschuss', 1],
+    ['Helmut', 'Plank', 'BR', 'Stv-Kdt. & Bezirkskommandant', 'Ausschuss', 2],
     ['Martin', 'Rainalter', 'HV', 'Kassier', 'Ausschuss', 3],
     ['Nina', 'Rippl', 'HV', 'Schriftführerin', 'Ausschuss', 4],
     ['Matthias', 'Stauder', 'BM', 'Zugskommandant', 'Ausschuss', 5],

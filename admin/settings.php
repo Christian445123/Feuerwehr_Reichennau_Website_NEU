@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/auth.php';
+require_once __DIR__ . '/../config/gate.php';
 requireLogin();
 
 $pageTitle = 'Einstellungen';
@@ -15,6 +16,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     $action = $_POST['action'] ?? '';
+
+    if ($action === 'change_site_password') {
+        $newPw = $_POST['new_site_password'] ?? '';
+        $confirmPw = $_POST['confirm_site_password'] ?? '';
+
+        if (strlen($newPw) < 4) {
+            flash('error', 'Das Zugangspasswort muss mindestens 4 Zeichen lang sein.');
+        } elseif ($newPw !== $confirmPw) {
+            flash('error', 'Passwörter stimmen nicht überein.');
+        } else {
+            setSitePassword($newPw);
+            flash('success', 'Das Zugangspasswort der Website wurde geändert.');
+        }
+    }
 
     if ($action === 'change_password') {
         $currentPw = $_POST['current_password'] ?? '';
@@ -47,6 +62,31 @@ require_once __DIR__ . '/includes/admin-header.php';
 ?>
 
 <div class="admin-card" style="max-width: 600px;">
+    <div class="admin-card-header"><h2><i class="fas fa-lock"></i> Website-Zugangssperre</h2></div>
+    <div class="admin-card-body">
+        <p style="margin-bottom: 16px; color: #6c757d;">Solange die Website nicht offiziell ist, müssen Besucher dieses Passwort eingeben, bevor sie die Seite sehen können.</p>
+        <form method="POST" class="admin-form">
+            <?php echo csrfField(); ?>
+            <input type="hidden" name="action" value="change_site_password">
+
+            <div class="form-group">
+                <label for="new_site_password">Neues Zugangspasswort</label>
+                <input type="password" id="new_site_password" name="new_site_password" required minlength="4">
+            </div>
+
+            <div class="form-group">
+                <label for="confirm_site_password">Passwort bestätigen</label>
+                <input type="password" id="confirm_site_password" name="confirm_site_password" required minlength="4">
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i> Zugangspasswort ändern
+            </button>
+        </form>
+    </div>
+</div>
+
+<div class="admin-card" style="max-width: 600px; margin-top: 24px;">
     <div class="admin-card-header"><h2><i class="fas fa-key"></i> Passwort ändern</h2></div>
     <div class="admin-card-body">
         <form method="POST" class="admin-form">

@@ -1,3 +1,4 @@
+<?php require_once __DIR__ . '/../config/gate.php'; requireSiteAccess(); ?>
     <!-- Page Header -->
     <section class="page-header">
         <div class="container">

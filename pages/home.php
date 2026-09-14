@@ -1,3 +1,4 @@
+<?php require_once __DIR__ . '/../config/gate.php'; requireSiteAccess(); ?>
     <!-- Hero Section -->
     <section class="hero">
         <div class="hero-overlay"></div>

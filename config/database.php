@@ -7,18 +7,20 @@
  * und die MySQL-Zugangsdaten eintragen.
  */
 
-// ── Treiber-Auswahl: 'sqlite' oder 'mysql' ──
-define('DB_DRIVER', 'sqlite');
+require_once __DIR__ . '/env.php';
+
+// ── Treiber-Auswahl: 'sqlite' oder 'mysql' (aus .env, Fallback: sqlite) ──
+define('DB_DRIVER', env('DB_DRIVER', 'sqlite'));
 
 // ── SQLite-Konfiguration ──
 define('DB_SQLITE_PATH', __DIR__ . '/../data/ffr.db');
 
-// ── MariaDB/MySQL-Konfiguration (für spätere Verwendung) ──
-define('DB_MYSQL_HOST', '127.0.0.1');
-define('DB_MYSQL_PORT', '3306');
-define('DB_MYSQL_NAME', 'ffr');
-define('DB_MYSQL_USER', 'ffr_user');
-define('DB_MYSQL_PASS', '');
+// ── MariaDB/MySQL-Konfiguration (aus .env) ──
+define('DB_MYSQL_HOST', env('DB_HOST', '127.0.0.1'));
+define('DB_MYSQL_PORT', env('DB_PORT', '3306'));
+define('DB_MYSQL_NAME', env('DB_NAME', 'ffr'));
+define('DB_MYSQL_USER', env('DB_USER', 'ffr_user'));
+define('DB_MYSQL_PASS', env('DB_PASSWORD', ''));
 define('DB_MYSQL_CHARSET', 'utf8mb4');
 
 // ── Upload-Konfiguration ──
@@ -78,6 +80,7 @@ function initDatabase(): void {
             lastname VARCHAR(100) NOT NULL,
             `rank` VARCHAR(50) DEFAULT '',
             `function` VARCHAR(100) DEFAULT '',
+            functions TEXT DEFAULT NULL,
             group_name VARCHAR(50) DEFAULT 'Mannschaft',
             extra_groups VARCHAR(255) DEFAULT '',
             photo VARCHAR(255) DEFAULT '',
@@ -121,6 +124,11 @@ function initDatabase(): void {
             badge VARCHAR(255) DEFAULT '',
             active TINYINT DEFAULT 1,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
+        $db->exec("CREATE TABLE IF NOT EXISTS site_settings (
+            setting_key VARCHAR(100) PRIMARY KEY,
+            value TEXT
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
     } else {
@@ -183,6 +191,11 @@ function initDatabase(): void {
             active INTEGER DEFAULT 1,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP
         )");
+
+        $db->exec("CREATE TABLE IF NOT EXISTS site_settings (
+            setting_key TEXT PRIMARY KEY,
+            value TEXT
+        )");
     }
 
     // Standard-Admin erstellen falls nicht vorhanden
@@ -196,6 +209,15 @@ function initDatabase(): void {
 
     // Standard-Ränge einfügen falls leer
     seedDefaultRanks($db);
+
+    // Standard-Zugangspasswort für die Seitensperre setzen, falls noch keines existiert
+    $stmt = $db->prepare("SELECT COUNT(*) FROM site_settings WHERE setting_key = ?");
+    $stmt->execute(['site_password']);
+    if ($stmt->fetchColumn() == 0) {
+        $hash = password_hash('reichenau2026', PASSWORD_DEFAULT);
+        $stmt = $db->prepare("INSERT INTO site_settings (setting_key, value) VALUES ('site_password', ?)");
+        $stmt->execute([$hash]);
+    }
 }
 
 /**

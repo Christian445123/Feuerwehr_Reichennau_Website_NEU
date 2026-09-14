@@ -116,7 +116,8 @@ FFR/
 
 ### Voraussetzungen
 
-- **PHP 8.0+** (getestet mit PHP 8.4.20)
+- **PHP 8.0+** (getestet mit PHP 8.4.20) mit aktivierter `pdo_mysql`-Erweiterung
+- Bei `DB_DRIVER=mysql`: laufender MySQL/MariaDB-Server (z.B. über XAMPP) mit den Zugangsdaten aus `.env`
 - Keine weiteren Abhängigkeiten (kein Composer, kein Node.js)
 
 ### Schnellstart
@@ -135,21 +136,47 @@ start.bat
 
 Die Website ist dann erreichbar unter: **http://localhost:8000**
 
+### Umgebungsvariablen (.env)
+
+Datenbank- und SMTP-Zugangsdaten werden aus einer `.env`-Datei im Projektroot gelesen (siehe `.env.example`). Die `.env` selbst ist in `.gitignore` und wird nie eingecheckt.
+
+```bash
+cp .env.example .env
+# .env öffnen und Zugangsdaten eintragen
+```
+
+```env
+DB_DRIVER=mysql        # oder "sqlite"
+DB_HOST=localhost
+DB_PORT=3306
+DB_NAME=ffrdb
+DB_USER=ffr
+DB_PASSWORD=...
+
+SMTP_HOST=...
+SMTP_PORT=587
+SMTP_ENCRYPTION=tls
+SMTP_USERNAME=...
+SMTP_PASSWORD=...
+SMTP_FROM_EMAIL=...
+SMTP_TO_EMAIL=reichenau@feuerwehr.tirol
+```
+
+Fehlt die `.env` oder eine Variable, fällt `config/database.php` automatisch auf SQLite (`data/ffr.db`) zurück.
+
 ### Datenbank
 
-Die SQLite-Datenbank wird beim ersten Aufruf automatisch erstellt (`data/ffr.db`).  
-Tabellen und der Standard-Admin werden durch `config/database.php` → `initDatabase()` angelegt.
+Tabellen und der Standard-Admin werden bei jedem Start automatisch durch `config/database.php` → `initDatabase()` angelegt (egal ob SQLite oder MySQL).
 
-### MySQL/MariaDB (optional)
+### Von SQLite zu MySQL migrieren
 
-In `config/database.php`:
-```php
-define('DB_DRIVER', 'mysql');  // statt 'sqlite'
-define('DB_MYSQL_HOST', '127.0.0.1');
-define('DB_MYSQL_NAME', 'ffr');
-define('DB_MYSQL_USER', 'ffr_user');
-define('DB_MYSQL_PASS', 'geheim');
+Wurde bisher mit SQLite gearbeitet und soll auf die MySQL-Datenbank aus der `.env` umgestiegen werden:
+
+```bash
+php config/migrate_sqlite_to_mysql.php
 ```
+
+Das Skript legt das Schema in MySQL an (falls nicht vorhanden) und überträgt alle Zeilen aus `data/ffr.db` 1:1 in die MySQL-Datenbank (bestehende Zeilen in den Zieltabellen werden dabei ersetzt).
 
 ---
 

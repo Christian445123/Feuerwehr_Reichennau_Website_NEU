@@ -1,3 +1,4 @@
+<?php require_once __DIR__ . '/../config/gate.php'; requireSiteAccess(); ?>
     <!-- Page Header -->
     <section class="page-header">
         <div class="container">
@@ -64,7 +65,7 @@
                         <p>Die verantwortliche Stelle für die Datenverarbeitung auf dieser Website ist:</p>
                         <p>
                             Freiwillige Feuerwehr Reichenau / Innsbruck Stadt<br>
-                            Kommandant: HBI Plank Helmut<br>
+                            Kommandant: OBI Danner David<br>
                             Rossaugasse 4<br>
                             A-6020 Innsbruck<br>
                             Österreich

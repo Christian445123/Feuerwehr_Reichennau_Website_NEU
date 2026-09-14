@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/../config/gate.php';
+requireSiteAccess();
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../config/ranks.php';
 $db = getDB();
