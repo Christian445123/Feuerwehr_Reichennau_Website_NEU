@@ -120,17 +120,23 @@ function getMigrations(): array {
                 $entries = json_decode(file_get_contents($jsonPath), true);
                 if (!$entries) return;
 
-                $exists = $db->prepare("SELECT COUNT(*) FROM reports WHERE title = ? AND date = ?");
-                $insertReport = $db->prepare("INSERT INTO reports (title, category, subcategory, content, date, author, published) VALUES (?,?,?,?,?,?,?)");
+                // source_slug (aus der ursprünglichen ffr.at-URL) dient als eindeutiger,
+                // stabiler Schlüssel - Titel+Datum reichen nicht, da mehrere Archiv-
+                // Einträge (z.B. "Umgestürzter Bauzaun") identischen Titel UND Datum haben.
+                addColumnIfMissing($db, 'reports', 'source_slug', 'VARCHAR(191) DEFAULT NULL', 'TEXT DEFAULT NULL');
+
+                $exists = $db->prepare("SELECT COUNT(*) FROM reports WHERE source_slug = ?");
+                $insertReport = $db->prepare("INSERT INTO reports (title, category, subcategory, content, date, author, published, source_slug) VALUES (?,?,?,?,?,?,?,?)");
                 $insertImg = $db->prepare("INSERT INTO report_images (report_id, filename, caption, sort_order) VALUES (?,?,?,?)");
 
                 foreach ($entries as $e) {
-                    $exists->execute([$e['title'], $e['date']]);
+                    $exists->execute([$e['source_slug']]);
                     if ($exists->fetchColumn() > 0) continue;
 
                     $insertReport->execute([
                         $e['title'], $e['category'], $e['subcategory'] ?? null,
                         $e['content'], $e['date'], $e['author'] ?? 'FF Reichenau', $e['published'] ?? 1,
+                        $e['source_slug'],
                     ]);
                     $reportId = $db->lastInsertId();
 
