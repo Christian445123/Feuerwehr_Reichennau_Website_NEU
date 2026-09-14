@@ -28,16 +28,27 @@ if (isset($_GET['delete']) && is_numeric($_GET['delete'])) {
 
 // Filter
 $category = $_GET['category'] ?? 'all';
-$validCategories = ['all', 'einsatz', 'uebung', 'jugend', 'sonstige'];
+$validCategories = ['all', 'einsatz', 'uebung', 'jugend', 'sonstige', 'archiv'];
 if (!in_array($category, $validCategories, true)) $category = 'all';
+
+$archivCutoff = date('Y-m-d', strtotime('-2 years'));
 
 if ($category === 'all') {
     $reports = $db->query("SELECT r.*, COUNT(ri.id) as image_count FROM reports r LEFT JOIN report_images ri ON r.id = ri.report_id GROUP BY r.id ORDER BY r.date DESC, r.created_at DESC")->fetchAll();
+} elseif ($category === 'archiv') {
+    $stmt = $db->prepare("SELECT r.*, COUNT(ri.id) as image_count FROM reports r LEFT JOIN report_images ri ON r.id = ri.report_id WHERE r.date < ? GROUP BY r.id ORDER BY r.date DESC, r.created_at DESC");
+    $stmt->execute([$archivCutoff]);
+    $reports = $stmt->fetchAll();
 } else {
     $stmt = $db->prepare("SELECT r.*, COUNT(ri.id) as image_count FROM reports r LEFT JOIN report_images ri ON r.id = ri.report_id WHERE r.category = ? GROUP BY r.id ORDER BY r.date DESC, r.created_at DESC");
     $stmt->execute([$category]);
     $reports = $stmt->fetchAll();
 }
+
+$subcategoryLabels = [
+    'brand' => 'Brand', 'technisch' => 'Technisch', 'abc' => 'ABC',
+    'unterstuetzung' => 'Unterstützung', 'sonstiges' => 'Sonstiges',
+];
 
 require_once __DIR__ . '/includes/admin-header.php';
 ?>
