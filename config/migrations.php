@@ -4,28 +4,20 @@
  *
  * Jede Migration hat eine eindeutige, unveränderliche ID und eine run()-Funktion.
  * Migrationen werden bei jedem Request automatisch geprüft (siehe runMigrations()
- * in database.php) und genau einmal ausgeführt - egal ob lokal (SQLite) oder auf
- * dem Live-Server (MySQL). Neue Änderungen einfach als neue Migration mit neuer
- * eindeutiger ID unten anhängen; niemals bestehende Einträge nachträglich ändern.
+ * in database.php) und genau einmal ausgeführt. Neue Änderungen einfach als neue
+ * Migration mit neuer eindeutiger ID unten anhängen; niemals bestehende Einträge
+ * nachträglich ändern.
  */
 
 function columnExists(PDO $db, string $table, string $column): bool {
-    if (DB_DRIVER === 'mysql') {
-        $stmt = $db->prepare("SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = ? AND column_name = ?");
-        $stmt->execute([$table, $column]);
-        return (bool)$stmt->fetchColumn();
-    }
-    $cols = $db->query("PRAGMA table_info(`$table`)")->fetchAll(PDO::FETCH_ASSOC);
-    foreach ($cols as $c) {
-        if ($c['name'] === $column) return true;
-    }
-    return false;
+    $stmt = $db->prepare("SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = ? AND column_name = ?");
+    $stmt->execute([$table, $column]);
+    return (bool)$stmt->fetchColumn();
 }
 
-function addColumnIfMissing(PDO $db, string $table, string $column, string $mysqlType, string $sqliteType): void {
+function addColumnIfMissing(PDO $db, string $table, string $column, string $mysqlType, string $sqliteType = ''): void {
     if (columnExists($db, $table, $column)) return;
-    $type = DB_DRIVER === 'mysql' ? $mysqlType : $sqliteType;
-    $db->exec("ALTER TABLE `$table` ADD COLUMN `$column` $type");
+    $db->exec("ALTER TABLE `$table` ADD COLUMN `$column` $mysqlType");
 }
 
 function getMigrations(): array {
