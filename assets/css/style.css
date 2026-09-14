@@ -313,8 +313,11 @@ a:hover {
 }
 
 .hero-heading {
-    font-size: clamp(1.5rem, 4vw, 2.8rem);
-    font-weight: 800;
+    font-family: var(--font-family-display);
+    font-size: clamp(2rem, 5.5vw, 3.6rem);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
     color: var(--color-primary-light);
     margin-bottom: 16px;
     animation: fadeInUp 0.8s ease 0.4s both;
@@ -448,8 +451,11 @@ a:hover {
 }
 
 .section-title {
-    font-size: 2rem;
-    font-weight: 800;
+    font-family: var(--font-family-display);
+    font-size: 2.4rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
     color: var(--color-dark);
     margin-bottom: 12px;
 }
