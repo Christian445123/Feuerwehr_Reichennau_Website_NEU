@@ -26,6 +26,8 @@ if ($isEdit) {
     $user['permissions'] = json_decode($user['permissions'] ?? '[]', true) ?: [];
 }
 
+$isProtected = $isEdit && isProtectedAdminUsername($user['username']);
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!verifyCsrf()) {
         flash('error', 'Ungültiger Sicherheits-Token.');
