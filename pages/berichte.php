@@ -25,6 +25,15 @@ $categoryBadges = [
     'einsatz' => 'badge-brand', 'uebung' => 'badge-uebung',
     'jugend' => 'badge-jugend', 'sonstige' => 'badge-sonstige'
 ];
+$subcategoryLabels = [
+    'brand' => 'Brand', 'technisch' => 'Technisch', 'abc' => 'ABC',
+    'unterstuetzung' => 'Unterstützung', 'sonstiges' => 'Sonstiges',
+];
+$subcategoryBadges = [
+    'brand' => 'badge-brand', 'technisch' => 'badge-technisch', 'abc' => 'badge-abc',
+    'unterstuetzung' => 'badge-unterstuetzung', 'sonstiges' => 'badge-sonstige',
+];
+$archivCutoff = date('Y-m-d', strtotime('-2 years'));
 ?>
 
 <?php if ($reportId > 0 && $report): ?>
@@ -33,9 +42,15 @@ $categoryBadges = [
         <div class="container">
             <h1 class="page-title"><?php echo htmlspecialchars($report['title']); ?></h1>
             <p class="page-subtitle">
-                <span class="bericht-badge <?php echo $categoryBadges[$report['category']] ?? 'badge-sonstige'; ?>">
-                    <?php echo htmlspecialchars(ucfirst($report['category'])); ?>
-                </span>
+                <?php if (!empty($report['subcategory']) && isset($subcategoryLabels[$report['subcategory']])): ?>
+                    <span class="bericht-badge <?php echo $subcategoryBadges[$report['subcategory']]; ?>">
+                        <?php echo htmlspecialchars($subcategoryLabels[$report['subcategory']]); ?>
+                    </span>
+                <?php else: ?>
+                    <span class="bericht-badge <?php echo $categoryBadges[$report['category']] ?? 'badge-sonstige'; ?>">
+                        <?php echo htmlspecialchars(ucfirst($report['category'])); ?>
+                    </span>
+                <?php endif; ?>
                 &middot; <?php echo htmlspecialchars($report['date']); ?>
                 <?php if ($report['author']): ?>
                     &middot; <?php echo htmlspecialchars($report['author']); ?>
