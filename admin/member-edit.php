@@ -49,12 +49,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $member['firstname'] = trim($_POST['firstname'] ?? '');
     $member['lastname'] = trim($_POST['lastname'] ?? '');
-    $member['rank'] = trim($_POST['rank'] ?? '');
-    $validBadges = array_keys(getAllBadges());
-    $badge1 = trim($_POST['badge1'] ?? '');
-    $badge2 = trim($_POST['badge2'] ?? '');
-    $member['badge1'] = in_array($badge1, $validBadges, true) ? $badge1 : null;
-    $member['badge2'] = (in_array($badge2, $validBadges, true) && $badge2 !== $member['badge1']) ? $badge2 : null;
     $member['group_name'] = $_POST['group_name'] ?? 'Mannschaft';
     $member['sort_order'] = (int)($_POST['sort_order'] ?? 0);
     $member['active'] = isset($_POST['active']) ? 1 : 0;
@@ -63,17 +57,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $member['email'] = trim($_POST['email'] ?? '');
     $member['bio'] = trim($_POST['bio'] ?? '');
 
-    // Funktionen als JSON verarbeiten
-    $funcSections = $_POST['func_section'] ?? [];
-    $funcRoles = $_POST['func_role'] ?? [];
-    $validSections = ['Kommando', 'Ausschuss', 'Beauftragter'];
-    $functions = [];
-    for ($i = 0; $i < count($funcSections); $i++) {
-        $sec = trim($funcSections[$i] ?? '');
-        $role = trim($funcRoles[$i] ?? '');
-        if ($sec && $role && in_array($sec, $validSections, true)) {
-            $functions[] = ['section' => $sec, 'role' => $role];
+    // Rang, Abzeichen und Funktionen dürfen nur mit der entsprechenden
+    // Zusatzberechtigung geändert werden - sonst bleiben die bisherigen
+    // Werte unangetastet (bzw. leer bei einem neuen Mitglied).
+    if ($canEditFunctions) {
+        $member['rank'] = trim($_POST['rank'] ?? '');
+        $validBadges = array_keys(getAllBadges());
+        $badge1 = trim($_POST['badge1'] ?? '');
+        $badge2 = trim($_POST['badge2'] ?? '');
+        $member['badge1'] = in_array($badge1, $validBadges, true) ? $badge1 : null;
+        $member['badge2'] = (in_array($badge2, $validBadges, true) && $badge2 !== $member['badge1']) ? $badge2 : null;
+
+        $funcSections = $_POST['func_section'] ?? [];
+        $funcRoles = $_POST['func_role'] ?? [];
+        $validSections = ['Kommando', 'Ausschuss', 'Beauftragter'];
+        $functions = [];
+        for ($i = 0; $i < count($funcSections); $i++) {
+            $sec = trim($funcSections[$i] ?? '');
+            $role = trim($funcRoles[$i] ?? '');
+            if ($sec && $role && in_array($sec, $validSections, true)) {
+                $functions[] = ['section' => $sec, 'role' => $role];
+            }
         }
+    } else {
+        $member['rank'] = $member['rank'] ?? '';
+        $member['badge1'] = $member['badge1'] ?? null;
+        $member['badge2'] = $member['badge2'] ?? null;
+        $functions = json_decode($member['functions'] ?? '[]', true) ?: [];
     }
     $member['functions'] = json_encode($functions, JSON_UNESCAPED_UNICODE);
 
