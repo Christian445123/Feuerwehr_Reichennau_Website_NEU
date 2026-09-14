@@ -98,6 +98,7 @@ function initDatabase(): void {
             id INT AUTO_INCREMENT PRIMARY KEY,
             title VARCHAR(255) NOT NULL,
             category VARCHAR(50) NOT NULL DEFAULT 'einsatz',
+            subcategory VARCHAR(50) DEFAULT NULL,
             content TEXT DEFAULT NULL,
             date DATE NOT NULL,
             author VARCHAR(100) DEFAULT '',
