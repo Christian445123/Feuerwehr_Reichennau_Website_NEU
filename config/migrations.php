@@ -194,6 +194,16 @@ function getMigrations(): array {
             },
         ],
 
+        [
+            'id' => '2026_09_16_add_user_permissions',
+            'run' => function (PDO $db) {
+                addColumnIfMissing($db, 'users', 'permissions', "TEXT DEFAULT NULL");
+                // Bestehende Benutzer (vor Einführung des Rechtesystems) erhalten
+                // automatisch Vollzugriff, damit sich niemand selbst aussperrt.
+                $db->exec("UPDATE users SET permissions = '[\"*\"]' WHERE permissions IS NULL OR permissions = ''");
+            },
+        ],
+
     ];
 }
 
