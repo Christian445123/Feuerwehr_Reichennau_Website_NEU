@@ -70,13 +70,16 @@ document.addEventListener('DOMContentLoaded', function () {
             var visibleCount = 0;
 
             berichteCards.forEach(function (card) {
+                var isArchiv = card.getAttribute('data-archiv') === '1';
                 var visible;
                 if (filter === 'all') {
                     visible = true;
                 } else if (filter === 'archiv') {
-                    visible = card.getAttribute('data-archiv') === '1';
+                    visible = isArchiv;
                 } else {
-                    visible = card.getAttribute('data-category') === filter;
+                    // Berichte über 2 Jahre wandern ausschließlich ins Archiv und
+                    // verschwinden dafür aus ihrem ursprünglichen Kategorie-Tab.
+                    visible = card.getAttribute('data-category') === filter && !isArchiv;
                 }
                 card.classList.toggle('hidden', !visible);
                 if (visible) visibleCount++;
