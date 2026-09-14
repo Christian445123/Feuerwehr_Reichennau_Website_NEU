@@ -121,8 +121,8 @@ function initDatabase(): void {
     $stmt->execute(['admin']);
     if ($stmt->fetchColumn() == 0) {
         $hash = password_hash('admin2024', PASSWORD_DEFAULT);
-        $stmt = $db->prepare("INSERT INTO users (username, password, name) VALUES (?, ?, ?)");
-        $stmt->execute(['admin', $hash, 'Administrator']);
+        $stmt = $db->prepare("INSERT INTO users (username, password, name, permissions) VALUES (?, ?, ?, ?)");
+        $stmt->execute(['admin', $hash, 'Administrator', '["*"]']);
     }
 
     // Standard-Ränge einfügen falls leer
