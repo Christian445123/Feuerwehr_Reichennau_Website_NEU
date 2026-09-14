@@ -346,8 +346,40 @@ img { max-width: 100%; height: auto; }
 
 .preview-empty-hint {
     font-size: 0.82rem;
-    color: var(--gray-500);
+    color: var(--gray-600);
     font-style: italic;
+}
+
+.rank-preview {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.rank-preview-img {
+    width: 36px;
+    height: 36px;
+    object-fit: contain;
+}
+
+.rank-preview span {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--gray-700);
+}
+
+.member-badge-inline.preview-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 30px;
+    height: 30px;
+    padding: 0 8px;
+    border-radius: 50px;
+    color: var(--white);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
 }
 
 .checkbox-label {
