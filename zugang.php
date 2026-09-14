@@ -45,7 +45,7 @@ if (siteAccessGranted()) {
     <meta name="robots" content="noindex, nofollow">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
     <style>
@@ -71,9 +71,13 @@ if (siteAccessGranted()) {
             margin-bottom: 20px;
         }
         .lock-card h1 {
-            font-size: 1.4rem;
+            font-family: 'Barlow Condensed', var(--font-family, sans-serif);
+            font-size: 1.6rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
             margin-bottom: 12px;
-            color: var(--color-dark, #1a1a2e);
+            color: var(--color-dark, #1a1a1a);
         }
         .lock-card p {
             color: var(--color-gray-600, #6c757d);
@@ -97,7 +101,7 @@ if (siteAccessGranted()) {
             padding: 14px 16px;
             border: none;
             border-radius: 50px;
-            background: var(--color-primary, #c0392b);
+            background: var(--color-primary, #d5001c);
             color: #fff;
             font-size: 0.95rem;
             font-weight: 600;
@@ -108,9 +112,9 @@ if (siteAccessGranted()) {
             filter: brightness(1.08);
         }
         .lock-error {
-            color: #c0392b;
-            background: rgba(192, 57, 43, 0.08);
-            border: 1px solid rgba(192, 57, 43, 0.25);
+            color: #d5001c;
+            background: rgba(213, 0, 28, 0.08);
+            border: 1px solid rgba(213, 0, 28, 0.25);
             border-radius: 10px;
             padding: 10px 14px;
             font-size: 0.9rem;
