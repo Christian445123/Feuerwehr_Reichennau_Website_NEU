@@ -14,8 +14,13 @@ if (isset($_GET['delete']) && is_numeric($_GET['delete'])) {
     if (isset($_GET['token']) && hash_equals(csrfToken(), $_GET['token'])) {
         $id = (int)$_GET['delete'];
         $total = (int)$db->query("SELECT COUNT(*) FROM users")->fetchColumn();
+        $targetUsername = $db->prepare("SELECT username FROM users WHERE id = ?");
+        $targetUsername->execute([$id]);
+        $targetUsername = $targetUsername->fetchColumn();
 
-        if ($id === (int)$_SESSION['admin_user_id']) {
+        if ($targetUsername !== false && isProtectedAdminUsername($targetUsername)) {
+            flash('error', 'Das Hauptkonto "admin" kann nicht gelöscht werden.');
+        } elseif ($id === (int)$_SESSION['admin_user_id']) {
             flash('error', 'Du kannst dich nicht selbst löschen.');
         } elseif ($total <= 1) {
             flash('error', 'Der letzte Benutzer kann nicht gelöscht werden.');
@@ -51,8 +56,13 @@ require_once __DIR__ . '/includes/admin-header.php';
         <tbody>
             <?php foreach ($users as $u): ?>
                 <?php $perms = json_decode($u['permissions'] ?? '[]', true) ?: []; ?>
+                <?php $isProtected = isProtectedAdminUsername($u['username']); ?>
                 <tr>
-                    <td><strong><?php echo e($u['name']); ?></strong> <?php if ((int)$u['id'] === (int)$_SESSION['admin_user_id']): ?><span class="badge badge-secondary">Du</span><?php endif; ?></td>
+                    <td>
+                        <strong><?php echo e($u['name']); ?></strong>
+                        <?php if ((int)$u['id'] === (int)$_SESSION['admin_user_id']): ?><span class="badge badge-secondary">Du</span><?php endif; ?>
+                        <?php if ($isProtected): ?><span class="badge badge-success" title="Hauptkonto mit fest eingebautem Vollzugriff"><i class="fas fa-shield-alt"></i> Geschützt</span><?php endif; ?>
+                    </td>
                     <td><?php echo e($u['username']); ?></td>
                     <td>
                         <?php if (in_array('*', $perms, true)): ?>
@@ -67,12 +77,14 @@ require_once __DIR__ . '/includes/admin-header.php';
                     </td>
                     <td class="actions-cell">
                         <a href="user-edit.php?id=<?php echo $u['id']; ?>" class="btn btn-sm btn-icon" title="Bearbeiten"><i class="fas fa-edit"></i></a>
-                        <a href="users.php?delete=<?php echo $u['id']; ?>&token=<?php echo e(csrfToken()); ?>"
-                           class="btn btn-sm btn-icon btn-danger"
-                           title="Löschen"
-                           onclick="return confirm('Benutzer wirklich löschen?')">
-                            <i class="fas fa-trash"></i>
-                        </a>
+                        <?php if (!$isProtected): ?>
+                            <a href="users.php?delete=<?php echo $u['id']; ?>&token=<?php echo e(csrfToken()); ?>"
+                               class="btn btn-sm btn-icon btn-danger"
+                               title="Löschen"
+                               onclick="return confirm('Benutzer wirklich löschen?')">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        <?php endif; ?>
                     </td>
                 </tr>
             <?php endforeach; ?>
