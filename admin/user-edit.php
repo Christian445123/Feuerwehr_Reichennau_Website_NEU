@@ -131,7 +131,10 @@ $isSuperadmin = in_array('*', $user['permissions'], true);
                 </div>
                 <div class="form-group">
                     <label for="username">Benutzername *</label>
-                    <input type="text" id="username" name="username" value="<?php echo e($user['username']); ?>" required autocomplete="off">
+                    <input type="text" id="username" name="username" value="<?php echo e($user['username']); ?>" required autocomplete="off" <?php echo $isProtected ? 'disabled' : ''; ?>>
+                    <?php if ($isProtected): ?>
+                        <input type="hidden" name="username" value="<?php echo e($user['username']); ?>">
+                    <?php endif; ?>
                 </div>
             </div>
             <div class="form-row">
