@@ -120,14 +120,7 @@ require_once __DIR__ . '/includes/admin-header.php';
     <div class="admin-card-body">
         <table class="admin-table">
             <tr><td><strong>PHP Version</strong></td><td><?php echo phpversion(); ?></td></tr>
-            <tr><td><strong>Datenbank</strong></td><td><?php
-                if (DB_DRIVER === 'mysql') {
-                    echo 'MariaDB/MySQL ' . $db->query("SELECT VERSION()")->fetchColumn();
-                } else {
-                    echo 'SQLite ' . $db->query("SELECT sqlite_version()")->fetchColumn();
-                }
-            ?></td></tr>
-            <tr><td><strong>DB-Treiber</strong></td><td><?php echo strtoupper(DB_DRIVER); ?></td></tr>
+            <tr><td><strong>Datenbank</strong></td><td><?php echo 'MariaDB/MySQL ' . $db->query("SELECT VERSION()")->fetchColumn(); ?></td></tr>
             <tr><td><strong>Upload Max</strong></td><td><?php echo ini_get('upload_max_filesize'); ?></td></tr>
             <tr><td><strong>Post Max</strong></td><td><?php echo ini_get('post_max_size'); ?></td></tr>
         </table>
