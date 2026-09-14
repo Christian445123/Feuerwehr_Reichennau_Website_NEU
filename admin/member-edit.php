@@ -171,11 +171,14 @@ require_once __DIR__ . '/includes/admin-header.php';
                     <!-- Rang & Abzeichen -->
                     <div class="rang-abzeichen-section">
                         <h4 class="subsection-title"><i class="fas fa-medal"></i> Rang &amp; Abzeichen</h4>
+                        <?php if (!$canEditFunctions): ?>
+                            <p class="permission-note"><i class="fas fa-lock"></i> Dir fehlt die Berechtigung, Rang, Abzeichen oder Funktionen zu ändern. Diese Felder sind nur sichtbar.</p>
+                        <?php endif; ?>
 
                         <div class="form-row form-row-3">
                             <div class="form-group">
                                 <label for="rank">Dienstgrad</label>
-                                <select id="rank" name="rank" class="rank-select">
+                                <select id="rank" name="rank" class="rank-select" <?php echo $canEditFunctions ? '' : 'disabled'; ?>>
                                     <option value="">-- Kein Dienstgrad --</option>
                                     <?php foreach (getRanksGrouped() as $category => $ranks): ?>
                                         <optgroup label="<?php echo e($category); ?>">
@@ -190,7 +193,7 @@ require_once __DIR__ . '/includes/admin-header.php';
                             </div>
                             <div class="form-group">
                                 <label for="badge1">Verwendungs-/Funktionsabzeichen 1</label>
-                                <select id="badge1" name="badge1" class="badge-select">
+                                <select id="badge1" name="badge1" class="badge-select" <?php echo $canEditFunctions ? '' : 'disabled'; ?>>
                                     <option value="">-- Kein Abzeichen --</option>
                                     <?php foreach (getAllBadges() as $code => $b): ?>
                                         <option value="<?php echo e($code); ?>" data-name="<?php echo e($b['name']); ?>" data-color="<?php echo e($b['color']); ?>" <?php echo ($member['badge1'] ?? '') === $code ? 'selected' : ''; ?>>
@@ -201,7 +204,7 @@ require_once __DIR__ . '/includes/admin-header.php';
                             </div>
                             <div class="form-group">
                                 <label for="badge2">Verwendungs-/Funktionsabzeichen 2</label>
-                                <select id="badge2" name="badge2" class="badge-select">
+                                <select id="badge2" name="badge2" class="badge-select" <?php echo $canEditFunctions ? '' : 'disabled'; ?>>
                                     <option value="">-- Kein Abzeichen --</option>
                                     <?php foreach (getAllBadges() as $code => $b): ?>
                                         <option value="<?php echo e($code); ?>" data-name="<?php echo e($b['name']); ?>" data-color="<?php echo e($b['color']); ?>" <?php echo ($member['badge2'] ?? '') === $code ? 'selected' : ''; ?>>
