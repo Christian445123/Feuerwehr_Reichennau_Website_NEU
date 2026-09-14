@@ -112,6 +112,7 @@ $archivCutoff = date('Y-m-d', strtotime('-2 years'));
                 <button class="filter-tab" data-filter="sonstige">Sonstige</button>
                 <button class="filter-tab" data-filter="archiv"><i class="fas fa-archive"></i> Archiv</button>
             </div>
+            <p class="filter-result-count" id="filterResultCount"></p>
 
             <?php
             $reports = $db->query("SELECT r.*, (SELECT ri.filename FROM report_images ri WHERE ri.report_id = r.id ORDER BY ri.sort_order LIMIT 1) as thumb FROM reports r WHERE r.published = 1 ORDER BY r.date DESC, r.created_at DESC")->fetchAll();
