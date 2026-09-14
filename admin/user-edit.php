@@ -72,7 +72,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Verhindern, dass sich der letzte Vollzugriff-Benutzer selbst die Benutzerverwaltung entzieht
-    if ($isEdit && $id === (int)$_SESSION['admin_user_id'] && !in_array('users.manage', $permissions, true)) {
+    $keepsUsersManage = in_array('*', $permissions, true) || in_array('users.manage', $permissions, true);
+    if ($isEdit && $id === (int)$_SESSION['admin_user_id'] && !$keepsUsersManage) {
         $errors[] = 'Du kannst dir selbst nicht die Benutzerverwaltungs-Berechtigung entziehen.';
     }
 
