@@ -268,7 +268,7 @@ a:hover {
     right: 0;
     bottom: 0;
     background:
-        radial-gradient(circle at 20% 50%, rgba(192, 57, 43, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 20% 50%, rgba(213, 0, 28, 0.2) 0%, transparent 50%),
         radial-gradient(circle at 80% 20%, rgba(231, 76, 60, 0.1) 0%, transparent 40%),
         radial-gradient(circle at 50% 80%, rgba(230, 126, 34, 0.08) 0%, transparent 50%);
 }
@@ -366,7 +366,7 @@ a:hover {
     border-color: var(--color-primary-dark);
     color: var(--color-white);
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(192, 57, 43, 0.35);
+    box-shadow: 0 8px 25px rgba(213, 0, 28, 0.35);
 }
 
 .btn-outline {
@@ -500,7 +500,7 @@ a:hover {
 }
 
 .badge-brand {
-    background: rgba(192, 57, 43, 0.1);
+    background: rgba(213, 0, 28, 0.1);
     color: var(--color-primary);
 }
 
@@ -618,7 +618,7 @@ a:hover {
     justify-content: center;
     font-size: 1.6rem;
     color: var(--color-primary);
-    background: rgba(192, 57, 43, 0.08);
+    background: rgba(213, 0, 28, 0.08);
     margin: 0 auto 20px;
     transition: var(--transition);
 }
@@ -1044,7 +1044,7 @@ a:hover {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(192, 57, 43, 0.08);
+    background: rgba(213, 0, 28, 0.08);
     color: var(--color-primary);
     font-size: 1.4rem;
     margin: 0 auto 20px;
@@ -1224,7 +1224,7 @@ a:hover {
     width: 60px;
     height: 60px;
     border-radius: 50%;
-    background: rgba(192, 57, 43, 0.08);
+    background: rgba(213, 0, 28, 0.08);
     color: var(--color-primary);
     font-size: 1.4rem;
     margin-bottom: 20px;
