@@ -14,6 +14,7 @@ $pageTitle = $isEdit ? 'Mitglied bearbeiten' : 'Neues Mitglied';
 $member = [
     'firstname' => '', 'lastname' => '', 'rank' => '',
     'functions' => '[]', 'group_name' => 'Mannschaft',
+    'badge1' => '', 'badge2' => '',
     'photo' => '',
     'sort_order' => 0, 'active' => 1,
     'entry_date' => '', 'phone' => '', 'email' => '', 'bio' => ''
@@ -42,6 +43,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $member['firstname'] = trim($_POST['firstname'] ?? '');
     $member['lastname'] = trim($_POST['lastname'] ?? '');
     $member['rank'] = trim($_POST['rank'] ?? '');
+    $validBadges = array_keys(getAllBadges());
+    $badge1 = trim($_POST['badge1'] ?? '');
+    $badge2 = trim($_POST['badge2'] ?? '');
+    $member['badge1'] = in_array($badge1, $validBadges, true) ? $badge1 : null;
+    $member['badge2'] = (in_array($badge2, $validBadges, true) && $badge2 !== $member['badge1']) ? $badge2 : null;
     $member['group_name'] = $_POST['group_name'] ?? 'Mannschaft';
     $member['sort_order'] = (int)($_POST['sort_order'] ?? 0);
     $member['active'] = isset($_POST['active']) ? 1 : 0;
