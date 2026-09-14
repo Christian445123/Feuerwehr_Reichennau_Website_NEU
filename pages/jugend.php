@@ -19,6 +19,12 @@
                 </div>
             </div>
 
+            <div class="content-card" style="margin-bottom: 50px;">
+                <div class="content-card-body" style="padding: 0;">
+                    <img src="assets/images/jugend_gruppe.jpg" alt="Unsere Jugendfeuerwehrgruppe" class="content-image" style="margin-top: 0;">
+                </div>
+            </div>
+
             <div class="info-cards-grid">
                 <div class="info-card">
                     <div class="info-card-icon"><i class="fas fa-calendar-check"></i></div>
