@@ -142,65 +142,68 @@ require_once __DIR__ . '/includes/admin-header.php';
                         </div>
                     </div>
 
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="rank">Dienstgrad</label>
-                            <select id="rank" name="rank" class="rank-select">
-                                <option value="">-- Kein Dienstgrad --</option>
-                                <?php foreach (getRanksGrouped() as $category => $ranks): ?>
-                                    <optgroup label="<?php echo e($category); ?>">
-                                        <?php foreach ($ranks as $abbr => $name): ?>
-                                            <option value="<?php echo e($abbr); ?>" <?php echo $member['rank'] === $abbr ? 'selected' : ''; ?>>
-                                                <?php echo e($abbr); ?> – <?php echo e($name); ?>
-                                            </option>
-                                        <?php endforeach; ?>
-                                    </optgroup>
-                                <?php endforeach; ?>
-                            </select>
-                            <?php if ($member['rank'] && isset(getAllRanks()[$member['rank']])): ?>
-                                <div class="rank-preview" id="rankPreview">
-                                    <img src="../<?php echo e(getRankBadgePath($member['rank'])); ?>" alt="<?php echo e($member['rank']); ?>" class="rank-preview-img">
-                                    <span><?php echo e($member['rank']); ?> – <?php echo e(getRankName($member['rank'])); ?></span>
-                                </div>
-                            <?php else: ?>
-                                <div class="rank-preview" id="rankPreview" style="display:none;">
-                                    <img src="" alt="" class="rank-preview-img">
-                                    <span></span>
-                                </div>
-                            <?php endif; ?>
-                        </div>
-                        <div class="form-group">
-                            <label for="group_name">Grundgruppe</label>
-                            <select id="group_name" name="group_name">
-                                <option value="Mannschaft" <?php echo $member['group_name'] === 'Mannschaft' ? 'selected' : ''; ?>>Mannschaft</option>
-                                <option value="Ehrenmitglieder" <?php echo $member['group_name'] === 'Ehrenmitglieder' ? 'selected' : ''; ?>>Ehrenmitglieder</option>
-                                <option value="Jugend" <?php echo $member['group_name'] === 'Jugend' ? 'selected' : ''; ?>>Jugend</option>
-                            </select>
-                        </div>
+                    <div class="form-group">
+                        <label for="group_name">Grundgruppe</label>
+                        <select id="group_name" name="group_name">
+                            <option value="Mannschaft" <?php echo $member['group_name'] === 'Mannschaft' ? 'selected' : ''; ?>>Mannschaft</option>
+                            <option value="Ehrenmitglieder" <?php echo $member['group_name'] === 'Ehrenmitglieder' ? 'selected' : ''; ?>>Ehrenmitglieder</option>
+                            <option value="Jugend" <?php echo $member['group_name'] === 'Jugend' ? 'selected' : ''; ?>>Jugend</option>
+                        </select>
                     </div>
 
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="badge1">Verwendungs-/Funktionsabzeichen 1</label>
-                            <select id="badge1" name="badge1">
-                                <option value="">-- Kein Abzeichen --</option>
-                                <?php foreach (getAllBadges() as $code => $b): ?>
-                                    <option value="<?php echo e($code); ?>" <?php echo ($member['badge1'] ?? '') === $code ? 'selected' : ''; ?>>
-                                        <?php echo e($code); ?> – <?php echo e($b['name']); ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
+                    <!-- Rang & Abzeichen -->
+                    <div class="rang-abzeichen-section">
+                        <h4 class="subsection-title"><i class="fas fa-medal"></i> Rang &amp; Abzeichen</h4>
+
+                        <div class="form-row form-row-3">
+                            <div class="form-group">
+                                <label for="rank">Dienstgrad</label>
+                                <select id="rank" name="rank" class="rank-select">
+                                    <option value="">-- Kein Dienstgrad --</option>
+                                    <?php foreach (getRanksGrouped() as $category => $ranks): ?>
+                                        <optgroup label="<?php echo e($category); ?>">
+                                            <?php foreach ($ranks as $abbr => $name): ?>
+                                                <option value="<?php echo e($abbr); ?>" <?php echo $member['rank'] === $abbr ? 'selected' : ''; ?>>
+                                                    <?php echo e($abbr); ?> – <?php echo e($name); ?>
+                                                </option>
+                                            <?php endforeach; ?>
+                                        </optgroup>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="badge1">Verwendungs-/Funktionsabzeichen 1</label>
+                                <select id="badge1" name="badge1" class="badge-select">
+                                    <option value="">-- Kein Abzeichen --</option>
+                                    <?php foreach (getAllBadges() as $code => $b): ?>
+                                        <option value="<?php echo e($code); ?>" data-name="<?php echo e($b['name']); ?>" data-color="<?php echo e($b['color']); ?>" <?php echo ($member['badge1'] ?? '') === $code ? 'selected' : ''; ?>>
+                                            <?php echo e($code); ?> – <?php echo e($b['name']); ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="badge2">Verwendungs-/Funktionsabzeichen 2</label>
+                                <select id="badge2" name="badge2" class="badge-select">
+                                    <option value="">-- Kein Abzeichen --</option>
+                                    <?php foreach (getAllBadges() as $code => $b): ?>
+                                        <option value="<?php echo e($code); ?>" data-name="<?php echo e($b['name']); ?>" data-color="<?php echo e($b['color']); ?>" <?php echo ($member['badge2'] ?? '') === $code ? 'selected' : ''; ?>>
+                                            <?php echo e($code); ?> – <?php echo e($b['name']); ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="badge2">Verwendungs-/Funktionsabzeichen 2</label>
-                            <select id="badge2" name="badge2">
-                                <option value="">-- Kein Abzeichen --</option>
-                                <?php foreach (getAllBadges() as $code => $b): ?>
-                                    <option value="<?php echo e($code); ?>" <?php echo ($member['badge2'] ?? '') === $code ? 'selected' : ''; ?>>
-                                        <?php echo e($code); ?> – <?php echo e($b['name']); ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
+
+                        <!-- Live-Vorschau: Rang + beide Abzeichen zusammen -->
+                        <div class="rang-abzeichen-preview" id="rangAbzeichenPreview">
+                            <div class="rank-preview" id="rankPreview" style="<?php echo ($member['rank'] && isset(getAllRanks()[$member['rank']])) ? '' : 'display:none;'; ?>">
+                                <img src="../<?php echo $member['rank'] ? e(getRankBadgePath($member['rank'])) : ''; ?>" alt="" class="rank-preview-img">
+                                <span><?php echo ($member['rank'] && isset(getAllRanks()[$member['rank']])) ? e($member['rank'] . ' – ' . getRankName($member['rank'])) : ''; ?></span>
+                            </div>
+                            <span class="member-badge-inline preview-badge" id="badgePreview1" style="<?php echo !empty($member['badge1']) ? 'background:' . e(getBadgeColor($member['badge1'])) : 'display:none;'; ?>" title="<?php echo !empty($member['badge1']) ? e(getBadgeName($member['badge1'])) : ''; ?>"><?php echo e($member['badge1'] ?? ''); ?></span>
+                            <span class="member-badge-inline preview-badge" id="badgePreview2" style="<?php echo !empty($member['badge2']) ? 'background:' . e(getBadgeColor($member['badge2'])) : 'display:none;'; ?>" title="<?php echo !empty($member['badge2']) ? e(getBadgeName($member['badge2'])) : ''; ?>"><?php echo e($member['badge2'] ?? ''); ?></span>
+                            <span class="preview-empty-hint" id="previewEmptyHint" style="<?php echo ($member['rank'] || !empty($member['badge1']) || !empty($member['badge2'])) ? 'display:none;' : ''; ?>">Noch kein Rang/Abzeichen gewählt</span>
                         </div>
                     </div>
 
