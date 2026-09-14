@@ -1,5 +1,6 @@
 [
     {
+        "source_slug": "Missions-Sturm_ueber_Innsbruck",
         "title": "Sturm über Innsbruck",
         "category": "einsatz",
         "subcategory": "technisch",
@@ -51,6 +52,7 @@
         ]
     },
     {
+        "source_slug": "Missions-5a69b078e83c6",
         "title": "90. Geburtstag unseres Ehrenmitgliedes Rudi Krebs",
         "category": "sonstige",
         "subcategory": null,
@@ -72,6 +74,7 @@
         ]
     },
     {
+        "source_slug": "Missions-Brandsicherheitswache_beim_Tuifelschauen",
         "title": "Brandsicherheitswache beim Tuifelschauen",
         "category": "einsatz",
         "subcategory": "brand",
@@ -88,6 +91,7 @@
         ]
     },
     {
+        "source_slug": "Missions-Feuerwehrball_2017",
         "title": "Feuerwehrball 2017",
         "category": "sonstige",
         "subcategory": null,
@@ -389,6 +393,7 @@
         ]
     },
     {
+        "source_slug": "Missions-Brandsicherheitswache_im_Pema_2",
         "title": "Brandsicherheitswache im Pema 2",
         "category": "einsatz",
         "subcategory": "brand",
@@ -445,6 +450,7 @@
         ]
     },
     {
+        "source_slug": "Missions-Person_in_Notlage",
         "title": "Person in Notlage",
         "category": "einsatz",
         "subcategory": "technisch",
@@ -471,6 +477,7 @@
         ]
     },
     {
+        "source_slug": "Missions-Umbau_der_Wache",
         "title": "Umbau der Wache",
         "category": "sonstige",
         "subcategory": null,
@@ -502,6 +509,7 @@
         ]
     },
     {
+        "source_slug": "Missions-Fertigstellung_der_ATS_Werkstatt",
         "title": "Fertigstellung der ATS Werkstatt",
         "category": "sonstige",
         "subcategory": null,
@@ -533,6 +541,7 @@
         ]
     },
     {
+        "source_slug": "Missions-Massiver_Wasserschaden",
         "title": "Massiver Wasserschaden",
         "category": "einsatz",
         "subcategory": "technisch",
@@ -584,6 +593,7 @@
         ]
     },
     {
+        "source_slug": "Missions-Wasserschaden_am_Parkplatz",
         "title": "Wasserschaden am Parkplatz",
         "category": "einsatz",
         "subcategory": "technisch",
@@ -605,6 +615,7 @@
         ]
     },
     {
+        "source_slug": "Missions-Umgestuerzter_Bauzaun_44",
         "title": "Umgestürzter Bauzaun",
         "category": "einsatz",
         "subcategory": "technisch",
@@ -621,6 +632,7 @@
         ]
     },
     {
+        "source_slug": "Missions-Umgestuerzter_Bauzaun_43",
         "title": "Umgestürzter Bauzaun",
         "category": "einsatz",
         "subcategory": "technisch",
@@ -637,6 +649,7 @@
         ]
     },
     {
+        "source_slug": "Missions-Uebersiedlung_Kindergarten_St_Paulus",
         "title": "Übersiedlung Kindergarten St. Paulus",
         "category": "sonstige",
         "subcategory": null,
@@ -653,6 +666,7 @@
         ]
     },
     {
+        "source_slug": "Missions-Umgestuerzter_Bauzaun_",
         "title": "Umgestürzter Bauzaun",
         "category": "einsatz",
         "subcategory": "technisch",
@@ -669,6 +683,7 @@
         ]
     },
     {
+        "source_slug": "Missions-Unwettereinsaetze_in_der_Reichenau",
         "title": "Unwettereinsätze in der Reichenau",
         "category": "einsatz",
         "subcategory": "technisch",
@@ -690,6 +705,7 @@
         ]
     },
     {
+        "source_slug": "Missions-Brandmeldealarm_",
         "title": "Brandmeldealarm",
         "category": "einsatz",
         "subcategory": "brand",
@@ -706,6 +722,7 @@
         ]
     },
     {
+        "source_slug": "Missions-Fahrzeugbrand_in_Tiefgarage",
         "title": "Fahrzeugbrand in Tiefgarage",
         "category": "einsatz",
         "subcategory": "brand",
@@ -742,6 +759,7 @@
         ]
     },
     {
+        "source_slug": "Missions-5a69b12c5e405",
         "title": "Übung mit der FF Mühlau - Verkehrsunfall mit Gefahrengut",
         "category": "uebung",
         "subcategory": null,
@@ -783,6 +801,7 @@
         ]
     },
     {
+        "source_slug": "Missions-Arbeitseinsatz_bei_den_Schuetzen",
         "title": "Arbeitseinsatz bei den Schützen",
         "category": "einsatz",
         "subcategory": "technisch",
@@ -799,6 +818,7 @@
         ]
     },
     {
+        "source_slug": "Missions-Waldbrand___Uebung_mit_der_FF_Arzl",
         "title": "Waldbrand - Übung mit der FF Arzl",
         "category": "uebung",
         "subcategory": null,
@@ -835,6 +855,7 @@
         ]
     },
     {
+        "source_slug": "Missions-Grossuebung_der_Jugendfeuerwehr",
         "title": "Großübung der Jugendfeuerwehr",
         "category": "uebung",
         "subcategory": null,
@@ -851,6 +872,7 @@
         ]
     },
     {
+        "source_slug": "Missions-Tueroeffnung_",
         "title": "Türöffnung",
         "category": "einsatz",
         "subcategory": "technisch",
@@ -867,6 +889,7 @@
         ]
     },
     {
+        "source_slug": "Missions-Neuerlicher_Wasserschaden_im_Feuerwehrhaus",
         "title": "Neuerlicher Wasserschaden im Feuerwehrhaus",
         "category": "einsatz",
         "subcategory": "technisch",
@@ -883,6 +906,7 @@
         ]
     },
     {
+        "source_slug": "Missions-Gefahrguteinsatz_auf_der_A13",
         "title": "Gefahrguteinsatz auf der A13",
         "category": "einsatz",
         "subcategory": "abc",
@@ -924,6 +948,7 @@
         ]
     },
     {
+        "source_slug": "Missions-5a69b0f9374b3",
         "title": "Evakuierungsübung Mittelhauptschule Reichenau",
         "category": "uebung",
         "subcategory": null,
@@ -940,6 +965,7 @@
         ]
     },
     {
+        "source_slug": "Missions-Waldbrand_am_Hechenberg",
         "title": "Waldbrand am Hechenberg",
         "category": "einsatz",
         "subcategory": "brand",
@@ -956,6 +982,7 @@
         ]
     },
     {
+        "source_slug": "Missions-Kellerbrand_Reichenauer_Str",
         "title": "Kellerbrand Reichenauer Str.",
         "category": "einsatz",
         "subcategory": "brand",
@@ -972,6 +999,7 @@
         ]
     },
     {
+        "source_slug": "Missions-Ertrinkungsnotfall_im_Inn",
         "title": "Ertrinkungsnotfall im Inn",
         "category": "einsatz",
         "subcategory": "technisch",
@@ -988,6 +1016,7 @@
         ]
     },
     {
+        "source_slug": "Missions-Wasserschaden_im_Feuerwehrhaus",
         "title": "Wasserschaden im Feuerwehrhaus",
         "category": "einsatz",
         "subcategory": "technisch",
@@ -1004,6 +1033,7 @@
         ]
     },
     {
+        "source_slug": "Missions-Wohnungsbrand_in_der_Reichenau",
         "title": "Wohnungsbrand in der Reichenau",
         "category": "einsatz",
         "subcategory": "brand",
@@ -1020,6 +1050,7 @@
         ]
     },
     {
+        "source_slug": "Missions-Oelspur_auf_der_Reichenaustrasse",
         "title": "Ölspur auf der Reichenaustraße",
         "category": "einsatz",
         "subcategory": "technisch",
@@ -1046,6 +1077,7 @@
         ]
     },
     {
+        "source_slug": "Missions-Person_in_Notlage31",
         "title": "Person in Notlage",
         "category": "einsatz",
         "subcategory": "technisch",
@@ -1062,6 +1094,7 @@
         ]
     },
     {
+        "source_slug": "Missions-Wohnungsbrand_mit_eingeschlossenen_Peronen",
         "title": "Wohnungsbrand mit eingeschlossenen Peronen",
         "category": "einsatz",
         "subcategory": "brand",
@@ -1088,6 +1121,7 @@
         ]
     },
     {
+        "source_slug": "Missions-Brand_einer_Muelldeponie",
         "title": "Brand einer Mülldeponie",
         "category": "einsatz",
         "subcategory": "brand",
@@ -1109,6 +1143,7 @@
         ]
     },
     {
+        "source_slug": "Missions-Brandsicherheitswache_beim_Brauchtumsschauen",
         "title": "Brandsicherheitswache beim Brauchtumsschauen",
         "category": "einsatz",
         "subcategory": "brand",
