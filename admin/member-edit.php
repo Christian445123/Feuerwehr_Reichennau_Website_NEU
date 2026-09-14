@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/auth.php';
 require_once __DIR__ . '/../config/ranks.php';
+require_once __DIR__ . '/../config/badges.php';
 requireLogin();
 
 $db = getDB();
