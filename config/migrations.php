@@ -180,17 +180,10 @@ function getMigrations(): array {
  * Führt alle noch nicht angewendeten Migrationen aus.
  */
 function runMigrations(PDO $db): void {
-    if (DB_DRIVER === 'mysql') {
-        $db->exec("CREATE TABLE IF NOT EXISTS migrations (
-            id VARCHAR(191) PRIMARY KEY,
-            applied_at DATETIME DEFAULT CURRENT_TIMESTAMP
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
-    } else {
-        $db->exec("CREATE TABLE IF NOT EXISTS migrations (
-            id TEXT PRIMARY KEY,
-            applied_at DATETIME DEFAULT CURRENT_TIMESTAMP
-        )");
-    }
+    $db->exec("CREATE TABLE IF NOT EXISTS migrations (
+        id VARCHAR(191) PRIMARY KEY,
+        applied_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
     $applied = $db->query("SELECT id FROM migrations")->fetchAll(PDO::FETCH_COLUMN);
     $appliedSet = array_flip($applied);
