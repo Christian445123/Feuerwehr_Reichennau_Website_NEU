@@ -55,6 +55,10 @@ document.addEventListener('DOMContentLoaded', function () {
     const filterTabs = document.querySelectorAll('.filter-tab');
     const berichteCards = document.querySelectorAll('.bericht-card');
     const berichteGrid = document.getElementById('berichteGrid');
+    const filterResultCount = document.getElementById('filterResultCount');
+    const noResultsMsg = document.getElementById('noResultsMsg');
+
+    var filterLabels = { all: 'Alle', einsatz: 'Einsatz', uebung: 'Übung', jugend: 'Jugend', sonstige: 'Sonstige', archiv: 'Archiv' };
 
     filterTabs.forEach(function (tab) {
         tab.addEventListener('click', function () {
@@ -63,6 +67,7 @@ document.addEventListener('DOMContentLoaded', function () {
             tab.classList.add('active');
 
             var filter = tab.getAttribute('data-filter');
+            var visibleCount = 0;
 
             berichteCards.forEach(function (card) {
                 var visible;
@@ -74,14 +79,30 @@ document.addEventListener('DOMContentLoaded', function () {
                     visible = card.getAttribute('data-category') === filter;
                 }
                 card.classList.toggle('hidden', !visible);
+                if (visible) visibleCount++;
             });
 
             // "Alle" zeigt einen Zeitstrahl, jeder Filter zeigt Kacheln
             if (berichteGrid) {
                 berichteGrid.classList.toggle('timeline-view', filter === 'all');
+                berichteGrid.style.display = visibleCount > 0 ? '' : 'none';
+            }
+
+            if (noResultsMsg) {
+                noResultsMsg.style.display = visibleCount === 0 ? '' : 'none';
+            }
+
+            if (filterResultCount) {
+                var label = filterLabels[filter] || filter;
+                filterResultCount.textContent = visibleCount + (visibleCount === 1 ? ' Bericht' : ' Berichte') + (filter === 'all' ? '' : ' – ' + label);
             }
         });
     });
+
+    // Initiale Anzeige beim Laden der Seite ("Alle")
+    if (filterResultCount && berichteCards.length > 0) {
+        filterResultCount.textContent = berichteCards.length + (berichteCards.length === 1 ? ' Bericht' : ' Berichte');
+    }
 
     // --- Vehicle Image Switcher ---
     // (Ausrüstung page)

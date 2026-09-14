@@ -154,6 +154,10 @@ $archivCutoff = date('Y-m-d', strtotime('-2 years'));
                         </a>
                     <?php endforeach; ?>
                 </div>
+                <div class="archiv-section" id="noResultsMsg" style="display:none;">
+                    <h2><i class="fas fa-folder-open"></i> Keine Berichte in dieser Kategorie</h2>
+                    <p>Für diesen Filter sind aktuell keine Berichte vorhanden.</p>
+                </div>
             <?php endif; ?>
         </div>
     </section>
