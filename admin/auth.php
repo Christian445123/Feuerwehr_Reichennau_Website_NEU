@@ -6,6 +6,7 @@
 session_start();
 
 require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/permissions.php';
 
 function isLoggedIn(): bool {
     return isset($_SESSION['admin_user_id']);

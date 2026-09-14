@@ -8,6 +8,16 @@
  * sich selbst aussperrt.
  */
 
+/**
+ * Der Benutzername "admin" ist das fest geschützte Hauptkonto: er hat immer
+ * und unveränderlich Vollzugriff, unabhängig davon, was in der Datenbank
+ * steht. Damit kann sich niemand - versehentlich oder absichtlich - selbst
+ * oder das Hauptkonto aussperren.
+ */
+function isProtectedAdminUsername(string $username): bool {
+    return $username === 'admin';
+}
+
 function getAllPermissions(): array {
     return [
         'reports.manage'    => 'Berichte verwalten (erstellen, bearbeiten, löschen, veröffentlichen)',
