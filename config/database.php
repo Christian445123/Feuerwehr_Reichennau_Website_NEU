@@ -81,6 +81,8 @@ function initDatabase(): void {
             `rank` VARCHAR(50) DEFAULT '',
             `function` VARCHAR(100) DEFAULT '',
             functions TEXT DEFAULT NULL,
+            badge1 VARCHAR(20) DEFAULT NULL,
+            badge2 VARCHAR(20) DEFAULT NULL,
             group_name VARCHAR(50) DEFAULT 'Mannschaft',
             extra_groups VARCHAR(255) DEFAULT '',
             photo VARCHAR(255) DEFAULT '',
