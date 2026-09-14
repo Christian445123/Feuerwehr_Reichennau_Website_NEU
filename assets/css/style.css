@@ -527,6 +527,16 @@ a:hover {
     color: var(--color-accent);
 }
 
+.badge-abc {
+    background: rgba(155, 89, 182, 0.12);
+    color: #8e44ad;
+}
+
+.badge-unterstuetzung {
+    background: rgba(52, 73, 94, 0.1);
+    color: var(--color-secondary);
+}
+
 .badge-sonstige {
     background: rgba(108, 117, 125, 0.1);
     color: var(--color-gray-600);
