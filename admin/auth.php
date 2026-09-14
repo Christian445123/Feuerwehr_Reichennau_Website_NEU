@@ -20,7 +20,7 @@ function requireLogin(): void {
 
 function login(string $username, string $password): bool {
     $db = getDB();
-    $stmt = $db->prepare("SELECT id, password, name FROM users WHERE username = ?");
+    $stmt = $db->prepare("SELECT id, password, name, permissions FROM users WHERE username = ?");
     $stmt->execute([$username]);
     $user = $stmt->fetch();
 
@@ -28,6 +28,7 @@ function login(string $username, string $password): bool {
         session_regenerate_id(true);
         $_SESSION['admin_user_id'] = $user['id'];
         $_SESSION['admin_user_name'] = $user['name'];
+        $_SESSION['admin_permissions'] = json_decode($user['permissions'] ?? '[]', true) ?: [];
         return true;
     }
     return false;
