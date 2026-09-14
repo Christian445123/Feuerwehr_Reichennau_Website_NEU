@@ -64,6 +64,7 @@ require_once __DIR__ . '/includes/admin-header.php';
     <a href="reports.php?category=uebung" class="filter-pill <?php echo $category === 'uebung' ? 'active' : ''; ?>">Übung</a>
     <a href="reports.php?category=jugend" class="filter-pill <?php echo $category === 'jugend' ? 'active' : ''; ?>">Jugend</a>
     <a href="reports.php?category=sonstige" class="filter-pill <?php echo $category === 'sonstige' ? 'active' : ''; ?>">Sonstige</a>
+    <a href="reports.php?category=archiv" class="filter-pill <?php echo $category === 'archiv' ? 'active' : ''; ?>"><i class="fas fa-archive"></i> Archiv</a>
 </div>
 
 <?php if (empty($reports)): ?>
@@ -88,9 +89,16 @@ require_once __DIR__ . '/includes/admin-header.php';
             </thead>
             <tbody>
                 <?php foreach ($reports as $r): ?>
+                    <?php $isArchiv = $r['date'] < $archivCutoff; ?>
                     <tr>
                         <td><strong><?php echo e($r['title']); ?></strong></td>
-                        <td><span class="badge badge-<?php echo e($r['category']); ?>"><?php echo e(ucfirst($r['category'])); ?></span></td>
+                        <td>
+                            <?php if (!empty($r['subcategory']) && isset($subcategoryLabels[$r['subcategory']])): ?>
+                                <span class="badge badge-<?php echo e($r['subcategory']); ?>"><?php echo e($subcategoryLabels[$r['subcategory']]); ?></span>
+                            <?php else: ?>
+                                <span class="badge badge-<?php echo e($r['category']); ?>"><?php echo e(ucfirst($r['category'])); ?></span>
+                            <?php endif; ?>
+                        </td>
                         <td><?php echo e($r['date']); ?></td>
                         <td><i class="fas fa-images"></i> <?php echo $r['image_count']; ?></td>
                         <td>
@@ -98,6 +106,9 @@ require_once __DIR__ . '/includes/admin-header.php';
                                 <span class="badge badge-success">Veröffentlicht</span>
                             <?php else: ?>
                                 <span class="badge badge-draft">Entwurf</span>
+                            <?php endif; ?>
+                            <?php if ($isArchiv): ?>
+                                <span class="badge badge-archiv" title="Älter als 2 Jahre - erscheint automatisch im Archiv"><i class="fas fa-archive"></i> Archiviert</span>
                             <?php endif; ?>
                         </td>
                         <td class="actions-cell">
