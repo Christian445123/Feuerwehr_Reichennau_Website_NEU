@@ -125,6 +125,7 @@
                         </div>
                         <p class="impressum-note">Layout und Gestaltung dieser Präsentationen sowie die enthaltenen Informationen sind gemäß dem Urheberrechtsgesetz geschützt. Alle Angaben erfolgen ohne Gewähr. Eine Haftung für Schäden, die sich aus der Verwendung der veröffentlichten Inhalte ergeben, ist ausgeschlossen.</p>
                         <p class="impressum-note">Diese Webseite wird veröffentlicht und gepflegt durch die Freiwillige Feuerwehr Reichenau / Innsbruck Stadt.</p>
+                        <p class="impressum-note"><strong>Hinweis:</strong> Diese Website befindet sich derzeit im Aufbau und ist noch nicht die offizielle, öffentlich zugängliche Internetpräsenz der Freiwilligen Feuerwehr Reichenau. Der Zugriff ist übergangsweise passwortgeschützt.</p>
                     </div>
                 </div>
             </div>
