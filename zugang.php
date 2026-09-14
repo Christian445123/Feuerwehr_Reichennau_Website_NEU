@@ -55,7 +55,7 @@ if (siteAccessGranted()) {
             align-items: center;
             justify-content: center;
             padding: 20px;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            background: linear-gradient(135deg, #181818 0%, #1f1f1f 50%, #141414 100%);
         }
         .lock-card {
             background: #fff;
