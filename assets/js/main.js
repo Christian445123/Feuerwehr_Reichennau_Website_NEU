@@ -60,53 +60,56 @@ document.addEventListener('DOMContentLoaded', function () {
 
     var filterLabels = { all: 'Alle', einsatz: 'Einsatz', uebung: 'Übung', jugend: 'Jugend', sonstige: 'Sonstige', archiv: 'Archiv' };
 
+    function applyBerichteFilter(filter) {
+        var visibleCount = 0;
+
+        berichteCards.forEach(function (card) {
+            var isArchiv = card.getAttribute('data-archiv') === '1';
+            var visible;
+            if (filter === 'all') {
+                // "Alle" zeigt die aktuellen Berichte; Berichte über 2 Jahre
+                // laufen ausschließlich unter "Archiv".
+                visible = !isArchiv;
+            } else if (filter === 'archiv') {
+                visible = isArchiv;
+            } else {
+                // Berichte über 2 Jahre wandern ausschließlich ins Archiv und
+                // verschwinden dafür aus ihrem ursprünglichen Kategorie-Tab.
+                visible = card.getAttribute('data-category') === filter && !isArchiv;
+            }
+            card.classList.toggle('hidden', !visible);
+            if (visible) visibleCount++;
+        });
+
+        // "Alle" zeigt einen Zeitstrahl, jeder Filter zeigt Kacheln
+        if (berichteGrid) {
+            berichteGrid.classList.toggle('timeline-view', filter === 'all');
+            berichteGrid.style.display = visibleCount > 0 ? '' : 'none';
+        }
+
+        if (noResultsMsg) {
+            noResultsMsg.style.display = visibleCount === 0 ? '' : 'none';
+        }
+
+        if (filterResultCount) {
+            var label = filterLabels[filter] || filter;
+            filterResultCount.textContent = visibleCount + (visibleCount === 1 ? ' Bericht' : ' Berichte') + (filter === 'all' ? '' : ' – ' + label);
+        }
+    }
+
     filterTabs.forEach(function (tab) {
         tab.addEventListener('click', function () {
             // Aktiven Tab setzen
             filterTabs.forEach(function (t) { t.classList.remove('active'); });
             tab.classList.add('active');
-
-            var filter = tab.getAttribute('data-filter');
-            var visibleCount = 0;
-
-            berichteCards.forEach(function (card) {
-                var isArchiv = card.getAttribute('data-archiv') === '1';
-                var visible;
-                if (filter === 'all') {
-                    // "Alle" zeigt die aktuellen Berichte; Berichte über 2 Jahre
-                    // laufen ausschließlich unter "Archiv".
-                    visible = !isArchiv;
-                } else if (filter === 'archiv') {
-                    visible = isArchiv;
-                } else {
-                    // Berichte über 2 Jahre wandern ausschließlich ins Archiv und
-                    // verschwinden dafür aus ihrem ursprünglichen Kategorie-Tab.
-                    visible = card.getAttribute('data-category') === filter && !isArchiv;
-                }
-                card.classList.toggle('hidden', !visible);
-                if (visible) visibleCount++;
-            });
-
-            // "Alle" zeigt einen Zeitstrahl, jeder Filter zeigt Kacheln
-            if (berichteGrid) {
-                berichteGrid.classList.toggle('timeline-view', filter === 'all');
-                berichteGrid.style.display = visibleCount > 0 ? '' : 'none';
-            }
-
-            if (noResultsMsg) {
-                noResultsMsg.style.display = visibleCount === 0 ? '' : 'none';
-            }
-
-            if (filterResultCount) {
-                var label = filterLabels[filter] || filter;
-                filterResultCount.textContent = visibleCount + (visibleCount === 1 ? ' Bericht' : ' Berichte') + (filter === 'all' ? '' : ' – ' + label);
-            }
+            applyBerichteFilter(tab.getAttribute('data-filter'));
         });
     });
 
-    // Initiale Anzeige beim Laden der Seite ("Alle")
-    if (filterResultCount && berichteCards.length > 0) {
-        filterResultCount.textContent = berichteCards.length + (berichteCards.length === 1 ? ' Bericht' : ' Berichte');
+    // Initiale Filterung beim Laden der Seite (aktiver Tab ist "Alle")
+    if (berichteCards.length > 0) {
+        var initialTab = document.querySelector('.filter-tab.active');
+        applyBerichteFilter(initialTab ? initialTab.getAttribute('data-filter') : 'all');
     }
 
     // --- Vehicle Image Switcher ---
