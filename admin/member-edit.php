@@ -331,9 +331,20 @@ photoInput.addEventListener('change', function() {
     }
 });
 
-// Rank selector preview
+// Rang & Abzeichen: gemeinsame Live-Vorschau
 var rankSelect = document.getElementById('rank');
 var rankPreview = document.getElementById('rankPreview');
+var badge1Select = document.getElementById('badge1');
+var badge2Select = document.getElementById('badge2');
+var badgePreview1 = document.getElementById('badgePreview1');
+var badgePreview2 = document.getElementById('badgePreview2');
+var previewEmptyHint = document.getElementById('previewEmptyHint');
+
+function updateEmptyHint() {
+    var anySelected = (rankSelect && rankSelect.value) || (badge1Select && badge1Select.value) || (badge2Select && badge2Select.value);
+    if (previewEmptyHint) previewEmptyHint.style.display = anySelected ? 'none' : '';
+}
+
 if (rankSelect && rankPreview) {
     rankSelect.addEventListener('change', function() {
         var val = this.value;
@@ -342,13 +353,32 @@ if (rankSelect && rankPreview) {
             var span = rankPreview.querySelector('span');
             img.src = '../assets/images/ranks/' + val.toLowerCase() + '.png';
             img.alt = val;
-            span.textContent = val + ' – ' + this.options[this.selectedIndex].text.trim();
+            span.textContent = val + ' – ' + this.options[this.selectedIndex].text.trim().replace(val + ' – ', '');
             rankPreview.style.display = 'flex';
         } else {
             rankPreview.style.display = 'none';
         }
+        updateEmptyHint();
     });
 }
+
+function wireBadgeSelect(select, previewEl) {
+    if (!select || !previewEl) return;
+    select.addEventListener('change', function() {
+        var opt = this.options[this.selectedIndex];
+        if (this.value) {
+            previewEl.textContent = this.value;
+            previewEl.style.background = opt.getAttribute('data-color');
+            previewEl.title = opt.getAttribute('data-name');
+            previewEl.style.display = 'inline-flex';
+        } else {
+            previewEl.style.display = 'none';
+        }
+        updateEmptyHint();
+    });
+}
+wireBadgeSelect(badge1Select, badgePreview1);
+wireBadgeSelect(badge2Select, badgePreview2);
 
 // Dynamic function rows
 document.getElementById('addFunctionBtn').addEventListener('click', function() {
