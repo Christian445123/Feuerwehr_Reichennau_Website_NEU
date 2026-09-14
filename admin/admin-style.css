@@ -231,7 +231,12 @@ img { max-width: 100%; height: auto; }
 .badge-einsatz { background: rgba(231,76,60,0.1); color: #c0392b; }
 .badge-uebung { background: rgba(39,174,96,0.1); color: #1e8449; }
 .badge-jugend { background: rgba(230,126,34,0.1); color: #d35400; }
-.badge-sonstige { background: rgba(108,117,125,0.1); color: var(--gray-600); }
+.badge-sonstige, .badge-sonstiges { background: rgba(108,117,125,0.1); color: var(--gray-600); }
+.badge-brand { background: rgba(213,0,28,0.1); color: var(--primary); }
+.badge-technisch { background: rgba(52,152,219,0.1); color: #2471a3; }
+.badge-abc { background: rgba(155,89,182,0.12); color: #8e44ad; }
+.badge-unterstuetzung { background: rgba(52,73,94,0.1); color: #34495e; }
+.badge-archiv { background: rgba(108,117,125,0.15); color: var(--gray-700); margin-left: 4px; }
 .badge-success { background: rgba(39,174,96,0.1); color: #1e8449; }
 .badge-draft { background: rgba(108,117,125,0.1); color: var(--gray-600); }
 
