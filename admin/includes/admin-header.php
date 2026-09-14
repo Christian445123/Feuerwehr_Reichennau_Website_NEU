@@ -2,6 +2,7 @@
 /**
  * Admin - Header Template
  */
+require_once __DIR__ . '/../permissions.php';
 ?>
 <!DOCTYPE html>
 <html lang="de">
@@ -38,6 +39,11 @@
 
             <div class="sidebar-divider"></div>
 
+            <?php if (userHasPermission('users.manage')): ?>
+                <a href="users.php" class="sidebar-link <?php echo ($activePage ?? '') === 'users' ? 'active' : ''; ?>">
+                    <i class="fas fa-user-shield"></i> Benutzer
+                </a>
+            <?php endif; ?>
             <a href="settings.php" class="sidebar-link <?php echo ($activePage ?? '') === 'settings' ? 'active' : ''; ?>">
                 <i class="fas fa-cog"></i> Einstellungen
             </a>
