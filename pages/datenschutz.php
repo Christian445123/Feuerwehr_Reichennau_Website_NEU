@@ -15,6 +15,16 @@
 
                 <div class="content-card">
                     <div class="content-card-header">
+                        <div class="content-card-icon"><i class="fas fa-info-circle"></i></div>
+                        <h2>Allgemeiner Hinweis</h2>
+                    </div>
+                    <div class="content-card-body">
+                        <p>Diese Website befindet sich derzeit im Aufbau und ist noch nicht die offizielle, öffentlich zugängliche Internetpräsenz der Freiwilligen Feuerwehr Reichenau. Der Zugriff ist übergangsweise passwortgeschützt. Diese Datenschutzerklärung gilt bereits jetzt für den Betrieb der Website in dieser Vorschau-Phase.</p>
+                    </div>
+                </div>
+
+                <div class="content-card">
+                    <div class="content-card-header">
                         <div class="content-card-icon"><i class="fas fa-shield-alt"></i></div>
                         <h2>1. Datenschutz auf einen Blick</h2>
                     </div>
@@ -123,7 +133,7 @@
                         <p>Eine Zusammenführung dieser Daten mit anderen Datenquellen wird nicht vorgenommen. Die Erfassung dieser Daten erfolgt auf Grundlage von Art. 6 Abs. 1 lit. f DSGVO. Der Websitebetreiber hat ein berechtigtes Interesse an der technisch fehlerfreien Darstellung und der Optimierung seiner Website.</p>
 
                         <h4>Cookies</h4>
-                        <p>Diese Website verwendet keine Tracking-Cookies und keine Analyse-Tools wie Google Analytics. Es werden ausschließlich technisch notwendige Cookies verwendet, die für den Betrieb der Website erforderlich sind (z.&nbsp;B. Session-Cookies für den Administrationsbereich). Diese Cookies werden nach Ende Ihrer Browser-Sitzung automatisch gelöscht.</p>
+                        <p>Diese Website verwendet keine Tracking-Cookies und keine Analyse-Tools wie Google Analytics. Es werden ausschließlich technisch notwendige Session-Cookies verwendet, die für den Betrieb der Website erforderlich sind: zum einen für den Administrationsbereich, zum anderen – solange die Website sich im Aufbau befindet – für die vorübergehende Zugangssperre der gesamten Website. Diese Cookies enthalten keine personenbezogenen Daten, sondern lediglich eine technische Sitzungskennung, und werden nach Ende Ihrer Browser-Sitzung automatisch gelöscht.</p>
 
                         <h4>Kontaktaufnahme</h4>
                         <p>Wenn Sie uns per E-Mail oder Telefon kontaktieren, wird Ihre Anfrage inklusive aller daraus hervorgehenden personenbezogenen Daten (Name, Anfrage, E-Mail-Adresse, Telefonnummer) zum Zwecke der Bearbeitung Ihres Anliegens bei uns gespeichert und verarbeitet. Diese Daten geben wir nicht ohne Ihre Einwilligung weiter.</p>
