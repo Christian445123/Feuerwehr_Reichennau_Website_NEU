@@ -173,6 +173,27 @@ function getMigrations(): array {
             },
         ],
 
+        [
+            'id' => '2026_09_15_update_ranks_from_orgchart',
+            'run' => function (PDO $db) {
+                // Dienstgrade laut Organigramm angeglichen (Plank & Danner bewusst ausgenommen).
+                $updates = [
+                    ['Martin', 'Tiefnig', 'OLM'],
+                    ['Marcel', 'Achs', 'OLM'],
+                    ['Angela', 'Pelzl', 'LM'],
+                    ['Johannes', 'Bauernfeind', 'OLM'],
+                    ['Dominik', 'Gasser', 'LM'],
+                    ['Fabian', 'Langer', 'LM'],
+                    ['Michel', 'Hilweg', 'OLM'],
+                    ['Michael', 'Pelzl', 'OLM'],
+                ];
+                $stmt = $db->prepare("UPDATE members SET rank = ? WHERE firstname = ? AND lastname = ?");
+                foreach ($updates as [$first, $last, $rank]) {
+                    $stmt->execute([$rank, $first, $last]);
+                }
+            },
+        ],
+
     ];
 }
 
