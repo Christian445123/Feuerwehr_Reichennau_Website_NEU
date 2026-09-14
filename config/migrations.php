@@ -125,20 +125,40 @@ function getMigrations(): array {
                 // Einträge (z.B. "Umgestürzter Bauzaun") identischen Titel UND Datum haben.
                 addColumnIfMissing($db, 'reports', 'source_slug', 'VARCHAR(191) DEFAULT NULL', 'TEXT DEFAULT NULL');
 
-                $exists = $db->prepare("SELECT COUNT(*) FROM reports WHERE source_slug = ?");
+                $existsBySlug = $db->prepare("SELECT COUNT(*) FROM reports WHERE source_slug = ?");
+                // Falls diese Berichte schon zuvor per manuellem SQL-Import (ohne source_slug)
+                // eingespielt wurden: passende Zeile anhand Titel+Datum+Inhalt finden und nur
+                // den source_slug nachtragen, statt einen Duplikat-Bericht anzulegen. Ein
+                // SELECT ... LIMIT 1 vor dem UPDATE verhindert, dass bei mehreren gleich
+                // lautenden Alt-Zeilen (z.B. zwei leere "Umgestürzter Bauzaun"-Berichte) aus
+                // Versehen dieselbe Zeile zweimal oder ein Massen-UPDATE mehrere Zeilen trifft.
+                $findUnlinked = $db->prepare("SELECT id FROM reports WHERE title = ? AND date = ? AND content = ? AND source_slug IS NULL ORDER BY id LIMIT 1");
+                $linkSlug = $db->prepare("UPDATE reports SET source_slug = ? WHERE id = ?");
                 $insertReport = $db->prepare("INSERT INTO reports (title, category, subcategory, content, date, author, published, source_slug) VALUES (?,?,?,?,?,?,?,?)");
                 $insertImg = $db->prepare("INSERT INTO report_images (report_id, filename, caption, sort_order) VALUES (?,?,?,?)");
+                $countImages = $db->prepare("SELECT COUNT(*) FROM report_images WHERE report_id = ?");
 
                 foreach ($entries as $e) {
-                    $exists->execute([$e['source_slug']]);
-                    if ($exists->fetchColumn() > 0) continue;
+                    $existsBySlug->execute([$e['source_slug']]);
+                    if ($existsBySlug->fetchColumn() > 0) continue;
 
-                    $insertReport->execute([
-                        $e['title'], $e['category'], $e['subcategory'] ?? null,
-                        $e['content'], $e['date'], $e['author'] ?? 'FF Reichenau', $e['published'] ?? 1,
-                        $e['source_slug'],
-                    ]);
-                    $reportId = $db->lastInsertId();
+                    $findUnlinked->execute([$e['title'], $e['date'], $e['content']]);
+                    $unlinkedId = $findUnlinked->fetchColumn();
+
+                    if ($unlinkedId) {
+                        $linkSlug->execute([$e['source_slug'], $unlinkedId]);
+                        // Bilder nur nachtragen, falls noch keine für diesen Bericht vorhanden sind
+                        $countImages->execute([$unlinkedId]);
+                        if ($countImages->fetchColumn() > 0) continue;
+                        $reportId = $unlinkedId;
+                    } else {
+                        $insertReport->execute([
+                            $e['title'], $e['category'], $e['subcategory'] ?? null,
+                            $e['content'], $e['date'], $e['author'] ?? 'FF Reichenau', $e['published'] ?? 1,
+                            $e['source_slug'],
+                        ]);
+                        $reportId = $db->lastInsertId();
+                    }
 
                     foreach ($e['images'] as $img) {
                         $insertImg->execute([$reportId, $img['filename'], $img['caption'] ?? '', $img['sort_order'] ?? 0]);
