@@ -132,9 +132,6 @@ $isSuperadmin = in_array('*', $user['permissions'], true);
                 <div class="form-group">
                     <label for="username">Benutzername *</label>
                     <input type="text" id="username" name="username" value="<?php echo e($user['username']); ?>" required autocomplete="off" <?php echo $isProtected ? 'disabled' : ''; ?>>
-                    <?php if ($isProtected): ?>
-                        <input type="hidden" name="username" value="<?php echo e($user['username']); ?>">
-                    <?php endif; ?>
                 </div>
             </div>
             <div class="form-row">
@@ -153,9 +150,12 @@ $isSuperadmin = in_array('*', $user['permissions'], true);
     <div class="admin-card">
         <div class="admin-card-header"><h2><i class="fas fa-key"></i> Berechtigungen</h2></div>
         <div class="admin-card-body">
+            <?php if ($isProtected): ?>
+                <p class="permission-note"><i class="fas fa-shield-alt"></i> Das Hauptkonto <strong>admin</strong> hat fest eingebauten Vollzugriff und kann nicht eingeschränkt werden.</p>
+            <?php endif; ?>
             <div class="form-group">
                 <label class="checkbox-label">
-                    <input type="checkbox" name="is_superadmin" id="is_superadmin" <?php echo $isSuperadmin ? 'checked' : ''; ?>>
+                    <input type="checkbox" name="is_superadmin" id="is_superadmin" <?php echo $isSuperadmin ? 'checked' : ''; ?> <?php echo $isProtected ? 'disabled' : ''; ?>>
                     <span><strong>Vollzugriff</strong> (alle aktuellen und zukünftigen Berechtigungen)</span>
                 </label>
             </div>
@@ -170,7 +170,7 @@ $isSuperadmin = in_array('*', $user['permissions'], true);
                         <label class="checkbox-label permission-checkbox">
                             <input type="checkbox" name="permissions[]" value="<?php echo e($key); ?>"
                                 <?php echo in_array($key, $user['permissions'], true) ? 'checked' : ''; ?>
-                                <?php echo $isSuperadmin ? 'disabled' : ''; ?>>
+                                <?php echo ($isSuperadmin || $isProtected) ? 'disabled' : ''; ?>>
                             <span><?php echo $label; ?></span>
                         </label>
                     </div>
