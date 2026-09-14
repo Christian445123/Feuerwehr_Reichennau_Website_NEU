@@ -165,6 +165,7 @@ function initDatabase(): void {
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             title TEXT NOT NULL,
             category TEXT NOT NULL DEFAULT 'einsatz',
+            subcategory TEXT DEFAULT NULL,
             content TEXT DEFAULT '',
             date TEXT NOT NULL,
             author TEXT DEFAULT '',
