@@ -232,7 +232,11 @@ $formSent = isset($_GET['sent']);
                             <h2>Unser Schutzgebiet</h2>
                         </div>
                         <div class="content-card-body">
-                            <img src="assets/images/schutzgebiet.jpg" alt="Schutzgebiet der FF Reichenau" class="content-image">
+                            <div id="schutzgebietMap" class="schutzgebiet-map"></div>
+                            <p class="schutzgebiet-map-hint">
+                                Grenze näherungsweise nachgezeichnet anhand unserer amtlichen Schutzbereichs-Karte.
+                                <a href="https://www.google.com/maps/search/?api=1&query=Freiwillige+Feuerwehr+Reichenau+Ro%C3%9Faugasse+4+Innsbruck" target="_blank" rel="noopener">Standort auf Google Maps öffnen <i class="fas fa-external-link-alt"></i></a>
+                            </p>
                         </div>
                     </div>
 
@@ -280,3 +284,50 @@ $formSent = isset($_GET['sent']);
 
         </div>
     </section>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var mapEl = document.getElementById('schutzgebietMap');
+    if (!mapEl || typeof L === 'undefined') return;
+
+    // Grenzverlauf näherungsweise aus der amtlichen Schutzbereichs-Karte der
+    // FF Reichenau nachgezeichnet und anhand realer Orte (Inn, Bahngleise,
+    // Pradl, Rossau) georeferenziert. Kein vermessungsgenauer Grenzverlauf -
+    // bei Bedarf hier direkt anpassen.
+    var schutzgebiet = [
+        [47.2758, 11.4050],
+        [47.2805, 11.4120],
+        [47.2838, 11.4210],
+        [47.2836, 11.4300],
+        [47.2795, 11.4345],
+        [47.2762, 11.4395],
+        [47.2705, 11.4375],
+        [47.2665, 11.4335],
+        [47.2635, 11.4225],
+        [47.2600, 11.4145],
+        [47.2612, 11.4025],
+        [47.2685, 11.4010]
+    ];
+
+    var map = L.map('schutzgebietMap', { scrollWheelZoom: false });
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>-Mitwirkende'
+    }).addTo(map);
+
+    var polygon = L.polygon(schutzgebiet, {
+        color: '#d5001c',
+        weight: 3,
+        fillColor: '#d5001c',
+        fillOpacity: 0.12
+    }).addTo(map);
+
+    L.marker([47.2724477, 11.4309793]).addTo(map)
+        .bindPopup('<strong>Feuerwehrhaus Reichenau</strong><br>Rossaugasse 4, 6020 Innsbruck');
+
+    map.fitBounds(polygon.getBounds(), { padding: [20, 20] });
+});
+</script>
