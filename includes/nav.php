@@ -1,7 +1,7 @@
     <nav class="navbar" id="navbar">
         <div class="nav-container">
             <a href="index.php?page=home" class="nav-logo">
-                <img src="assets/images/logo.png" alt="FF Reichenau Wappen" class="nav-logo-img">
+                <img src="assets/images/logo.png?v=2" alt="FF Reichenau Wappen" class="nav-logo-img">
                 <span class="nav-logo-divider"></span>
                 <div class="nav-logo-text">
                     <span class="nav-logo-line nav-logo-line-light">Freiwillige</span>

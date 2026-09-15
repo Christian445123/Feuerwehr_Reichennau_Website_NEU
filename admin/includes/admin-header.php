@@ -19,7 +19,7 @@ require_once __DIR__ . '/../permissions.php';
     <!-- Sidebar -->
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <img src="../assets/images/logo.png" alt="FF Reichenau" class="sidebar-logo">
+            <img src="../assets/images/logo.png?v=2" alt="FF Reichenau" class="sidebar-logo">
             <span class="sidebar-title">FF Reichenau</span>
         </div>
 

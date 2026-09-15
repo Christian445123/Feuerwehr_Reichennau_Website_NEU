@@ -125,7 +125,7 @@ if (siteAccessGranted()) {
 <body>
     <div class="lock-screen">
         <div class="lock-card">
-            <img src="assets/images/logo.png" alt="FF Reichenau Logo">
+            <img src="assets/images/logo.png?v=2" alt="FF Reichenau Logo">
             <h1>Interner Vorschau-Zugang</h1>
             <p>Diese Website befindet sich im Aufbau und ist noch nicht offiziell. Der Zugriff ist derzeit nur mit Passwort möglich.</p>
             <?php if ($error): ?>
