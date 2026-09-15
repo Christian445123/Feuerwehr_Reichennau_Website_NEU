@@ -34,12 +34,12 @@ $subcategoryLabels = [
             <div class="stats-grid" style="margin-bottom:50px;">
                 <div class="stat-card">
                     <div class="stat-icon"><i class="fas fa-fire"></i></div>
-                    <div class="stat-number"><?php echo (int)$brandCount; ?></div>
+                    <div class="stat-number" data-count="<?php echo (int)$brandCount; ?>"><?php echo (int)$brandCount; ?></div>
                     <div class="stat-label">Brandeinsätze <?php echo $year; ?></div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon"><i class="fas fa-tools"></i></div>
-                    <div class="stat-number"><?php echo (int)$technischCount; ?></div>
+                    <div class="stat-number" data-count="<?php echo (int)$technischCount; ?>"><?php echo (int)$technischCount; ?></div>
                     <div class="stat-label">Technische Einsätze <?php echo $year; ?></div>
                 </div>
             </div>
