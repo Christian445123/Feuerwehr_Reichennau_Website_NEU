@@ -31,13 +31,13 @@ if (isset($_GET['delete']) && is_numeric($_GET['delete'])) {
 // Filter
 $group = $_GET['group'] ?? 'all';
 $search = trim($_GET['q'] ?? '');
-$validGroups = ['all', 'Kommando', 'Ausschuss', 'Beauftragter', 'Mannschaft', 'Ehrenmitglieder', 'Jugend'];
+$validGroups = ['all', 'Kommando', 'Ausschuss', 'Beauftragter', 'Sonstige', 'Mannschaft', 'Ehrenmitglieder', 'Jugend'];
 if (!in_array($group, $validGroups, true)) $group = 'all';
 
 // Build query based on filter
 if ($group === 'all') {
     $members = $db->query("SELECT * FROM members WHERE active = 1 ORDER BY group_name, sort_order, lastname")->fetchAll();
-} elseif (in_array($group, ['Kommando', 'Ausschuss', 'Beauftragter'])) {
+} elseif (in_array($group, ['Kommando', 'Ausschuss', 'Beauftragter', 'Sonstige'])) {
     // Filter by JSON functions section
     $pattern = '%"section":"' . $group . '"%';
     $stmt = $db->prepare("SELECT * FROM members WHERE active = 1 AND functions LIKE ? ORDER BY sort_order, lastname");
@@ -77,6 +77,7 @@ require_once __DIR__ . '/includes/admin-header.php';
     <a href="members.php?group=Kommando" class="filter-pill <?php echo $group === 'Kommando' ? 'active' : ''; ?>">Kommando</a>
     <a href="members.php?group=Ausschuss" class="filter-pill <?php echo $group === 'Ausschuss' ? 'active' : ''; ?>">Ausschuss</a>
     <a href="members.php?group=Beauftragter" class="filter-pill <?php echo $group === 'Beauftragter' ? 'active' : ''; ?>">Beauftragter</a>
+    <a href="members.php?group=Sonstige" class="filter-pill <?php echo $group === 'Sonstige' ? 'active' : ''; ?>">Sonstige</a>
     <a href="members.php?group=Mannschaft" class="filter-pill <?php echo $group === 'Mannschaft' ? 'active' : ''; ?>">Mannschaft</a>
     <a href="members.php?group=Ehrenmitglieder" class="filter-pill <?php echo $group === 'Ehrenmitglieder' ? 'active' : ''; ?>">Ehrenmitglieder</a>
     <a href="members.php?group=Jugend" class="filter-pill <?php echo $group === 'Jugend' ? 'active' : ''; ?>">Jugend</a>

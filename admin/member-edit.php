@@ -432,8 +432,9 @@ if (addFunctionBtn) {
             '<option value="Kommando">Kommando</option>' +
             '<option value="Ausschuss">Ausschuss</option>' +
             '<option value="Beauftragter">Beauftragter</option>' +
+            '<option value="Sonstige">Sonstige</option>' +
             '</select>' +
-            '<input type="text" name="func_role[]" placeholder="Rolle (z.B. Kommandant, Kassier, ...)" class="func-role-input">' +
+            '<input type="text" name="func_role[]" placeholder="Rolle (z.B. Kommandant, Gerätewart, ...)" class="func-role-input" list="orgPositionsList">' +
             '<button type="button" class="btn btn-sm btn-danger func-remove" onclick="this.closest(\'.function-row\').remove()"><i class="fas fa-times"></i></button>';
         container.appendChild(row);
     });
