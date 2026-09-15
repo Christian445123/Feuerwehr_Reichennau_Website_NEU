@@ -450,6 +450,22 @@ a:hover {
     transform: translateY(-2px);
 }
 
+.btn-outline-dark {
+    background: var(--color-white);
+    color: var(--color-gray-700);
+    border-color: var(--color-gray-300);
+    padding: 10px 22px;
+    font-size: 0.9rem;
+    border-radius: 50px;
+}
+
+.btn-outline-dark:hover {
+    background: var(--color-gray-100);
+    border-color: var(--color-gray-400);
+    color: var(--color-dark);
+    transform: translateY(-2px);
+}
+
 /* --- Stats Section --- */
 .stats-section {
     background: var(--color-white);
@@ -2855,6 +2871,10 @@ a:hover {
     font-size: 0.85rem;
     color: var(--color-gray-600);
     text-align: center;
+}
+
+.bericht-social-link {
+    margin-top: 30px;
 }
 
 @media (max-width: 768px) {

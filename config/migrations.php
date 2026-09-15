@@ -254,6 +254,13 @@ function getMigrations(): array {
             },
         ],
 
+        [
+            'id' => '2026_09_16_add_social_link_reports',
+            'run' => function (PDO $db) {
+                addColumnIfMissing($db, 'reports', 'social_link', 'VARCHAR(255) DEFAULT NULL');
+            },
+        ],
+
     ];
 }
 

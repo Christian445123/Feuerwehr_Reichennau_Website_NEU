@@ -13,7 +13,7 @@ $pageTitle = $isEdit ? 'Bericht bearbeiten' : 'Neuer Bericht';
 
 $report = [
     'title' => '', 'category' => 'einsatz', 'content' => '',
-    'date' => date('Y-m-d'), 'author' => '', 'published' => 1
+    'date' => date('Y-m-d'), 'author' => '', 'published' => 1, 'social_link' => ''
 ];
 $images = [];
 
@@ -65,6 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $report['date'] = $_POST['date'] ?? date('Y-m-d');
     $report['author'] = trim($_POST['author'] ?? '');
     $report['published'] = isset($_POST['published']) ? 1 : 0;
+    $report['social_link'] = trim($_POST['social_link'] ?? '');
 
     $validCats = ['einsatz', 'uebung', 'jugend', 'veranstaltungen', 'sonstige'];
     if (!in_array($report['category'], $validCats, true)) {
@@ -73,13 +74,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($report['title'])) {
         flash('error', 'Titel ist erforderlich.');
+    } elseif ($report['social_link'] !== '' && !filter_var($report['social_link'], FILTER_VALIDATE_URL)) {
+        flash('error', 'Der Social-Media-Link ist keine gültige URL (z.B. https://www.instagram.com/p/...).');
     } else {
         if ($isEdit) {
-            $stmt = $db->prepare("UPDATE reports SET title=?, category=?, content=?, date=?, author=?, published=?, updated_at=CURRENT_TIMESTAMP WHERE id=?");
-            $stmt->execute([$report['title'], $report['category'], $report['content'], $report['date'], $report['author'], $report['published'], $id]);
+            $stmt = $db->prepare("UPDATE reports SET title=?, category=?, content=?, date=?, author=?, published=?, social_link=?, updated_at=CURRENT_TIMESTAMP WHERE id=?");
+            $stmt->execute([$report['title'], $report['category'], $report['content'], $report['date'], $report['author'], $report['published'], $report['social_link'] ?: null, $id]);
         } else {
-            $stmt = $db->prepare("INSERT INTO reports (title, category, content, date, author, published) VALUES (?,?,?,?,?,?)");
-            $stmt->execute([$report['title'], $report['category'], $report['content'], $report['date'], $report['author'], $report['published']]);
+            $stmt = $db->prepare("INSERT INTO reports (title, category, content, date, author, published, social_link) VALUES (?,?,?,?,?,?,?)");
+            $stmt->execute([$report['title'], $report['category'], $report['content'], $report['date'], $report['author'], $report['published'], $report['social_link'] ?: null]);
             $id = $db->lastInsertId();
             $isEdit = true;
         }
@@ -162,6 +165,12 @@ require_once __DIR__ . '/includes/admin-header.php';
                     <div class="form-group">
                         <label for="author">Autor</label>
                         <input type="text" id="author" name="author" value="<?php echo e($report['author']); ?>">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="social_link"><i class="fab fa-instagram"></i> Instagram-Beitrag oder Website verlinken</label>
+                        <input type="url" id="social_link" name="social_link" value="<?php echo e($report['social_link'] ?? ''); ?>" placeholder="z.B. https://www.instagram.com/p/... oder eine externe Website">
+                        <p class="form-hint">Optional: Link zu einem Instagram-Beitrag oder einer externen Website (z.B. Zeitungsartikel, feuerwehr.tirol). Wird beim veröffentlichten Bericht als Button angezeigt.</p>
                     </div>
                 </div>
             </div>

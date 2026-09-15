@@ -61,7 +61,7 @@ $archivCutoff = date('Y-m-d', strtotime('-2 years')); // Älter als 2 Jahre gilt
 
     <section class="section">
         <div class="container">
-            <a href="index.php?page=berichte" class="btn btn-outline-dark" style="margin-bottom: 24px; display: inline-flex; align-items: center; gap: 8px; padding: 8px 18px; border: 1px solid #ced4da; border-radius: 50px; color: #495057; font-size: 0.9rem;">
+            <a href="index.php?page=berichte" class="btn btn-outline-dark" style="margin-bottom: 24px;">
                 <i class="fas fa-arrow-left"></i> Zurück zu allen Berichten
             </a>
 
@@ -86,6 +86,25 @@ $archivCutoff = date('Y-m-d', strtotime('-2 years')); // Älter als 2 Jahre gilt
                             <?php endif; ?>
                         </div>
                     <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+
+            <?php if (!empty($report['social_link'])): ?>
+                <?php
+                $socialIconClass = 'fas fa-external-link-alt';
+                $socialLabel = 'Weitere Informationen';
+                if (stripos($report['social_link'], 'instagram.com') !== false) {
+                    $socialIconClass = 'fab fa-instagram';
+                    $socialLabel = 'Auf Instagram ansehen';
+                } elseif (stripos($report['social_link'], 'facebook.com') !== false) {
+                    $socialIconClass = 'fab fa-facebook';
+                    $socialLabel = 'Auf Facebook ansehen';
+                }
+                ?>
+                <div class="bericht-social-link">
+                    <a href="<?php echo htmlspecialchars($report['social_link']); ?>" target="_blank" rel="noopener" class="btn btn-outline-dark">
+                        <i class="<?php echo $socialIconClass; ?>"></i> <?php echo $socialLabel; ?>
+                    </a>
                 </div>
             <?php endif; ?>
         </div>

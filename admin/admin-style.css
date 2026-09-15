@@ -298,6 +298,7 @@ img { max-width: 100%; height: auto; }
 .form-group input[type="text"],
 .form-group input[type="password"],
 .form-group input[type="email"],
+.form-group input[type="url"],
 .form-group input[type="number"],
 .form-group input[type="date"],
 .form-group select,
@@ -318,6 +319,10 @@ img { max-width: 100%; height: auto; }
 .form-group textarea { resize: vertical; min-height: 120px; }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .form-row-3 { grid-template-columns: 1fr 1fr 1fr; }
+
+.form-hint {
+    font-size: 0.78rem; color: var(--gray-600); margin-top: 6px;
+}
 
 .rang-abzeichen-section {
     margin: 4px 0 20px;
