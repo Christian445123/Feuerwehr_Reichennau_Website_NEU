@@ -27,6 +27,7 @@ function getAllPermissions(): array {
         'settings.manage'   => 'Website-Einstellungen verwalten (Zugangspasswort der Seite)',
         'users.manage'      => 'Benutzer &amp; Rechte verwalten',
         'deploy.manage'     => 'Deployment: neuesten Stand von GitHub auf den Server holen (git pull)',
+        'orgchart.manage'   => 'Organigramm verwalten (Namen den Positionen zuordnen)',
     ];
 }
 

@@ -36,6 +36,11 @@ require_once __DIR__ . '/../permissions.php';
             <a href="ranks.php" class="sidebar-link <?php echo ($activePage ?? '') === 'ranks' ? 'active' : ''; ?>">
                 <i class="fas fa-medal"></i> Dienstgrade
             </a>
+            <?php if (userHasPermission('orgchart.manage')): ?>
+                <a href="orgchart.php" class="sidebar-link <?php echo ($activePage ?? '') === 'orgchart' ? 'active' : ''; ?>">
+                    <i class="fas fa-sitemap"></i> Organigramm
+                </a>
+            <?php endif; ?>
 
             <div class="sidebar-divider"></div>
 
