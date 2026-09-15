@@ -109,13 +109,9 @@
                     <div class="content-card-body">
                         <div class="impressum-grid">
                             <div>
-                                <h4>Verantwortliche</h4>
-                                <p>
-                                    <strong>Kommandant:</strong> OBI Danner David<br>
-                                    <strong>Stv. Kommandant &amp; Bezirkskommandant:</strong> BR Plank Helmut<br>
-                                    <strong>Schriftführerin:</strong> HV Rippl Nina<br>
-                                    <strong>Kassier:</strong> HV Rainalter Martin
-                                </p>
+                                <h4>Herausgeberin</h4>
+                                <p>Freiwillige Feuerwehr Reichenau / Innsbruck Stadt<br>Roßaugasse 4, A-6020 Innsbruck</p>
+                                <p>Bei Fragen oder Anliegen wenden Sie sich bitte an <a href="mailto:reichenau@feuerwehr.tirol">reichenau@feuerwehr.tirol</a> – wir kümmern uns darum.</p>
                             </div>
                             <div>
                                 <h4>Copyright</h4>
