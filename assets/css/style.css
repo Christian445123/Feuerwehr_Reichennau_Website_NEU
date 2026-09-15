@@ -488,16 +488,6 @@ a:hover {
     padding: 20px;
 }
 
-.stats-period {
-    text-align: center;
-    color: var(--color-gray-600);
-    font-size: 0.85rem;
-    font-weight: 600;
-    margin-bottom: 24px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
 .stat-icon {
     font-size: 2rem;
     color: var(--color-primary);

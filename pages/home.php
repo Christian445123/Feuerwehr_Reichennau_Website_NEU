@@ -25,7 +25,6 @@
     <!-- Einsatz-Statistik -->
     <section class="stats-section">
         <div class="container">
-            <p class="stats-period">Berichtszeitraum <?php echo date('d.m.Y', strtotime($stats['start'])); ?> – <?php echo date('d.m.Y', strtotime($stats['end'])); ?></p>
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-icon"><i class="fas fa-fire"></i></div>
