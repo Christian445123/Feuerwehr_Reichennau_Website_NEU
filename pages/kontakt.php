@@ -232,9 +232,8 @@ $formSent = isset($_GET['sent']);
                             <h2>Unser Schutzgebiet</h2>
                         </div>
                         <div class="content-card-body">
-                            <div id="schutzgebietMap" class="schutzgebiet-map"></div>
+                            <img src="assets/images/schutzgebiet_karte.jpg" alt="Schutzbereich der FF Reichenau (amtliche Karte, Stadt Innsbruck)" class="content-image">
                             <p class="schutzgebiet-map-hint">
-                                Grenze näherungsweise nachgezeichnet anhand unserer amtlichen Schutzbereichs-Karte.
                                 <a href="https://www.google.com/maps/search/?api=1&query=Freiwillige+Feuerwehr+Reichenau+Ro%C3%9Faugasse+4+Innsbruck" target="_blank" rel="noopener">Standort auf Google Maps öffnen <i class="fas fa-external-link-alt"></i></a>
                             </p>
                         </div>
@@ -265,103 +264,52 @@ $formSent = isset($_GET['sent']);
                     <div class="content-card-body">
                         <div class="impressum-grid">
                             <div>
-                                <h4>Herausgeberin</h4>
-                                <p>Freiwillige Feuerwehr Reichenau / Innsbruck Stadt<br>Roßaugasse 4, A-6020 Innsbruck</p>
-                                <p>Bei Fragen oder Anliegen wenden Sie sich bitte an <a href="mailto:reichenau@feuerwehr.tirol">reichenau@feuerwehr.tirol</a> – wir kümmern uns darum.</p>
+                                <h4>Medieninhaberin &amp; Herausgeberin</h4>
+                                <p>
+                                    Freiwillige Feuerwehr Reichenau / Innsbruck Stadt<br>
+                                    Roßaugasse 4, A-6020 Innsbruck
+                                </p>
+                                <p><strong>Vertreten durch:</strong> Kommandant David Danner</p>
+                                <p>
+                                    Tel.: <a href="tel:+43512345160">+43 (0)512 / 345160</a><br>
+                                    E-Mail: <a href="mailto:reichenau@feuerwehr.tirol">reichenau@feuerwehr.tirol</a>
+                                </p>
                             </div>
                             <div>
-                                <h4>Copyright</h4>
-                                <p>Alle Rechte vorbehalten. Verantwortlich für Inhalt und Gestaltung der Internetpräsentation ist die Freiwillige Feuerwehr Reichenau.</p>
-                                <p>Die Feuerwehr Reichenau erteilt die Erlaubnis, alle auf diesen Internetseiten erscheinenden Inhalte zur Informationsgewinnung des Anwenders zu nutzen und einen Ausdruck zu erstellen. Für eine gewerbliche Nutzung gilt dies nur nach einer vorher erteilten Zustimmung der Verantwortlichen.</p>
+                                <h4>Vereinszweck &amp; Blattlinie</h4>
+                                <p>Die Freiwillige Feuerwehr Reichenau ist eine öffentliche Einrichtung der Gefahrenabwehr (Brand- und Katastrophenschutz) im Schutzgebiet Reichenau/Innsbruck. Diese Website dient der Information der Öffentlichkeit über Einsätze, Aktivitäten und Angebote der Feuerwehr sowie der Mitgliederwerbung.</p>
                             </div>
                         </div>
-                        <p class="impressum-note">Layout und Gestaltung dieser Präsentationen sowie die enthaltenen Informationen sind gemäß dem Urheberrechtsgesetz geschützt. Alle Angaben erfolgen ohne Gewähr. Eine Haftung für Schäden, die sich aus der Verwendung der veröffentlichten Inhalte ergeben, ist ausgeschlossen.</p>
-                        <p class="impressum-note">Diese Webseite wird veröffentlicht und gepflegt durch die Freiwillige Feuerwehr Reichenau / Innsbruck Stadt.</p>
-                        <p class="impressum-note"><strong>Hinweis:</strong> Diese Website befindet sich derzeit im Aufbau und ist noch nicht die offizielle, öffentlich zugängliche Internetpräsenz der Freiwilligen Feuerwehr Reichenau. Der Zugriff ist übergangsweise passwortgeschützt.</p>
+                        <hr>
+                        <h4>Copyright</h4>
+                        <p>Alle Rechte vorbehalten. Verantwortlich für Inhalt und Gestaltung der Internetpräsentation ist die Freiwillige Feuerwehr Reichenau. Layout und Gestaltung dieser Präsentation sowie die enthaltenen Informationen sind gemäß dem Urheberrechtsgesetz geschützt.</p>
+                        <p>Die Feuerwehr Reichenau erteilt die Erlaubnis, alle auf diesen Internetseiten erscheinenden Inhalte zur Informationsgewinnung des Anwenders zu nutzen und einen Ausdruck zu erstellen. Für eine gewerbliche Nutzung gilt dies nur nach einer vorher erteilten Zustimmung der Verantwortlichen.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Allgemeine Hinweise -->
+            <div class="impressum-section">
+                <div class="content-card">
+                    <div class="content-card-header">
+                        <div class="content-card-icon"><i class="fas fa-circle-info"></i></div>
+                        <h2>Allgemeine Hinweise</h2>
+                    </div>
+                    <div class="content-card-body">
+                        <h4><i class="fas fa-phone-volume"></i> Im Notfall</h4>
+                        <p>Diese Website, das Kontaktformular und unsere E-Mail-Adresse werden <strong>nicht laufend rund um die Uhr überwacht</strong> und sind daher für echte Notfälle ungeeignet. Wählen Sie im Ernstfall immer den <strong>Euronotruf 112</strong> oder die <strong>Feuerwehr 122</strong>.</p>
+
+                        <h4><i class="fas fa-triangle-exclamation"></i> Keine Gewähr für Inhalte</h4>
+                        <p>Wir erstellen die Inhalte dieser Website mit größtmöglicher Sorgfalt. Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte – insbesondere von Terminen, Einsatzberichten und Statistiken – können wir dennoch keine Gewähr übernehmen. Änderungen ohne vorherige Ankündigung sind möglich.</p>
+
+                        <h4><i class="fas fa-link"></i> Eingebettete Inhalte Dritter</h4>
+                        <p>Auf einzelnen Seiten binden wir Inhalte externer Anbieter ein, z.&nbsp;B. eine Kartendarstellung (OpenStreetMap/CARTO) unter Kontakt sowie die Alarmierungsübersicht des Landes-Feuerwehrverbands Tirol unter Service&nbsp;&rarr;&nbsp;Alarmierungen. Für diese Inhalte ist der jeweilige externe Anbieter verantwortlich. Details dazu finden Sie in unserer <a href="index.php?page=datenschutz">Datenschutzerklärung</a>.</p>
+
+                        <h4><i class="fas fa-clock-rotate-left"></i> Status dieser Website</h4>
+                        <p>Diese Website befindet sich derzeit im Aufbau und ist noch nicht die offizielle, öffentlich zugängliche Internetpräsenz der Freiwilligen Feuerwehr Reichenau. Der Zugriff ist übergangsweise passwortgeschützt.</p>
                     </div>
                 </div>
             </div>
 
         </div>
     </section>
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    var mapEl = document.getElementById('schutzgebietMap');
-    if (!mapEl || typeof L === 'undefined') return;
-
-    // Grenzverlauf: der Kern (Stadtteil Reichenau) stammt aus den echten,
-    // amtlichen OpenStreetMap-Verwaltungsgrenzen (Nominatim, Relation 19639238)
-    // - keine Schätzung. Der Bereich reicht laut FF Reichenau aber über den
-    // Stadtteil Reichenau hinaus auch über Teile von Pradl/Pradler Saggen und
-    // das Gewerbegebiet Rossau (siehe "Über uns" -> Geschichte); dieser
-    // zusätzliche westliche/südliche Bereich (Punkte ab "Erweiterung") ist
-    // anhand der amtlichen Schutzbereichs-Karte nachgezeichnet und mit realen
-    // Orientierungspunkten (Pradler Platz, Hauptbahnhof) abgeglichen, aber
-    // nicht vermessungsgenau - bei Bedarf hier direkt anpassen.
-    var schutzgebiet = [
-        // -- Stadtteil Reichenau (offizielle Verwaltungsgrenze, OSM) --
-        [47.2713, 11.4144],
-        [47.2701, 11.4151],
-        [47.2690, 11.4154],
-        [47.2682, 11.4174],
-        [47.2664, 11.4213],
-        [47.2657, 11.4229],
-        [47.2650, 11.4238],
-        [47.2688, 11.4263],
-        [47.2717, 11.4273],
-        [47.2727, 11.4280],
-        // -- Erweiterung Richtung Osten, damit das Feuerwehrhaus (Rossau) mit
-        //    eingeschlossen ist --
-        [47.2732, 11.4300],
-        [47.2722, 11.4322],
-        [47.2712, 11.4318],
-        [47.2705, 11.4296],
-        // -- zurück zur Reichenau-Grenze (Nordbereich entlang des Inn) --
-        [47.2741, 11.4287],
-        [47.2772, 11.4222],
-        [47.2783, 11.4181],
-        [47.2775, 11.4164],
-        [47.2760, 11.4145],
-        [47.2750, 11.4153],
-        [47.2739, 11.4159],
-        [47.2730, 11.4159],
-        [47.2720, 11.4153],
-        [47.2715, 11.4149],
-        // -- Erweiterung Richtung Westen (Teile Pradl/Pradler Saggen/Rossau
-        //    Richtung Hauptbahnhof) - als geschlossener Keil ohne
-        //    Selbstüberschneidung --
-        [47.2695, 11.4095],
-        [47.2650, 11.4040],
-        [47.2612, 11.4025],
-        [47.2655, 11.4015],
-        [47.2700, 11.4070]
-    ];
-
-    var map = L.map('schutzgebietMap', { scrollWheelZoom: false });
-
-    // Hinweis: der kostenlose tile.openstreetmap.org-Server ist laut Nutzungs-
-    // richtlinie nur für kurze Tests gedacht und blockt echte Websites (403
-    // "Access blocked"). CARTO stellt kostenlose Kacheln ausdrücklich auch für
-    // den produktiven Einsatz bereit, daher hier stattdessen genutzt.
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-        maxZoom: 19,
-        subdomains: 'abcd',
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>-Mitwirkende &copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a>'
-    }).addTo(map);
-
-    var polygon = L.polygon(schutzgebiet, {
-        color: '#d5001c',
-        weight: 3,
-        fillColor: '#d5001c',
-        fillOpacity: 0.12
-    }).addTo(map);
-
-    L.marker([47.2724477, 11.4309793]).addTo(map)
-        .bindPopup('<strong>Feuerwehrhaus Reichenau</strong><br>Rossaugasse 4, 6020 Innsbruck');
-
-    map.fitBounds(polygon.getBounds(), { padding: [20, 20] });
-});
-</script>

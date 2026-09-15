@@ -138,6 +138,10 @@
                         <h4>Kontaktaufnahme</h4>
                         <p>Wenn Sie uns per E-Mail oder Telefon kontaktieren, wird Ihre Anfrage inklusive aller daraus hervorgehenden personenbezogenen Daten (Name, Anfrage, E-Mail-Adresse, Telefonnummer) zum Zwecke der Bearbeitung Ihres Anliegens bei uns gespeichert und verarbeitet. Diese Daten geben wir nicht ohne Ihre Einwilligung weiter.</p>
                         <p>Die Verarbeitung dieser Daten erfolgt auf Grundlage von Art. 6 Abs. 1 lit. b DSGVO, sofern Ihre Anfrage mit der Erfüllung eines Vertrags zusammenhängt oder zur Durchführung vorvertraglicher Maßnahmen erforderlich ist. In allen übrigen Fällen beruht die Verarbeitung auf unserem berechtigten Interesse an der effektiven Bearbeitung der an uns gerichteten Anfragen (Art. 6 Abs. 1 lit. f DSGVO).</p>
+
+                        <h4>Kontaktformular</h4>
+                        <p>Auf unserer Kontakt-Seite steht Ihnen zusätzlich ein Kontaktformular zur Verfügung. Die dort freiwillig eingegebenen Daten (Anrede, Vor- und Nachname, Straße/Nr., Ort, E-Mail-Adresse, Telefonnummer, Nachricht) werden per E-Mail an uns übermittelt und ausschließlich zur Bearbeitung Ihres Anliegens verwendet. Eine dauerhafte Speicherung in einer Datenbank erfolgt nicht – die Anfrage landet direkt als E-Mail in unserem Postfach. Pflichtfelder sind Vorname, Nachname, E-Mail-Adresse und Nachricht; alle übrigen Angaben sind freiwillig.</p>
+                        <p>Zum Schutz vor automatisiertem Spam-Versand enthält das Formular ein für Menschen unsichtbares Zusatzfeld ("Honeypot"). Ausgefüllte Formulare mit diesem Feld werden automatisch verworfen und nicht versendet.</p>
                     </div>
                 </div>
 
@@ -161,6 +165,9 @@
 
                         <h4>Instagram-Link</h4>
                         <p>Unsere Website enthält außerdem einen Link zu unserer Instagram-Seite. Auch hierbei handelt es sich um einen einfachen Hyperlink, der keine Daten an Instagram überträgt. Erst wenn Sie den Link anklicken und die Instagram-Seite besuchen, gelten die Datenschutzbestimmungen von Instagram (Meta Platforms Ireland Ltd.).</p>
+
+                        <h4>Eingebettete Alarmierungsübersicht (Landes-Feuerwehrverband Tirol)</h4>
+                        <p>Auf der Seite Service&nbsp;&rarr;&nbsp;Alarmierungen binden wir die "Aktuelle Alarmierungen"-Seite des Landes-Feuerwehrverbands Tirol (feuerwehr.tirol) per Iframe ein. Beim Aufruf dieser Seite wird eine Verbindung zu den Servern des Landes-Feuerwehrverbands Tirol hergestellt, wodurch Ihre IP-Adresse sowie ggf. weitere technische Daten an diesen übertragen werden. Es gilt die Datenschutzerklärung von feuerwehr.tirol.</p>
                     </div>
                 </div>
 
