@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // --- Berichte Filter ---
     const filterTabs = document.querySelectorAll('.filter-tab');
-    const berichteCards = document.querySelectorAll('.bericht-card');
+    const berichteCards = document.querySelectorAll('.bericht-row');
     const berichteGrid = document.getElementById('berichteGrid');
     const filterResultCount = document.getElementById('filterResultCount');
     const noResultsMsg = document.getElementById('noResultsMsg');
