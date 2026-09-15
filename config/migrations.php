@@ -204,6 +204,56 @@ function getMigrations(): array {
             },
         ],
 
+        [
+            'id' => '2026_09_16_create_org_chart',
+            'run' => function (PDO $db) {
+                $db->exec("CREATE TABLE IF NOT EXISTS org_chart_positions (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    position_key VARCHAR(50) UNIQUE NOT NULL,
+                    label VARCHAR(100) NOT NULL,
+                    name VARCHAR(150) DEFAULT '',
+                    sort_order INT DEFAULT 0
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
+                // Struktur des Organigramms (Positionen + Layout) ist fest im Code
+                // verankert (siehe pages/ueber-uns.php) - hier werden nur einmalig
+                // die aktuellen Namen je Position vorbefüllt. Danach ausschließlich
+                // über Admin -> Organigramm pflegen, diese Migration überschreibt
+                // spätere Änderungen nicht mehr.
+                $positions = [
+                    ['kommandant', 'Kommandant', 'David Danner', 1],
+                    ['kassier', 'Kassier', 'Martin Rainalter', 2],
+                    ['kommandant_stv', 'Kommandant Stv.', 'Helmut Plank', 3],
+                    ['schriftfuehrer', 'Schriftführerin', 'Nina Rippl', 4],
+                    ['feuerwehrkurat', 'Feuerwehrkurat', 'Paul Kneussl', 5],
+                    ['obermaschinist', 'Obermaschinist', 'Martin Tiefnig', 6],
+                    ['geraetewart', 'Gerätewart', 'Michael Pelzl', 7],
+                    ['zugskommandant', 'Zugskommandant', '', 8],
+                    ['jugendbetreuer', 'Jugendbetreuerin', 'Angela Pelzl', 9],
+                    ['funkbeauftragter', 'Funkbeauftragter', 'Martin Rainalter', 10],
+                    ['atemschutzbeauftragter', 'Atemschutzbeauftragter', 'Marcel Achs', 11],
+                    ['gruppenkdt_1', 'Gruppenkommandant', 'Martin Tiefnig', 12],
+                    ['gruppenkdt_2', 'Gruppenkommandant', 'Harald Glenda', 13],
+                    ['gruppenkdt_3', 'Gruppenkommandant', 'J. Bauernfeind', 14],
+                    ['gruppenkdt_4', 'Gruppenkommandant', 'Matthias Stauder', 15],
+                    ['gruppenkdt_5', 'Gruppenkommandant', 'Dominik Gasser', 16],
+                    ['gruppenkdt_stv_1', 'Gruppenkommandant-Stv.', 'Marcel Achs', 17],
+                    ['gruppenkdt_stv_2', 'Gruppenkommandant-Stv.', 'Fabian Langer', 18],
+                    ['gruppenkdt_stv_3', 'Gruppenkommandant-Stv.', 'Angela Pelzl', 19],
+                    ['gruppenkdt_stv_4', 'Gruppenkommandant-Stv.', 'Michel Hilweg', 20],
+                    ['gruppenkdt_stv_5', 'Gruppenkommandant-Stv.', 'Martin Rainalter', 21],
+                ];
+
+                $check = $db->prepare("SELECT COUNT(*) FROM org_chart_positions WHERE position_key = ?");
+                $insert = $db->prepare("INSERT INTO org_chart_positions (position_key, label, name, sort_order) VALUES (?,?,?,?)");
+                foreach ($positions as [$key, $label, $name, $order]) {
+                    $check->execute([$key]);
+                    if ($check->fetchColumn() > 0) continue;
+                    $insert->execute([$key, $label, $name, $order]);
+                }
+            },
+        ],
+
     ];
 }
 
