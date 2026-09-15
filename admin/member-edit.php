@@ -14,6 +14,11 @@ $canEditFunctions = userHasPermission('members.functions');
 $db = getDB();
 $activePage = 'members';
 
+// Positionsnamen aus dem Organigramm als Vorschläge für die Funktion/Rolle -
+// so können Funktionen wie "Gerätewart" direkt übernommen werden, statt sie
+// frei tippen zu müssen.
+$orgPositionLabels = $db->query("SELECT DISTINCT label FROM org_chart_positions ORDER BY sort_order")->fetchAll(PDO::FETCH_COLUMN);
+
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 $isEdit = $id > 0;
 $pageTitle = $isEdit ? 'Mitglied bearbeiten' : 'Neues Mitglied';
@@ -232,11 +237,18 @@ require_once __DIR__ . '/includes/admin-header.php';
                     <div class="form-group">
                         <label><i class="fas fa-briefcase"></i> Funktionen / Rollen</label>
                         <p style="font-size:0.82rem;color:var(--gray-600);margin-bottom:10px;">
-                            Weisen Sie dem Mitglied eine oder mehrere Funktionen zu. Jede Funktion bestimmt, in welcher Sektion das Mitglied auf der Website angezeigt wird.
+                            Weisen Sie dem Mitglied eine oder mehrere Funktionen zu. "Kommando" und "Ausschuss" bestimmen zusätzlich, in welcher Übersicht das Mitglied auf der Website erscheint.
+                            Für Funktionen, die zu keiner dieser beiden Gruppen gehören (z.B. Gerätewart, Zugskommandant, ...), einfach "Sonstige" wählen - die Rolle wird trotzdem am Profil des Mitglieds angezeigt.
+                            Bei der Rolle können die Positionen aus dem Organigramm ausgewählt werden, oder ein eigener Text eingetragen werden.
                         </p>
                         <?php if (!$canEditFunctions): ?>
                             <p class="permission-note"><i class="fas fa-lock"></i> Dir fehlt die Berechtigung, Funktionen zu ändern.</p>
                         <?php endif; ?>
+                        <datalist id="orgPositionsList">
+                            <?php foreach ($orgPositionLabels as $label): ?>
+                                <option value="<?php echo e($label); ?>">
+                            <?php endforeach; ?>
+                        </datalist>
                         <div id="functionsContainer">
                             <?php if (!empty($currentFunctions)): ?>
                                 <?php foreach ($currentFunctions as $i => $func): ?>
@@ -246,8 +258,9 @@ require_once __DIR__ . '/includes/admin-header.php';
                                             <option value="Kommando" <?php echo ($func['section'] ?? '') === 'Kommando' ? 'selected' : ''; ?>>Kommando</option>
                                             <option value="Ausschuss" <?php echo ($func['section'] ?? '') === 'Ausschuss' ? 'selected' : ''; ?>>Ausschuss</option>
                                             <option value="Beauftragter" <?php echo ($func['section'] ?? '') === 'Beauftragter' ? 'selected' : ''; ?>>Beauftragter</option>
+                                            <option value="Sonstige" <?php echo ($func['section'] ?? '') === 'Sonstige' ? 'selected' : ''; ?>>Sonstige</option>
                                         </select>
-                                        <input type="text" name="func_role[]" value="<?php echo e($func['role'] ?? ''); ?>" placeholder="Rolle (z.B. Kommandant, Kassier, ...)" class="func-role-input" <?php echo $canEditFunctions ? '' : 'disabled'; ?>>
+                                        <input type="text" name="func_role[]" value="<?php echo e($func['role'] ?? ''); ?>" placeholder="Rolle (z.B. Kommandant, Gerätewart, ...)" class="func-role-input" list="orgPositionsList" <?php echo $canEditFunctions ? '' : 'disabled'; ?>>
                                         <?php if ($canEditFunctions): ?>
                                             <button type="button" class="btn btn-sm btn-danger func-remove" onclick="this.closest('.function-row').remove()"><i class="fas fa-times"></i></button>
                                         <?php endif; ?>
