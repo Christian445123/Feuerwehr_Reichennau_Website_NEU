@@ -241,12 +241,12 @@ foreach ($allMembers as $am) {
 
                 <!-- Organigramm -->
                 <?php
-                function orgBox(array $org, array $memberRankByName, string $key, string $label, string $colorClass): void {
+                function orgBox(array $org, array $memberRankByName, string $key, string $label, string $colorClass, string $gridColumn = ''): void {
                     $name = orgName($org, $key);
                     $isVacant = ($name === 'derzeit nicht besetzt');
                     $badge = !$isVacant ? orgRankBadge($memberRankByName, $name) : null;
                     ?>
-                    <div class="org2-box <?php echo $colorClass; ?><?php echo $isVacant ? ' org2-vacant' : ''; ?>">
+                    <div class="org2-box <?php echo $colorClass; ?><?php echo $isVacant ? ' org2-vacant' : ''; ?>" <?php echo $gridColumn ? 'style="grid-column:' . $gridColumn . ';"' : ''; ?>>
                         <?php if ($badge): ?>
                             <img src="<?php echo htmlspecialchars($badge); ?>" alt="" class="org2-rank-badge">
                         <?php endif; ?>
@@ -274,25 +274,24 @@ foreach ($allMembers as $am) {
                             <div class="org2-row">
                                 <?php orgBox($org, $memberRankByName, 'zugskommandant', 'Zugskommandant', 'org2-gray'); ?>
                             </div>
-                            <div class="org2-row org2-row-five">
-                                <?php for ($i = 1; $i <= 5; $i++): ?>
-                                    <?php orgBox($org, $memberRankByName, "gruppenkdt_$i", 'Gruppenkommandant', 'org2-red'); ?>
+                            <div class="org2-row org2-grid">
+                                <?php for ($i = 1; $i <= 5; $i++): $col = ($i - 1) * 2 + 1; ?>
+                                    <?php orgBox($org, $memberRankByName, "gruppenkdt_$i", 'Gruppenkommandant', 'org2-red', "$col / " . ($col + 2)); ?>
                                 <?php endfor; ?>
                             </div>
-                            <div class="org2-row org2-row-five">
-                                <?php for ($i = 1; $i <= 5; $i++): ?>
-                                    <?php orgBox($org, $memberRankByName, "gruppenkdt_stv_$i", 'Gkdt.-Stv.', 'org2-red'); ?>
+                            <div class="org2-row org2-grid">
+                                <?php for ($i = 1; $i <= 5; $i++): $col = ($i - 1) * 2 + 1; ?>
+                                    <?php orgBox($org, $memberRankByName, "gruppenkdt_stv_$i", 'Gkdt.-Stv.', 'org2-red', "$col / " . ($col + 2)); ?>
                                 <?php endfor; ?>
                             </div>
-                            <div class="org2-row org2-row-scatter">
-                                <?php orgBox($org, $memberRankByName, 'feuerwehrkurat', 'Feuerwehrkurat', 'org2-red'); ?>
-                                <?php orgBox($org, $memberRankByName, 'obermaschinist', 'Obermaschinist', 'org2-red'); ?>
-                                <?php orgBox($org, $memberRankByName, 'geraetewart', 'Gerätewart', 'org2-red'); ?>
-                                <?php orgBox($org, $memberRankByName, 'jugendbetreuer', 'Jugendbetreuer', 'org2-red'); ?>
+                            <div class="org2-row org2-grid">
+                                <?php orgBox($org, $memberRankByName, 'obermaschinist', 'Obermaschinist', 'org2-red', '2 / 4'); ?>
+                                <?php orgBox($org, $memberRankByName, 'geraetewart', 'Gerätewart', 'org2-red', '5 / 7'); ?>
+                                <?php orgBox($org, $memberRankByName, 'jugendbetreuer', 'Jugendbetreuer', 'org2-red', '8 / 10'); ?>
                             </div>
-                            <div class="org2-row org2-row-scatter">
-                                <?php orgBox($org, $memberRankByName, 'funkbeauftragter', 'Funkbeauftragter', 'org2-red'); ?>
-                                <?php orgBox($org, $memberRankByName, 'atemschutzbeauftragter', 'Atemschutzwart', 'org2-red'); ?>
+                            <div class="org2-row org2-grid">
+                                <?php orgBox($org, $memberRankByName, 'funkbeauftragter', 'Funkbeauftragter', 'org2-red', '3 / 5'); ?>
+                                <?php orgBox($org, $memberRankByName, 'atemschutzbeauftragter', 'Atemschutzwart', 'org2-red', '6 / 8'); ?>
                             </div>
                         </div>
                     </div>
