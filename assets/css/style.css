@@ -2281,6 +2281,13 @@ a:hover {
     box-shadow: 0 -4px 20px rgba(0,0,0,0.2);
 }
 
+/* .cookie-banner{display:flex} hat dieselbe Spezifität wie die
+   Browser-Standardregel für [hidden] und würde sie sonst überschreiben,
+   sodass das Banner nach dem Setzen von .hidden sichtbar bliebe. */
+.cookie-banner[hidden] {
+    display: none !important;
+}
+
 .cookie-banner p {
     margin: 0;
     max-width: 700px;
