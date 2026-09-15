@@ -437,6 +437,23 @@ a:hover {
     box-shadow: 0 8px 25px rgba(213, 0, 28, 0.35);
 }
 
+.btn-secondary {
+    background: rgba(255,255,255,0.1);
+    color: var(--color-white);
+    border-color: rgba(255,255,255,0.25);
+}
+
+.btn-secondary:hover {
+    background: rgba(255,255,255,0.18);
+    border-color: rgba(255,255,255,0.4);
+    color: var(--color-white);
+}
+
+.btn-sm {
+    padding: 9px 20px;
+    font-size: 0.85rem;
+}
+
 .btn-outline {
     background: transparent;
     color: var(--color-white);
@@ -2245,6 +2262,49 @@ a:hover {
 .back-to-top:hover {
     background: var(--color-primary-dark);
     transform: translateY(-3px);
+}
+
+.cookie-banner {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1000;
+    background: var(--color-secondary);
+    color: rgba(255,255,255,0.85);
+    padding: 18px 24px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.2);
+}
+
+.cookie-banner p {
+    margin: 0;
+    max-width: 700px;
+    font-size: 0.88rem;
+    line-height: 1.5;
+}
+
+.cookie-banner p a {
+    color: var(--color-primary-light);
+    text-decoration: underline;
+}
+
+.cookie-banner-actions {
+    display: flex;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+@media (max-width: 640px) {
+    .cookie-banner {
+        flex-direction: column;
+        text-align: center;
+        padding: 16px 20px;
+    }
 }
 
 /* --- Animations --- */

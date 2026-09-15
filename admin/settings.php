@@ -3,6 +3,7 @@ require_once __DIR__ . '/auth.php';
 require_once __DIR__ . '/permissions.php';
 require_once __DIR__ . '/../config/gate.php';
 require_once __DIR__ . '/../config/stats.php';
+require_once __DIR__ . '/../config/analytics.php';
 requireLogin();
 
 $pageTitle = 'Einstellungen';
@@ -48,6 +49,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         flash('success', 'Der Einsatz-Statistik-Zähler wurde zurückgesetzt. Gezählt wird ab ' . date('d.m.Y', strtotime($newStart)) . '.');
     }
 
+    if ($action === 'save_ga_id') {
+        if (!userHasPermission('settings.manage')) {
+            flash('error', 'Dir fehlt die Berechtigung, Google Analytics einzurichten.');
+            header('Location: settings.php');
+            exit;
+        }
+        $gaId = trim($_POST['ga_measurement_id'] ?? '');
+        if ($gaId !== '' && !preg_match('/^G-[A-Z0-9]+$/', $gaId)) {
+            flash('error', 'Ungültiges Format. Eine Google-Analytics-4-Measurement-ID beginnt mit "G-" (z.B. G-ABC1234XYZ).');
+        } else {
+            setGaMeasurementId($gaId);
+            flash('success', $gaId !== '' ? 'Google Analytics wurde eingerichtet.' : 'Google Analytics wurde deaktiviert.');
+        }
+    }
+
     if ($action === 'change_password') {
         $currentPw = $_POST['current_password'] ?? '';
         $newPw = $_POST['new_password'] ?? '';
@@ -80,6 +96,26 @@ require_once __DIR__ . '/includes/admin-header.php';
 
 <?php if (userHasPermission('settings.manage')): ?>
 <div class="admin-card" style="max-width: 600px;">
+    <div class="admin-card-header"><h2><i class="fab fa-google"></i> Google Analytics</h2></div>
+    <div class="admin-card-body">
+        <p style="margin-bottom: 8px; color: #6c757d;">Trage hier deine GA4-Measurement-ID ein (Format <code>G-XXXXXXXXXX</code>, zu finden in deinem <a href="https://analytics.google.com" target="_blank" rel="noopener">Google-Analytics-Konto</a> unter Verwaltung &rarr; Datenstreams). Analytics wird öffentlich erst geladen, nachdem ein Besucher im Cookie-Banner zugestimmt hat - ohne Einwilligung wird nichts geladen. Feld leer lassen, um Analytics wieder zu deaktivieren.</p>
+        <form method="POST" class="admin-form">
+            <?php echo csrfField(); ?>
+            <input type="hidden" name="action" value="save_ga_id">
+
+            <div class="form-group">
+                <label for="ga_measurement_id">Measurement-ID</label>
+                <input type="text" id="ga_measurement_id" name="ga_measurement_id" value="<?php echo e(getGaMeasurementId()); ?>" placeholder="G-ABC1234XYZ">
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i> Speichern
+            </button>
+        </form>
+    </div>
+</div>
+
+<div class="admin-card" style="max-width: 600px; margin-top: 24px;">
     <div class="admin-card-header"><h2><i class="fas fa-lock"></i> Website-Zugangssperre</h2></div>
     <div class="admin-card-body">
         <p style="margin-bottom: 16px; color: #6c757d;">Solange die Website nicht offiziell ist, müssen Besucher dieses Passwort eingeben, bevor sie die Seite sehen können.</p>

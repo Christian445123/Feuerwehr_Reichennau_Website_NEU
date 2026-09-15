@@ -133,7 +133,8 @@
                         <p>Eine Zusammenführung dieser Daten mit anderen Datenquellen wird nicht vorgenommen. Die Erfassung dieser Daten erfolgt auf Grundlage von Art. 6 Abs. 1 lit. f DSGVO. Der Websitebetreiber hat ein berechtigtes Interesse an der technisch fehlerfreien Darstellung und der Optimierung seiner Website.</p>
 
                         <h4>Cookies</h4>
-                        <p>Diese Website verwendet keine Tracking-Cookies und keine Analyse-Tools wie Google Analytics. Es werden ausschließlich technisch notwendige Session-Cookies verwendet, die für den Betrieb der Website erforderlich sind: zum einen für den Administrationsbereich, zum anderen – solange die Website sich im Aufbau befindet – für die vorübergehende Zugangssperre der gesamten Website. Diese Cookies enthalten keine personenbezogenen Daten, sondern lediglich eine technische Sitzungskennung, und werden nach Ende Ihrer Browser-Sitzung automatisch gelöscht.</p>
+                        <p>Diese Website verwendet zunächst nur technisch notwendige Session-Cookies, die für den Betrieb der Website erforderlich sind: zum einen für den Administrationsbereich, zum anderen – solange die Website sich im Aufbau befindet – für die vorübergehende Zugangssperre der gesamten Website. Diese Cookies enthalten keine personenbezogenen Daten, sondern lediglich eine technische Sitzungskennung, und werden nach Ende Ihrer Browser-Sitzung automatisch gelöscht.</p>
+                        <p>Zusätzlich setzen wir – nur nach Ihrer Zustimmung im Cookie-Banner – Google Analytics zur anonymisierten Reichweitenmessung ein. Nähere Informationen dazu finden Sie im Abschnitt "Google Analytics" weiter unten.</p>
 
                         <h4>Kontaktaufnahme</h4>
                         <p>Wenn Sie uns per E-Mail oder Telefon kontaktieren, wird Ihre Anfrage inklusive aller daraus hervorgehenden personenbezogenen Daten (Name, Anfrage, E-Mail-Adresse, Telefonnummer) zum Zwecke der Bearbeitung Ihres Anliegens bei uns gespeichert und verarbeitet. Diese Daten geben wir nicht ohne Ihre Einwilligung weiter.</p>
@@ -151,6 +152,12 @@
                         <h2>5. Externe Dienste</h2>
                     </div>
                     <div class="content-card-body">
+                        <h4>Google Analytics</h4>
+                        <p>Diese Website nutzt – ausschließlich nach Ihrer Zustimmung im Cookie-Banner – Google Analytics, einen Webanalysedienst der Google Ireland Limited. Google Analytics verwendet Cookies, die eine Analyse der Benutzung dieser Website ermöglichen (z.&nbsp;B. aufgerufene Seiten, Verweildauer, verwendetes Gerät). Ihre IP-Adresse wird dabei von Google innerhalb der EU bzw. des EWR vor der weiteren Verarbeitung gekürzt (IP-Anonymisierung).</p>
+                        <p>Die Verarbeitung erfolgt ausschließlich auf Grundlage Ihrer Einwilligung gemäß Art. 6 Abs. 1 lit. a DSGVO. Sie können Ihre Einwilligung jederzeit mit Wirkung für die Zukunft widerrufen, indem Sie auf den folgenden Button klicken:</p>
+                        <p><button type="button" id="revokeGaConsent" class="btn btn-outline-dark"><i class="fas fa-ban"></i> Google-Analytics-Einwilligung widerrufen</button></p>
+                        <p>Weitere Informationen zu Nutzungsbedingungen und Datenschutz finden Sie unter <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">policies.google.com/privacy</a> bzw. <a href="https://marketingplatform.google.com/about/analytics/terms/de/" target="_blank" rel="noopener">Google-Analytics-Nutzungsbedingungen</a>.</p>
+
                         <h4>Google Fonts</h4>
                         <p>Diese Website nutzt zur einheitlichen Darstellung von Schriftarten sogenannte Google Fonts, die von Google bereitgestellt werden. Beim Aufruf einer Seite lädt Ihr Browser die benötigten Schriftarten in Ihren Browsercache, um Texte und Schriftarten korrekt anzuzeigen.</p>
                         <p>Zu diesem Zweck muss der von Ihnen verwendete Browser Verbindung zu den Servern von Google aufnehmen. Hierdurch erlangt Google Kenntnis darüber, dass über Ihre IP-Adresse diese Website aufgerufen wurde. Die Nutzung von Google Fonts erfolgt auf Grundlage von Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an der einheitlichen Darstellung des Schriftbildes).</p>
@@ -206,3 +213,14 @@
 
         </div>
     </section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var revokeBtn = document.getElementById('revokeGaConsent');
+    if (!revokeBtn) return;
+    revokeBtn.addEventListener('click', function () {
+        try { localStorage.setItem('ga_consent', 'denied'); } catch (e) {}
+        alert('Deine Einwilligung wurde widerrufen. Beim nächsten Laden der Seite wird Google Analytics nicht mehr geladen.');
+    });
+});
+</script>
