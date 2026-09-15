@@ -2682,6 +2682,21 @@ a:hover {
     margin-left: 0;
 }
 
+.badge-inline-img {
+    width: 26px;
+    height: 26px;
+    object-fit: contain;
+    margin-left: 4px;
+    vertical-align: middle;
+    cursor: help;
+}
+
+.badge-modal-img {
+    width: 34px;
+    height: 34px;
+    margin-left: 0;
+}
+
 /* Admin rank preview */
 .rank-preview {
     display: flex;

@@ -37,7 +37,7 @@ foreach ($allMembers as $am) {
     $funcLabels = array_map(fn($f) => $f['role'] . ' (' . $f['section'] . ')', $funcs);
     $badgeList = [];
     foreach ([$am['badge1'] ?? null, $am['badge2'] ?? null] as $bc) {
-        if ($bc) $badgeList[] = ['code' => $bc, 'name' => getBadgeName($bc), 'color' => getBadgeColor($bc)];
+        if ($bc) $badgeList[] = ['code' => $bc, 'name' => getBadgeName($bc), 'color' => getBadgeColor($bc), 'image' => getBadgeImage($bc)];
     }
     $membersJson[$am['id']] = [
         'name' => $am['firstname'] . ' ' . $am['lastname'],
@@ -130,7 +130,7 @@ foreach ($allMembers as $am) {
                                             <?php endif; ?>
                                             <?php foreach ([$m['badge1'] ?? null, $m['badge2'] ?? null] as $bc): ?>
                                                 <?php if ($bc): ?>
-                                                    <span class="member-badge-inline" style="background: <?php echo htmlspecialchars(getBadgeColor($bc)); ?>" title="<?php echo htmlspecialchars(getBadgeName($bc)); ?>"><?php echo htmlspecialchars($bc); ?></span>
+                                                    <img src="<?php echo htmlspecialchars(getBadgeImage($bc)); ?>" alt="<?php echo htmlspecialchars($bc); ?>" class="badge-inline-img" title="<?php echo htmlspecialchars(getBadgeName($bc)); ?>">
                                                 <?php endif; ?>
                                             <?php endforeach; ?>
                                         </div>
@@ -325,7 +325,7 @@ function showMemberDetail(id) {
     var badgesEl = document.getElementById('modalBadges');
     if (m.badges && m.badges.length > 0) {
         badgesEl.innerHTML = m.badges.map(function(b) {
-            return '<span class="member-badge-inline member-badge-modal" style="background:' + b.color + '" title="' + escHtml(b.name) + '">' + escHtml(b.code) + '</span>';
+            return '<img class="badge-inline-img badge-modal-img" src="' + b.image + '" alt="' + escHtml(b.code) + '" title="' + escHtml(b.name) + '">';
         }).join('');
         badgesEl.style.display = 'flex';
     } else {

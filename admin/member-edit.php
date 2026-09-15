@@ -200,10 +200,14 @@ require_once __DIR__ . '/includes/admin-header.php';
                                 <label for="badge1">Verwendungs-/Funktionsabzeichen 1</label>
                                 <select id="badge1" name="badge1" class="badge-select" <?php echo $canEditFunctions ? '' : 'disabled'; ?>>
                                     <option value="">-- Kein Abzeichen --</option>
-                                    <?php foreach (getAllBadges() as $code => $b): ?>
-                                        <option value="<?php echo e($code); ?>" data-name="<?php echo e($b['name']); ?>" data-color="<?php echo e($b['color']); ?>" <?php echo ($member['badge1'] ?? '') === $code ? 'selected' : ''; ?>>
-                                            <?php echo e($code); ?> – <?php echo e($b['name']); ?>
-                                        </option>
+                                    <?php foreach (getBadgesGrouped() as $category => $badges): ?>
+                                        <optgroup label="<?php echo e($category); ?>">
+                                            <?php foreach ($badges as $code => $b): ?>
+                                                <option value="<?php echo e($code); ?>" data-name="<?php echo e($b['name']); ?>" data-color="<?php echo e($b['color']); ?>" data-image="../<?php echo e(getBadgeImage($code)); ?>" <?php echo ($member['badge1'] ?? '') === $code ? 'selected' : ''; ?>>
+                                                    <?php echo e($code); ?> – <?php echo e($b['name']); ?>
+                                                </option>
+                                            <?php endforeach; ?>
+                                        </optgroup>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
@@ -211,10 +215,14 @@ require_once __DIR__ . '/includes/admin-header.php';
                                 <label for="badge2">Verwendungs-/Funktionsabzeichen 2</label>
                                 <select id="badge2" name="badge2" class="badge-select" <?php echo $canEditFunctions ? '' : 'disabled'; ?>>
                                     <option value="">-- Kein Abzeichen --</option>
-                                    <?php foreach (getAllBadges() as $code => $b): ?>
-                                        <option value="<?php echo e($code); ?>" data-name="<?php echo e($b['name']); ?>" data-color="<?php echo e($b['color']); ?>" <?php echo ($member['badge2'] ?? '') === $code ? 'selected' : ''; ?>>
-                                            <?php echo e($code); ?> – <?php echo e($b['name']); ?>
-                                        </option>
+                                    <?php foreach (getBadgesGrouped() as $category => $badges): ?>
+                                        <optgroup label="<?php echo e($category); ?>">
+                                            <?php foreach ($badges as $code => $b): ?>
+                                                <option value="<?php echo e($code); ?>" data-name="<?php echo e($b['name']); ?>" data-color="<?php echo e($b['color']); ?>" data-image="../<?php echo e(getBadgeImage($code)); ?>" <?php echo ($member['badge2'] ?? '') === $code ? 'selected' : ''; ?>>
+                                                    <?php echo e($code); ?> – <?php echo e($b['name']); ?>
+                                                </option>
+                                            <?php endforeach; ?>
+                                        </optgroup>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
@@ -226,8 +234,8 @@ require_once __DIR__ . '/includes/admin-header.php';
                                 <img src="../<?php echo $member['rank'] ? e(getRankBadgePath($member['rank'])) : ''; ?>" alt="" class="rank-preview-img">
                                 <span><?php echo ($member['rank'] && isset(getAllRanks()[$member['rank']])) ? e($member['rank'] . ' – ' . getRankName($member['rank'])) : ''; ?></span>
                             </div>
-                            <span class="member-badge-inline preview-badge" id="badgePreview1" style="<?php echo !empty($member['badge1']) ? 'background:' . e(getBadgeColor($member['badge1'])) : 'display:none;'; ?>" title="<?php echo !empty($member['badge1']) ? e(getBadgeName($member['badge1'])) : ''; ?>"><?php echo e($member['badge1'] ?? ''); ?></span>
-                            <span class="member-badge-inline preview-badge" id="badgePreview2" style="<?php echo !empty($member['badge2']) ? 'background:' . e(getBadgeColor($member['badge2'])) : 'display:none;'; ?>" title="<?php echo !empty($member['badge2']) ? e(getBadgeName($member['badge2'])) : ''; ?>"><?php echo e($member['badge2'] ?? ''); ?></span>
+                            <img class="badge-preview-img" id="badgePreview1" src="<?php echo !empty($member['badge1']) ? '../' . e(getBadgeImage($member['badge1'])) : ''; ?>" title="<?php echo !empty($member['badge1']) ? e(getBadgeName($member['badge1'])) : ''; ?>" style="<?php echo !empty($member['badge1']) ? '' : 'display:none;'; ?>">
+                            <img class="badge-preview-img" id="badgePreview2" src="<?php echo !empty($member['badge2']) ? '../' . e(getBadgeImage($member['badge2'])) : ''; ?>" title="<?php echo !empty($member['badge2']) ? e(getBadgeName($member['badge2'])) : ''; ?>" style="<?php echo !empty($member['badge2']) ? '' : 'display:none;'; ?>">
                             <span class="preview-empty-hint" id="previewEmptyHint" style="<?php echo ($member['rank'] || !empty($member['badge1']) || !empty($member['badge2'])) ? 'display:none;' : ''; ?>">Noch kein Rang/Abzeichen gewählt</span>
                         </div>
                     </div>
@@ -407,10 +415,10 @@ function wireBadgeSelect(select, previewEl) {
     select.addEventListener('change', function() {
         var opt = this.options[this.selectedIndex];
         if (this.value) {
-            previewEl.textContent = this.value;
-            previewEl.style.background = opt.getAttribute('data-color');
+            previewEl.src = opt.getAttribute('data-image');
+            previewEl.alt = this.value;
             previewEl.title = opt.getAttribute('data-name');
-            previewEl.style.display = 'inline-flex';
+            previewEl.style.display = 'inline-block';
         } else {
             previewEl.style.display = 'none';
         }
