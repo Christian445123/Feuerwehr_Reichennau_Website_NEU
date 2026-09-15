@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // --- Berichte Filter ---
     const filterTabs = document.querySelectorAll('.filter-tab');
-    const berichteCards = document.querySelectorAll('.bericht-row');
+    const berichteCards = document.querySelectorAll('.bericht-card');
     const berichteGrid = document.getElementById('berichteGrid');
     const filterResultCount = document.getElementById('filterResultCount');
     const noResultsMsg = document.getElementById('noResultsMsg');
@@ -81,7 +81,9 @@ document.addEventListener('DOMContentLoaded', function () {
             if (visible) visibleCount++;
         });
 
+        // "Alle" zeigt einen Zeitstrahl, jeder Filter zeigt Kacheln
         if (berichteGrid) {
+            berichteGrid.classList.toggle('timeline-view', filter === 'all');
             berichteGrid.style.display = visibleCount > 0 ? '' : 'none';
         }
 

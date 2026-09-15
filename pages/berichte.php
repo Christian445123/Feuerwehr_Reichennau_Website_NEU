@@ -115,7 +115,7 @@ $archivCutoff = date('Y-m-d', strtotime('-2 years')); // Älter als 2 Jahre gilt
             <p class="filter-result-count" id="filterResultCount"></p>
 
             <?php
-            $reports = $db->query("SELECT r.*, COUNT(ri.id) as image_count FROM reports r LEFT JOIN report_images ri ON r.id = ri.report_id WHERE r.published = 1 GROUP BY r.id ORDER BY r.date DESC, r.created_at DESC")->fetchAll();
+            $reports = $db->query("SELECT r.*, (SELECT ri.filename FROM report_images ri WHERE ri.report_id = r.id ORDER BY ri.sort_order LIMIT 1) as thumb FROM reports r WHERE r.published = 1 ORDER BY r.date DESC, r.created_at DESC")->fetchAll();
             ?>
 
             <?php if (empty($reports)): ?>
@@ -124,54 +124,38 @@ $archivCutoff = date('Y-m-d', strtotime('-2 years')); // Älter als 2 Jahre gilt
                     <p>Es wurden noch keine Berichte veröffentlicht.</p>
                 </div>
             <?php else: ?>
-                <div class="berichte-table-wrap">
-                    <table class="berichte-table" id="berichteGrid">
-                        <thead>
-                            <tr>
-                                <th>Titel</th>
-                                <th>Kategorie</th>
-                                <th>Datum</th>
-                                <th>Fotos</th>
-                                <th>Status</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($reports as $r): ?>
-                                <?php $isArchiv = $r['date'] < $archivCutoff; ?>
-                                <tr class="bericht-row"
-                                    data-category="<?php echo htmlspecialchars($r['category']); ?>"
-                                    data-archiv="<?php echo $isArchiv ? '1' : '0'; ?>"
-                                    data-date="<?php echo htmlspecialchars($r['date']); ?>"
-                                    data-href="index.php?page=berichte&id=<?php echo $r['id']; ?>"
-                                    onclick="window.location.href=this.getAttribute('data-href');">
-                                    <td>
-                                        <i class="fas <?php echo $categoryIcons[$r['category']] ?? 'fa-newspaper'; ?>"></i>
-                                        <a href="index.php?page=berichte&id=<?php echo $r['id']; ?>"><strong><?php echo htmlspecialchars($r['title']); ?></strong></a>
-                                    </td>
-                                    <td>
-                                        <?php if (!empty($r['subcategory']) && isset($subcategoryLabels[$r['subcategory']])): ?>
-                                            <span class="bericht-badge <?php echo $subcategoryBadges[$r['subcategory']]; ?>"><?php echo htmlspecialchars($subcategoryLabels[$r['subcategory']]); ?></span>
-                                        <?php else: ?>
-                                            <span class="bericht-badge <?php echo $categoryBadges[$r['category']] ?? 'badge-sonstige'; ?>"><?php echo htmlspecialchars(ucfirst($r['category'])); ?></span>
-                                        <?php endif; ?>
-                                    </td>
-                                    <td><?php echo htmlspecialchars($r['date']); ?></td>
-                                    <td><i class="fas fa-images"></i> <?php echo (int)$r['image_count']; ?></td>
-                                    <td>
-                                        <?php if ($isArchiv): ?>
-                                            <span class="bericht-badge badge-archiv"><i class="fas fa-archive"></i> Archiviert</span>
-                                        <?php else: ?>
-                                            <span class="bericht-badge badge-success">Aktuell</span>
-                                        <?php endif; ?>
-                                    </td>
-                                    <td class="actions-cell">
-                                        <a href="index.php?page=berichte&id=<?php echo $r['id']; ?>" class="btn btn-sm btn-icon" title="Details ansehen"><i class="fas fa-arrow-right"></i></a>
-                                    </td>
-                                </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
+                <div class="berichte-grid timeline-view" id="berichteGrid">
+                    <?php foreach ($reports as $r): ?>
+                        <?php $isArchiv = $r['date'] < $archivCutoff; ?>
+                        <a href="index.php?page=berichte&id=<?php echo $r['id']; ?>"
+                           class="bericht-card bericht-card-link"
+                           data-category="<?php echo htmlspecialchars($r['category']); ?>"
+                           data-archiv="<?php echo $isArchiv ? '1' : '0'; ?>"
+                           data-date="<?php echo htmlspecialchars($r['date']); ?>">
+                            <?php if ($r['thumb']): ?>
+                                <div class="bericht-thumb">
+                                    <img src="uploads/<?php echo htmlspecialchars($r['thumb']); ?>" alt="<?php echo htmlspecialchars($r['title']); ?>">
+                                </div>
+                            <?php endif; ?>
+                            <?php if (!empty($r['subcategory']) && isset($subcategoryLabels[$r['subcategory']])): ?>
+                                <div class="bericht-badge <?php echo $subcategoryBadges[$r['subcategory']]; ?>">
+                                    <?php echo htmlspecialchars($subcategoryLabels[$r['subcategory']]); ?>
+                                </div>
+                            <?php else: ?>
+                                <div class="bericht-badge <?php echo $categoryBadges[$r['category']] ?? 'badge-sonstige'; ?>">
+                                    <?php echo htmlspecialchars(ucfirst($r['category'])); ?>
+                                </div>
+                            <?php endif; ?>
+                            <?php if ($isArchiv): ?>
+                                <div class="bericht-badge badge-archiv"><i class="fas fa-archive"></i> Archiviert</div>
+                            <?php endif; ?>
+                            <h3><i class="fas <?php echo $categoryIcons[$r['category']] ?? 'fa-newspaper'; ?>"></i> <?php echo htmlspecialchars($r['title']); ?></h3>
+                            <p class="bericht-date"><i class="fas fa-calendar"></i> <?php echo htmlspecialchars($r['date']); ?></p>
+                            <?php if ($r['content']): ?>
+                                <p><?php echo htmlspecialchars(mb_substr($r['content'], 0, 120)) . (mb_strlen($r['content']) > 120 ? '...' : ''); ?></p>
+                            <?php endif; ?>
+                        </a>
+                    <?php endforeach; ?>
                 </div>
                 <div class="archiv-section" id="noResultsMsg" style="display:none;">
                     <h2><i class="fas fa-folder-open"></i> Keine Berichte in dieser Kategorie</h2>
