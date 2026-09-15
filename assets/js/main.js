@@ -81,9 +81,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (visible) visibleCount++;
         });
 
-        // "Alle" zeigt einen Zeitstrahl, jeder Filter zeigt Kacheln
         if (berichteGrid) {
-            berichteGrid.classList.toggle('timeline-view', filter === 'all');
             berichteGrid.style.display = visibleCount > 0 ? '' : 'none';
         }
 
