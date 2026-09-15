@@ -120,7 +120,11 @@ a:hover {
 
 .nav-logo-text {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0 6px;
+    max-width: 210px;
 }
 
 .nav-logo-title {
@@ -146,29 +150,41 @@ a:hover {
 }
 
 .nav-logo-line {
-    display: block;
+    display: inline-block;
     font-family: var(--font-family-display);
     font-weight: 700;
     text-transform: uppercase;
-    font-size: 0.95rem;
-    line-height: 1.15;
+    font-size: 0.85rem;
+    line-height: 1.3;
     letter-spacing: 0.3px;
+    white-space: nowrap;
 }
 
 .nav-logo-line-light {
     font-weight: 400;
     color: rgba(255,255,255,0.6);
-    font-size: 0.7rem;
-    letter-spacing: 1px;
+    font-size: 0.72rem;
+    letter-spacing: 0.5px;
 }
 
 .nav-logo-line-brand {
     color: var(--color-primary-light);
-    font-size: 1.05rem;
 }
 
 .nav-logo-line-dark {
     color: var(--color-white);
+}
+
+@media (max-width: 480px) {
+    .nav-logo-line-light {
+        display: none;
+    }
+    .nav-logo-text {
+        max-width: 140px;
+    }
+    .nav-logo-line {
+        font-size: 0.75rem;
+    }
 }
 
 .nav-menu {
