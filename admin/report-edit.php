@@ -73,10 +73,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $report['category'] = 'einsatz';
     }
 
-    // Subkategorie (Brand/Technisch/ABC/Unterstützung/Sonstiges) gibt es nur
-    // bei Einsätzen - bei allen anderen Kategorien wird sie nicht gespeichert.
-    $validSubcats = ['brand', 'technisch', 'abc', 'unterstuetzung', 'sonstiges'];
-    if ($report['category'] !== 'einsatz' || !in_array($report['subcategory'], $validSubcats, true)) {
+    // Subkategorie gibt es bei Einsätzen (Brand/Technisch/ABC/Unterstützung/
+    // Sonstiges) und bei Übungen (Brand/Technisch/ABC/Sonstiges - ohne
+    // Unterstützung, das ist ein reiner Einsatz-Begriff). Bei allen anderen
+    // Kategorien wird sie nicht gespeichert.
+    $validSubcatsByCategory = [
+        'einsatz' => ['brand', 'technisch', 'abc', 'unterstuetzung', 'sonstiges'],
+        'uebung' => ['brand', 'technisch', 'abc', 'sonstiges'],
+    ];
+    $allowedSubcats = $validSubcatsByCategory[$report['category']] ?? [];
+    if (!in_array($report['subcategory'], $allowedSubcats, true)) {
         $report['subcategory'] = '';
     }
 
@@ -165,17 +171,18 @@ require_once __DIR__ . '/includes/admin-header.php';
                         </div>
                     </div>
 
-                    <div class="form-group" id="subcategoryGroup" style="<?php echo $report['category'] === 'einsatz' ? '' : 'display:none;'; ?>">
-                        <label for="subcategory">Einsatzart</label>
+                    <?php $showSubcat = in_array($report['category'], ['einsatz', 'uebung'], true); ?>
+                    <div class="form-group" id="subcategoryGroup" style="<?php echo $showSubcat ? '' : 'display:none;'; ?>">
+                        <label for="subcategory" id="subcategoryLabel"><?php echo $report['category'] === 'uebung' ? 'Übungsart' : 'Einsatzart'; ?></label>
                         <select id="subcategory" name="subcategory">
                             <option value="">-- Bitte wählen --</option>
                             <option value="brand" <?php echo ($report['subcategory'] ?? '') === 'brand' ? 'selected' : ''; ?>>Brand</option>
                             <option value="technisch" <?php echo ($report['subcategory'] ?? '') === 'technisch' ? 'selected' : ''; ?>>Technisch</option>
                             <option value="abc" <?php echo ($report['subcategory'] ?? '') === 'abc' ? 'selected' : ''; ?>>ABC</option>
-                            <option value="unterstuetzung" <?php echo ($report['subcategory'] ?? '') === 'unterstuetzung' ? 'selected' : ''; ?>>Unterstützung</option>
+                            <option value="unterstuetzung" class="subcat-unterstuetzung" <?php echo $report['category'] === 'uebung' ? 'style="display:none;" disabled' : ''; ?> <?php echo ($report['subcategory'] ?? '') === 'unterstuetzung' ? 'selected' : ''; ?>>Unterstützung</option>
                             <option value="sonstiges" <?php echo ($report['subcategory'] ?? '') === 'sonstiges' ? 'selected' : ''; ?>>Sonstiges</option>
                         </select>
-                        <p class="form-hint">Nur bei Kategorie "Einsatz" - bestimmt die Einsatzart für Statistik und Kennzeichnung (Brand/Technisch/ABC/Unterstützung).</p>
+                        <p class="form-hint" id="subcategoryHint">Bestimmt die <?php echo $report['category'] === 'uebung' ? 'Übungsart' : 'Einsatzart für Statistik und Kennzeichnung'; ?> (Brand/Technisch/ABC<?php echo $report['category'] === 'uebung' ? '' : '/Unterstützung'; ?>/Sonstiges).</p>
                     </div>
 
                     <div class="form-group">
@@ -257,12 +264,33 @@ require_once __DIR__ . '/includes/admin-header.php';
 </form>
 
 <script>
-// Einsatzart-Feld nur bei Kategorie "Einsatz" anzeigen
+// Einsatz-/Übungsart-Feld nur bei Kategorie "Einsatz" oder "Übung" anzeigen.
+// Bei "Übung" gibt es keine Option "Unterstützung" (reiner Einsatz-Begriff).
 var categorySelect = document.getElementById('category');
 var subcategoryGroup = document.getElementById('subcategoryGroup');
+var subcategoryLabel = document.getElementById('subcategoryLabel');
+var subcategoryHint = document.getElementById('subcategoryHint');
+var subcategorySelect = document.getElementById('subcategory');
+var subcatUnterstuetzung = document.querySelector('.subcat-unterstuetzung');
+
 if (categorySelect && subcategoryGroup) {
     categorySelect.addEventListener('change', function() {
-        subcategoryGroup.style.display = this.value === 'einsatz' ? '' : 'none';
+        var isUebung = this.value === 'uebung';
+        var showSubcat = this.value === 'einsatz' || isUebung;
+        subcategoryGroup.style.display = showSubcat ? '' : 'none';
+
+        if (subcategoryLabel) subcategoryLabel.textContent = isUebung ? 'Übungsart' : 'Einsatzart';
+        if (subcategoryHint) {
+            subcategoryHint.textContent = 'Bestimmt die ' + (isUebung ? 'Übungsart' : 'Einsatzart für Statistik und Kennzeichnung') +
+                ' (Brand/Technisch/ABC' + (isUebung ? '' : '/Unterstützung') + '/Sonstiges).';
+        }
+        if (subcatUnterstuetzung) {
+            subcatUnterstuetzung.style.display = isUebung ? 'none' : '';
+            subcatUnterstuetzung.disabled = isUebung;
+            if (isUebung && subcategorySelect.value === 'unterstuetzung') {
+                subcategorySelect.value = '';
+            }
+        }
     });
 }
 
