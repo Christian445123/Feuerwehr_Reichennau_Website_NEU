@@ -47,8 +47,15 @@
                 </div>
             </div>
 
-            <div class="footer-bottom">
-                <p>&copy; <?php echo date('Y'); ?> Freiwillige Feuerwehr Reichenau / Innsbruck Stadt. Alle Rechte vorbehalten. | <a href="index.php?page=datenschutz">Datenschutz</a></p>
+            <div class="footer-bottom footer-bottom-split">
+                <p class="footer-bottom-copy">&copy; <?php echo date('Y'); ?> FF Reichenau | Webagentur Paul Weber</p>
+                <p class="footer-bottom-legal">
+                    <a href="index.php?page=kontakt">Impressum</a> &middot; <a href="index.php?page=datenschutz">Datenschutz</a>
+                </p>
+                <div class="footer-bottom-social">
+                    <span>Folgt uns:</span>
+                    <a href="http://facebook.ffr.at/" target="_blank" rel="noopener" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                </div>
             </div>
         </div>
     </footer>
