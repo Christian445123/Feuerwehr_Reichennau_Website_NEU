@@ -139,6 +139,38 @@ a:hover {
     font-weight: 400;
 }
 
+.nav-logo-divider {
+    width: 1px;
+    height: 34px;
+    background: rgba(255,255,255,0.2);
+}
+
+.nav-logo-line {
+    display: block;
+    font-family: var(--font-family-display);
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.95rem;
+    line-height: 1.15;
+    letter-spacing: 0.3px;
+}
+
+.nav-logo-line-light {
+    font-weight: 400;
+    color: rgba(255,255,255,0.6);
+    font-size: 0.7rem;
+    letter-spacing: 1px;
+}
+
+.nav-logo-line-brand {
+    color: var(--color-primary-light);
+    font-size: 1.05rem;
+}
+
+.nav-logo-line-dark {
+    color: var(--color-white);
+}
+
 .nav-menu {
     display: flex;
     align-items: center;
