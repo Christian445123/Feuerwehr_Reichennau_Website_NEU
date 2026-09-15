@@ -230,7 +230,36 @@ foreach ($allMembers as $am) {
                         <h2>Organigramm</h2>
                     </div>
                     <div class="content-card-body">
-                        <img src="assets/images/organigramm.jpg" alt="Organigramm der FF Reichenau" class="content-image">
+                        <div class="orgchart">
+                            <div class="orgchart-row orgchart-row-top">
+                                <div class="orgchart-box orgchart-box-command"><strong>Kassier</strong><span><?php echo htmlspecialchars(orgName($org, 'kassier')); ?></span></div>
+                                <div class="orgchart-box orgchart-box-command orgchart-box-chief"><strong>Kommandant</strong><span><?php echo htmlspecialchars(orgName($org, 'kommandant')); ?></span></div>
+                                <div class="orgchart-box orgchart-box-command"><strong>Schriftführerin</strong><span><?php echo htmlspecialchars(orgName($org, 'schriftfuehrer')); ?></span></div>
+                            </div>
+                            <div class="orgchart-connector"></div>
+                            <div class="orgchart-row orgchart-row-mid">
+                                <div class="orgchart-box"><strong>Feuerwehrkurat</strong><span><?php echo htmlspecialchars(orgName($org, 'feuerwehrkurat')); ?></span></div>
+                                <div class="orgchart-box"><strong>Obermaschinist</strong><span><?php echo htmlspecialchars(orgName($org, 'obermaschinist')); ?></span></div>
+                                <div class="orgchart-box"><strong>Gerätewart</strong><span><?php echo htmlspecialchars(orgName($org, 'geraetewart')); ?></span></div>
+                                <div class="orgchart-box orgchart-box-command"><strong>Kommandant Stv.</strong><span><?php echo htmlspecialchars(orgName($org, 'kommandant_stv')); ?></span></div>
+                                <div class="orgchart-box"><strong>Jugendbetreuerin</strong><span><?php echo htmlspecialchars(orgName($org, 'jugendbetreuer')); ?></span></div>
+                                <div class="orgchart-box"><strong>Funkbeauftragter</strong><span><?php echo htmlspecialchars(orgName($org, 'funkbeauftragter')); ?></span></div>
+                                <div class="orgchart-box"><strong>Atemschutzbeauftragter</strong><span><?php echo htmlspecialchars(orgName($org, 'atemschutzbeauftragter')); ?></span></div>
+                            </div>
+                            <div class="orgchart-connector orgchart-connector-single"></div>
+                            <div class="orgchart-row orgchart-row-zug">
+                                <div class="orgchart-box orgchart-box-dark"><strong>Zugskommandant</strong><span><?php echo htmlspecialchars(orgName($org, 'zugskommandant')); ?></span></div>
+                            </div>
+                            <div class="orgchart-connector"></div>
+                            <div class="orgchart-row orgchart-row-groups">
+                                <?php for ($i = 1; $i <= 5; $i++): ?>
+                                    <div class="orgchart-group-col">
+                                        <div class="orgchart-box orgchart-box-dark"><strong>Gruppen-Kdt.</strong><span><?php echo htmlspecialchars(orgName($org, "gruppenkdt_$i")); ?></span></div>
+                                        <div class="orgchart-box orgchart-box-dark orgchart-box-sub"><strong>Gruppen-Kdt.-Stv.</strong><span><?php echo htmlspecialchars(orgName($org, "gruppenkdt_stv_$i")); ?></span></div>
+                                    </div>
+                                <?php endfor; ?>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
