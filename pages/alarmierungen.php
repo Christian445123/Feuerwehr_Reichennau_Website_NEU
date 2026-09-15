@@ -65,7 +65,7 @@ $subcategoryLabels = [
                         </div>
                     <?php endif; ?>
                     <div class="section-cta">
-                        <a href="index.php?page=berichte#einsatz" class="btn btn-outline-dark" style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border:1px solid #ced4da;border-radius:50px;color:#495057;">
+                        <a href="index.php?page=berichte&category=einsatz" class="btn btn-outline-dark" style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border:1px solid #ced4da;border-radius:50px;color:#495057;">
                             <i class="fas fa-list"></i> Alle Einsatzberichte ansehen
                         </a>
                     </div>
@@ -78,7 +78,7 @@ $subcategoryLabels = [
                     <h2>Alarmierungsübersicht Innsbruck Stadt</h2>
                 </div>
                 <div class="content-card-body">
-                    <p>Eine bezirksweite Live-Übersicht aller Alarmierungen im Bezirk Innsbruck-Stadt stellt die Leitstelle Tirol nicht öffentlich zur Verfügung. Aktuelle Einsätze der FF Reichenau findest du bei uns immer zeitnah unter <a href="index.php?page=berichte#einsatz">Aktuelles → Einsatz</a>.</p>
+                    <p>Eine bezirksweite Live-Übersicht aller Alarmierungen im Bezirk Innsbruck-Stadt stellt die Leitstelle Tirol nicht öffentlich zur Verfügung. Aktuelle Einsätze der FF Reichenau findest du bei uns immer zeitnah unter <a href="index.php?page=berichte&category=einsatz">Aktuelles → Einsatz</a>.</p>
                 </div>
             </div>
 

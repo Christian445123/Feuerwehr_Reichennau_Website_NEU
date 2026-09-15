@@ -66,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $report['author'] = trim($_POST['author'] ?? '');
     $report['published'] = isset($_POST['published']) ? 1 : 0;
 
-    $validCats = ['einsatz', 'uebung', 'jugend', 'sonstige'];
+    $validCats = ['einsatz', 'uebung', 'jugend', 'veranstaltungen', 'sonstige'];
     if (!in_array($report['category'], $validCats, true)) {
         $report['category'] = 'einsatz';
     }
@@ -144,6 +144,7 @@ require_once __DIR__ . '/includes/admin-header.php';
                                 <option value="einsatz" <?php echo $report['category'] === 'einsatz' ? 'selected' : ''; ?>>Einsatz</option>
                                 <option value="uebung" <?php echo $report['category'] === 'uebung' ? 'selected' : ''; ?>>Übung</option>
                                 <option value="jugend" <?php echo $report['category'] === 'jugend' ? 'selected' : ''; ?>>Jugend</option>
+                                <option value="veranstaltungen" <?php echo $report['category'] === 'veranstaltungen' ? 'selected' : ''; ?>>Veranstaltungen</option>
                                 <option value="sonstige" <?php echo $report['category'] === 'sonstige' ? 'selected' : ''; ?>>Sonstige</option>
                             </select>
                         </div>

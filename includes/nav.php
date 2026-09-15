@@ -21,11 +21,12 @@
                 <li class="nav-dropdown">
                     <a href="index.php?page=berichte" class="nav-link <?php echo $current_page === 'berichte' ? 'active' : ''; ?>"><i class="fas fa-newspaper"></i> Aktuelles <i class="fas fa-chevron-down dropdown-arrow"></i></a>
                     <ul class="dropdown-menu">
-                        <li><a href="index.php?page=berichte#einsatz">Einsatz</a></li>
-                        <li><a href="index.php?page=berichte#uebung">Übung</a></li>
-                        <li><a href="index.php?page=berichte#jugend">Jugend</a></li>
-                        <li><a href="index.php?page=berichte#sonstige">Sonstige</a></li>
-                        <li><a href="index.php?page=berichte#archiv">Archiv</a></li>
+                        <li><a href="index.php?page=berichte&category=einsatz">Einsatz</a></li>
+                        <li><a href="index.php?page=berichte&category=uebung">Übung</a></li>
+                        <li><a href="index.php?page=berichte&category=jugend">Jugend</a></li>
+                        <li><a href="index.php?page=berichte&category=veranstaltungen">Veranstaltungen</a></li>
+                        <li><a href="index.php?page=berichte&category=sonstige">Sonstige</a></li>
+                        <li><a href="index.php?page=berichte&category=archiv">Archiv</a></li>
                     </ul>
                 </li>
                 <li class="nav-dropdown">

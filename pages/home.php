@@ -71,8 +71,8 @@
 
             <?php
             $recentReports = $db->query("SELECT * FROM reports WHERE published = 1 ORDER BY date DESC, created_at DESC LIMIT 6")->fetchAll();
-            $categoryIcons = ['einsatz' => 'fa-fire', 'uebung' => 'fa-dumbbell', 'jugend' => 'fa-child', 'sonstige' => 'fa-newspaper'];
-            $categoryBadges = ['einsatz' => 'badge-brand', 'uebung' => 'badge-uebung', 'jugend' => 'badge-jugend', 'sonstige' => 'badge-sonstige'];
+            $categoryIcons = ['einsatz' => 'fa-fire', 'uebung' => 'fa-dumbbell', 'jugend' => 'fa-child', 'veranstaltungen' => 'fa-calendar-alt', 'sonstige' => 'fa-newspaper'];
+            $categoryBadges = ['einsatz' => 'badge-brand', 'uebung' => 'badge-uebung', 'jugend' => 'badge-jugend', 'veranstaltungen' => 'badge-veranstaltungen', 'sonstige' => 'badge-sonstige'];
             ?>
 
             <?php if (!empty($recentReports)): ?>
@@ -136,7 +136,7 @@
             <div class="info-highlight">
                 <div class="info-icon"><i class="fas fa-gavel"></i></div>
                 <p>Die 41. Jahreshauptversammlung unserer Feuerwehr hat stattgefunden. Für Details und Berichte klicken Sie auf den untenstehenden Button.</p>
-                <a href="index.php?page=berichte#sonstige" class="btn btn-primary"><i class="fas fa-info-circle"></i> Details ansehen</a>
+                <a href="index.php?page=berichte&category=sonstige" class="btn btn-primary"><i class="fas fa-info-circle"></i> Details ansehen</a>
             </div>
         </div>
     </section>

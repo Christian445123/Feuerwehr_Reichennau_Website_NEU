@@ -19,11 +19,11 @@ if ($reportId > 0) {
 
 $categoryIcons = [
     'einsatz' => 'fa-fire', 'uebung' => 'fa-dumbbell',
-    'jugend' => 'fa-child', 'sonstige' => 'fa-newspaper'
+    'jugend' => 'fa-child', 'veranstaltungen' => 'fa-calendar-alt', 'sonstige' => 'fa-newspaper'
 ];
 $categoryBadges = [
     'einsatz' => 'badge-brand', 'uebung' => 'badge-uebung',
-    'jugend' => 'badge-jugend', 'sonstige' => 'badge-sonstige'
+    'jugend' => 'badge-jugend', 'veranstaltungen' => 'badge-veranstaltungen', 'sonstige' => 'badge-sonstige'
 ];
 $subcategoryLabels = [
     'brand' => 'Brand', 'technisch' => 'Technisch', 'abc' => 'ABC',
@@ -100,38 +100,53 @@ $archivCutoff = date('Y-m-d', strtotime('-2 years')); // Älter als 2 Jahre gilt
         </div>
     </section>
 
-    <section class="section" id="archiv">
+    <?php
+    // Filterung läuft serverseitig über den URL-Parameter ?category=,
+    // genau wie im Admindashboard (admin/reports.php) - kein Client-JS mehr.
+    $category = $_GET['category'] ?? 'all';
+    $validCategories = ['all', 'einsatz', 'uebung', 'jugend', 'veranstaltungen', 'sonstige', 'archiv'];
+    if (!in_array($category, $validCategories, true)) $category = 'all';
+
+    // Archivierte Berichte (vor dem Stichtag) erscheinen ausschließlich unter
+    // dem Archiv-Filter, nicht mehr zusätzlich in "Alle" oder ihrer Kategorie.
+    if ($category === 'all') {
+        $stmt = $db->prepare("SELECT r.*, (SELECT ri.filename FROM report_images ri WHERE ri.report_id = r.id ORDER BY ri.sort_order LIMIT 1) as thumb FROM reports r WHERE r.published = 1 AND r.date >= ? ORDER BY r.date DESC, r.created_at DESC");
+        $stmt->execute([$archivCutoff]);
+    } elseif ($category === 'archiv') {
+        $stmt = $db->prepare("SELECT r.*, (SELECT ri.filename FROM report_images ri WHERE ri.report_id = r.id ORDER BY ri.sort_order LIMIT 1) as thumb FROM reports r WHERE r.published = 1 AND r.date < ? ORDER BY r.date DESC, r.created_at DESC");
+        $stmt->execute([$archivCutoff]);
+    } else {
+        $stmt = $db->prepare("SELECT r.*, (SELECT ri.filename FROM report_images ri WHERE ri.report_id = r.id ORDER BY ri.sort_order LIMIT 1) as thumb FROM reports r WHERE r.published = 1 AND r.category = ? AND r.date >= ? ORDER BY r.date DESC, r.created_at DESC");
+        $stmt->execute([$category, $archivCutoff]);
+    }
+    $reports = $stmt->fetchAll();
+    ?>
+
+    <section class="section">
         <div class="container">
 
             <!-- Filter-Tabs -->
             <div class="filter-tabs">
-                <button class="filter-tab active" data-filter="all">Alle</button>
-                <button class="filter-tab" data-filter="einsatz">Einsatz</button>
-                <button class="filter-tab" data-filter="uebung">Übung</button>
-                <button class="filter-tab" data-filter="jugend">Jugend</button>
-                <button class="filter-tab" data-filter="sonstige">Sonstige</button>
-                <button class="filter-tab" data-filter="archiv"><i class="fas fa-archive"></i> Archiv</button>
+                <a href="index.php?page=berichte&category=all" class="filter-tab <?php echo $category === 'all' ? 'active' : ''; ?>">Alle</a>
+                <a href="index.php?page=berichte&category=einsatz" class="filter-tab <?php echo $category === 'einsatz' ? 'active' : ''; ?>">Einsatz</a>
+                <a href="index.php?page=berichte&category=uebung" class="filter-tab <?php echo $category === 'uebung' ? 'active' : ''; ?>">Übung</a>
+                <a href="index.php?page=berichte&category=jugend" class="filter-tab <?php echo $category === 'jugend' ? 'active' : ''; ?>">Jugend</a>
+                <a href="index.php?page=berichte&category=veranstaltungen" class="filter-tab <?php echo $category === 'veranstaltungen' ? 'active' : ''; ?>">Veranstaltungen</a>
+                <a href="index.php?page=berichte&category=sonstige" class="filter-tab <?php echo $category === 'sonstige' ? 'active' : ''; ?>">Sonstige</a>
+                <a href="index.php?page=berichte&category=archiv" class="filter-tab <?php echo $category === 'archiv' ? 'active' : ''; ?>"><i class="fas fa-archive"></i> Archiv</a>
             </div>
-            <p class="filter-result-count" id="filterResultCount"></p>
-
-            <?php
-            $reports = $db->query("SELECT r.*, (SELECT ri.filename FROM report_images ri WHERE ri.report_id = r.id ORDER BY ri.sort_order LIMIT 1) as thumb FROM reports r WHERE r.published = 1 ORDER BY r.date DESC, r.created_at DESC")->fetchAll();
-            ?>
+            <p class="filter-result-count"><?php echo count($reports); ?> <?php echo count($reports) === 1 ? 'Bericht' : 'Berichte'; ?></p>
 
             <?php if (empty($reports)): ?>
                 <div class="archiv-section">
-                    <h2><i class="fas fa-newspaper"></i> Noch keine Berichte</h2>
-                    <p>Es wurden noch keine Berichte veröffentlicht.</p>
+                    <h2><i class="fas fa-folder-open"></i> Keine Berichte</h2>
+                    <p>Für diesen Filter sind aktuell keine Berichte vorhanden.</p>
                 </div>
             <?php else: ?>
-                <div class="berichte-grid timeline-view" id="berichteGrid">
+                <div class="berichte-grid <?php echo $category === 'all' ? 'timeline-view' : ''; ?>">
                     <?php foreach ($reports as $r): ?>
                         <?php $isArchiv = $r['date'] < $archivCutoff; ?>
-                        <a href="index.php?page=berichte&id=<?php echo $r['id']; ?>"
-                           class="bericht-card bericht-card-link"
-                           data-category="<?php echo htmlspecialchars($r['category']); ?>"
-                           data-archiv="<?php echo $isArchiv ? '1' : '0'; ?>"
-                           data-date="<?php echo htmlspecialchars($r['date']); ?>">
+                        <a href="index.php?page=berichte&id=<?php echo $r['id']; ?>" class="bericht-card bericht-card-link">
                             <?php if ($r['thumb']): ?>
                                 <div class="bericht-thumb">
                                     <img src="uploads/<?php echo htmlspecialchars($r['thumb']); ?>" alt="<?php echo htmlspecialchars($r['title']); ?>">
@@ -156,10 +171,6 @@ $archivCutoff = date('Y-m-d', strtotime('-2 years')); // Älter als 2 Jahre gilt
                             <?php endif; ?>
                         </a>
                     <?php endforeach; ?>
-                </div>
-                <div class="archiv-section" id="noResultsMsg" style="display:none;">
-                    <h2><i class="fas fa-folder-open"></i> Keine Berichte in dieser Kategorie</h2>
-                    <p>Für diesen Filter sind aktuell keine Berichte vorhanden.</p>
                 </div>
             <?php endif; ?>
         </div>

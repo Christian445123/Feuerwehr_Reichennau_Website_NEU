@@ -30,7 +30,7 @@ if (isset($_GET['delete']) && is_numeric($_GET['delete'])) {
 
 // Filter
 $category = $_GET['category'] ?? 'all';
-$validCategories = ['all', 'einsatz', 'uebung', 'jugend', 'sonstige', 'archiv'];
+$validCategories = ['all', 'einsatz', 'uebung', 'jugend', 'veranstaltungen', 'sonstige', 'archiv'];
 if (!in_array($category, $validCategories, true)) $category = 'all';
 
 $archivCutoff = date('Y-m-d', strtotime('-2 years')); // Älter als 2 Jahre gilt als Archiv
@@ -69,6 +69,7 @@ require_once __DIR__ . '/includes/admin-header.php';
     <a href="reports.php?category=einsatz" class="filter-pill <?php echo $category === 'einsatz' ? 'active' : ''; ?>">Einsatz</a>
     <a href="reports.php?category=uebung" class="filter-pill <?php echo $category === 'uebung' ? 'active' : ''; ?>">Übung</a>
     <a href="reports.php?category=jugend" class="filter-pill <?php echo $category === 'jugend' ? 'active' : ''; ?>">Jugend</a>
+    <a href="reports.php?category=veranstaltungen" class="filter-pill <?php echo $category === 'veranstaltungen' ? 'active' : ''; ?>">Veranstaltungen</a>
     <a href="reports.php?category=sonstige" class="filter-pill <?php echo $category === 'sonstige' ? 'active' : ''; ?>">Sonstige</a>
     <a href="reports.php?category=archiv" class="filter-pill <?php echo $category === 'archiv' ? 'active' : ''; ?>"><i class="fas fa-archive"></i> Archiv</a>
 </div>
