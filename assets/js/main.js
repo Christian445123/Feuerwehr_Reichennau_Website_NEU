@@ -4,6 +4,15 @@
 
 document.addEventListener('DOMContentLoaded', function () {
 
+    // --- Aktuelle Alarmierungen Tirol: alle 5 Minuten neu laden ---
+    var tirolAlarmFrame = document.getElementById('tirolAlarmFrame');
+    if (tirolAlarmFrame) {
+        var tirolAlarmBaseSrc = tirolAlarmFrame.src;
+        setInterval(function () {
+            tirolAlarmFrame.src = tirolAlarmBaseSrc + (tirolAlarmBaseSrc.indexOf('?') === -1 ? '?' : '&') + '_=' + Date.now();
+        }, 5 * 60 * 1000);
+    }
+
     // --- Mobile Navigation Toggle ---
     const navToggle = document.getElementById('navToggle');
     const navMenu = document.getElementById('navMenu');
