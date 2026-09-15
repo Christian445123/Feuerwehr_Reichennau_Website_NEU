@@ -10,6 +10,7 @@
                     <p>Freiwillige Feuerwehr Reichenau<br>Innsbruck Stadt</p>
                     <div class="footer-social">
                         <a href="http://facebook.ffr.at/" target="_blank" rel="noopener" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://www.instagram.com/ffreichenau_innsbruck/" target="_blank" rel="noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
                     </div>
                 </div>
 
@@ -55,6 +56,7 @@
                 <div class="footer-bottom-social">
                     <span>Folgt uns:</span>
                     <a href="http://facebook.ffr.at/" target="_blank" rel="noopener" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com/ffreichenau_innsbruck/" target="_blank" rel="noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
                 </div>
             </div>
         </div>

@@ -158,6 +158,9 @@
 
                         <h4>Facebook-Link</h4>
                         <p>Unsere Website enthält einen Link zu unserer Facebook-Seite. Es handelt sich dabei um einen einfachen Hyperlink, der keine Daten an Facebook überträgt. Erst wenn Sie den Link anklicken und die Facebook-Seite besuchen, gelten die Datenschutzbestimmungen von Facebook (Meta Platforms Ireland Ltd.).</p>
+
+                        <h4>Instagram-Link</h4>
+                        <p>Unsere Website enthält außerdem einen Link zu unserer Instagram-Seite. Auch hierbei handelt es sich um einen einfachen Hyperlink, der keine Daten an Instagram überträgt. Erst wenn Sie den Link anklicken und die Instagram-Seite besuchen, gelten die Datenschutzbestimmungen von Instagram (Meta Platforms Ireland Ltd.).</p>
                     </div>
                 </div>
 

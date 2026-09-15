@@ -61,7 +61,8 @@
                         <li><a href="index.php?page=sicherheitstipps">Sicherheitstipps</a></li>
                     </ul>
                 </li>
-                <li><a href="http://facebook.ffr.at/" class="nav-link nav-social" target="_blank" rel="noopener"><i class="fab fa-facebook"></i></a></li>
+                <li><a href="http://facebook.ffr.at/" class="nav-link nav-social" target="_blank" rel="noopener" aria-label="Facebook"><i class="fab fa-facebook"></i></a></li>
+                <li><a href="https://www.instagram.com/ffreichenau_innsbruck/" class="nav-link nav-social" target="_blank" rel="noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a></li>
                 <li class="nav-admin-item"><a href="admin/login.php" class="nav-link nav-admin-link"><i class="fas fa-user-shield"></i> Admin</a></li>
             </ul>
         </div>
