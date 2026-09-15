@@ -75,10 +75,10 @@
             </div>
 
             <div class="cta-box" style="margin-top:40px;">
-                <div class="cta-icon"><i class="fas fa-external-link-alt"></i></div>
-                <h3>Ausführliche Informationen</h3>
-                <p>Detaillierte Selbstschutzinformationen, Sirenensignale und Notfall-Checklisten stellt der Zivilschutzverband Tirol bereit.</p>
-                <a href="https://www.zivilschutz-tirol.at" target="_blank" rel="noopener" class="btn btn-primary"><i class="fas fa-shield-alt"></i> zivilschutz-tirol.at</a>
+                <div class="cta-icon"><i class="fas fa-question-circle"></i></div>
+                <h3>Fragen zur Sicherheit?</h3>
+                <p>Detaillierte Selbstschutzinformationen, Sirenensignale und Notfall-Checklisten findest du beim Zivilschutzverband deines Bundeslandes. Bei Fragen kannst du dich auch jederzeit an uns wenden.</p>
+                <a href="mailto:reichenau@feuerwehr.tirol" class="btn btn-primary"><i class="fas fa-envelope"></i> reichenau@feuerwehr.tirol</a>
             </div>
         </div>
     </section>
