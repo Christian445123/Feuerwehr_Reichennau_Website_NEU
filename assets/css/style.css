@@ -1113,6 +1113,58 @@ a:hover {
     }
 }
 
+/* --- Alarmierungen Timeline --- */
+.alarm-timeline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 20px 0;
+    border-top: 1px solid var(--color-gray-200);
+    border-bottom: 1px solid var(--color-gray-200);
+    margin-bottom: 20px;
+}
+
+.alarm-timeline-item {
+    flex: 1 1 160px;
+    position: relative;
+    padding-top: 18px;
+    border-top: 3px solid var(--color-primary);
+}
+
+.alarm-timeline-dot {
+    position: absolute;
+    top: -8px;
+    left: 0;
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    border: 2px solid var(--color-white);
+    box-shadow: 0 0 0 1px var(--color-primary);
+}
+
+.alarm-timeline-date {
+    font-size: 0.78rem;
+    color: var(--color-gray-600);
+    font-weight: 600;
+}
+
+.alarm-timeline-type {
+    display: inline-block;
+    margin-top: 4px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--color-primary);
+}
+
+.alarm-timeline-title {
+    margin-top: 4px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-dark);
+}
+
 /* Sponsors */
 .section-sponsors {
     padding: 40px 0;
