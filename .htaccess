@@ -6,12 +6,23 @@ RewriteRule ^data/ - [F,L]
 RewriteRule ^config/ - [F,L]
 RewriteRule ^pages/ - [F,L]
 
-<FilesMatch "\.(db|sqlite|env)$">
-    Require all denied
-</FilesMatch>
-<FilesMatch "^\.env">
-    Require all denied
-</FilesMatch>
+# Alle "Punktdateien" (.env, .htaccess, .git/..., .DS_Store, ...) sowie
+# Datenbank-Dumps nie direkt ausliefern - unabhängig von der Apache-Version.
+<IfModule mod_authz_core.c>
+    # Apache 2.4+
+    <FilesMatch "(^\.|\.(db|sqlite|sql|env|log)$)">
+        Require all denied
+    </FilesMatch>
+</IfModule>
+<IfModule !mod_authz_core.c>
+    # Apache 2.2 Fallback
+    <FilesMatch "(^\.|\.(db|sqlite|sql|env|log)$)">
+        Order allow,deny
+        Deny from all
+    </FilesMatch>
+</IfModule>
+
+RewriteRule (^|/)\. - [F,L]
 
 # Statische Dateien direkt ausliefern
 RewriteCond %{REQUEST_FILENAME} -f

@@ -9,6 +9,7 @@
  */
 
 require_once __DIR__ . '/env.php';
+require_once __DIR__ . '/crypto.php';
 
 /**
  * Sendet eine E-Mail. Gibt bei Erfolg true zurück, sonst false
@@ -46,7 +47,7 @@ function sendViaSmtp(string $host, string $to, string $fromEmail, string $fromNa
     $port = (int)env('SMTP_PORT', '587');
     $encryption = strtolower((string)env('SMTP_ENCRYPTION', 'tls'));
     $username = env('SMTP_USERNAME', '');
-    $password = env('SMTP_PASSWORD', '');
+    $password = decryptSecret(env('SMTP_PASSWORD', ''));
 
     $transport = $encryption === 'ssl' ? 'ssl://' : '';
     $socket = @stream_socket_client($transport . $host . ':' . $port, $errno, $errstr, 10);

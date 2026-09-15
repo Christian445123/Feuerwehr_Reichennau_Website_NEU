@@ -7,14 +7,18 @@
  */
 
 require_once __DIR__ . '/env.php';
+require_once __DIR__ . '/crypto.php';
 require_once __DIR__ . '/migrations.php';
 
 // ── MariaDB/MySQL-Konfiguration (aus .env) ──
+// DB_PASSWORD ist in der .env verschlüsselt hinterlegt (Präfix "enc:"),
+// siehe config/crypto.php. Ein noch unverschlüsselter Klartext-Wert
+// funktioniert übergangsweise weiterhin.
 define('DB_MYSQL_HOST', env('DB_HOST', '127.0.0.1'));
 define('DB_MYSQL_PORT', env('DB_PORT', '3306'));
 define('DB_MYSQL_NAME', env('DB_NAME', 'ffr'));
 define('DB_MYSQL_USER', env('DB_USER', 'ffr_user'));
-define('DB_MYSQL_PASS', env('DB_PASSWORD', ''));
+define('DB_MYSQL_PASS', decryptSecret(env('DB_PASSWORD', '')));
 define('DB_MYSQL_CHARSET', 'utf8mb4');
 
 // ── Upload-Konfiguration ──

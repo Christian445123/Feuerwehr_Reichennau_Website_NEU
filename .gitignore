@@ -1,2 +1,3 @@
 autocommit.bat
 .env
+config/secret_key.php
