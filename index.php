@@ -37,14 +37,16 @@ if (!file_exists($page_file)) {
 
 // Seitentitel
 $page_titles = [
-    'home'        => 'Startseite',
-    'ueber-uns'   => 'Über Uns',
-    'ausruestung' => 'Ausrüstung',
-    'jugend'      => 'Jugend',
-    'berichte'    => 'Berichte',
-    'termine'     => 'Termine',
-    'kontakt'     => 'Kontakt & Impressum',
-    'datenschutz' => 'Datenschutzerklärung'
+    'home'             => 'Startseite',
+    'ueber-uns'        => 'Über Uns',
+    'ausruestung'      => 'Ausrüstung',
+    'jugend'           => 'Jugend',
+    'berichte'         => 'Aktuelles',
+    'termine'          => 'Termine',
+    'kontakt'          => 'Kontakt & Impressum',
+    'datenschutz'      => 'Datenschutzerklärung',
+    'alarmierungen'    => 'Alarmierungen',
+    'sicherheitstipps' => 'Sicherheitstipps',
 ];
 
 $current_title = $page_titles[$page] ?? 'Startseite';
