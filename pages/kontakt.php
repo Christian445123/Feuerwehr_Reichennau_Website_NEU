@@ -313,9 +313,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     var map = L.map('schutzgebietMap', { scrollWheelZoom: false });
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    // Hinweis: der kostenlose tile.openstreetmap.org-Server ist laut Nutzungs-
+    // richtlinie nur für kurze Tests gedacht und blockt echte Websites (403
+    // "Access blocked"). CARTO stellt kostenlose Kacheln ausdrücklich auch für
+    // den produktiven Einsatz bereit, daher hier stattdessen genutzt.
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
         maxZoom: 19,
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>-Mitwirkende'
+        subdomains: 'abcd',
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>-Mitwirkende &copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a>'
     }).addTo(map);
 
     var polygon = L.polygon(schutzgebiet, {
