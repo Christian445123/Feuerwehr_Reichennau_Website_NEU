@@ -15,24 +15,42 @@
         </div>
     </section>
 
+    <?php
+    require_once __DIR__ . '/../config/database.php';
+    $db = getDB();
+
+    $year = date('Y');
+    $brandCount = $db->prepare("SELECT COUNT(*) FROM reports WHERE published = 1 AND category = 'einsatz' AND subcategory = 'brand' AND date LIKE ?");
+    $brandCount->execute(["$year-%"]);
+    $brandCount = (int)$brandCount->fetchColumn();
+
+    $technischCount = $db->prepare("SELECT COUNT(*) FROM reports WHERE published = 1 AND category = 'einsatz' AND subcategory IN ('technisch','abc','unterstuetzung') AND date LIKE ?");
+    $technischCount->execute(["$year-%"]);
+    $technischCount = (int)$technischCount->fetchColumn();
+
+    $totalEinsaetze = $db->prepare("SELECT COUNT(*) FROM reports WHERE published = 1 AND category = 'einsatz' AND date LIKE ?");
+    $totalEinsaetze->execute(["$year-%"]);
+    $totalEinsaetze = (int)$totalEinsaetze->fetchColumn();
+    ?>
+
     <!-- Einsatz-Statistik -->
     <section class="stats-section">
         <div class="container">
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-icon"><i class="fas fa-fire"></i></div>
-                    <div class="stat-number" data-count="7">7</div>
-                    <div class="stat-label">Brandeinsätze</div>
+                    <div class="stat-number" data-count="<?php echo $brandCount; ?>"><?php echo $brandCount; ?></div>
+                    <div class="stat-label">Brandeinsätze <?php echo $year; ?></div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon"><i class="fas fa-tools"></i></div>
-                    <div class="stat-number" data-count="3">3</div>
-                    <div class="stat-label">Technische Einsätze</div>
+                    <div class="stat-number" data-count="<?php echo $technischCount; ?>"><?php echo $technischCount; ?></div>
+                    <div class="stat-label">Technische Einsätze <?php echo $year; ?></div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon"><i class="fas fa-bell"></i></div>
-                    <div class="stat-number" data-count="10">10</div>
-                    <div class="stat-label">Alarmierungen Gesamt</div>
+                    <div class="stat-number" data-count="<?php echo $totalEinsaetze; ?>"><?php echo $totalEinsaetze; ?></div>
+                    <div class="stat-label">Alarmierungen <?php echo $year; ?></div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon"><i class="fas fa-users"></i></div>
@@ -52,8 +70,6 @@
             </div>
 
             <?php
-            require_once __DIR__ . '/../config/database.php';
-            $db = getDB();
             $recentReports = $db->query("SELECT * FROM reports WHERE published = 1 ORDER BY date DESC, created_at DESC LIMIT 6")->fetchAll();
             $categoryIcons = ['einsatz' => 'fa-fire', 'uebung' => 'fa-dumbbell', 'jugend' => 'fa-child', 'sonstige' => 'fa-newspaper'];
             $categoryBadges = ['einsatz' => 'badge-brand', 'uebung' => 'badge-uebung', 'jugend' => 'badge-jugend', 'sonstige' => 'badge-sonstige'];
@@ -80,6 +96,35 @@
             </div>
         </div>
     </section>
+
+    <!-- Letzte Alarmierungen -->
+    <?php
+    $subcategoryLabels = ['brand' => 'Brand', 'technisch' => 'Technisch', 'abc' => 'ABC', 'unterstuetzung' => 'Unterstützung', 'sonstiges' => 'Sonstiges'];
+    $latestEinsaetze = $db->query("SELECT title, subcategory, date FROM reports WHERE published = 1 AND category = 'einsatz' ORDER BY date DESC, created_at DESC LIMIT 5")->fetchAll();
+    ?>
+    <?php if (!empty($latestEinsaetze)): ?>
+    <section class="section section-dark">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Die letzten 5 Alarmierungen</h2>
+                <p class="section-subtitle">Immer aktuell informiert</p>
+            </div>
+            <div class="alarm-timeline alarm-timeline-dark">
+                <?php foreach ($latestEinsaetze as $e): ?>
+                    <div class="alarm-timeline-item">
+                        <div class="alarm-timeline-dot"></div>
+                        <div class="alarm-timeline-date"><?php echo htmlspecialchars($e['date']); ?></div>
+                        <div class="alarm-timeline-type"><?php echo htmlspecialchars($subcategoryLabels[$e['subcategory']] ?? 'Einsatz'); ?></div>
+                        <div class="alarm-timeline-title"><?php echo htmlspecialchars($e['title']); ?></div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+            <div class="section-cta">
+                <a href="index.php?page=alarmierungen" class="btn btn-primary"><i class="fas fa-bell"></i> Alle Alarmierungen ansehen</a>
+            </div>
+        </div>
+    </section>
+    <?php endif; ?>
 
     <!-- Info-Bereich -->
     <section class="section section-dark">
