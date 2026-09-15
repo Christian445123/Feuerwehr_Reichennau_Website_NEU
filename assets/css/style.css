@@ -1742,6 +1742,122 @@ a:hover {
     text-decoration: underline;
 }
 
+.section-alt {
+    background: var(--color-gray-100);
+}
+
+/* --- Öffentliche Formulare (Kontaktformular) --- */
+.kontakt-form-card {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.public-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.public-form .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.public-form .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.public-form label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-gray-700);
+}
+
+.public-form .req {
+    color: var(--color-primary);
+    font-weight: 400;
+}
+
+.public-form input[type="text"],
+.public-form input[type="email"],
+.public-form select,
+.public-form textarea {
+    padding: 11px 14px;
+    border: 1px solid var(--color-gray-300);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-family);
+    font-size: 0.95rem;
+    color: var(--color-dark);
+    background: var(--color-white);
+    transition: var(--transition);
+}
+
+.public-form input[type="text"]:focus,
+.public-form input[type="email"]:focus,
+.public-form select:focus,
+.public-form textarea:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(213,0,28,0.1);
+}
+
+.public-form textarea {
+    resize: vertical;
+    min-height: 120px;
+    font-family: var(--font-family);
+}
+
+.public-form .btn {
+    align-self: flex-start;
+}
+
+.form-honeypot {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.form-alert {
+    padding: 14px 18px;
+    border-radius: var(--radius-sm);
+    margin-bottom: 20px;
+    font-size: 0.92rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.form-alert i {
+    margin-top: 2px;
+}
+
+.form-alert ul {
+    margin: 0;
+    padding-left: 18px;
+}
+
+.form-alert-success {
+    background: rgba(39,174,96,0.1);
+    color: #1e8449;
+}
+
+.form-alert-error {
+    background: rgba(213,0,28,0.08);
+    color: var(--color-primary-dark);
+}
+
+@media (max-width: 640px) {
+    .public-form .form-row {
+        grid-template-columns: 1fr;
+    }
+}
+
 /* Impressum */
 .impressum-section {
     margin-top: 40px;

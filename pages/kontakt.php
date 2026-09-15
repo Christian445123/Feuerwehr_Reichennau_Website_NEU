@@ -1,4 +1,70 @@
-<?php require_once __DIR__ . '/../config/gate.php'; requireSiteAccess(); ?>
+<?php
+require_once __DIR__ . '/../config/gate.php';
+requireSiteAccess();
+require_once __DIR__ . '/../config/mail.php';
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+if (empty($_SESSION['kontakt_csrf'])) {
+    $_SESSION['kontakt_csrf'] = bin2hex(random_bytes(32));
+}
+
+$formData = ['anrede' => '', 'vorname' => '', 'nachname' => '', 'strasse' => '', 'ort' => '', 'email' => '', 'telefon' => '', 'nachricht' => ''];
+$formErrors = [];
+$formSent = false;
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['kontakt_submit'])) {
+    foreach ($formData as $key => $_) {
+        $formData[$key] = trim($_POST[$key] ?? '');
+    }
+
+    $csrfOk = hash_equals($_SESSION['kontakt_csrf'], $_POST['csrf_token'] ?? '');
+    $honeypotOk = ($_POST['website'] ?? '') === ''; // Anti-Spam-Feld, für Menschen unsichtbar
+
+    if (!$csrfOk || !$honeypotOk) {
+        $formErrors[] = 'Ungültige Anfrage. Bitte lade die Seite neu und versuche es erneut.';
+    }
+    if ($formData['vorname'] === '' || $formData['nachname'] === '') {
+        $formErrors[] = 'Bitte gib Vor- und Nachname an.';
+    }
+    if ($formData['email'] === '' || !filter_var($formData['email'], FILTER_VALIDATE_EMAIL)) {
+        $formErrors[] = 'Bitte gib eine gültige E-Mail-Adresse an.';
+    }
+    if ($formData['nachricht'] === '') {
+        $formErrors[] = 'Bitte gib eine Nachricht ein.';
+    }
+
+    if (empty($formErrors)) {
+        $subject = 'Kontaktanfrage von ' . $formData['vorname'] . ' ' . $formData['nachname'];
+        $bodyLines = [
+            'Neue Kontaktanfrage über die Website der FF Reichenau',
+            '',
+            'Anrede: ' . ($formData['anrede'] ?: '-'),
+            'Name: ' . $formData['vorname'] . ' ' . $formData['nachname'],
+            'Strasse / Nr.: ' . ($formData['strasse'] ?: '-'),
+            'Ort: ' . ($formData['ort'] ?: '-'),
+            'E-Mail: ' . $formData['email'],
+            'Telefon: ' . ($formData['telefon'] ?: '-'),
+            '',
+            'Nachricht:',
+            $formData['nachricht'],
+        ];
+        $mailError = null;
+        $sent = sendContactMail($subject, implode("\n", $bodyLines), $formData['email'], $formData['vorname'] . ' ' . $formData['nachname'], $mailError);
+
+        if ($sent) {
+            unset($_SESSION['kontakt_csrf']);
+            header('Location: index.php?page=kontakt&sent=1#kontaktformular');
+            exit;
+        }
+        $formErrors[] = 'Die Nachricht konnte leider nicht versendet werden. Bitte versuche es später erneut oder schreibe direkt an reichenau@feuerwehr.tirol.';
+    }
+}
+
+$formSent = isset($_GET['sent']);
+?>
     <!-- Page Header -->
     <section class="page-header">
         <div class="container">
@@ -7,7 +73,93 @@
         </div>
     </section>
 
-    <section class="section">
+    <section class="section" id="kontaktformular">
+        <div class="container">
+            <div class="content-card kontakt-form-card">
+                <div class="content-card-header">
+                    <div class="content-card-icon"><i class="fas fa-paper-plane"></i></div>
+                    <h2>Kontaktanfrage</h2>
+                </div>
+                <div class="content-card-body">
+                    <?php if ($formSent): ?>
+                        <div class="form-alert form-alert-success">
+                            <i class="fas fa-check-circle"></i> Vielen Dank für deine Nachricht! Wir melden uns so schnell wie möglich bei dir.
+                        </div>
+                    <?php endif; ?>
+                    <?php if (!empty($formErrors)): ?>
+                        <div class="form-alert form-alert-error">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <ul>
+                                <?php foreach ($formErrors as $err): ?>
+                                    <li><?php echo htmlspecialchars($err); ?></li>
+                                <?php endforeach; ?>
+                            </ul>
+                        </div>
+                    <?php endif; ?>
+
+                    <form method="POST" action="index.php?page=kontakt#kontaktformular" class="public-form">
+                        <input type="hidden" name="kontakt_submit" value="1">
+                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['kontakt_csrf']); ?>">
+                        <input type="text" name="website" value="" class="form-honeypot" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+                        <div class="form-group">
+                            <label for="anrede">Anrede</label>
+                            <select id="anrede" name="anrede">
+                                <option value="" <?php echo $formData['anrede'] === '' ? 'selected' : ''; ?>>Bitte auswählen</option>
+                                <option value="Frau" <?php echo $formData['anrede'] === 'Frau' ? 'selected' : ''; ?>>Frau</option>
+                                <option value="Herr" <?php echo $formData['anrede'] === 'Herr' ? 'selected' : ''; ?>>Herr</option>
+                                <option value="Divers" <?php echo $formData['anrede'] === 'Divers' ? 'selected' : ''; ?>>Divers</option>
+                            </select>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="vorname">Vorname <span class="req">(*)</span></label>
+                                <input type="text" id="vorname" name="vorname" value="<?php echo htmlspecialchars($formData['vorname']); ?>" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="nachname">Nachname <span class="req">(*)</span></label>
+                                <input type="text" id="nachname" name="nachname" value="<?php echo htmlspecialchars($formData['nachname']); ?>" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="strasse">Strasse / Nr.</label>
+                                <input type="text" id="strasse" name="strasse" value="<?php echo htmlspecialchars($formData['strasse']); ?>">
+                            </div>
+                            <div class="form-group">
+                                <label for="ort">Ort</label>
+                                <input type="text" id="ort" name="ort" value="<?php echo htmlspecialchars($formData['ort']); ?>">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="email">E-Mail <span class="req">(*)</span></label>
+                                <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($formData['email']); ?>" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="telefon">Telefon allgemein</label>
+                                <input type="text" id="telefon" name="telefon" value="<?php echo htmlspecialchars($formData['telefon']); ?>">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="nachricht">Nachricht <span class="req">(*)</span></label>
+                            <textarea id="nachricht" name="nachricht" rows="6" required><?php echo htmlspecialchars($formData['nachricht']); ?></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i> Anfrage senden
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section section-alt">
         <div class="container">
 
             <div class="kontakt-grid">
