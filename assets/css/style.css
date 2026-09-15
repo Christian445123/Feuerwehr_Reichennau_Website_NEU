@@ -1036,111 +1036,119 @@ a:hover {
 }
 
 /* --- Organigramm --- */
-.orgchart {
+.org2 {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0;
+    gap: 10px;
     margin-top: 16px;
     overflow-x: auto;
     padding-bottom: 8px;
 }
 
-.orgchart-row {
+.org2-row {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 14px;
+    gap: 10px;
     width: 100%;
 }
 
-.orgchart-connector {
-    width: 2px;
-    height: 22px;
-    background: var(--color-gray-300);
+.org2-row-five {
+    flex-wrap: nowrap;
 }
 
-.orgchart-connector-single {
-    height: 16px;
+.org2-row-scatter {
+    margin-top: 6px;
 }
 
-.orgchart-box {
+.org2-box {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 4px;
-    min-width: 130px;
-    padding: 10px 12px;
+    gap: 3px;
+    min-width: 140px;
+    flex: 1 1 140px;
+    max-width: 190px;
+    padding: 10px 14px;
     border-radius: var(--radius-md);
-    background: var(--color-gray-700);
-    color: var(--color-white);
+    border: 3px solid;
     text-align: center;
     box-shadow: var(--shadow-sm);
 }
 
-.orgchart-box strong {
-    font-size: 0.72rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
-    opacity: 0.85;
-}
-
-.orgchart-box span {
+.org2-box strong {
     font-size: 0.85rem;
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+.org2-box span {
+    font-size: 0.72rem;
     font-weight: 600;
+    opacity: 0.9;
 }
 
-.orgchart-box-command {
+.org2-rank-badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 26px;
+    height: 26px;
+    object-fit: contain;
     background: var(--color-white);
-    border: 2px solid var(--color-primary);
-    color: var(--color-dark);
+    border-radius: 50%;
+    padding: 2px;
+    box-shadow: var(--shadow-sm);
 }
 
-.orgchart-box-command strong {
-    color: var(--color-primary);
-    opacity: 1;
+/* Kommando (Kommandant, Kommandant-Stv.) */
+.org2-gold {
+    background: #ffd400;
+    border-color: var(--color-primary);
+    color: #3a2c00;
 }
 
-.orgchart-box-chief {
-    min-width: 160px;
-    box-shadow: var(--shadow-md);
+/* Kassier, Schriftführer */
+.org2-navy {
+    background: #1e2f4d;
+    border-color: #ffd400;
+    color: var(--color-white);
 }
 
-.orgchart-box-dark {
-    background: var(--color-dark);
+/* Zugskommandant */
+.org2-gray {
+    background: var(--color-gray-100);
+    border-color: var(--color-gray-400);
+    color: var(--color-gray-600);
 }
 
-.orgchart-box-sub {
-    background: var(--color-gray-600);
+/* Gruppenkommandant, Gkdt.-Stv. und sonstige Funktionen */
+.org2-red {
+    background: var(--color-primary);
+    border-color: var(--color-gray-400);
+    color: var(--color-white);
 }
 
-.orgchart-group-col {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-}
-
-.orgchart-row-groups {
-    align-items: flex-start;
-    gap: 18px;
+.org2-vacant {
+    opacity: 0.6;
 }
 
 @media (max-width: 768px) {
-    .orgchart-row {
-        gap: 8px;
+    .org2-row-five {
+        flex-wrap: wrap;
     }
-    .orgchart-box {
-        min-width: 100px;
-        padding: 8px;
+    .org2-box {
+        min-width: 110px;
+        padding: 8px 10px;
     }
-    .orgchart-box strong {
-        font-size: 0.62rem;
+    .org2-box strong {
+        font-size: 0.75rem;
     }
-    .orgchart-box span {
-        font-size: 0.78rem;
+    .org2-box span {
+        font-size: 0.65rem;
     }
 }
 
@@ -1761,26 +1769,35 @@ a:hover {
 
 /* --- Öffentliche Formulare (Kontaktformular) --- */
 .kontakt-form-card {
-    max-width: 900px;
+    max-width: 820px;
     margin: 0 auto;
+    box-shadow: var(--shadow-lg);
+}
+
+.kontakt-form-card .content-card-header {
+    padding: 28px 32px;
+}
+
+.kontakt-form-card .content-card-body {
+    padding: 36px 32px 32px;
 }
 
 .public-form {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 22px;
 }
 
 .public-form .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 20px;
+    gap: 22px;
 }
 
 .public-form .form-group {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 7px;
 }
 
 .public-form label {
@@ -1798,14 +1815,31 @@ a:hover {
 .public-form input[type="email"],
 .public-form select,
 .public-form textarea {
-    padding: 11px 14px;
-    border: 1px solid var(--color-gray-300);
-    border-radius: var(--radius-sm);
+    padding: 13px 16px;
+    border: 1.5px solid var(--color-gray-200);
+    border-radius: var(--radius-md);
     font-family: var(--font-family);
     font-size: 0.95rem;
     color: var(--color-dark);
-    background: var(--color-white);
+    background: var(--color-gray-100);
     transition: var(--transition);
+}
+
+.public-form select {
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'%3E%3Cpath fill='none' stroke='%236c757d' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' d='M1 1l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    padding-right: 40px;
+    cursor: pointer;
+}
+
+.public-form input[type="text"]:hover,
+.public-form input[type="email"]:hover,
+.public-form select:hover,
+.public-form textarea:hover {
+    border-color: var(--color-gray-300);
 }
 
 .public-form input[type="text"]:focus,
@@ -1814,17 +1848,20 @@ a:hover {
 .public-form textarea:focus {
     outline: none;
     border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px rgba(213,0,28,0.1);
+    background: var(--color-white);
+    box-shadow: 0 0 0 4px rgba(213,0,28,0.1);
 }
 
 .public-form textarea {
     resize: vertical;
-    min-height: 120px;
+    min-height: 130px;
     font-family: var(--font-family);
 }
 
 .public-form .btn {
     align-self: flex-start;
+    margin-top: 6px;
+    padding: 15px 34px;
 }
 
 .form-honeypot {

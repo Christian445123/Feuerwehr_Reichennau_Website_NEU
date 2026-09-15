@@ -16,6 +16,22 @@ function orgName(array $org, string $key): string {
     return $name !== '' ? $name : 'derzeit nicht besetzt';
 }
 
+// Rang-Icons fürs Organigramm: Namen im Organigramm werden gegen die
+// Mitgliederliste gematcht, um automatisch das passende Dienstgrad-Abzeichen
+// anzuzeigen (wie im Vorbild-Organigramm), ohne Ränge doppelt pflegen zu müssen.
+$memberRankByName = [];
+$rankLookupStmt = $db->query("SELECT firstname, lastname, rank FROM members WHERE rank IS NOT NULL AND rank != ''");
+foreach ($rankLookupStmt->fetchAll() as $mr) {
+    $key = mb_strtolower(trim($mr['firstname'] . ' ' . $mr['lastname']));
+    $memberRankByName[$key] = $mr['rank'];
+}
+function orgRankBadge(array $memberRankByName, string $name): ?string {
+    $key = mb_strtolower(trim($name));
+    $rank = $memberRankByName[$key] ?? null;
+    if (!$rank || !isset(getAllRanks()[$rank])) return null;
+    return getRankBadgePath($rank);
+}
+
 $groups = ['Kommando', 'Ausschuss', 'Mannschaft', 'Ehrenmitglieder'];
 $groupIcons = [
     'Kommando' => 'fa-star', 'Ausschuss' => 'fa-user-tie',
@@ -224,40 +240,59 @@ foreach ($allMembers as $am) {
                 </div>
 
                 <!-- Organigramm -->
+                <?php
+                function orgBox(array $org, array $memberRankByName, string $key, string $label, string $colorClass): void {
+                    $name = orgName($org, $key);
+                    $isVacant = ($name === 'derzeit nicht besetzt');
+                    $badge = !$isVacant ? orgRankBadge($memberRankByName, $name) : null;
+                    ?>
+                    <div class="org2-box <?php echo $colorClass; ?><?php echo $isVacant ? ' org2-vacant' : ''; ?>">
+                        <?php if ($badge): ?>
+                            <img src="<?php echo htmlspecialchars($badge); ?>" alt="" class="org2-rank-badge">
+                        <?php endif; ?>
+                        <strong><?php echo htmlspecialchars($name); ?></strong>
+                        <span><?php echo htmlspecialchars($label); ?></span>
+                    </div>
+                    <?php
+                }
+                ?>
                 <div class="content-card" id="organigramm">
                     <div class="content-card-header">
                         <div class="content-card-icon"><i class="fas fa-sitemap"></i></div>
                         <h2>Organigramm</h2>
                     </div>
                     <div class="content-card-body">
-                        <div class="orgchart">
-                            <div class="orgchart-row orgchart-row-top">
-                                <div class="orgchart-box orgchart-box-command"><strong>Kassier</strong><span><?php echo htmlspecialchars(orgName($org, 'kassier')); ?></span></div>
-                                <div class="orgchart-box orgchart-box-command orgchart-box-chief"><strong>Kommandant</strong><span><?php echo htmlspecialchars(orgName($org, 'kommandant')); ?></span></div>
-                                <div class="orgchart-box orgchart-box-command"><strong>Schriftführerin</strong><span><?php echo htmlspecialchars(orgName($org, 'schriftfuehrer')); ?></span></div>
+                        <div class="org2">
+                            <div class="org2-row">
+                                <?php orgBox($org, $memberRankByName, 'kommandant', 'Kommandant', 'org2-gold'); ?>
                             </div>
-                            <div class="orgchart-connector"></div>
-                            <div class="orgchart-row orgchart-row-mid">
-                                <div class="orgchart-box"><strong>Feuerwehrkurat</strong><span><?php echo htmlspecialchars(orgName($org, 'feuerwehrkurat')); ?></span></div>
-                                <div class="orgchart-box"><strong>Obermaschinist</strong><span><?php echo htmlspecialchars(orgName($org, 'obermaschinist')); ?></span></div>
-                                <div class="orgchart-box"><strong>Gerätewart</strong><span><?php echo htmlspecialchars(orgName($org, 'geraetewart')); ?></span></div>
-                                <div class="orgchart-box orgchart-box-command"><strong>Kommandant Stv.</strong><span><?php echo htmlspecialchars(orgName($org, 'kommandant_stv')); ?></span></div>
-                                <div class="orgchart-box"><strong>Jugendbetreuerin</strong><span><?php echo htmlspecialchars(orgName($org, 'jugendbetreuer')); ?></span></div>
-                                <div class="orgchart-box"><strong>Funkbeauftragter</strong><span><?php echo htmlspecialchars(orgName($org, 'funkbeauftragter')); ?></span></div>
-                                <div class="orgchart-box"><strong>Atemschutzbeauftragter</strong><span><?php echo htmlspecialchars(orgName($org, 'atemschutzbeauftragter')); ?></span></div>
+                            <div class="org2-row">
+                                <?php orgBox($org, $memberRankByName, 'kassier', 'Kassier', 'org2-navy'); ?>
+                                <?php orgBox($org, $memberRankByName, 'kommandant_stv', 'Kommandant-Stv.', 'org2-gold'); ?>
+                                <?php orgBox($org, $memberRankByName, 'schriftfuehrer', 'Schriftführer', 'org2-navy'); ?>
                             </div>
-                            <div class="orgchart-connector orgchart-connector-single"></div>
-                            <div class="orgchart-row orgchart-row-zug">
-                                <div class="orgchart-box orgchart-box-dark"><strong>Zugskommandant</strong><span><?php echo htmlspecialchars(orgName($org, 'zugskommandant')); ?></span></div>
+                            <div class="org2-row">
+                                <?php orgBox($org, $memberRankByName, 'zugskommandant', 'Zugskommandant', 'org2-gray'); ?>
                             </div>
-                            <div class="orgchart-connector"></div>
-                            <div class="orgchart-row orgchart-row-groups">
+                            <div class="org2-row org2-row-five">
                                 <?php for ($i = 1; $i <= 5; $i++): ?>
-                                    <div class="orgchart-group-col">
-                                        <div class="orgchart-box orgchart-box-dark"><strong>Gruppen-Kdt.</strong><span><?php echo htmlspecialchars(orgName($org, "gruppenkdt_$i")); ?></span></div>
-                                        <div class="orgchart-box orgchart-box-dark orgchart-box-sub"><strong>Gruppen-Kdt.-Stv.</strong><span><?php echo htmlspecialchars(orgName($org, "gruppenkdt_stv_$i")); ?></span></div>
-                                    </div>
+                                    <?php orgBox($org, $memberRankByName, "gruppenkdt_$i", 'Gruppenkommandant', 'org2-red'); ?>
                                 <?php endfor; ?>
+                            </div>
+                            <div class="org2-row org2-row-five">
+                                <?php for ($i = 1; $i <= 5; $i++): ?>
+                                    <?php orgBox($org, $memberRankByName, "gruppenkdt_stv_$i", 'Gkdt.-Stv.', 'org2-red'); ?>
+                                <?php endfor; ?>
+                            </div>
+                            <div class="org2-row org2-row-scatter">
+                                <?php orgBox($org, $memberRankByName, 'feuerwehrkurat', 'Feuerwehrkurat', 'org2-red'); ?>
+                                <?php orgBox($org, $memberRankByName, 'obermaschinist', 'Obermaschinist', 'org2-red'); ?>
+                                <?php orgBox($org, $memberRankByName, 'geraetewart', 'Gerätewart', 'org2-red'); ?>
+                                <?php orgBox($org, $memberRankByName, 'jugendbetreuer', 'Jugendbetreuer', 'org2-red'); ?>
+                            </div>
+                            <div class="org2-row org2-row-scatter">
+                                <?php orgBox($org, $memberRankByName, 'funkbeauftragter', 'Funkbeauftragter', 'org2-red'); ?>
+                                <?php orgBox($org, $memberRankByName, 'atemschutzbeauftragter', 'Atemschutzwart', 'org2-red'); ?>
                             </div>
                         </div>
                     </div>
