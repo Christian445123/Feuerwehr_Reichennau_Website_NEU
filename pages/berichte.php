@@ -107,17 +107,17 @@ $archivCutoff = date('Y-m-d', strtotime('-2 years')); // Älter als 2 Jahre gilt
     $validCategories = ['all', 'einsatz', 'uebung', 'jugend', 'veranstaltungen', 'sonstige', 'archiv'];
     if (!in_array($category, $validCategories, true)) $category = 'all';
 
-    // Archivierte Berichte (vor dem Stichtag) erscheinen ausschließlich unter
-    // dem Archiv-Filter, nicht mehr zusätzlich in "Alle" oder ihrer Kategorie.
+    // "Alle" zeigt wirklich alle Berichte (auch archivierte). Die Archivierung
+    // ist nur eine automatische Kennzeichnung (Badge) anhand des Alters, kein
+    // Ausschlusskriterium - "Archiv" ist ein zusätzlicher Filter dafür.
     if ($category === 'all') {
-        $stmt = $db->prepare("SELECT r.*, (SELECT ri.filename FROM report_images ri WHERE ri.report_id = r.id ORDER BY ri.sort_order LIMIT 1) as thumb FROM reports r WHERE r.published = 1 AND r.date >= ? ORDER BY r.date DESC, r.created_at DESC");
-        $stmt->execute([$archivCutoff]);
+        $stmt = $db->query("SELECT r.*, (SELECT ri.filename FROM report_images ri WHERE ri.report_id = r.id ORDER BY ri.sort_order LIMIT 1) as thumb FROM reports r WHERE r.published = 1 ORDER BY r.date DESC, r.created_at DESC");
     } elseif ($category === 'archiv') {
         $stmt = $db->prepare("SELECT r.*, (SELECT ri.filename FROM report_images ri WHERE ri.report_id = r.id ORDER BY ri.sort_order LIMIT 1) as thumb FROM reports r WHERE r.published = 1 AND r.date < ? ORDER BY r.date DESC, r.created_at DESC");
         $stmt->execute([$archivCutoff]);
     } else {
-        $stmt = $db->prepare("SELECT r.*, (SELECT ri.filename FROM report_images ri WHERE ri.report_id = r.id ORDER BY ri.sort_order LIMIT 1) as thumb FROM reports r WHERE r.published = 1 AND r.category = ? AND r.date >= ? ORDER BY r.date DESC, r.created_at DESC");
-        $stmt->execute([$category, $archivCutoff]);
+        $stmt = $db->prepare("SELECT r.*, (SELECT ri.filename FROM report_images ri WHERE ri.report_id = r.id ORDER BY ri.sort_order LIMIT 1) as thumb FROM reports r WHERE r.published = 1 AND r.category = ? ORDER BY r.date DESC, r.created_at DESC");
+        $stmt->execute([$category]);
     }
     $reports = $stmt->fetchAll();
     ?>

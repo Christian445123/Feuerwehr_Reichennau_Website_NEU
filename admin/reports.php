@@ -33,21 +33,21 @@ $category = $_GET['category'] ?? 'all';
 $validCategories = ['all', 'einsatz', 'uebung', 'jugend', 'veranstaltungen', 'sonstige', 'archiv'];
 if (!in_array($category, $validCategories, true)) $category = 'all';
 
-$archivCutoff = date('Y-m-d', strtotime('-2 years')); // Älter als 2 Jahre gilt als Archiv
+$archivCutoff = date('Y-m-d', strtotime('-2 years')); // Älter als 2 Jahre gilt automatisch als archiviert
 
-// Archivierte Berichte (vor dem Stichtag) erscheinen ausschließlich unter
-// dem Archiv-Filter, nicht mehr zusätzlich in "Alle" oder ihrer Kategorie.
+// "Alle" zeigt wirklich alle Berichte (auch archivierte). Die Archivierung
+// ist nur eine automatische Kennzeichnung (Badge) anhand des Alters, kein
+// Ausschlusskriterium - "Archiv" ist ein zusätzlicher Filter dafür.
 if ($category === 'all') {
-    $stmt = $db->prepare("SELECT r.*, COUNT(ri.id) as image_count FROM reports r LEFT JOIN report_images ri ON r.id = ri.report_id WHERE r.date >= ? GROUP BY r.id ORDER BY r.date DESC, r.created_at DESC");
-    $stmt->execute([$archivCutoff]);
+    $stmt = $db->query("SELECT r.*, COUNT(ri.id) as image_count FROM reports r LEFT JOIN report_images ri ON r.id = ri.report_id GROUP BY r.id ORDER BY r.date DESC, r.created_at DESC");
     $reports = $stmt->fetchAll();
 } elseif ($category === 'archiv') {
     $stmt = $db->prepare("SELECT r.*, COUNT(ri.id) as image_count FROM reports r LEFT JOIN report_images ri ON r.id = ri.report_id WHERE r.date < ? GROUP BY r.id ORDER BY r.date DESC, r.created_at DESC");
     $stmt->execute([$archivCutoff]);
     $reports = $stmt->fetchAll();
 } else {
-    $stmt = $db->prepare("SELECT r.*, COUNT(ri.id) as image_count FROM reports r LEFT JOIN report_images ri ON r.id = ri.report_id WHERE r.category = ? AND r.date >= ? GROUP BY r.id ORDER BY r.date DESC, r.created_at DESC");
-    $stmt->execute([$category, $archivCutoff]);
+    $stmt = $db->prepare("SELECT r.*, COUNT(ri.id) as image_count FROM reports r LEFT JOIN report_images ri ON r.id = ri.report_id WHERE r.category = ? GROUP BY r.id ORDER BY r.date DESC, r.created_at DESC");
+    $stmt->execute([$category]);
     $reports = $stmt->fetchAll();
 }
 

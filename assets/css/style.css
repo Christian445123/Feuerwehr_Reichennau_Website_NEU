@@ -463,13 +463,23 @@ a:hover {
 
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     gap: 30px;
 }
 
 .stat-card {
     text-align: center;
     padding: 20px;
+}
+
+.stats-period {
+    text-align: center;
+    color: var(--color-gray-600);
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 24px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .stat-icon {

@@ -17,40 +17,35 @@
 
     <?php
     require_once __DIR__ . '/../config/database.php';
+    require_once __DIR__ . '/../config/stats.php';
     $db = getDB();
-
-    $year = date('Y');
-    $brandCount = $db->prepare("SELECT COUNT(*) FROM reports WHERE published = 1 AND category = 'einsatz' AND subcategory = 'brand' AND date LIKE ?");
-    $brandCount->execute(["$year-%"]);
-    $brandCount = (int)$brandCount->fetchColumn();
-
-    $technischCount = $db->prepare("SELECT COUNT(*) FROM reports WHERE published = 1 AND category = 'einsatz' AND subcategory IN ('technisch','abc','unterstuetzung') AND date LIKE ?");
-    $technischCount->execute(["$year-%"]);
-    $technischCount = (int)$technischCount->fetchColumn();
-
-    $totalEinsaetze = $db->prepare("SELECT COUNT(*) FROM reports WHERE published = 1 AND category = 'einsatz' AND date LIKE ?");
-    $totalEinsaetze->execute(["$year-%"]);
-    $totalEinsaetze = (int)$totalEinsaetze->fetchColumn();
+    $stats = getEinsatzStats($db);
     ?>
 
     <!-- Einsatz-Statistik -->
     <section class="stats-section">
         <div class="container">
+            <p class="stats-period">Berichtszeitraum <?php echo date('d.m.Y', strtotime($stats['start'])); ?> – <?php echo date('d.m.Y', strtotime($stats['end'])); ?></p>
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-icon"><i class="fas fa-fire"></i></div>
-                    <div class="stat-number" data-count="<?php echo $brandCount; ?>"><?php echo $brandCount; ?></div>
-                    <div class="stat-label">Brandeinsätze <?php echo $year; ?></div>
+                    <div class="stat-number" data-count="<?php echo $stats['brand']; ?>"><?php echo $stats['brand']; ?></div>
+                    <div class="stat-label">Brandeinsätze</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon"><i class="fas fa-tools"></i></div>
-                    <div class="stat-number" data-count="<?php echo $technischCount; ?>"><?php echo $technischCount; ?></div>
-                    <div class="stat-label">Technische Einsätze <?php echo $year; ?></div>
+                    <div class="stat-number" data-count="<?php echo $stats['technisch']; ?>"><?php echo $stats['technisch']; ?></div>
+                    <div class="stat-label">Technische Einsätze</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-hands-helping"></i></div>
+                    <div class="stat-number" data-count="<?php echo $stats['unterstuetzung']; ?>"><?php echo $stats['unterstuetzung']; ?></div>
+                    <div class="stat-label">Unterstützungseinsätze</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon"><i class="fas fa-bell"></i></div>
-                    <div class="stat-number" data-count="<?php echo $totalEinsaetze; ?>"><?php echo $totalEinsaetze; ?></div>
-                    <div class="stat-label">Alarmierungen <?php echo $year; ?></div>
+                    <div class="stat-number" data-count="<?php echo $stats['einsatz_gesamt']; ?>"><?php echo $stats['einsatz_gesamt']; ?></div>
+                    <div class="stat-label">Einsätze gesamt</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon"><i class="fas fa-users"></i></div>
