@@ -876,10 +876,14 @@ a:hover {
     margin: 24px 0;
 }
 
+/* feuerwehr.tirol bindet das eigentliche Alarmierungs-Widget (ohne die
+   Überschriften "Aktuelle Alarmierungen"/"Der Tiroler Feuerwehren") selbst
+   über die eigene Unterseite aktuelle-alarmierungen.feuerwehr.tirol mit
+   genau 425px Höhe ein - das übernehmen wir hier 1:1, damit wirklich nur
+   die Liste angezeigt wird, ohne Crop-Trick. */
 .tirol-alarm-embed {
-    position: relative;
     width: 100%;
-    height: 600px;
+    height: 425px;
     margin-top: 16px;
     border-radius: var(--radius-md);
     overflow: hidden;
@@ -887,19 +891,9 @@ a:hover {
     background: var(--color-gray-100);
 }
 
-/* Die eingebettete Seite hat oben eine eigene Überschrift ("Aktuelle
-   Alarmierungen" / "Der Tiroler Feuerwehren"), die wir nicht anzeigen
-   wollen - nur die eigentliche Liste. Da es sich um eine fremde Seite
-   handelt, lässt sich das nicht per CSS in der Seite selbst ausblenden;
-   stattdessen wird der Iframe etwas größer als der sichtbare Bereich
-   gerendert und nach oben verschoben, sodass die Überschrift oberhalb
-   des sichtbaren (overflow:hidden) Bereichs abgeschnitten wird. */
 .tirol-alarm-embed iframe {
-    position: absolute;
-    top: -128px;
-    left: 0;
     width: 100%;
-    height: calc(100% + 128px);
+    height: 100%;
     border: 0;
     display: block;
 }
@@ -908,12 +902,6 @@ a:hover {
     margin-top: 12px;
     font-size: 0.82rem;
     color: var(--color-gray-600);
-}
-
-@media (max-width: 640px) {
-    .tirol-alarm-embed {
-        height: 450px;
-    }
 }
 
 .content-image {
