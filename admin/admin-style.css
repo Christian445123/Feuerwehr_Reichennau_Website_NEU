@@ -533,15 +533,15 @@ img { max-width: 100%; height: auto; }
     flex-wrap: wrap; width: 100%;
 }
 
-.func-section-select {
+.function-row .func-section-select {
     flex: 0 0 auto; width: auto; min-width: 120px; max-width: 150px;
     padding: 8px 10px; border: 1px solid var(--gray-300);
     border-radius: var(--radius); font-family: var(--font); font-size: 0.85rem;
     background: var(--white);
 }
 
-.func-role-input {
-    flex: 1 1 200px; min-width: 180px;
+.function-row .func-role-input {
+    flex: 1 1 200px; width: auto; min-width: 180px;
     padding: 8px 10px; border: 1px solid var(--gray-300);
     border-radius: var(--radius); font-family: var(--font); font-size: 0.85rem;
 }
