@@ -6,6 +6,16 @@ require_once __DIR__ . '/../config/ranks.php';
 require_once __DIR__ . '/../config/badges.php';
 $db = getDB();
 
+// Organigramm-Namen (Struktur ist fest unten im Template, nur die Namen sind
+// über Admin -> Organigramm pflegbar)
+$orgRows = $db->query("SELECT position_key, name FROM org_chart_positions")->fetchAll();
+$org = [];
+foreach ($orgRows as $r) { $org[$r['position_key']] = $r['name']; }
+function orgName(array $org, string $key): string {
+    $name = trim($org[$key] ?? '');
+    return $name !== '' ? $name : 'derzeit nicht besetzt';
+}
+
 $groups = ['Kommando', 'Ausschuss', 'Mannschaft', 'Ehrenmitglieder'];
 $groupIcons = [
     'Kommando' => 'fa-star', 'Ausschuss' => 'fa-user-tie',
