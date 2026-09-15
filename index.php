@@ -18,7 +18,9 @@ $allowed_pages = [
     'berichte',
     'termine',
     'kontakt',
-    'datenschutz'
+    'datenschutz',
+    'alarmierungen',
+    'sicherheitstipps',
 ];
 
 // Sicherheitscheck: Nur erlaubte Seiten laden
