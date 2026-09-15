@@ -48,7 +48,7 @@
             </div>
 
             <div class="footer-bottom footer-bottom-split">
-                <p class="footer-bottom-copy">&copy; <?php echo date('Y'); ?> FF Reichenau | Webagentur Paul Weber</p>
+                <p class="footer-bottom-copy">&copy; Copyrights by <?php echo date('Y'); ?> FF Reichenau</p>
                 <p class="footer-bottom-legal">
                     <a href="index.php?page=kontakt">Impressum</a> &middot; <a href="index.php?page=datenschutz">Datenschutz</a>
                 </p>
