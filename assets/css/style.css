@@ -877,6 +877,7 @@ a:hover {
 }
 
 .tirol-alarm-embed {
+    position: relative;
     width: 100%;
     height: 600px;
     margin-top: 16px;
@@ -886,9 +887,19 @@ a:hover {
     background: var(--color-gray-100);
 }
 
+/* Die eingebettete Seite hat oben eine eigene Überschrift ("Aktuelle
+   Alarmierungen" / "Der Tiroler Feuerwehren"), die wir nicht anzeigen
+   wollen - nur die eigentliche Liste. Da es sich um eine fremde Seite
+   handelt, lässt sich das nicht per CSS in der Seite selbst ausblenden;
+   stattdessen wird der Iframe etwas größer als der sichtbare Bereich
+   gerendert und nach oben verschoben, sodass die Überschrift oberhalb
+   des sichtbaren (overflow:hidden) Bereichs abgeschnitten wird. */
 .tirol-alarm-embed iframe {
+    position: absolute;
+    top: -128px;
+    left: 0;
     width: 100%;
-    height: 100%;
+    height: calc(100% + 128px);
     border: 0;
     display: block;
 }
