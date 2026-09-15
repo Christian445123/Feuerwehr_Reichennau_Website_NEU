@@ -44,6 +44,11 @@ require_once __DIR__ . '/../permissions.php';
                     <i class="fas fa-user-shield"></i> Benutzer
                 </a>
             <?php endif; ?>
+            <?php if (userHasPermission('deploy.manage')): ?>
+                <a href="deploy.php" class="sidebar-link <?php echo ($activePage ?? '') === 'deploy' ? 'active' : ''; ?>">
+                    <i class="fab fa-github"></i> Deployment
+                </a>
+            <?php endif; ?>
             <a href="settings.php" class="sidebar-link <?php echo ($activePage ?? '') === 'settings' ? 'active' : ''; ?>">
                 <i class="fas fa-cog"></i> Einstellungen
             </a>

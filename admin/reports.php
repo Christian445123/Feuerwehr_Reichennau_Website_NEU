@@ -33,7 +33,7 @@ $category = $_GET['category'] ?? 'all';
 $validCategories = ['all', 'einsatz', 'uebung', 'jugend', 'sonstige', 'archiv'];
 if (!in_array($category, $validCategories, true)) $category = 'all';
 
-$archivCutoff = '2024-01-01'; // Alles vor 2024 gilt als Archiv
+$archivCutoff = date('Y-m-d', strtotime('-2 years')); // Älter als 2 Jahre gilt als Archiv
 
 // Archivierte Berichte (vor dem Stichtag) erscheinen ausschließlich unter
 // dem Archiv-Filter, nicht mehr zusätzlich in "Alle" oder ihrer Kategorie.

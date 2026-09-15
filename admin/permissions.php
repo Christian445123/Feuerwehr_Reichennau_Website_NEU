@@ -26,6 +26,7 @@ function getAllPermissions(): array {
         'ranks.manage'      => 'Dienstgrade verwalten',
         'settings.manage'   => 'Website-Einstellungen verwalten (Zugangspasswort der Seite)',
         'users.manage'      => 'Benutzer &amp; Rechte verwalten',
+        'deploy.manage'     => 'Deployment: neuesten Stand von GitHub auf den Server holen (git pull)',
     ];
 }
 
