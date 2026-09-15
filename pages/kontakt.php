@@ -292,23 +292,52 @@ document.addEventListener('DOMContentLoaded', function () {
     var mapEl = document.getElementById('schutzgebietMap');
     if (!mapEl || typeof L === 'undefined') return;
 
-    // Grenzverlauf näherungsweise aus der amtlichen Schutzbereichs-Karte der
-    // FF Reichenau nachgezeichnet und anhand realer Orte (Inn, Bahngleise,
-    // Pradl, Rossau) georeferenziert. Kein vermessungsgenauer Grenzverlauf -
-    // bei Bedarf hier direkt anpassen.
+    // Grenzverlauf: der Kern (Stadtteil Reichenau) stammt aus den echten,
+    // amtlichen OpenStreetMap-Verwaltungsgrenzen (Nominatim, Relation 19639238)
+    // - keine Schätzung. Der Bereich reicht laut FF Reichenau aber über den
+    // Stadtteil Reichenau hinaus auch über Teile von Pradl/Pradler Saggen und
+    // das Gewerbegebiet Rossau (siehe "Über uns" -> Geschichte); dieser
+    // zusätzliche westliche/südliche Bereich (Punkte ab "Erweiterung") ist
+    // anhand der amtlichen Schutzbereichs-Karte nachgezeichnet und mit realen
+    // Orientierungspunkten (Pradler Platz, Hauptbahnhof) abgeglichen, aber
+    // nicht vermessungsgenau - bei Bedarf hier direkt anpassen.
     var schutzgebiet = [
-        [47.2758, 11.4050],
-        [47.2805, 11.4120],
-        [47.2838, 11.4210],
-        [47.2836, 11.4300],
-        [47.2795, 11.4345],
-        [47.2762, 11.4395],
-        [47.2705, 11.4375],
-        [47.2665, 11.4335],
-        [47.2635, 11.4225],
-        [47.2600, 11.4145],
+        // -- Stadtteil Reichenau (offizielle Verwaltungsgrenze, OSM) --
+        [47.2713, 11.4144],
+        [47.2701, 11.4151],
+        [47.2690, 11.4154],
+        [47.2682, 11.4174],
+        [47.2664, 11.4213],
+        [47.2657, 11.4229],
+        [47.2650, 11.4238],
+        [47.2688, 11.4263],
+        [47.2717, 11.4273],
+        [47.2727, 11.4280],
+        // -- Erweiterung Richtung Osten, damit das Feuerwehrhaus (Rossau) mit
+        //    eingeschlossen ist --
+        [47.2732, 11.4300],
+        [47.2722, 11.4322],
+        [47.2712, 11.4318],
+        [47.2705, 11.4296],
+        // -- zurück zur Reichenau-Grenze (Nordbereich entlang des Inn) --
+        [47.2741, 11.4287],
+        [47.2772, 11.4222],
+        [47.2783, 11.4181],
+        [47.2775, 11.4164],
+        [47.2760, 11.4145],
+        [47.2750, 11.4153],
+        [47.2739, 11.4159],
+        [47.2730, 11.4159],
+        [47.2720, 11.4153],
+        [47.2715, 11.4149],
+        // -- Erweiterung Richtung Westen (Teile Pradl/Pradler Saggen/Rossau
+        //    Richtung Hauptbahnhof) - als geschlossener Keil ohne
+        //    Selbstüberschneidung --
+        [47.2695, 11.4095],
+        [47.2650, 11.4040],
         [47.2612, 11.4025],
-        [47.2685, 11.4010]
+        [47.2655, 11.4015],
+        [47.2700, 11.4070]
     ];
 
     var map = L.map('schutzgebietMap', { scrollWheelZoom: false });
