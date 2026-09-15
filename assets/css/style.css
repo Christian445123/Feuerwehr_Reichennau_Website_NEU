@@ -1115,67 +1115,104 @@ a:hover {
 
 /* --- Alarmierungen Timeline --- */
 .alarm-timeline {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    padding: 20px 0;
-    border-top: 1px solid var(--color-gray-200);
-    border-bottom: 1px solid var(--color-gray-200);
-    margin-bottom: 20px;
+    position: relative;
+    max-width: 780px;
+    margin: 0 auto 20px;
+    padding-left: 36px;
+}
+
+.alarm-timeline::before {
+    content: '';
+    position: absolute;
+    top: 6px;
+    bottom: 6px;
+    left: 6px;
+    width: 2px;
+    background: var(--color-gray-300);
 }
 
 .alarm-timeline-item {
-    flex: 1 1 160px;
     position: relative;
-    padding-top: 18px;
-    border-top: 3px solid var(--color-primary);
+    padding: 0 0 30px 24px;
+}
+
+.alarm-timeline-item:last-child {
+    padding-bottom: 0;
 }
 
 .alarm-timeline-dot {
     position: absolute;
-    top: -8px;
-    left: 0;
-    width: 13px;
-    height: 13px;
+    top: 3px;
+    left: -36px;
+    width: 14px;
+    height: 14px;
     border-radius: 50%;
     background: var(--color-primary);
-    border: 2px solid var(--color-white);
-    box-shadow: 0 0 0 1px var(--color-primary);
+    border: 3px solid var(--color-white);
+    box-shadow: 0 0 0 2px var(--color-primary);
 }
 
 .alarm-timeline-date {
+    display: inline-block;
     font-size: 0.78rem;
+    font-weight: 700;
     color: var(--color-gray-600);
-    font-weight: 600;
+    letter-spacing: 0.3px;
 }
 
 .alarm-timeline-type {
     display: inline-block;
-    margin-top: 4px;
-    font-size: 0.68rem;
+    margin-left: 10px;
+    padding: 2px 12px;
+    border-radius: 50px;
+    font-size: 0.65rem;
     font-weight: 700;
     text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: rgba(213,0,28,0.1);
     color: var(--color-primary);
+    vertical-align: middle;
 }
 
 .alarm-timeline-title {
-    margin-top: 4px;
-    font-size: 0.9rem;
-    font-weight: 600;
+    margin-top: 6px;
+    font-size: 1.05rem;
+    font-weight: 700;
     color: var(--color-dark);
 }
 
-.alarm-timeline-dark {
-    border-top-color: rgba(255,255,255,0.15);
-    border-bottom-color: rgba(255,255,255,0.15);
+.alarm-timeline-dark::before {
+    background: rgba(255,255,255,0.15);
+}
+
+.alarm-timeline-dark .alarm-timeline-dot {
+    border-color: var(--color-secondary);
+    box-shadow: 0 0 0 2px var(--color-primary);
 }
 
 .alarm-timeline-dark .alarm-timeline-date {
-    color: rgba(255,255,255,0.6);
+    color: rgba(255,255,255,0.55);
+}
+
+.alarm-timeline-dark .alarm-timeline-type {
+    background: rgba(213,0,28,0.25);
+    color: #ff8a8a;
 }
 
 .alarm-timeline-dark .alarm-timeline-title {
     color: var(--color-white);
+}
+
+@media (max-width: 560px) {
+    .alarm-timeline {
+        padding-left: 26px;
+    }
+    .alarm-timeline-item {
+        padding-left: 16px;
+    }
+    .alarm-timeline-dot {
+        left: -26px;
+    }
 }
 
 /* Sponsors */
