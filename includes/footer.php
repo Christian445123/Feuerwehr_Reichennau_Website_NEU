@@ -65,6 +65,6 @@
         <i class="fas fa-chevron-up"></i>
     </button>
 
-    <script src="assets/js/main.js"></script>
+    <script src="assets/js/main.js?v=<?php echo @filemtime(__DIR__ . '/../assets/js/main.js') ?: time(); ?>"></script>
 </body>
 </html>
