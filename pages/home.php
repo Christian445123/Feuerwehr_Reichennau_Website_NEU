@@ -43,6 +43,11 @@
                     <div class="stat-label">Unterstützungseinsätze</div>
                 </div>
                 <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-biohazard"></i></div>
+                    <div class="stat-number" data-count="<?php echo $stats['abc']; ?>"><?php echo $stats['abc']; ?></div>
+                    <div class="stat-label">ABC-Einsätze</div>
+                </div>
+                <div class="stat-card">
                     <div class="stat-icon"><i class="fas fa-bell"></i></div>
                     <div class="stat-number" data-count="<?php echo $stats['einsatz_gesamt']; ?>"><?php echo $stats['einsatz_gesamt']; ?></div>
                     <div class="stat-label">Einsätze gesamt</div>
