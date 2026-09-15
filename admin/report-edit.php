@@ -12,7 +12,7 @@ $isEdit = $id > 0;
 $pageTitle = $isEdit ? 'Bericht bearbeiten' : 'Neuer Bericht';
 
 $report = [
-    'title' => '', 'category' => 'einsatz', 'content' => '',
+    'title' => '', 'category' => 'einsatz', 'subcategory' => '', 'content' => '',
     'date' => date('Y-m-d'), 'author' => '', 'published' => 1, 'social_link' => ''
 ];
 $images = [];
@@ -61,6 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $report['title'] = trim($_POST['title'] ?? '');
     $report['category'] = $_POST['category'] ?? 'einsatz';
+    $report['subcategory'] = $_POST['subcategory'] ?? '';
     $report['content'] = trim($_POST['content'] ?? '');
     $report['date'] = $_POST['date'] ?? date('Y-m-d');
     $report['author'] = trim($_POST['author'] ?? '');
@@ -72,17 +73,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $report['category'] = 'einsatz';
     }
 
+    // Subkategorie (Brand/Technisch/ABC/Unterstützung/Sonstiges) gibt es nur
+    // bei Einsätzen - bei allen anderen Kategorien wird sie nicht gespeichert.
+    $validSubcats = ['brand', 'technisch', 'abc', 'unterstuetzung', 'sonstiges'];
+    if ($report['category'] !== 'einsatz' || !in_array($report['subcategory'], $validSubcats, true)) {
+        $report['subcategory'] = '';
+    }
+
     if (empty($report['title'])) {
         flash('error', 'Titel ist erforderlich.');
     } elseif ($report['social_link'] !== '' && !filter_var($report['social_link'], FILTER_VALIDATE_URL)) {
         flash('error', 'Der Social-Media-Link ist keine gültige URL (z.B. https://www.instagram.com/p/...).');
     } else {
         if ($isEdit) {
-            $stmt = $db->prepare("UPDATE reports SET title=?, category=?, content=?, date=?, author=?, published=?, social_link=?, updated_at=CURRENT_TIMESTAMP WHERE id=?");
-            $stmt->execute([$report['title'], $report['category'], $report['content'], $report['date'], $report['author'], $report['published'], $report['social_link'] ?: null, $id]);
+            $stmt = $db->prepare("UPDATE reports SET title=?, category=?, subcategory=?, content=?, date=?, author=?, published=?, social_link=?, updated_at=CURRENT_TIMESTAMP WHERE id=?");
+            $stmt->execute([$report['title'], $report['category'], $report['subcategory'] ?: null, $report['content'], $report['date'], $report['author'], $report['published'], $report['social_link'] ?: null, $id]);
         } else {
-            $stmt = $db->prepare("INSERT INTO reports (title, category, content, date, author, published, social_link) VALUES (?,?,?,?,?,?,?)");
-            $stmt->execute([$report['title'], $report['category'], $report['content'], $report['date'], $report['author'], $report['published'], $report['social_link'] ?: null]);
+            $stmt = $db->prepare("INSERT INTO reports (title, category, subcategory, content, date, author, published, social_link) VALUES (?,?,?,?,?,?,?,?)");
+            $stmt->execute([$report['title'], $report['category'], $report['subcategory'] ?: null, $report['content'], $report['date'], $report['author'], $report['published'], $report['social_link'] ?: null]);
             $id = $db->lastInsertId();
             $isEdit = true;
         }
@@ -155,6 +163,19 @@ require_once __DIR__ . '/includes/admin-header.php';
                             <label for="date">Datum</label>
                             <input type="date" id="date" name="date" value="<?php echo e($report['date']); ?>">
                         </div>
+                    </div>
+
+                    <div class="form-group" id="subcategoryGroup" style="<?php echo $report['category'] === 'einsatz' ? '' : 'display:none;'; ?>">
+                        <label for="subcategory">Einsatzart</label>
+                        <select id="subcategory" name="subcategory">
+                            <option value="">-- Bitte wählen --</option>
+                            <option value="brand" <?php echo ($report['subcategory'] ?? '') === 'brand' ? 'selected' : ''; ?>>Brand</option>
+                            <option value="technisch" <?php echo ($report['subcategory'] ?? '') === 'technisch' ? 'selected' : ''; ?>>Technisch</option>
+                            <option value="abc" <?php echo ($report['subcategory'] ?? '') === 'abc' ? 'selected' : ''; ?>>ABC</option>
+                            <option value="unterstuetzung" <?php echo ($report['subcategory'] ?? '') === 'unterstuetzung' ? 'selected' : ''; ?>>Unterstützung</option>
+                            <option value="sonstiges" <?php echo ($report['subcategory'] ?? '') === 'sonstiges' ? 'selected' : ''; ?>>Sonstiges</option>
+                        </select>
+                        <p class="form-hint">Nur bei Kategorie "Einsatz" - bestimmt die Einsatzart für Statistik und Kennzeichnung (Brand/Technisch/ABC/Unterstützung).</p>
                     </div>
 
                     <div class="form-group">
@@ -236,6 +257,15 @@ require_once __DIR__ . '/includes/admin-header.php';
 </form>
 
 <script>
+// Einsatzart-Feld nur bei Kategorie "Einsatz" anzeigen
+var categorySelect = document.getElementById('category');
+var subcategoryGroup = document.getElementById('subcategoryGroup');
+if (categorySelect && subcategoryGroup) {
+    categorySelect.addEventListener('change', function() {
+        subcategoryGroup.style.display = this.value === 'einsatz' ? '' : 'none';
+    });
+}
+
 // Drag & Drop + Preview
 var uploadArea = document.getElementById('uploadArea');
 var imageInput = document.getElementById('imageInput');
