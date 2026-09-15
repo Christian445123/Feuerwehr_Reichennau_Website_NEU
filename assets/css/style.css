@@ -1004,6 +1004,115 @@ a:hover {
     margin-top: 0;
 }
 
+/* --- Organigramm --- */
+.orgchart {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    margin-top: 16px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+}
+
+.orgchart-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 14px;
+    width: 100%;
+}
+
+.orgchart-connector {
+    width: 2px;
+    height: 22px;
+    background: var(--color-gray-300);
+}
+
+.orgchart-connector-single {
+    height: 16px;
+}
+
+.orgchart-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    min-width: 130px;
+    padding: 10px 12px;
+    border-radius: var(--radius-md);
+    background: var(--color-gray-700);
+    color: var(--color-white);
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+}
+
+.orgchart-box strong {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    opacity: 0.85;
+}
+
+.orgchart-box span {
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.orgchart-box-command {
+    background: var(--color-white);
+    border: 2px solid var(--color-primary);
+    color: var(--color-dark);
+}
+
+.orgchart-box-command strong {
+    color: var(--color-primary);
+    opacity: 1;
+}
+
+.orgchart-box-chief {
+    min-width: 160px;
+    box-shadow: var(--shadow-md);
+}
+
+.orgchart-box-dark {
+    background: var(--color-dark);
+}
+
+.orgchart-box-sub {
+    background: var(--color-gray-600);
+}
+
+.orgchart-group-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+.orgchart-row-groups {
+    align-items: flex-start;
+    gap: 18px;
+}
+
+@media (max-width: 768px) {
+    .orgchart-row {
+        gap: 8px;
+    }
+    .orgchart-box {
+        min-width: 100px;
+        padding: 8px;
+    }
+    .orgchart-box strong {
+        font-size: 0.62rem;
+    }
+    .orgchart-box span {
+        font-size: 0.78rem;
+    }
+}
+
 /* Sponsors */
 .section-sponsors {
     padding: 40px 0;
