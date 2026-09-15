@@ -523,16 +523,19 @@ img { max-width: 100%; height: auto; }
 /* --- Function Rows (Multi-Role System) --- */
 .function-row {
     display: flex; align-items: center; gap: 8px; margin-bottom: 8px;
+    flex-wrap: wrap; width: 100%;
 }
 
 .func-section-select {
-    width: 160px; padding: 8px 10px; border: 1px solid var(--gray-300);
+    flex: 1 1 160px; min-width: 140px; max-width: 220px;
+    padding: 8px 10px; border: 1px solid var(--gray-300);
     border-radius: var(--radius); font-family: var(--font); font-size: 0.85rem;
-    background: var(--white); flex-shrink: 0;
+    background: var(--white);
 }
 
 .func-role-input {
-    flex: 1; padding: 8px 10px; border: 1px solid var(--gray-300);
+    flex: 2 1 220px; min-width: 160px;
+    padding: 8px 10px; border: 1px solid var(--gray-300);
     border-radius: var(--radius); font-family: var(--font); font-size: 0.85rem;
 }
 

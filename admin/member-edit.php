@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $funcSections = $_POST['func_section'] ?? [];
         $funcRoles = $_POST['func_role'] ?? [];
-        $validSections = ['Kommando', 'Ausschuss', 'Beauftragter'];
+        $validSections = ['Kommando', 'Ausschuss', 'Beauftragter', 'Sonstige'];
         $functions = [];
         for ($i = 0; $i < count($funcSections); $i++) {
             $sec = trim($funcSections[$i] ?? '');
