@@ -7,7 +7,7 @@
         </div>
     </section>
 
-    <section class="section">
+    <section class="section" id="aktivitaeten">
         <div class="container">
             <div class="jugend-hero">
                 <div class="jugend-hero-content">
@@ -46,7 +46,7 @@
                 </div>
             </div>
 
-            <div class="cta-box">
+            <div class="cta-box" id="machmit">
                 <div class="cta-icon"><i class="fas fa-envelope-open-text"></i></div>
                 <h3>Interesse?</h3>
                 <p>Sollte dich die Jugendfeuerwehr interessieren, dann schick uns einfach ein Mail!</p>
