@@ -232,7 +232,7 @@ $formSent = isset($_GET['sent']);
                             <h2>Unser Schutzgebiet</h2>
                         </div>
                         <div class="content-card-body">
-                            <img src="assets/images/schutzgebiet_karte.jpg" alt="Schutzbereich der FF Reichenau (amtliche Karte, Stadt Innsbruck)" class="content-image">
+                            <img src="assets/images/schutzgebiet_karte.jpg" alt="Schutzbereich der FF Reichenau (amtliche Karte, Stadt Innsbruck)" class="content-image" data-lightbox-group="schutzgebiet-karte-kontakt">
                             <p class="schutzgebiet-map-hint">
                                 <a href="https://www.google.com/maps/search/?api=1&query=Freiwillige+Feuerwehr+Reichenau+Ro%C3%9Faugasse+4+Innsbruck" target="_blank" rel="noopener">Standort auf Google Maps öffnen <i class="fas fa-external-link-alt"></i></a>
                             </p>

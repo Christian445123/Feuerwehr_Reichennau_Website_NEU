@@ -77,7 +77,9 @@ $archivCutoff = date('Y-m-d', strtotime('-2 years')); // Älter als 2 Jahre gilt
                 <div class="bericht-gallery">
                     <?php foreach ($reportImages as $img): ?>
                         <div class="gallery-item">
-                            <a href="uploads/<?php echo htmlspecialchars($img['filename']); ?>" target="_blank">
+                            <a href="uploads/<?php echo htmlspecialchars($img['filename']); ?>"
+                               data-lightbox-group="bericht-<?php echo (int) $report['id']; ?>"
+                               data-lightbox-src="uploads/<?php echo htmlspecialchars($img['filename']); ?>">
                                 <img src="uploads/<?php echo htmlspecialchars($img['filename']); ?>"
                                      alt="<?php echo htmlspecialchars($img['caption'] ?: $report['title']); ?>">
                             </a>

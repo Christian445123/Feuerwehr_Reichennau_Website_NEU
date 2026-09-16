@@ -216,9 +216,9 @@ foreach ($allMembers as $am) {
                         <p>2008 übergab Armin Praxmarer aus Altersgründen das Kommando an den neu gewählten Kommandanten Helmut Plank. Armin wurde noch im selben Jahr die Ehrenmitgliedschaft verliehen.</p>
 
                         <div class="geschichte-gallery">
-                            <img src="assets/images/geschichte1.jpg" alt="Geschichte der FF Reichenau" class="content-image">
-                            <img src="assets/images/geschichte2.jpg" alt="Geschichte der FF Reichenau" class="content-image">
-                            <img src="assets/images/geschichte3.jpg" alt="Geschichte der FF Reichenau" class="content-image">
+                            <img src="assets/images/geschichte1.jpg" alt="Geschichte der FF Reichenau" class="content-image" data-lightbox-group="geschichte">
+                            <img src="assets/images/geschichte2.jpg" alt="Geschichte der FF Reichenau" class="content-image" data-lightbox-group="geschichte">
+                            <img src="assets/images/geschichte3.jpg" alt="Geschichte der FF Reichenau" class="content-image" data-lightbox-group="geschichte">
                         </div>
                     </div>
                 </div>
@@ -233,8 +233,8 @@ foreach ($allMembers as $am) {
                         <h4>Einwohnerzahl im Schutzgebiet der FF Reichenau:</h4>
                         <p>Derzeit sind im Schutzgebiet der FF Reichenau <strong>27.575 Einwohner</strong> mit Hauptwohnsitz und <strong>2.760 Einwohner</strong> mit Nebenwohnsitz gemeldet. Das Schutzgebiet der FF Reichenau umfasst somit ca. <strong>14.000 Haushalte</strong> (Umrechnungsschlüssel: es wird mit 2,2 Personen pro Haushalt gerechnet).</p>
                         <div class="schutzbereich-images">
-                            <img src="assets/images/schutzgebiet_karte.jpg" alt="Karte Schutzgebiet" class="content-image">
-                            <img src="assets/images/schutzgebiet.jpg" alt="Schutzgebiet der FF Reichenau" class="content-image">
+                            <img src="assets/images/schutzgebiet_karte.jpg" alt="Karte Schutzgebiet" class="content-image" data-lightbox-group="schutzbereich">
+                            <img src="assets/images/schutzgebiet.jpg" alt="Schutzgebiet der FF Reichenau" class="content-image" data-lightbox-group="schutzbereich">
                         </div>
                     </div>
                 </div>

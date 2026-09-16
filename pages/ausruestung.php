@@ -25,7 +25,7 @@
                             <!-- Transportfahrzeug TF -->
                             <div class="vehicle-card" id="tf">
                                 <div class="vehicle-image-slider">
-                                    <img src="assets/images/vehicles/5a64a254c3916.jpg" alt="Transportfahrzeug TF" class="vehicle-main-img">
+                                    <img src="assets/images/vehicles/5a64a254c3916.jpg" alt="Transportfahrzeug TF" class="vehicle-main-img" data-lightbox-images='["assets/images/vehicles/5a64a254c3916.jpg","assets/images/vehicles/59e798f23da53.jpg","assets/images/vehicles/59e79918d3763.jpg","assets/images/vehicles/59e7992f194b8.jpg"]'>
                                     <div class="vehicle-thumbs">
                                         <img src="assets/images/vehicles/5a64a254c3916.jpg" alt="TF" class="vehicle-thumb active" onclick="switchVehicleImg(this)">
                                         <img src="assets/images/vehicles/59e798f23da53.jpg" alt="TF" class="vehicle-thumb" onclick="switchVehicleImg(this)">
@@ -53,7 +53,7 @@
                             <!-- Tanklöschfahrzeug TLFH -->
                             <div class="vehicle-card" id="tlfh">
                                 <div class="vehicle-image-slider">
-                                    <img src="assets/images/vehicles/5a6ceb6430a76.jpg" alt="Tanklöschfahrzeug TLFH" class="vehicle-main-img">
+                                    <img src="assets/images/vehicles/5a6ceb6430a76.jpg" alt="Tanklöschfahrzeug TLFH" class="vehicle-main-img" data-lightbox-images='["assets/images/vehicles/5a6ceb6430a76.jpg","assets/images/vehicles/59e799948f7b4.jpg","assets/images/vehicles/59e799af76311.jpg","assets/images/vehicles/59e799cac5929.jpg","assets/images/vehicles/59e799e612420.jpg","assets/images/vehicles/59e79a0c24b48.jpg"]'>
                                     <div class="vehicle-thumbs">
                                         <img src="assets/images/vehicles/5a6ceb6430a76.jpg" alt="TLFH" class="vehicle-thumb active" onclick="switchVehicleImg(this)">
                                         <img src="assets/images/vehicles/59e799948f7b4.jpg" alt="TLFH" class="vehicle-thumb" onclick="switchVehicleImg(this)">
@@ -83,7 +83,7 @@
                             <!-- Kleinlöschfahrzeug Allrad KLF-A -->
                             <div class="vehicle-card" id="klf-a">
                                 <div class="vehicle-image-slider">
-                                    <img src="assets/images/vehicles/59dfafb7eb6a6.jpg" alt="Kleinlöschfahrzeug Allrad KLF-A" class="vehicle-main-img">
+                                    <img src="assets/images/vehicles/59dfafb7eb6a6.jpg" alt="Kleinlöschfahrzeug Allrad KLF-A" class="vehicle-main-img" data-lightbox-images='["assets/images/vehicles/59dfafb7eb6a6.jpg","assets/images/vehicles/59e79a2bbb199.jpg","assets/images/vehicles/59e79a483ecab.jpg","assets/images/vehicles/59e79a61adcd4.jpg","assets/images/vehicles/59e79a9520e6c.jpg"]'>
                                     <div class="vehicle-thumbs">
                                         <img src="assets/images/vehicles/59dfafb7eb6a6.jpg" alt="KLF-A" class="vehicle-thumb active" onclick="switchVehicleImg(this)">
                                         <img src="assets/images/vehicles/59e79a2bbb199.jpg" alt="KLF-A" class="vehicle-thumb" onclick="switchVehicleImg(this)">
@@ -112,7 +112,7 @@
                             <!-- Transportfahrzeug LAST1 -->
                             <div class="vehicle-card" id="last1">
                                 <div class="vehicle-image-slider">
-                                    <img src="assets/images/vehicles/59dfaf7dcdc02.jpg" alt="Transportfahrzeug LAST1" class="vehicle-main-img">
+                                    <img src="assets/images/vehicles/59dfaf7dcdc02.jpg" alt="Transportfahrzeug LAST1" class="vehicle-main-img" data-lightbox-images='["assets/images/vehicles/59dfaf7dcdc02.jpg","assets/images/vehicles/59e79ac12dc6d.jpg","assets/images/vehicles/59e79ad6ede32.jpg"]'>
                                     <div class="vehicle-thumbs">
                                         <img src="assets/images/vehicles/59dfaf7dcdc02.jpg" alt="LAST1" class="vehicle-thumb active" onclick="switchVehicleImg(this)">
                                         <img src="assets/images/vehicles/59e79ac12dc6d.jpg" alt="LAST1" class="vehicle-thumb" onclick="switchVehicleImg(this)">
@@ -135,7 +135,7 @@
                             <!-- Gefahrgutfahrzeug GGF -->
                             <div class="vehicle-card" id="ggf">
                                 <div class="vehicle-image-slider">
-                                    <img src="assets/images/vehicles/5a6cebf9cfc45.jpg" alt="Gefahrgutfahrzeug GGF" class="vehicle-main-img">
+                                    <img src="assets/images/vehicles/5a6cebf9cfc45.jpg" alt="Gefahrgutfahrzeug GGF" class="vehicle-main-img" data-lightbox-images='["assets/images/vehicles/5a6cebf9cfc45.jpg","assets/images/vehicles/59e79af242705.jpg","assets/images/vehicles/59e79b0dd1d1b.jpg","assets/images/vehicles/59e79b2766ab6.jpg","assets/images/vehicles/59e79b3ccefeb.jpg"]'>
                                     <div class="vehicle-thumbs">
                                         <img src="assets/images/vehicles/5a6cebf9cfc45.jpg" alt="GGF" class="vehicle-thumb active" onclick="switchVehicleImg(this)">
                                         <img src="assets/images/vehicles/59e79af242705.jpg" alt="GGF" class="vehicle-thumb" onclick="switchVehicleImg(this)">
@@ -164,7 +164,7 @@
                             <!-- Großpumpenhänger -->
                             <div class="vehicle-card" id="grosspumpe">
                                 <div class="vehicle-image-slider">
-                                    <img src="assets/images/vehicles/59dfb11106df6.jpg" alt="Großpumpenhänger" class="vehicle-main-img">
+                                    <img src="assets/images/vehicles/59dfb11106df6.jpg" alt="Großpumpenhänger" class="vehicle-main-img" data-lightbox-group="grosspumpe">
                                 </div>
                                 <div class="vehicle-info">
                                     <h3><i class="fas fa-water"></i> Großpumpenhänger</h3>
@@ -186,7 +186,7 @@
                             <!-- Anhänger leicht -->
                             <div class="vehicle-card" id="anhaenger">
                                 <div class="vehicle-image-slider">
-                                    <img src="assets/images/vehicles/59dfb0b1d7908.jpg" alt="Anhänger leicht" class="vehicle-main-img">
+                                    <img src="assets/images/vehicles/59dfb0b1d7908.jpg" alt="Anhänger leicht" class="vehicle-main-img" data-lightbox-images='["assets/images/vehicles/59dfb0b1d7908.jpg","assets/images/vehicles/59e79ba4aa875.jpg","assets/images/vehicles/59e79bbbbc83c.jpg"]'>
                                     <div class="vehicle-thumbs">
                                         <img src="assets/images/vehicles/59dfb0b1d7908.jpg" alt="Anhänger" class="vehicle-thumb active" onclick="switchVehicleImg(this)">
                                         <img src="assets/images/vehicles/59e79ba4aa875.jpg" alt="Anhänger" class="vehicle-thumb" onclick="switchVehicleImg(this)">
@@ -220,19 +220,19 @@
 
                         <div class="wache-gallery">
                             <div class="gallery-item">
-                                <img src="assets/images/wache_umkleide1.jpg" alt="Umkleideraum">
+                                <img src="assets/images/wache_umkleide1.jpg" alt="Umkleideraum" data-lightbox-group="wache">
                                 <p class="gallery-caption">Umkleideraum</p>
                             </div>
                             <div class="gallery-item">
-                                <img src="assets/images/wache_umkleide2.jpg" alt="Umkleidebereich">
+                                <img src="assets/images/wache_umkleide2.jpg" alt="Umkleidebereich" data-lightbox-group="wache">
                                 <p class="gallery-caption">Umkleidebereich</p>
                             </div>
                             <div class="gallery-item">
-                                <img src="assets/images/wache_ats.jpg" alt="Atemschutz-Arbeitsplatz">
+                                <img src="assets/images/wache_ats.jpg" alt="Atemschutz-Arbeitsplatz" data-lightbox-group="wache">
                                 <p class="gallery-caption">Atemschutz-Arbeitsplatz</p>
                             </div>
                             <div class="gallery-item">
-                                <img src="assets/images/wache_funk.jpg" alt="Funkkabine">
+                                <img src="assets/images/wache_funk.jpg" alt="Funkkabine" data-lightbox-group="wache">
                                 <p class="gallery-caption">Funkkabine</p>
                             </div>
                         </div>

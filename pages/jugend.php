@@ -22,7 +22,7 @@
 
             <div class="content-card" style="margin-bottom: 50px;">
                 <div class="content-card-body" style="padding: 0;">
-                    <img src="assets/images/jugend_gruppe.jpg" alt="Unsere Jugendfeuerwehrgruppe" class="content-image" style="margin-top: 0;">
+                    <img src="assets/images/jugend_gruppe.jpg" alt="Unsere Jugendfeuerwehrgruppe" class="content-image" style="margin-top: 0;" data-lightbox-group="jugend-gruppe">
                 </div>
             </div>
 

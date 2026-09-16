@@ -70,6 +70,111 @@ document.addEventListener('DOMContentLoaded', function () {
         thumb.classList.add('active');
     };
 
+    // --- Bilder-Lightbox ---
+    (function () {
+        var overlay, imgEl, counterEl, prevBtn, nextBtn;
+        var currentImages = [];
+        var currentIndex = 0;
+
+        function buildOverlay() {
+            overlay = document.createElement('div');
+            overlay.className = 'lightbox-overlay';
+            overlay.innerHTML =
+                '<button type="button" class="lightbox-close" aria-label="Schließen"><i class="fas fa-times"></i></button>' +
+                '<button type="button" class="lightbox-nav lightbox-prev" aria-label="Vorheriges Bild"><i class="fas fa-chevron-left"></i></button>' +
+                '<div class="lightbox-content">' +
+                    '<img class="lightbox-image" alt="">' +
+                    '<p class="lightbox-counter"></p>' +
+                '</div>' +
+                '<button type="button" class="lightbox-nav lightbox-next" aria-label="Nächstes Bild"><i class="fas fa-chevron-right"></i></button>';
+            document.body.appendChild(overlay);
+
+            imgEl = overlay.querySelector('.lightbox-image');
+            counterEl = overlay.querySelector('.lightbox-counter');
+            prevBtn = overlay.querySelector('.lightbox-prev');
+            nextBtn = overlay.querySelector('.lightbox-next');
+
+            overlay.querySelector('.lightbox-close').addEventListener('click', closeLightbox);
+            overlay.addEventListener('click', function (e) {
+                if (e.target === overlay) closeLightbox();
+            });
+            prevBtn.addEventListener('click', function () { showIndex(currentIndex - 1); });
+            nextBtn.addEventListener('click', function () { showIndex(currentIndex + 1); });
+        }
+
+        function showIndex(i) {
+            var len = currentImages.length;
+            currentIndex = (i + len) % len;
+            var item = currentImages[currentIndex];
+            imgEl.src = item.src;
+            imgEl.alt = item.alt || '';
+
+            var multiple = len > 1;
+            prevBtn.style.display = multiple ? '' : 'none';
+            nextBtn.style.display = multiple ? '' : 'none';
+            counterEl.style.display = multiple ? '' : 'none';
+            counterEl.textContent = multiple ? (currentIndex + 1) + ' / ' + len : '';
+        }
+
+        function openLightbox(images, index) {
+            if (!overlay) buildOverlay();
+            currentImages = images;
+            showIndex(index);
+            overlay.classList.add('active');
+            document.body.classList.add('lightbox-open');
+        }
+
+        function closeLightbox() {
+            if (!overlay) return;
+            overlay.classList.remove('active');
+            document.body.classList.remove('lightbox-open');
+        }
+
+        // Statische Gruppen: alle Elemente mit gleichem data-lightbox-group bilden eine Galerie
+        var groups = {};
+        document.querySelectorAll('[data-lightbox-group]').forEach(function (el) {
+            var name = el.getAttribute('data-lightbox-group');
+            (groups[name] = groups[name] || []).push(el);
+        });
+        Object.keys(groups).forEach(function (name) {
+            var els = groups[name];
+            var images = els.map(function (el) {
+                return { src: el.getAttribute('data-lightbox-src') || el.src, alt: el.alt || '' };
+            });
+            els.forEach(function (el, idx) {
+                el.style.cursor = 'zoom-in';
+                el.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    openLightbox(images, idx);
+                });
+            });
+        });
+
+        // Dynamische Galerien (z.B. Fahrzeug-Hauptbild): Bilderliste als JSON, Startindex anhand des aktuell angezeigten Bildes
+        document.querySelectorAll('[data-lightbox-images]').forEach(function (el) {
+            el.style.cursor = 'zoom-in';
+            el.addEventListener('click', function (e) {
+                e.preventDefault();
+                var paths;
+                try {
+                    paths = JSON.parse(el.getAttribute('data-lightbox-images'));
+                } catch (err) {
+                    paths = [el.getAttribute('src')];
+                }
+                var images = paths.map(function (p) { return { src: p, alt: el.alt || '' }; });
+                var idx = paths.indexOf(el.getAttribute('src'));
+                openLightbox(images, idx < 0 ? 0 : idx);
+            });
+        });
+
+        document.addEventListener('keydown', function (e) {
+            if (!overlay || !overlay.classList.contains('active')) return;
+            if (e.key === 'Escape') closeLightbox();
+            if (e.key === 'ArrowLeft') showIndex(currentIndex - 1);
+            if (e.key === 'ArrowRight') showIndex(currentIndex + 1);
+        });
+    })();
+
     // --- Scroll-Animation (Intersection Observer) ---
     var observerOptions = {
         threshold: 0.1,
