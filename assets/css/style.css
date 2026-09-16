@@ -880,13 +880,16 @@ a:hover {
    rendert eigenständig eingebettet deutlich schlechter (Bootstrap-Grid
    bricht bei abweichender Iframe-Breite anders um) als innerhalb der
    vollständigen Seite. Daher bewusst wieder die volle Seite einbetten
-   und nur die eigene Überschrift ("Aktuelle Alarmierungen"/"Der Tiroler
-   Feuerwehren") oberhalb des sichtbaren Bereichs abschneiden: der Iframe
-   ist größer als der sichtbare Ausschnitt und nach oben verschoben. */
+   und alles oberhalb ("Landes-Feuerwehrverband Tirol"-Logo + Navigation)
+   sowie alles unterhalb (Footer-Boxen LFV-Tirol/Mitglied werden/
+   E-Learning) abschneiden: der Iframe ist größer als der sichtbare
+   Ausschnitt und nach oben verschoben, sodass nur der gelb hinterlegte
+   Bereich (Überschrift "Aktuelle Alarmierungen" + Liste mit Scrollbar)
+   im sichtbaren Fenster landet. */
 .tirol-alarm-embed {
     position: relative;
     width: 100%;
-    height: 500px;
+    height: 720px;
     margin-top: 16px;
     border-radius: var(--radius-md);
     overflow: hidden;
@@ -896,10 +899,10 @@ a:hover {
 
 .tirol-alarm-embed iframe {
     position: absolute;
-    top: -128px;
+    top: -270px;
     left: 0;
     width: 100%;
-    height: calc(100% + 128px);
+    height: calc(100% + 270px);
     border: 0;
     display: block;
 }
