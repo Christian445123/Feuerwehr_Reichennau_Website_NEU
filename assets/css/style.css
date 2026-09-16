@@ -889,7 +889,7 @@ a:hover {
 .tirol-alarm-embed {
     position: relative;
     width: 100%;
-    height: 720px;
+    height: 640px;
     margin-top: 16px;
     border-radius: var(--radius-md);
     overflow: hidden;
@@ -902,9 +902,34 @@ a:hover {
     top: -270px;
     left: 0;
     width: 100%;
-    height: calc(100% + 270px);
+    height: calc(100% + 270px + 40px);
     border: 0;
     display: block;
+}
+
+/* Da sich der Ausschnitt bei einer fremden Seite nie pixelgenau treffen
+   lässt, blendet ein weicher Verlauf an Ober- und Unterkante einen
+   eventuell angeschnittenen Rest (z.B. ein halbes Listen-Element) sanft
+   aus, statt ihn hart abzuschneiden. */
+.tirol-alarm-embed::before,
+.tirol-alarm-embed::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 22px;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.tirol-alarm-embed::before {
+    top: 0;
+    background: linear-gradient(to bottom, var(--color-white), transparent);
+}
+
+.tirol-alarm-embed::after {
+    bottom: 0;
+    background: linear-gradient(to top, var(--color-white), transparent);
 }
 
 .tirol-alarm-source {
