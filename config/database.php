@@ -195,6 +195,8 @@ function ensureUploadDirs(): void {
         UPLOAD_PATH,
         UPLOAD_PATH . 'reports/',
         UPLOAD_PATH . 'members/',
+        UPLOAD_PATH . 'vehicles/',
+        UPLOAD_PATH . 'wache/',
     ];
     foreach ($dirs as $dir) {
         if (!is_dir($dir)) {

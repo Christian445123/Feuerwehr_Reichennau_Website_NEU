@@ -685,6 +685,10 @@ body.nav-open {
     color: rgba(255,255,255,0.7);
 }
 
+.section-dark .jugend-narrow p {
+    color: rgba(255,255,255,0.8);
+}
+
 .section-header {
     text-align: center;
     margin-bottom: 50px;
@@ -1732,90 +1736,132 @@ body.nav-open {
 }
 
 /* --- Jugend Page --- */
-.jugend-hero {
-    display: flex;
-    align-items: center;
-    gap: 40px;
-    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
-    border-radius: var(--radius-xl);
-    padding: 50px;
-    color: var(--color-white);
-    margin-bottom: 50px;
-}
-
-.jugend-hero-content {
-    flex: 1;
-}
-
-.jugend-hero h2 {
-    font-size: 2.2rem;
-    font-weight: 800;
-    margin-bottom: 16px;
-}
-
-.jugend-hero .lead {
-    font-size: 1.2rem;
-    line-height: 1.7;
-    opacity: 0.95;
-}
-
-.jugend-hero p {
-    opacity: 0.9;
-    line-height: 1.7;
-}
-
-.jugend-hero-icon {
-    font-size: 6rem;
-    opacity: 0.2;
-    flex-shrink: 0;
-}
-
-.info-cards-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
-    margin-bottom: 50px;
-}
-
-.info-card {
-    background: var(--color-white);
-    border-radius: var(--radius-lg);
-    padding: 36px;
-    box-shadow: var(--shadow-sm);
-    border: 1px solid var(--color-gray-200);
-    text-align: center;
-    transition: var(--transition);
-}
-
-.info-card:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-md);
-}
-
-.info-card-icon {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
+.jugend-hero-banner {
+    position: relative;
+    min-height: 56vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(213, 0, 28, 0.08);
-    color: var(--color-primary);
-    font-size: 1.4rem;
-    margin: 0 auto 20px;
+    text-align: center;
+    background-size: cover;
+    background-position: center;
+    padding: 60px 20px;
 }
 
-.info-card h3 {
-    font-size: 1.2rem;
-    font-weight: 700;
-    margin-bottom: 12px;
+.jugend-hero-banner h1 {
+    font-family: var(--font-family-display);
+    font-size: clamp(2.6rem, 7vw, 4.5rem);
+    font-weight: 800;
+    text-transform: uppercase;
+    line-height: 1.1;
+    color: var(--color-white);
+    text-shadow: 3px 3px 0 rgba(0,0,0,0.4);
+}
+
+.jugend-narrow {
+    max-width: 760px;
+    text-align: center;
+}
+
+.jugend-h2 {
+    font-family: var(--font-family-display);
+    font-size: clamp(1.8rem, 4vw, 2.4rem);
+    font-weight: 800;
+    text-transform: uppercase;
     color: var(--color-dark);
+    margin-bottom: 12px;
 }
 
-.info-card p {
-    color: var(--color-gray-600);
-    font-size: 0.92rem;
+.jugend-h3 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--color-gray-700);
+    margin-bottom: 24px;
+    line-height: 1.6;
+}
+
+.jugend-narrow p {
+    color: var(--color-gray-700);
     line-height: 1.7;
+    margin-bottom: 16px;
+}
+
+.jugend-statement {
+    font-family: var(--font-family-display);
+    font-size: clamp(1.6rem, 4vw, 2.2rem);
+    font-weight: 800;
+    text-transform: uppercase;
+    line-height: 1.2;
+    color: var(--color-primary);
+    margin-top: 30px !important;
+}
+
+.jugend-red-band {
+    background: var(--color-primary);
+    color: var(--color-white);
+    text-align: center;
+    padding: 50px 20px;
+}
+
+.jugend-red-band h2 {
+    font-family: var(--font-family-display);
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    font-weight: 800;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+
+.jugend-red-band h3 {
+    font-weight: 500;
+    opacity: 0.95;
+}
+
+.jugend-contact-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 30px;
+    align-items: start;
+}
+
+.jugend-betreuer-card {
+    background: var(--color-white);
+    border-radius: var(--radius-lg);
+    padding: 36px 24px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--color-gray-200);
+    text-align: center;
+}
+
+.jugend-betreuer-label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--color-gray-500);
+    margin-bottom: 4px;
+}
+
+.jugend-betreuer-card h4 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--color-dark);
+    margin-bottom: 16px;
+}
+
+.jugend-betreuer-card a {
+    font-size: 0.9rem;
+}
+
+@media (max-width: 900px) {
+    .jugend-contact-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .jugend-hero-banner {
+        min-height: 46vh;
+    }
 }
 
 /* CTA Box */
@@ -1845,24 +1891,6 @@ body.nav-open {
     color: var(--color-gray-600);
     margin-bottom: 24px;
     font-size: 1rem;
-}
-
-.jugend-photo-large {
-    max-height: 460px;
-    object-fit: cover;
-    margin-bottom: 40px;
-}
-
-.jugend-dark-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 30px;
-}
-
-@media (max-width: 900px) {
-    .jugend-dark-grid {
-        grid-template-columns: 1fr;
-    }
 }
 
 .jugend-contact-photo {
@@ -3001,20 +3029,6 @@ body.lightbox-open {
     .quick-links-grid {
         grid-template-columns: 1fr 1fr;
         gap: 16px;
-    }
-
-    .info-cards-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .jugend-hero {
-        flex-direction: column;
-        padding: 36px;
-        text-align: center;
-    }
-
-    .jugend-hero-icon {
-        display: none;
     }
 
     .footer-grid {

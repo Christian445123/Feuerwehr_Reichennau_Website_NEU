@@ -495,6 +495,40 @@ img { max-width: 100%; height: auto; }
 
 .remove-photo-label { font-size: 0.85rem; color: var(--danger); }
 
+/* --- Fahrzeug-/Wache-Fotos --- */
+.vehicle-photo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 16px;
+}
+
+.vehicle-photo-item {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: var(--gray-100);
+    border-radius: var(--radius);
+    padding: 10px;
+}
+
+.vehicle-photo-item img {
+    width: 100%;
+    height: 110px;
+    object-fit: cover;
+    border-radius: var(--radius);
+}
+
+.vehicle-photo-replace-form {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.vehicle-photo-replace-form input[type="file"] {
+    font-size: 0.75rem;
+}
+
 /* --- Members Grid (Admin) --- */
 .members-grid {
     display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));

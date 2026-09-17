@@ -478,6 +478,65 @@ function getMigrations(): array {
             },
         ],
 
+        [
+            'id' => '2026_09_18_create_vehicle_and_media_photos',
+            'run' => function (PDO $db) {
+                // Fahrzeug-Fotogalerien (erstes Foto je Fahrzeug = Hauptbild,
+                // Rest = Vorschaubilder), austauschbar über Admin -> Fahrzeug-
+                // und Wache-Fotos.
+                $db->exec("CREATE TABLE IF NOT EXISTS vehicle_photos (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    vehicle_key VARCHAR(50) NOT NULL,
+                    photo_path VARCHAR(255) NOT NULL,
+                    sort_order INT DEFAULT 0,
+                    INDEX idx_vehicle_key (vehicle_key)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
+                // Feste Einzelbild-Slots (z.B. die 4 Wache-Fotos), austauschbar
+                // über Admin, mit unveränderlichem Label/Beschriftung.
+                $db->exec("CREATE TABLE IF NOT EXISTS media_slots (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    slot_key VARCHAR(50) UNIQUE NOT NULL,
+                    label VARCHAR(150) NOT NULL,
+                    photo_path VARCHAR(255) NOT NULL
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
+                $vehiclePhotos = [
+                    'tf' => ['assets/images/vehicles/5a64a254c3916.jpg', 'assets/images/vehicles/59e798f23da53.jpg', 'assets/images/vehicles/59e79918d3763.jpg', 'assets/images/vehicles/59e7992f194b8.jpg'],
+                    'tlfh' => ['assets/images/vehicles/5a6ceb6430a76.jpg', 'assets/images/vehicles/59e799948f7b4.jpg', 'assets/images/vehicles/59e799af76311.jpg', 'assets/images/vehicles/59e799cac5929.jpg', 'assets/images/vehicles/59e799e612420.jpg', 'assets/images/vehicles/59e79a0c24b48.jpg'],
+                    'klf_a' => ['assets/images/vehicles/59dfafb7eb6a6.jpg', 'assets/images/vehicles/59e79a2bbb199.jpg', 'assets/images/vehicles/59e79a483ecab.jpg', 'assets/images/vehicles/59e79a61adcd4.jpg', 'assets/images/vehicles/59e79a9520e6c.jpg'],
+                    'last1' => ['assets/images/vehicles/59dfaf7dcdc02.jpg', 'assets/images/vehicles/59e79ac12dc6d.jpg', 'assets/images/vehicles/59e79ad6ede32.jpg'],
+                    'ggf' => ['assets/images/vehicles/5a6cebf9cfc45.jpg', 'assets/images/vehicles/59e79af242705.jpg', 'assets/images/vehicles/59e79b0dd1d1b.jpg', 'assets/images/vehicles/59e79b2766ab6.jpg', 'assets/images/vehicles/59e79b3ccefeb.jpg'],
+                    'grosspumpe' => ['assets/images/vehicles/59dfb11106df6.jpg'],
+                    'anhaenger' => ['assets/images/vehicles/59dfb0b1d7908.jpg', 'assets/images/vehicles/59e79ba4aa875.jpg', 'assets/images/vehicles/59e79bbbbc83c.jpg'],
+                ];
+
+                $checkVehicle = $db->prepare("SELECT COUNT(*) FROM vehicle_photos WHERE vehicle_key = ?");
+                $insertVehicle = $db->prepare("INSERT INTO vehicle_photos (vehicle_key, photo_path, sort_order) VALUES (?,?,?)");
+                foreach ($vehiclePhotos as $key => $photos) {
+                    $checkVehicle->execute([$key]);
+                    if ($checkVehicle->fetchColumn() > 0) continue;
+                    foreach ($photos as $i => $path) {
+                        $insertVehicle->execute([$key, $path, $i]);
+                    }
+                }
+
+                $mediaSlots = [
+                    ['wache_umkleide1', 'Umkleideraum', 'assets/images/wache_umkleide1.jpg'],
+                    ['wache_umkleide2', 'Umkleidebereich', 'assets/images/wache_umkleide2.jpg'],
+                    ['wache_ats', 'Atemschutz-Arbeitsplatz', 'assets/images/wache_ats.jpg'],
+                    ['wache_funk', 'Funkkabine', 'assets/images/wache_funk.jpg'],
+                ];
+                $checkSlot = $db->prepare("SELECT COUNT(*) FROM media_slots WHERE slot_key = ?");
+                $insertSlot = $db->prepare("INSERT INTO media_slots (slot_key, label, photo_path) VALUES (?,?,?)");
+                foreach ($mediaSlots as [$key, $label, $path]) {
+                    $checkSlot->execute([$key]);
+                    if ($checkSlot->fetchColumn() > 0) continue;
+                    $insertSlot->execute([$key, $label, $path]);
+                }
+            },
+        ],
+
     ];
 }
 

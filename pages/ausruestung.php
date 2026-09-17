@@ -1,4 +1,40 @@
-<?php require_once __DIR__ . '/../config/gate.php'; requireSiteAccess(); ?>
+<?php
+require_once __DIR__ . '/../config/gate.php';
+requireSiteAccess();
+require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../config/media.php';
+$db = getDB();
+
+$vehiclePhotos = getAllVehiclePhotos($db);
+$wacheSlots = [];
+foreach (getAllMediaSlots($db) as $slot) {
+    $wacheSlots[$slot['slot_key']] = $slot;
+}
+
+/**
+ * Rendert das Bild-Slider-Markup (Hauptbild + Vorschaubilder) für ein
+ * Fahrzeug. Fotos kommen aus der Datenbank (Admin -> Fahrzeug- & Wache-
+ * Fotos) statt fest im Code zu stehen, damit sie austauschbar sind.
+ */
+function renderVehicleImages(array $photos, string $vehicleName): void {
+    if (empty($photos)) {
+        return;
+    }
+    $paths = array_map(fn($p) => $p['photo_path'], $photos);
+    ?>
+    <div class="vehicle-image-slider">
+        <img src="<?php echo htmlspecialchars($photos[0]['photo_path']); ?>" alt="<?php echo htmlspecialchars($vehicleName); ?>" class="vehicle-main-img" data-lightbox-images='<?php echo json_encode($paths); ?>'>
+        <?php if (count($photos) > 1): ?>
+            <div class="vehicle-thumbs">
+                <?php foreach ($photos as $i => $p): ?>
+                    <img src="<?php echo htmlspecialchars($p['photo_path']); ?>" alt="<?php echo htmlspecialchars($vehicleName); ?>" class="vehicle-thumb<?php echo $i === 0 ? ' active' : ''; ?>" onclick="switchVehicleImg(this)">
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
+    </div>
+    <?php
+}
+?>
     <!-- Page Header -->
     <section class="page-header">
         <div class="container">
@@ -24,15 +60,7 @@
 
                             <!-- Transportfahrzeug TF -->
                             <div class="vehicle-card" id="tf">
-                                <div class="vehicle-image-slider">
-                                    <img src="assets/images/vehicles/5a64a254c3916.jpg" alt="Transportfahrzeug TF" class="vehicle-main-img" data-lightbox-images='["assets/images/vehicles/5a64a254c3916.jpg","assets/images/vehicles/59e798f23da53.jpg","assets/images/vehicles/59e79918d3763.jpg","assets/images/vehicles/59e7992f194b8.jpg"]'>
-                                    <div class="vehicle-thumbs">
-                                        <img src="assets/images/vehicles/5a64a254c3916.jpg" alt="TF" class="vehicle-thumb active" onclick="switchVehicleImg(this)">
-                                        <img src="assets/images/vehicles/59e798f23da53.jpg" alt="TF" class="vehicle-thumb" onclick="switchVehicleImg(this)">
-                                        <img src="assets/images/vehicles/59e79918d3763.jpg" alt="TF" class="vehicle-thumb" onclick="switchVehicleImg(this)">
-                                        <img src="assets/images/vehicles/59e7992f194b8.jpg" alt="TF" class="vehicle-thumb" onclick="switchVehicleImg(this)">
-                                    </div>
-                                </div>
+                                <?php renderVehicleImages($vehiclePhotos['tf'] ?? [], 'Transportfahrzeug TF'); ?>
                                 <div class="vehicle-info">
                                     <h3><i class="fas fa-shuttle-van"></i> Transportfahrzeug – TF</h3>
                                     <table class="vehicle-specs">
@@ -52,17 +80,7 @@
 
                             <!-- Tanklöschfahrzeug TLFH -->
                             <div class="vehicle-card" id="tlfh">
-                                <div class="vehicle-image-slider">
-                                    <img src="assets/images/vehicles/5a6ceb6430a76.jpg" alt="Tanklöschfahrzeug TLFH" class="vehicle-main-img" data-lightbox-images='["assets/images/vehicles/5a6ceb6430a76.jpg","assets/images/vehicles/59e799948f7b4.jpg","assets/images/vehicles/59e799af76311.jpg","assets/images/vehicles/59e799cac5929.jpg","assets/images/vehicles/59e799e612420.jpg","assets/images/vehicles/59e79a0c24b48.jpg"]'>
-                                    <div class="vehicle-thumbs">
-                                        <img src="assets/images/vehicles/5a6ceb6430a76.jpg" alt="TLFH" class="vehicle-thumb active" onclick="switchVehicleImg(this)">
-                                        <img src="assets/images/vehicles/59e799948f7b4.jpg" alt="TLFH" class="vehicle-thumb" onclick="switchVehicleImg(this)">
-                                        <img src="assets/images/vehicles/59e799af76311.jpg" alt="TLFH" class="vehicle-thumb" onclick="switchVehicleImg(this)">
-                                        <img src="assets/images/vehicles/59e799cac5929.jpg" alt="TLFH" class="vehicle-thumb" onclick="switchVehicleImg(this)">
-                                        <img src="assets/images/vehicles/59e799e612420.jpg" alt="TLFH" class="vehicle-thumb" onclick="switchVehicleImg(this)">
-                                        <img src="assets/images/vehicles/59e79a0c24b48.jpg" alt="TLFH" class="vehicle-thumb" onclick="switchVehicleImg(this)">
-                                    </div>
-                                </div>
+                                <?php renderVehicleImages($vehiclePhotos['tlfh'] ?? [], 'Tanklöschfahrzeug TLFH'); ?>
                                 <div class="vehicle-info">
                                     <h3><i class="fas fa-fire-extinguisher"></i> Tanklöschfahrzeug mit Hochdruck – TLFH</h3>
                                     <table class="vehicle-specs">
@@ -82,16 +100,7 @@
 
                             <!-- Kleinlöschfahrzeug Allrad KLF-A -->
                             <div class="vehicle-card" id="klf-a">
-                                <div class="vehicle-image-slider">
-                                    <img src="assets/images/vehicles/59dfafb7eb6a6.jpg" alt="Kleinlöschfahrzeug Allrad KLF-A" class="vehicle-main-img" data-lightbox-images='["assets/images/vehicles/59dfafb7eb6a6.jpg","assets/images/vehicles/59e79a2bbb199.jpg","assets/images/vehicles/59e79a483ecab.jpg","assets/images/vehicles/59e79a61adcd4.jpg","assets/images/vehicles/59e79a9520e6c.jpg"]'>
-                                    <div class="vehicle-thumbs">
-                                        <img src="assets/images/vehicles/59dfafb7eb6a6.jpg" alt="KLF-A" class="vehicle-thumb active" onclick="switchVehicleImg(this)">
-                                        <img src="assets/images/vehicles/59e79a2bbb199.jpg" alt="KLF-A" class="vehicle-thumb" onclick="switchVehicleImg(this)">
-                                        <img src="assets/images/vehicles/59e79a483ecab.jpg" alt="KLF-A" class="vehicle-thumb" onclick="switchVehicleImg(this)">
-                                        <img src="assets/images/vehicles/59e79a61adcd4.jpg" alt="KLF-A" class="vehicle-thumb" onclick="switchVehicleImg(this)">
-                                        <img src="assets/images/vehicles/59e79a9520e6c.jpg" alt="KLF-A" class="vehicle-thumb" onclick="switchVehicleImg(this)">
-                                    </div>
-                                </div>
+                                <?php renderVehicleImages($vehiclePhotos['klf_a'] ?? [], 'Kleinlöschfahrzeug Allrad KLF-A'); ?>
                                 <div class="vehicle-info">
                                     <h3><i class="fas fa-truck-pickup"></i> Kleinlöschfahrzeug Allrad – KLF-A</h3>
                                     <table class="vehicle-specs">
@@ -111,14 +120,7 @@
 
                             <!-- Transportfahrzeug LAST1 -->
                             <div class="vehicle-card" id="last1">
-                                <div class="vehicle-image-slider">
-                                    <img src="assets/images/vehicles/59dfaf7dcdc02.jpg" alt="Transportfahrzeug LAST1" class="vehicle-main-img" data-lightbox-images='["assets/images/vehicles/59dfaf7dcdc02.jpg","assets/images/vehicles/59e79ac12dc6d.jpg","assets/images/vehicles/59e79ad6ede32.jpg"]'>
-                                    <div class="vehicle-thumbs">
-                                        <img src="assets/images/vehicles/59dfaf7dcdc02.jpg" alt="LAST1" class="vehicle-thumb active" onclick="switchVehicleImg(this)">
-                                        <img src="assets/images/vehicles/59e79ac12dc6d.jpg" alt="LAST1" class="vehicle-thumb" onclick="switchVehicleImg(this)">
-                                        <img src="assets/images/vehicles/59e79ad6ede32.jpg" alt="LAST1" class="vehicle-thumb" onclick="switchVehicleImg(this)">
-                                    </div>
-                                </div>
+                                <?php renderVehicleImages($vehiclePhotos['last1'] ?? [], 'Transportfahrzeug LAST1'); ?>
                                 <div class="vehicle-info">
                                     <h3><i class="fas fa-truck-moving"></i> Transportfahrzeug – LAST1</h3>
                                     <table class="vehicle-specs">
@@ -134,16 +136,7 @@
 
                             <!-- Gefahrgutfahrzeug GGF -->
                             <div class="vehicle-card" id="ggf">
-                                <div class="vehicle-image-slider">
-                                    <img src="assets/images/vehicles/5a6cebf9cfc45.jpg" alt="Gefahrgutfahrzeug GGF" class="vehicle-main-img" data-lightbox-images='["assets/images/vehicles/5a6cebf9cfc45.jpg","assets/images/vehicles/59e79af242705.jpg","assets/images/vehicles/59e79b0dd1d1b.jpg","assets/images/vehicles/59e79b2766ab6.jpg","assets/images/vehicles/59e79b3ccefeb.jpg"]'>
-                                    <div class="vehicle-thumbs">
-                                        <img src="assets/images/vehicles/5a6cebf9cfc45.jpg" alt="GGF" class="vehicle-thumb active" onclick="switchVehicleImg(this)">
-                                        <img src="assets/images/vehicles/59e79af242705.jpg" alt="GGF" class="vehicle-thumb" onclick="switchVehicleImg(this)">
-                                        <img src="assets/images/vehicles/59e79b0dd1d1b.jpg" alt="GGF" class="vehicle-thumb" onclick="switchVehicleImg(this)">
-                                        <img src="assets/images/vehicles/59e79b2766ab6.jpg" alt="GGF" class="vehicle-thumb" onclick="switchVehicleImg(this)">
-                                        <img src="assets/images/vehicles/59e79b3ccefeb.jpg" alt="GGF" class="vehicle-thumb" onclick="switchVehicleImg(this)">
-                                    </div>
-                                </div>
+                                <?php renderVehicleImages($vehiclePhotos['ggf'] ?? [], 'Gefahrgutfahrzeug GGF'); ?>
                                 <div class="vehicle-info">
                                     <h3><i class="fas fa-biohazard"></i> Gefahrgutfahrzeug – GGF</h3>
                                     <table class="vehicle-specs">
@@ -163,9 +156,7 @@
 
                             <!-- Großpumpenhänger -->
                             <div class="vehicle-card" id="grosspumpe">
-                                <div class="vehicle-image-slider">
-                                    <img src="assets/images/vehicles/59dfb11106df6.jpg" alt="Großpumpenhänger" class="vehicle-main-img" data-lightbox-group="grosspumpe">
-                                </div>
+                                <?php renderVehicleImages($vehiclePhotos['grosspumpe'] ?? [], 'Großpumpenhänger'); ?>
                                 <div class="vehicle-info">
                                     <h3><i class="fas fa-water"></i> Großpumpenhänger</h3>
                                     <table class="vehicle-specs">
@@ -185,14 +176,7 @@
 
                             <!-- Anhänger leicht -->
                             <div class="vehicle-card" id="anhaenger">
-                                <div class="vehicle-image-slider">
-                                    <img src="assets/images/vehicles/59dfb0b1d7908.jpg" alt="Anhänger leicht" class="vehicle-main-img" data-lightbox-images='["assets/images/vehicles/59dfb0b1d7908.jpg","assets/images/vehicles/59e79ba4aa875.jpg","assets/images/vehicles/59e79bbbbc83c.jpg"]'>
-                                    <div class="vehicle-thumbs">
-                                        <img src="assets/images/vehicles/59dfb0b1d7908.jpg" alt="Anhänger" class="vehicle-thumb active" onclick="switchVehicleImg(this)">
-                                        <img src="assets/images/vehicles/59e79ba4aa875.jpg" alt="Anhänger" class="vehicle-thumb" onclick="switchVehicleImg(this)">
-                                        <img src="assets/images/vehicles/59e79bbbbc83c.jpg" alt="Anhänger" class="vehicle-thumb" onclick="switchVehicleImg(this)">
-                                    </div>
-                                </div>
+                                <?php renderVehicleImages($vehiclePhotos['anhaenger'] ?? [], 'Anhänger leicht'); ?>
                                 <div class="vehicle-info">
                                     <h3><i class="fas fa-trailer"></i> Anhänger leicht – bis 750 kg</h3>
                                     <p>Der leichte Anhänger ist hauptsächlich für Materialtransport zum Einsatz oder nach einem Einsatz gedacht.</p>
@@ -219,22 +203,14 @@
                         <p>Die Wache Reichenau besteht aus einer Fahrzeughalle für die 5 Feuerwehrfahrzeuge, einen Umkleidebereich, eine Funkkabine, einem Bekleidungsraum und einem Atemschutzarbeitsplatz. Im Anschluss an den Umkleidebereich gibt es noch einen kleinen Garagenanbau wo die 2 Anhänger (Großpumpe und leichter Anhänger bis 750 kg) abgestellt sind und ein Gerätelager, wo diverse Gerätschaften gelagert werden. Seit 2013 ist diese kleine Garage mit einem Tor versehen, so dass die Geräte und Anhänger besser geschützt werden können.</p>
 
                         <div class="wache-gallery">
-                            <div class="gallery-item">
-                                <img src="assets/images/wache_umkleide1.jpg" alt="Umkleideraum" data-lightbox-group="wache">
-                                <p class="gallery-caption">Umkleideraum</p>
-                            </div>
-                            <div class="gallery-item">
-                                <img src="assets/images/wache_umkleide2.jpg" alt="Umkleidebereich" data-lightbox-group="wache">
-                                <p class="gallery-caption">Umkleidebereich</p>
-                            </div>
-                            <div class="gallery-item">
-                                <img src="assets/images/wache_ats.jpg" alt="Atemschutz-Arbeitsplatz" data-lightbox-group="wache">
-                                <p class="gallery-caption">Atemschutz-Arbeitsplatz</p>
-                            </div>
-                            <div class="gallery-item">
-                                <img src="assets/images/wache_funk.jpg" alt="Funkkabine" data-lightbox-group="wache">
-                                <p class="gallery-caption">Funkkabine</p>
-                            </div>
+                            <?php foreach (['wache_umkleide1', 'wache_umkleide2', 'wache_ats', 'wache_funk'] as $slotKey): ?>
+                                <?php if (isset($wacheSlots[$slotKey])): ?>
+                                    <div class="gallery-item">
+                                        <img src="<?php echo htmlspecialchars($wacheSlots[$slotKey]['photo_path']); ?>" alt="<?php echo htmlspecialchars($wacheSlots[$slotKey]['label']); ?>" data-lightbox-group="wache">
+                                        <p class="gallery-caption"><?php echo htmlspecialchars($wacheSlots[$slotKey]['label']); ?></p>
+                                    </div>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
                         </div>
 
                         <div class="address-card">
@@ -251,4 +227,3 @@
             </div>
         </div>
     </section>
-

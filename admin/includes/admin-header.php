@@ -41,6 +41,11 @@ require_once __DIR__ . '/../permissions.php';
                     <i class="fas fa-sitemap"></i> Organigramm
                 </a>
             <?php endif; ?>
+            <?php if (userHasPermission('media.manage')): ?>
+                <a href="vehicle-photos.php" class="sidebar-link <?php echo ($activePage ?? '') === 'vehicle-photos' ? 'active' : ''; ?>">
+                    <i class="fas fa-images"></i> Fahrzeug- & Wache-Fotos
+                </a>
+            <?php endif; ?>
 
             <div class="sidebar-divider"></div>
 

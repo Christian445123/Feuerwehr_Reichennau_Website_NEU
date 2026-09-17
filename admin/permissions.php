@@ -29,6 +29,7 @@ function getAllPermissions(): array {
         'deploy.manage'     => 'Deployment: neuesten Stand von GitHub auf den Server holen (git pull)',
         'orgchart.manage'   => 'Organigramm verwalten (Namen den Positionen zuordnen)',
         'logs.manage'       => 'Protokolle einsehen &amp; IP-Adressen sperren (Aktivitäts-Log, Login-Log, Rate-Limit)',
+        'media.manage'      => 'Fahrzeug- und Wache-Fotos austauschen',
     ];
 }
 
