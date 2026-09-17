@@ -393,9 +393,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
     var map = L.map('schutzbereich-map', { scrollWheelZoom: false });
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    // Weder tile.openstreetmap.org (blockt Produktiv-Websites ohne
+    // Registrierung, 403 "Access blocked") noch CARTO (verlangt inzwischen
+    // einen API-Key) funktionieren ohne Anmeldung. Esris kostenloser
+    // World-Street-Map-Kachelserver braucht keinen API-Key.
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
         maxZoom: 19,
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>-Mitwirkende'
+        attribution: 'Tiles &copy; Esri &mdash; Source: Esri, HERE, Garmin, FAO, NOAA, USGS'
     }).addTo(map);
 
     var schutzbereichPolygon = L.polygon(schutzbereichCoords, {
