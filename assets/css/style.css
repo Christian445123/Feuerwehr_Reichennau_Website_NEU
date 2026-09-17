@@ -571,7 +571,7 @@ body.nav-open {
 
 /* --- Einsatzgebiete (Startseite) --- */
 .einsatzgebiete-section {
-    background: #ffb700;
+    background: var(--color-secondary);
     padding: 70px 0;
 }
 
@@ -581,16 +581,16 @@ body.nav-open {
     font-weight: 800;
     text-transform: uppercase;
     line-height: 1.05;
-    color: var(--color-dark);
+    color: var(--color-white);
     margin-bottom: 30px;
 }
 
 .einsatzgebiete-intro {
     max-width: 780px;
     font-size: 1.05rem;
-    font-weight: 600;
+    font-weight: 500;
     line-height: 1.7;
-    color: var(--color-dark);
+    color: rgba(255,255,255,0.75);
     margin-bottom: 16px;
 }
 
@@ -600,7 +600,7 @@ body.nav-open {
     font-weight: 800;
     text-transform: uppercase;
     line-height: 1.1;
-    color: var(--color-dark);
+    color: var(--color-white);
     margin: 40px 0 24px;
 }
 
@@ -647,7 +647,7 @@ body.nav-open {
 
 .einsatzgebiete-label i {
     font-size: 1.8rem;
-    color: #ffb700;
+    color: var(--color-primary-light);
 }
 
 .einsatzgebiete-label span {
