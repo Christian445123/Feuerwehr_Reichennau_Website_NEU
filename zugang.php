@@ -59,21 +59,73 @@ if (!isMaintenanceModeEnabled() || siteAccessGranted()) {
     <link rel="stylesheet" href="assets/css/style.css?v=<?php echo @filemtime(__DIR__ . '/assets/css/style.css') ?: time(); ?>">
     <style>
         .lock-screen {
+            position: relative;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 20px;
             background: linear-gradient(135deg, #181818 0%, #1f1f1f 50%, #141414 100%);
+            overflow: hidden;
+        }
+        /* Dezente diagonale Akzentstreifen im Hintergrund, wie im
+           Organigramm/Referenzdesign - sorgt für Feuerwehr-Wiedererkennung
+           auch auf dieser reinen Systemseite. */
+        .lock-screen::before,
+        .lock-screen::after {
+            content: '';
+            position: absolute;
+            width: 260px;
+            height: 46px;
+            transform: skewX(-25deg);
+            pointer-events: none;
+        }
+        .lock-screen::before {
+            top: -40px;
+            right: -60px;
+            background: rgba(213, 0, 28, 0.35);
+        }
+        .lock-screen::after {
+            bottom: -40px;
+            left: -60px;
+            background: rgba(255, 183, 0, 0.18);
         }
         .lock-card {
+            position: relative;
+            z-index: 1;
             background: #fff;
             border-radius: var(--radius-xl, 16px);
-            padding: 44px 40px 40px;
             max-width: 440px;
             width: 100%;
-            text-align: center;
+            overflow: hidden;
             box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+        }
+        /* Warnstreifen wie ein Absperrband - verbindet "Baustelle/Wartung"
+           mit dem Erscheinungsbild eines Einsatzfahrzeugs. */
+        .maintenance-stripe {
+            height: 10px;
+            background: repeating-linear-gradient(
+                135deg,
+                var(--color-primary, #d5001c) 0px, var(--color-primary, #d5001c) 16px,
+                #1a1a1a 16px, #1a1a1a 32px
+            );
+        }
+        .lock-card-body {
+            padding: 36px 40px 40px;
+            text-align: center;
+        }
+        .maintenance-logo {
+            width: 76px;
+            margin-bottom: 10px;
+        }
+        .maintenance-org {
+            font-family: 'Barlow Condensed', var(--font-family, sans-serif);
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--color-gray-500, #adb5bd);
+            margin-bottom: 22px;
         }
         .maintenance-icon-wrap {
             position: relative;
@@ -91,8 +143,8 @@ if (!isMaintenanceModeEnabled() || siteAccessGranted()) {
             position: absolute;
             bottom: -2px;
             right: -10px;
-            font-size: 1.5rem;
-            color: #ffb700;
+            font-size: 1.4rem;
+            color: #ff7a00;
             background: #fff;
             border-radius: 50%;
             padding: 8px;
@@ -153,17 +205,10 @@ if (!isMaintenanceModeEnabled() || siteAccessGranted()) {
             margin-bottom: 18px;
         }
         .lock-footer {
-            margin-top: 22px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-        .lock-footer img {
-            width: 32px;
-        }
-        .lock-footer span {
-            font-size: 0.8rem;
+            margin-top: 26px;
+            padding-top: 18px;
+            border-top: 1px solid var(--color-gray-200, #e9ecef);
+            font-size: 0.78rem;
             color: var(--color-gray-500, #adb5bd);
         }
     </style>
@@ -171,22 +216,25 @@ if (!isMaintenanceModeEnabled() || siteAccessGranted()) {
 <body>
     <div class="lock-screen">
         <div class="lock-card">
-            <div class="maintenance-icon-wrap">
-                <i class="fas fa-gear maintenance-gear"></i>
-                <i class="fas fa-person-digging maintenance-badge"></i>
-            </div>
-            <h1>Wartungsmodus</h1>
-            <p>Die Website ist in Wartung.<br>Solltest du dennoch darauf zugreifen wollen, bitte Passwort eingeben.</p>
-            <?php if ($error): ?>
-                <div class="lock-error"><?php echo htmlspecialchars($error); ?></div>
-            <?php endif; ?>
-            <form method="POST" class="lock-form">
-                <input type="password" name="password" placeholder="Passwort" required autofocus>
-                <button type="submit"><i class="fas fa-unlock"></i> Zugang freischalten</button>
-            </form>
-            <div class="lock-footer">
-                <img src="assets/images/logo.png?v=2" alt="FF Reichenau Logo">
-                <span>Freiwillige Feuerwehr Reichenau</span>
+            <div class="maintenance-stripe"></div>
+            <div class="lock-card-body">
+                <img src="assets/images/logo.png?v=2" alt="FF Reichenau Wappen" class="maintenance-logo">
+                <p class="maintenance-org">Freiwillige Feuerwehr Reichenau</p>
+
+                <div class="maintenance-icon-wrap">
+                    <i class="fas fa-gear maintenance-gear"></i>
+                    <i class="fas fa-fire maintenance-badge"></i>
+                </div>
+                <h1>Wartungsmodus</h1>
+                <p>Die Website ist in Wartung.<br>Solltest du dennoch darauf zugreifen wollen, bitte Passwort eingeben.</p>
+                <?php if ($error): ?>
+                    <div class="lock-error"><?php echo htmlspecialchars($error); ?></div>
+                <?php endif; ?>
+                <form method="POST" class="lock-form">
+                    <input type="password" name="password" placeholder="Passwort" required autofocus>
+                    <button type="submit"><i class="fas fa-unlock"></i> Zugang freischalten</button>
+                </form>
+                <div class="lock-footer">Innsbruck Stadt &middot; Rossaugasse 4</div>
             </div>
         </div>
     </div>
