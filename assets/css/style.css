@@ -118,10 +118,11 @@ a:hover {
 .nav-container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 20px;
+    padding: 0 20px 0 12px;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 16px;
     height: 72px;
 }
 
@@ -130,6 +131,7 @@ a:hover {
     align-items: center;
     gap: 12px;
     text-decoration: none;
+    flex-shrink: 0;
 }
 
 .nav-logo-img {
