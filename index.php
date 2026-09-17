@@ -21,6 +21,10 @@ $allowed_pages = [
     'datenschutz',
     'alarmierungen',
     'sicherheitstipps',
+    'feuer',
+    'technik',
+    'gefahrgut',
+    'mitmachen',
 ];
 
 // Sicherheitscheck: Nur erlaubte Seiten laden
@@ -47,6 +51,10 @@ $page_titles = [
     'datenschutz'      => 'Datenschutzerklärung',
     'alarmierungen'    => 'Alarmierungen',
     'sicherheitstipps' => 'Sicherheitstipps',
+    'feuer'            => 'Einsatzgebiet Feuer',
+    'technik'          => 'Einsatzgebiet Technik',
+    'gefahrgut'        => 'Einsatzgebiet Gefahrgut',
+    'mitmachen'        => 'Mitmachen',
 ];
 
 $current_title = $page_titles[$page] ?? 'Startseite';

@@ -266,6 +266,20 @@ a:hover {
     color: var(--color-white);
 }
 
+.nav-cta {
+    background: #bbdce7 !important;
+    color: var(--color-dark) !important;
+    font-weight: 700 !important;
+    text-transform: uppercase;
+    font-size: 0.8rem !important;
+    letter-spacing: 0.3px;
+    margin-left: 6px;
+}
+
+.nav-cta:hover {
+    background: #a5cfdd !important;
+}
+
 /* Dropdown */
 .nav-dropdown {
     position: relative;
@@ -1861,6 +1875,69 @@ body.nav-open {
 @media (max-width: 640px) {
     .jugend-hero-banner {
         min-height: 46vh;
+    }
+}
+
+/* --- Einsatzgebiet-Seiten (Feuer/Technik/Gefahrgut) --- */
+.einsatzgebiet-hero {
+    position: relative;
+    min-height: 46vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background-size: cover;
+    background-position: center;
+    padding: 60px 20px;
+}
+
+.einsatzgebiet-eyebrow {
+    color: rgba(255,255,255,0.7);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.einsatzgebiet-hero h1 {
+    font-family: var(--font-family-display);
+    font-size: clamp(2.4rem, 6vw, 4rem);
+    font-weight: 800;
+    text-transform: uppercase;
+    color: var(--color-white);
+    text-shadow: 2px 2px 0 rgba(0,0,0,0.4);
+}
+
+.einsatzgebiet-gallery {
+    columns: 3 220px;
+    column-gap: 16px;
+}
+
+.einsatzgebiet-gallery-item {
+    break-inside: avoid;
+    margin-bottom: 16px;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+}
+
+.einsatzgebiet-gallery-item img {
+    width: 100%;
+    display: block;
+    cursor: zoom-in;
+    transition: transform 0.4s ease;
+}
+
+.einsatzgebiet-gallery-item:hover img {
+    transform: scale(1.04);
+}
+
+@media (max-width: 640px) {
+    .einsatzgebiet-hero {
+        min-height: 38vh;
+    }
+    .einsatzgebiet-gallery {
+        columns: 2 160px;
     }
 }
 
