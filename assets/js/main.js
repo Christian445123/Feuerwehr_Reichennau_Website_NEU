@@ -18,17 +18,28 @@ document.addEventListener('DOMContentLoaded', function () {
     const navMenu = document.getElementById('navMenu');
 
     if (navToggle && navMenu) {
+        function closeNavMenu() {
+            navMenu.classList.remove('open');
+            navToggle.classList.remove('active');
+            document.body.classList.remove('nav-open');
+        }
+
         navToggle.addEventListener('click', function () {
-            navMenu.classList.toggle('open');
-            navToggle.classList.toggle('active');
+            var isOpen = navMenu.classList.toggle('open');
+            navToggle.classList.toggle('active', isOpen);
+            document.body.classList.toggle('nav-open', isOpen);
         });
 
         // Menü schließen bei Klick auf Link
         navMenu.querySelectorAll('.nav-link').forEach(function (link) {
-            link.addEventListener('click', function () {
-                navMenu.classList.remove('open');
-                navToggle.classList.remove('active');
-            });
+            link.addEventListener('click', closeNavMenu);
+        });
+
+        // Menü schließen mit Escape-Taste
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && navMenu.classList.contains('open')) {
+                closeNavMenu();
+            }
         });
     }
 

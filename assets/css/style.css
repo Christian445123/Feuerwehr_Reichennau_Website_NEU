@@ -83,7 +83,7 @@ a:hover {
     top: 0;
     left: 0;
     right: 0;
-    z-index: 1000;
+    z-index: 1100;
     background: rgba(26, 26, 46, 0.95);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
@@ -311,6 +311,22 @@ a:hover {
     background: var(--color-white);
     border-radius: 2px;
     transition: var(--transition);
+}
+
+.nav-toggle.active span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+}
+
+.nav-toggle.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.nav-toggle.active span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+}
+
+body.nav-open {
+    overflow: hidden;
 }
 
 /* --- Hero Section --- */
@@ -2631,6 +2647,19 @@ body.lightbox-open {
     .schutzbereich-images {
         grid-template-columns: 1fr;
         gap: 30px;
+    }
+
+    .wache-gallery {
+        grid-template-columns: 1fr;
+    }
+
+    .vehicle-card {
+        grid-template-columns: 1fr;
+    }
+
+    .dropdown-menu li a {
+        padding: 12px 14px;
+        font-size: 0.95rem;
     }
 
     .termin-item {

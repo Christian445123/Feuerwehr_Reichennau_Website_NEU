@@ -607,4 +607,9 @@ img { max-width: 100%; height: auto; }
     .members-grid { grid-template-columns: 1fr; }
     .admin-table { font-size: 0.82rem; }
     .admin-table th, .admin-table td { padding: 8px 10px; }
+    .admin-card-body { overflow-x: auto; }
+    .admin-card-body .admin-table { min-width: 560px; }
+    .admin-header { padding: 14px 16px; flex-wrap: wrap; }
+    .admin-page-title { font-size: 1.1rem; }
+    .admin-search input { max-width: 100%; }
 }
