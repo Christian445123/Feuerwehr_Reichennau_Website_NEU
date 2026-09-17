@@ -569,6 +569,104 @@ body.nav-open {
     font-weight: 500;
 }
 
+/* --- Einsatzgebiete (Startseite) --- */
+.einsatzgebiete-section {
+    background: #ffb700;
+    padding: 70px 0;
+}
+
+.einsatzgebiete-title {
+    font-family: var(--font-family-display);
+    font-size: clamp(2.4rem, 6vw, 4rem);
+    font-weight: 800;
+    text-transform: uppercase;
+    line-height: 1.05;
+    color: var(--color-dark);
+    margin-bottom: 30px;
+}
+
+.einsatzgebiete-intro {
+    max-width: 780px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    line-height: 1.7;
+    color: var(--color-dark);
+    margin-bottom: 16px;
+}
+
+.einsatzgebiete-subtitle {
+    font-family: var(--font-family-display);
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    font-weight: 800;
+    text-transform: uppercase;
+    line-height: 1.1;
+    color: var(--color-dark);
+    margin: 40px 0 24px;
+}
+
+.einsatzgebiete-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
+
+.einsatzgebiete-card {
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+}
+
+.einsatzgebiete-image {
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    background: var(--color-gray-200);
+}
+
+.einsatzgebiete-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    cursor: zoom-in;
+    transition: transform 0.5s ease;
+}
+
+.einsatzgebiete-card:hover .einsatzgebiete-image img {
+    transform: scale(1.06);
+}
+
+.einsatzgebiete-label {
+    background: var(--color-dark);
+    color: var(--color-white);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 24px 16px;
+}
+
+.einsatzgebiete-label i {
+    font-size: 1.8rem;
+    color: #ffb700;
+}
+
+.einsatzgebiete-label span {
+    font-family: var(--font-family-display);
+    font-weight: 700;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+@media (max-width: 768px) {
+    .einsatzgebiete-section {
+        padding: 50px 0;
+    }
+    .einsatzgebiete-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 /* --- Sections --- */
 .section {
     padding: 80px 0;

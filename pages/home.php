@@ -61,6 +61,47 @@
         </div>
     </section>
 
+    <!-- Wer wir sind / Unsere Einsatzgebiete -->
+    <section class="einsatzgebiete-section">
+        <div class="container">
+            <h2 class="einsatzgebiete-title">Freiwillige<br>Feuerwehr<br>Reichenau</h2>
+            <p class="einsatzgebiete-intro">Wir sind eine der Freiwilligen Feuerwehren der Stadt Innsbruck und arbeiten gemeinsam mit der Berufsfeuerwehr und neun weiteren Freiwilligen-Einheiten für die Sicherheit der Innsbrucker Bevölkerung.</p>
+            <p class="einsatzgebiete-intro">Neben Brandeinsätzen, technischer Hilfeleistung und Katastrophenschutz sind wir auch als Stützpunktfeuerwehr im Spezialgebiet Gefahrgut tätig.</p>
+
+            <h3 class="einsatzgebiete-subtitle">Unsere Einsatzgebiete</h3>
+
+            <div class="einsatzgebiete-grid">
+                <div class="einsatzgebiete-card">
+                    <div class="einsatzgebiete-image">
+                        <img src="assets/images/einsatzgebiet_feuer.jpg" alt="Feuerwehrmänner im Brandeinsatz" data-lightbox-group="einsatzgebiete" loading="lazy">
+                    </div>
+                    <div class="einsatzgebiete-label">
+                        <i class="fas fa-fire"></i>
+                        <span>Feuer</span>
+                    </div>
+                </div>
+                <div class="einsatzgebiete-card">
+                    <div class="einsatzgebiete-image">
+                        <img src="assets/images/einsatzgebiet_technik.jpg" alt="Feuerwehrleute im technischen Einsatz" data-lightbox-group="einsatzgebiete" loading="lazy">
+                    </div>
+                    <div class="einsatzgebiete-label">
+                        <i class="fas fa-wrench"></i>
+                        <span>Technik</span>
+                    </div>
+                </div>
+                <div class="einsatzgebiete-card">
+                    <div class="einsatzgebiete-image">
+                        <img src="assets/images/einsatzgebiet_gefahrgut.jpg" alt="Feuerwehr im Gefahrgut-Einsatz" data-lightbox-group="einsatzgebiete" loading="lazy">
+                    </div>
+                    <div class="einsatzgebiete-label">
+                        <i class="fas fa-skull-crossbones"></i>
+                        <span>Gefahrgut</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Aktuelle Einsätze & Berichte -->
     <section class="section">
         <div class="container">
