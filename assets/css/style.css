@@ -1127,6 +1127,48 @@ body.nav-open {
     color: var(--color-gray-600);
 }
 
+/* Der Crop-Ausschnitt ist auf die Desktop-Breite der fremden Seite
+   kalibriert. Bei einer schmalen Viewport-Breite lädt die fremde Seite
+   ihr eigenes, völlig anders aufgebautes Mobil-Layout im Iframe, wodurch
+   der Ausschnitt eine ganz andere Stelle der Seite zeigt und "verkryptet"
+   aussieht. Deshalb wird der Iframe am Handy durch eine schlichte
+   "extern öffnen"-Karte ersetzt statt ihn blind neu zu kalibrieren. */
+.tirol-alarm-mobile-cta {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .tirol-alarm-embed {
+        display: none;
+    }
+
+    .tirol-alarm-mobile-cta {
+        display: block;
+        text-align: center;
+        padding: 36px 24px;
+        margin-top: 16px;
+        background: var(--color-gray-100);
+        border-radius: var(--radius-md);
+        border: 1px solid var(--color-gray-200);
+    }
+
+    .tirol-alarm-mobile-icon {
+        font-size: 2.2rem;
+        color: var(--color-primary);
+        margin-bottom: 16px;
+    }
+
+    .tirol-alarm-mobile-cta p {
+        color: var(--color-gray-600);
+        margin-bottom: 20px;
+        line-height: 1.6;
+    }
+
+    .tirol-alarm-source {
+        display: none;
+    }
+}
+
 .content-image {
     width: 100%;
     border-radius: var(--radius-md);
