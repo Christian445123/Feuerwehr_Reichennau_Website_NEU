@@ -1816,9 +1816,10 @@ body.nav-open {
     font-size: clamp(1.6rem, 4vw, 2.2rem);
     font-weight: 800;
     text-transform: uppercase;
+    letter-spacing: 0.5px;
     line-height: 1.2;
-    color: var(--color-primary);
-    margin-top: 30px !important;
+    color: var(--color-dark);
+    margin-top: 20px !important;
 }
 
 .jugend-yellow-band {

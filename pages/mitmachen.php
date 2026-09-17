@@ -127,6 +127,22 @@ foreach ([['Helmut', 'Plank', 'Kommandant'], ['David', 'Danner', 'Kommandant-Stv
         </div>
     </section>
 
+    <section class="section" style="padding-top: 0;">
+        <div class="container">
+            <div class="einsatzgebiet-gallery">
+                <div class="einsatzgebiet-gallery-item">
+                    <img src="assets/images/mitmachen/mitmachen_01.jpg" alt="Mannschaft im Einsatz" data-lightbox-group="mitmachen" loading="lazy">
+                </div>
+                <div class="einsatzgebiet-gallery-item">
+                    <img src="assets/images/mitmachen/mitmachen_02.jpg" alt="Mannschaft im Einsatz" data-lightbox-group="mitmachen" loading="lazy">
+                </div>
+                <div class="einsatzgebiet-gallery-item">
+                    <img src="assets/images/mitmachen/mitmachen_03.jpg" alt="Stationsbetrieb Regelangriff" data-lightbox-group="mitmachen" loading="lazy">
+                </div>
+            </div>
+        </div>
+    </section>
+
     <section class="section section-dark">
         <div class="container jugend-narrow">
             <div class="section-header">

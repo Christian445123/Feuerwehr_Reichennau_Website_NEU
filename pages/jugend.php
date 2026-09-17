@@ -88,6 +88,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['jugend_submit'])) {
         <div class="container jugend-narrow">
             <h2 class="jugend-h2">Lust auf Action, viel Spaß und neue Freunde?</h2>
             <h3 class="jugend-h3">In der Feuerwehrjugend bist du mittendrin statt nur dabei – von 11 bis 15 Jahren!</h3>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container jugend-narrow">
             <p>Bei der Feuerwehrjugend Reichenau lernst du spielerisch alles rund um das Feuerwehrwesen. Während spannenden Übungen, Bewerben, Lagern und Ausflügen erwartet dich Abenteuer und jede Menge Spaß.</p>
             <p><strong>Dabei wirst du auf das vorbereitet, was zählt:</strong></p>
             <p class="jugend-statement">Verantwortung übernehmen<br>und helfen können.</p>
