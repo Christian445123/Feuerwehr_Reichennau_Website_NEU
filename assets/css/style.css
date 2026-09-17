@@ -710,7 +710,10 @@ body.nav-open {
     color: rgba(255,255,255,0.7);
 }
 
-.section-dark .jugend-narrow p {
+/* Nur direkte Absätze im dunklen Abschnitt einfärben, nicht solche in
+   verschachtelten weißen Karten (z.B. "So kannst du mitmachen" auf der
+   Mitmachen-Seite) - sonst wird deren Text weiß-auf-weiß unsichtbar. */
+.section-dark .jugend-narrow > p {
     color: rgba(255,255,255,0.8);
 }
 
