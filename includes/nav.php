@@ -30,21 +30,16 @@
                     </ul>
                 </li>
                 <li class="nav-dropdown">
-                    <a href="#" class="nav-link <?php echo in_array($current_page, ['feuer', 'technik', 'gefahrgut'], true) ? 'active' : ''; ?>"><i class="fas fa-shield-halved"></i> Einsatzbereiche <i class="fas fa-chevron-down dropdown-arrow"></i></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="index.php?page=ueber-uns#schutzbereich">Schutzgebiet</a></li>
-                        <li><a href="index.php?page=gefahrgut">Gefahrgut</a></li>
-                        <li><a href="index.php?page=feuer">Feuer</a></li>
-                        <li><a href="index.php?page=technik">Technik</a></li>
-                    </ul>
-                </li>
-                <li class="nav-dropdown">
-                    <a href="index.php?page=ueber-uns" class="nav-link <?php echo $current_page === 'ueber-uns' ? 'active' : ''; ?>"><i class="fas fa-users"></i> Über Uns <i class="fas fa-chevron-down dropdown-arrow"></i></a>
+                    <a href="index.php?page=ueber-uns" class="nav-link <?php echo in_array($current_page, ['ueber-uns', 'feuer', 'technik', 'gefahrgut'], true) ? 'active' : ''; ?>"><i class="fas fa-users"></i> Über Uns <i class="fas fa-chevron-down dropdown-arrow"></i></a>
                     <ul class="dropdown-menu">
                         <li><a href="index.php?page=ueber-uns#mannschaft">Mannschaft</a></li>
                         <li><a href="index.php?page=ueber-uns#kommando">Ausschuss</a></li>
                         <li><a href="index.php?page=ueber-uns#geschichte">Geschichte</a></li>
                         <li><a href="index.php?page=ueber-uns#schutzbereich">Schutzbereich</a></li>
+                        <li class="dropdown-menu-heading">Einsatzbereiche</li>
+                        <li><a href="index.php?page=feuer">Feuer</a></li>
+                        <li><a href="index.php?page=technik">Technik</a></li>
+                        <li><a href="index.php?page=gefahrgut">Gefahrgut</a></li>
                     </ul>
                 </li>
                 <li class="nav-dropdown">
