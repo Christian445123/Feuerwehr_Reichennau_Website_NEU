@@ -84,16 +84,35 @@ a:hover {
     left: 0;
     right: 0;
     z-index: 1100;
-    background: rgba(26, 26, 46, 0.95);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
     border-bottom: 1px solid rgba(255,255,255,0.05);
     transition: var(--transition);
 }
 
+/*
+ * Der Blur-Hintergrund sitzt bewusst in einem eigenen ::before statt direkt
+ * auf .navbar: backdrop-filter/filter macht ein Element zum Containing Block
+ * für fixed-positionierte Kindelemente. Da .nav-menu (mobiles Menü) selbst
+ * position:fixed ist, würde es sich sonst relativ zur ~72px hohen Navbar
+ * statt zum Viewport positionieren und dadurch auf 0 Höhe zusammenschrumpfen
+ * - das mobile Menü wäre dann unsichtbar.
+ */
+.navbar::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: rgba(26, 26, 46, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    transition: var(--transition);
+}
+
 .navbar.scrolled {
-    background: rgba(26, 26, 46, 0.98);
     box-shadow: var(--shadow-lg);
+}
+
+.navbar.scrolled::before {
+    background: rgba(26, 26, 46, 0.98);
 }
 
 .nav-container {
