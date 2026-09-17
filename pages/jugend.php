@@ -84,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['jugend_submit'])) {
         </div>
     </section>
 
-    <section class="section" id="aktivitaeten">
+    <section class="jugend-yellow-band" id="aktivitaeten">
         <div class="container jugend-narrow">
             <h2 class="jugend-h2">Lust auf Action, viel Spaß und neue Freunde?</h2>
             <h3 class="jugend-h3">In der Feuerwehrjugend bist du mittendrin statt nur dabei – von 11 bis 15 Jahren!</h3>
@@ -123,11 +123,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['jugend_submit'])) {
     </section>
 
     <!-- Infos für Eltern -->
-    <section class="section section-dark">
+    <section class="jugend-yellow-band">
         <div class="container jugend-narrow">
-            <div class="section-header">
-                <h2 class="section-title">Infos für Eltern</h2>
-            </div>
+            <h2 class="jugend-h2">Infos für Eltern</h2>
             <p><strong>Die Mitgliedschaft in der Feuerwehrjugend ist kostenlos.</strong> Uniform, Ausrüstung und Material werden von uns gestellt.</p>
             <p>Die Jugendlichen sind fester Bestandteil der Freiwilligen Feuerwehr Reichenau und werden von speziell geschulten Jugendbetreuer:innen begleitet, die mit viel Herzblut für Ausbildung, Organisation und Unterstützung sorgen.</p>
             <p><strong>Schule hat Vorrang:</strong> Wir achten darauf, dass sich die Teilnahme problemlos mit schulischen Verpflichtungen vereinbaren lässt.</p>

@@ -1810,8 +1810,13 @@ body.nav-open {
     margin-top: 30px !important;
 }
 
+.jugend-yellow-band {
+    background: #ffb700;
+    padding: 60px 0;
+}
+
 .jugend-red-band {
-    background: var(--color-primary);
+    background: #e4002b;
     color: var(--color-white);
     text-align: center;
     padding: 50px 20px;
