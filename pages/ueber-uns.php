@@ -349,6 +349,11 @@ foreach ($allMembers as $am) {
                     <div class="content-card-body">
                         <h4>Einwohnerzahl im Schutzgebiet der FF Reichenau:</h4>
                         <p>Derzeit sind im Schutzgebiet der FF Reichenau <strong>27.575 Einwohner</strong> mit Hauptwohnsitz und <strong>2.760 Einwohner</strong> mit Nebenwohnsitz gemeldet. Das Schutzgebiet der FF Reichenau umfasst somit ca. <strong>14.000 Haushalte</strong> (Umrechnungsschlüssel: es wird mit 2,2 Personen pro Haushalt gerechnet).</p>
+
+                        <h4>Karte des Schutzgebiets:</h4>
+                        <div id="schutzbereich-map" class="schutzbereich-map" role="img" aria-label="Interaktive Karte des Schutzbereichs der FF Reichenau"></div>
+                        <p class="schutzbereich-map-note"><i class="fas fa-circle-info"></i> Der eingezeichnete Bereich ist eine Annäherung an das offizielle Schutzgebiet.</p>
+
                         <div class="schutzbereich-images">
                             <img src="assets/images/schutzgebiet_karte.jpg" alt="Karte Schutzgebiet" class="content-image" data-lightbox-group="schutzbereich">
                             <img src="assets/images/schutzgebiet.jpg" alt="Schutzgebiet der FF Reichenau" class="content-image" data-lightbox-group="schutzbereich">
@@ -359,6 +364,60 @@ foreach ($allMembers as $am) {
             </div>
         </div>
     </section>
+
+<!-- Schutzbereich-Karte (Leaflet + OpenStreetMap). Die Grenze ist von Hand
+     anhand von realen Straßen/Orten (Feuerwache Rossaugasse 4, Hauptbahnhof,
+     Pradl, Pradler Saggen, Gewerbegebiet Rossau, Amraser-See-Straße) grob
+     nachgezogen und keine exakte amtliche Grenze - siehe Hinweistext auf der
+     Seite. Bei Bedarf hier die Koordinaten in "schutzbereichCoords" anpassen. -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var mapEl = document.getElementById('schutzbereich-map');
+    if (!mapEl || typeof L === 'undefined') return;
+
+    var schutzbereichCoords = [
+        [47.2775, 11.4010],
+        [47.2790, 11.4110],
+        [47.2800, 11.4230],
+        [47.2770, 11.4340],
+        [47.2740, 11.4400],
+        [47.2691, 11.4400],
+        [47.2660, 11.4340],
+        [47.2628, 11.4262],
+        [47.2600, 11.4160],
+        [47.2629, 11.4043],
+        [47.2633, 11.4010],
+        [47.2680, 11.3995]
+    ];
+
+    var map = L.map('schutzbereich-map', { scrollWheelZoom: false });
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>-Mitwirkende'
+    }).addTo(map);
+
+    var schutzbereichPolygon = L.polygon(schutzbereichCoords, {
+        color: '#e4002b',
+        weight: 3,
+        fillColor: '#e4002b',
+        fillOpacity: 0.15
+    }).addTo(map);
+
+    L.marker([47.27245, 11.43098]).addTo(map)
+        .bindPopup('<strong>Feuerwache Reichenau</strong><br>Rossaugasse 4');
+
+    map.fitBounds(schutzbereichPolygon.getBounds(), { padding: [20, 20] });
+
+    mapEl.addEventListener('click', function () {
+        map.scrollWheelZoom.enable();
+    });
+    mapEl.addEventListener('mouseleave', function () {
+        map.scrollWheelZoom.disable();
+    });
+});
+</script>
 
 <!-- Member Detail Modal -->
 <div class="member-modal-overlay" id="memberModal">
