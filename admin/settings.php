@@ -4,6 +4,7 @@ require_once __DIR__ . '/permissions.php';
 require_once __DIR__ . '/../config/gate.php';
 require_once __DIR__ . '/../config/stats.php';
 require_once __DIR__ . '/../config/analytics.php';
+require_once __DIR__ . '/../config/logging.php';
 requireLogin();
 
 $pageTitle = 'Einstellungen';
@@ -35,6 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             flash('error', 'Passwörter stimmen nicht überein.');
         } else {
             setSitePassword($newPw);
+            logActivity($db, 'settings.site_password');
             flash('success', 'Das Zugangspasswort der Website wurde geändert.');
         }
     }
@@ -46,6 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
         $newStart = resetStatsPeriod($db);
+        logActivity($db, 'settings.stats_reset', 'Neuer Zählbeginn: ' . $newStart);
         flash('success', 'Der Einsatz-Statistik-Zähler wurde zurückgesetzt. Gezählt wird ab ' . date('d.m.Y', strtotime($newStart)) . '.');
     }
 
@@ -60,6 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             flash('error', 'Ungültiges Format. Eine Google-Analytics-4-Measurement-ID beginnt mit "G-" (z.B. G-ABC1234XYZ).');
         } else {
             setGaMeasurementId($gaId);
+            logActivity($db, 'settings.ga_id', $gaId !== '' ? "Gesetzt auf $gaId" : 'Deaktiviert');
             flash('success', $gaId !== '' ? 'Google Analytics wurde eingerichtet.' : 'Google Analytics wurde deaktiviert.');
         }
     }
@@ -83,6 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $hash = password_hash($newPw, PASSWORD_DEFAULT);
             $stmt = $db->prepare("UPDATE users SET password = ? WHERE id = ?");
             $stmt->execute([$hash, $_SESSION['admin_user_id']]);
+            logActivity($db, 'settings.own_password');
             flash('success', 'Passwort wurde geändert.');
         }
     }

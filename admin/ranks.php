@@ -2,6 +2,7 @@
 require_once __DIR__ . '/auth.php';
 require_once __DIR__ . '/permissions.php';
 require_once __DIR__ . '/../config/ranks.php';
+require_once __DIR__ . '/../config/logging.php';
 requireLogin();
 requirePermission('ranks.manage');
 
@@ -25,6 +26,7 @@ if (isset($_GET['delete']) && is_numeric($_GET['delete'])) {
                 flash('error', 'Dieser Dienstgrad ist bei Mitgliedern in Verwendung und kann nicht gelöscht werden.');
             } else {
                 $db->prepare("DELETE FROM ranks WHERE id = ?")->execute([$id]);
+                logActivity($db, 'rank.delete', $rankData['abbr']);
                 flash('success', 'Dienstgrad wurde gelöscht.');
             }
         }

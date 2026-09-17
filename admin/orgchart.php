@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/auth.php';
 require_once __DIR__ . '/permissions.php';
+require_once __DIR__ . '/../config/logging.php';
 requireLogin();
 requirePermission('orgchart.manage');
 
@@ -22,6 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->execute([trim($name), $key]);
     }
 
+    logActivity($db, 'orgchart.update');
     flash('success', 'Organigramm wurde aktualisiert.');
     header('Location: orgchart.php');
     exit;

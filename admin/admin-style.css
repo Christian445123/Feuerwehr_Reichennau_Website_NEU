@@ -240,6 +240,7 @@ img { max-width: 100%; height: auto; }
 .badge-archiv { background: rgba(108,117,125,0.15); color: var(--gray-700); margin-left: 4px; }
 .badge-success { background: rgba(39,174,96,0.1); color: #1e8449; }
 .badge-draft { background: rgba(108,117,125,0.1); color: var(--gray-600); }
+.badge-error { background: rgba(213,0,28,0.1); color: var(--primary); }
 
 /* --- Dashboard --- */
 .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 30px; }

@@ -3,6 +3,7 @@ require_once __DIR__ . '/auth.php';
 require_once __DIR__ . '/permissions.php';
 require_once __DIR__ . '/../config/ranks.php';
 require_once __DIR__ . '/../config/badges.php';
+require_once __DIR__ . '/../config/logging.php';
 requireLogin();
 requirePermission('members.manage');
 
@@ -132,6 +133,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $id = $db->lastInsertId();
         }
 
+        logActivity($db, $isEdit ? 'member.update' : 'member.create', $member['firstname'] . ' ' . $member['lastname']);
         flash('success', $isEdit ? 'Mitglied wurde aktualisiert.' : 'Mitglied wurde hinzugefügt.');
         header("Location: members.php");
         exit;

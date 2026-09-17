@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/auth.php';
 require_once __DIR__ . '/permissions.php';
+require_once __DIR__ . '/../config/logging.php';
 requireLogin();
 requirePermission('reports.manage');
 
@@ -13,6 +14,9 @@ $db = getDB();
 if (isset($_GET['delete']) && is_numeric($_GET['delete'])) {
     if (isset($_GET['token']) && hash_equals(csrfToken(), $_GET['token'])) {
         $id = (int)$_GET['delete'];
+        $reportTitle = $db->prepare("SELECT title FROM reports WHERE id = ?");
+        $reportTitle->execute([$id]);
+        $titleVal = $reportTitle->fetchColumn();
         // Bilder löschen
         $images = $db->prepare("SELECT filename FROM report_images WHERE report_id = ?");
         $images->execute([$id]);
@@ -22,6 +26,7 @@ if (isset($_GET['delete']) && is_numeric($_GET['delete'])) {
         }
         $db->prepare("DELETE FROM report_images WHERE report_id = ?")->execute([$id]);
         $db->prepare("DELETE FROM reports WHERE id = ?")->execute([$id]);
+        logActivity($db, 'report.delete', $titleVal ?: "#$id");
         flash('success', 'Bericht wurde gelöscht.');
     }
     header('Location: reports.php');

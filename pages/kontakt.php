@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../config/gate.php';
 requireSiteAccess();
 require_once __DIR__ . '/../config/mail.php';
+require_once __DIR__ . '/../config/logging.php';
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -18,6 +19,10 @@ $formSent = false;
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['kontakt_submit'])) {
     foreach ($formData as $key => $_) {
         $formData[$key] = trim($_POST[$key] ?? '');
+    }
+
+    if (!checkRateLimit(getDB(), 'contact_form', 5, 3600)) {
+        $formErrors[] = 'Zu viele Anfragen. Bitte versuche es später erneut.';
     }
 
     $csrfOk = hash_equals($_SESSION['kontakt_csrf'], $_POST['csrf_token'] ?? '');

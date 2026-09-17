@@ -2,6 +2,7 @@
 require_once __DIR__ . '/auth.php';
 require_once __DIR__ . '/permissions.php';
 require_once __DIR__ . '/../config/ranks.php';
+require_once __DIR__ . '/../config/logging.php';
 requireLogin();
 requirePermission('ranks.manage');
 
@@ -103,6 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $id = $db->lastInsertId();
             }
 
+            logActivity($db, $isEdit ? 'rank.update' : 'rank.create', $rank['abbr'] . ' - ' . $rank['name']);
             flash('success', $isEdit ? 'Dienstgrad wurde aktualisiert.' : 'Dienstgrad wurde hinzugefügt.');
             header("Location: ranks.php");
             exit;

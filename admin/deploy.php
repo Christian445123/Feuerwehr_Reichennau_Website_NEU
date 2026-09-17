@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/auth.php';
 require_once __DIR__ . '/permissions.php';
+require_once __DIR__ . '/../config/logging.php';
 requireLogin();
 requirePermission('deploy.manage');
 
@@ -70,6 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ];
 
         if ($pullResult['ok']) {
+            logActivity(getDB(), 'deploy.pull', "Branch: $branch");
             flash('success', 'Server wurde auf den neuesten GitHub-Stand gebracht.');
         } else {
             flash('error', 'Deployment fehlgeschlagen - siehe Log unten.');

@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/auth.php';
 require_once __DIR__ . '/permissions.php';
+require_once __DIR__ . '/../config/logging.php';
 requireLogin();
 requirePermission('users.manage');
 
@@ -26,6 +27,7 @@ if (isset($_GET['delete']) && is_numeric($_GET['delete'])) {
             flash('error', 'Der letzte Benutzer kann nicht gelöscht werden.');
         } else {
             $db->prepare("DELETE FROM users WHERE id = ?")->execute([$id]);
+            logActivity($db, 'user.delete', $targetUsername);
             flash('success', 'Benutzer wurde gelöscht.');
         }
     }

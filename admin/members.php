@@ -2,6 +2,7 @@
 require_once __DIR__ . '/auth.php';
 require_once __DIR__ . '/permissions.php';
 require_once __DIR__ . '/../config/ranks.php';
+require_once __DIR__ . '/../config/logging.php';
 requireLogin();
 requirePermission('members.manage');
 
@@ -14,7 +15,7 @@ $db = getDB();
 if (isset($_GET['delete']) && is_numeric($_GET['delete'])) {
     if (isset($_GET['token']) && hash_equals(csrfToken(), $_GET['token'])) {
         $id = (int)$_GET['delete'];
-        $stmt = $db->prepare("SELECT photo FROM members WHERE id = ?");
+        $stmt = $db->prepare("SELECT firstname, lastname, photo FROM members WHERE id = ?");
         $stmt->execute([$id]);
         $member = $stmt->fetch();
         if ($member && $member['photo']) {
@@ -22,6 +23,9 @@ if (isset($_GET['delete']) && is_numeric($_GET['delete'])) {
             if (file_exists($path)) unlink($path);
         }
         $db->prepare("DELETE FROM members WHERE id = ?")->execute([$id]);
+        if ($member) {
+            logActivity($db, 'member.delete', $member['firstname'] . ' ' . $member['lastname']);
+        }
         flash('success', 'Mitglied wurde gelöscht.');
     }
     header('Location: members.php');

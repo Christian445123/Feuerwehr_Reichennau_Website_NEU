@@ -417,6 +417,67 @@ function getMigrations(): array {
             },
         ],
 
+        [
+            'id' => '2026_09_17_create_logging_tables',
+            'run' => function (PDO $db) {
+                // Aktivitäts-Log: wer hat wann was im Admin-Bereich gemacht
+                $db->exec("CREATE TABLE IF NOT EXISTS activity_log (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    user_id INT DEFAULT NULL,
+                    user_name VARCHAR(150) DEFAULT '',
+                    action VARCHAR(100) NOT NULL,
+                    details TEXT,
+                    ip_address VARCHAR(45) DEFAULT '',
+                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    INDEX idx_created_at (created_at)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
+                // Login-Log: jeder Anmeldeversuch (Admin-Bereich und Seiten-Zugangssperre)
+                $db->exec("CREATE TABLE IF NOT EXISTS login_log (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    login_type VARCHAR(20) NOT NULL DEFAULT 'admin',
+                    username_attempted VARCHAR(150) DEFAULT '',
+                    success TINYINT(1) NOT NULL DEFAULT 0,
+                    ip_address VARCHAR(45) DEFAULT '',
+                    user_agent VARCHAR(255) DEFAULT '',
+                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    INDEX idx_created_at (created_at)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
+                // Gesperrte IP-Adressen (manuell oder automatisch durch Rate-Limit)
+                $db->exec("CREATE TABLE IF NOT EXISTS blocked_ips (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    ip_address VARCHAR(45) UNIQUE NOT NULL,
+                    reason VARCHAR(255) DEFAULT '',
+                    blocked_by VARCHAR(150) DEFAULT '',
+                    auto_blocked TINYINT(1) NOT NULL DEFAULT 0,
+                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    expires_at DATETIME DEFAULT NULL
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
+                // Einzelne Rate-Limit-Treffer (kurzlebig, nur für die Zählung im
+                // Zeitfenster - alte Einträge werden laufend aufgeräumt)
+                $db->exec("CREATE TABLE IF NOT EXISTS rate_limit_hits (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    action_key VARCHAR(50) NOT NULL,
+                    ip_address VARCHAR(45) NOT NULL,
+                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    INDEX idx_action_ip_time (action_key, ip_address, created_at)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
+                // Protokollierte Rate-Limit-Überschreitungen, für die Admin-Ansicht
+                $db->exec("CREATE TABLE IF NOT EXISTS rate_limit_events (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    action_key VARCHAR(50) NOT NULL,
+                    ip_address VARCHAR(45) NOT NULL,
+                    detail VARCHAR(255) DEFAULT '',
+                    auto_blocked TINYINT(1) NOT NULL DEFAULT 0,
+                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    INDEX idx_created_at (created_at)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+            },
+        ],
+
     ];
 }
 

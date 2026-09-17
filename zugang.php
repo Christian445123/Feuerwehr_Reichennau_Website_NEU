@@ -3,32 +3,41 @@
  * Zugangssperre für die noch nicht offizielle Website.
  */
 require_once __DIR__ . '/config/gate.php';
+require_once __DIR__ . '/config/logging.php';
 
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'] ?? '';
-    $hash = getSitePasswordHash();
+    $db = getDB();
 
-    if ($hash !== '' && password_verify($password, $hash)) {
-        session_regenerate_id(true);
-        $_SESSION['site_access_granted'] = true;
+    if (!checkRateLimit($db, 'site_gate', 10, 600)) {
+        $error = 'Zu viele Versuche. Bitte versuchen Sie es später erneut.';
+    } else {
+        $hash = getSitePasswordHash();
 
-        $redirect = $_SESSION['site_access_redirect'] ?? 'index.php';
-        unset($_SESSION['site_access_redirect']);
+        if ($hash !== '' && password_verify($password, $hash)) {
+            session_regenerate_id(true);
+            $_SESSION['site_access_granted'] = true;
+            logLoginAttempt($db, 'site_gate', '', true);
 
-        // Nur interne, relative Ziele zulassen (Schutz vor Open-Redirect)
-        if (!is_string($redirect) || $redirect === '' || $redirect[0] !== '/' || str_starts_with($redirect, '//')) {
-            $redirect = 'index.php';
-        } else {
-            $redirect = ltrim($redirect, '/');
+            $redirect = $_SESSION['site_access_redirect'] ?? 'index.php';
+            unset($_SESSION['site_access_redirect']);
+
+            // Nur interne, relative Ziele zulassen (Schutz vor Open-Redirect)
+            if (!is_string($redirect) || $redirect === '' || $redirect[0] !== '/' || str_starts_with($redirect, '//')) {
+                $redirect = 'index.php';
+            } else {
+                $redirect = ltrim($redirect, '/');
+            }
+
+            header('Location: ' . $redirect);
+            exit;
         }
 
-        header('Location: ' . $redirect);
-        exit;
+        logLoginAttempt($db, 'site_gate', '', false);
+        $error = 'Falsches Passwort. Bitte versuchen Sie es erneut.';
     }
-
-    $error = 'Falsches Passwort. Bitte versuchen Sie es erneut.';
 }
 
 if (siteAccessGranted()) {

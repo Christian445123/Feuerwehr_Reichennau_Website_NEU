@@ -6,6 +6,7 @@
 session_start();
 
 require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../config/logging.php';
 require_once __DIR__ . '/permissions.php';
 
 function isLoggedIn(): bool {
@@ -32,12 +33,18 @@ function login(string $username, string $password): bool {
         $_SESSION['admin_permissions'] = isProtectedAdminUsername($username)
             ? ['*']
             : (json_decode($user['permissions'] ?? '[]', true) ?: []);
+        logLoginAttempt($db, 'admin', $username, true);
+        logActivity($db, 'auth.login', 'Erfolgreich angemeldet', $user['id'], $user['name']);
         return true;
     }
+    logLoginAttempt($db, 'admin', $username, false);
     return false;
 }
 
 function logout(): void {
+    if (isLoggedIn()) {
+        logActivity(getDB(), 'auth.logout', 'Abgemeldet');
+    }
     $_SESSION = [];
     if (ini_get('session.use_cookies')) {
         $p = session_get_cookie_params();

@@ -44,6 +44,18 @@ require_once __DIR__ . '/../permissions.php';
 
             <div class="sidebar-divider"></div>
 
+            <?php if (userHasPermission('logs.manage')): ?>
+                <a href="logs.php" class="sidebar-link <?php echo ($activePage ?? '') === 'logs' ? 'active' : ''; ?>">
+                    <i class="fas fa-clipboard-list"></i> Aktivitäts-Log
+                </a>
+                <a href="login-log.php" class="sidebar-link <?php echo ($activePage ?? '') === 'login-log' ? 'active' : ''; ?>">
+                    <i class="fas fa-right-to-bracket"></i> Login-Log
+                </a>
+                <a href="rate-limit.php" class="sidebar-link <?php echo ($activePage ?? '') === 'rate-limit' ? 'active' : ''; ?>">
+                    <i class="fas fa-shield-halved"></i> Rate-Limit &amp; IPs
+                </a>
+            <?php endif; ?>
+
             <?php if (userHasPermission('users.manage')): ?>
                 <a href="users.php" class="sidebar-link <?php echo ($activePage ?? '') === 'users' ? 'active' : ''; ?>">
                     <i class="fas fa-user-shield"></i> Benutzer

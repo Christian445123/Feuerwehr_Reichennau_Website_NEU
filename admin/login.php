@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/auth.php';
+require_once __DIR__ . '/../config/logging.php';
 
 if (isLoggedIn()) {
     header('Location: index.php');
@@ -11,7 +12,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username'] ?? '');
     $password = $_POST['password'] ?? '';
 
-    if (login($username, $password)) {
+    if (!checkRateLimit(getDB(), 'admin_login', 8, 600)) {
+        $error = 'Zu viele Anmeldeversuche. Bitte versuche es später erneut.';
+    } elseif (login($username, $password)) {
         header('Location: index.php');
         exit;
     } else {

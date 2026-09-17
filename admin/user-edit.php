@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/auth.php';
 require_once __DIR__ . '/permissions.php';
+require_once __DIR__ . '/../config/logging.php';
 requireLogin();
 requirePermission('users.manage');
 
@@ -100,6 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->execute([$username, $hash, $name, $permissionsJson]);
         }
 
+        logActivity($db, $isEdit ? 'user.update' : 'user.create', $username);
         flash('success', $isEdit ? 'Benutzer wurde aktualisiert.' : 'Benutzer wurde angelegt.');
         header('Location: users.php');
         exit;

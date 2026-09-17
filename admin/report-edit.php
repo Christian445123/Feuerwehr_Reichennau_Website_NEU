@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/auth.php';
 require_once __DIR__ . '/permissions.php';
+require_once __DIR__ . '/../config/logging.php';
 requireLogin();
 requirePermission('reports.manage');
 
@@ -44,6 +45,7 @@ if (isset($_GET['delete_image']) && is_numeric($_GET['delete_image']) && $isEdit
             $path = UPLOAD_PATH . $img['filename'];
             if (file_exists($path)) unlink($path);
             $db->prepare("DELETE FROM report_images WHERE id = ?")->execute([$imgId]);
+            logActivity($db, 'report.image_delete', "Bericht #$id: " . $img['filename']);
             flash('success', 'Bild wurde gelöscht.');
         }
     }
@@ -91,6 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif ($report['social_link'] !== '' && !filter_var($report['social_link'], FILTER_VALIDATE_URL)) {
         flash('error', 'Der Social-Media-Link ist keine gültige URL (z.B. https://www.instagram.com/p/...).');
     } else {
+        $wasCreate = !$isEdit;
         if ($isEdit) {
             $stmt = $db->prepare("UPDATE reports SET title=?, category=?, subcategory=?, content=?, date=?, author=?, published=?, social_link=?, updated_at=CURRENT_TIMESTAMP WHERE id=?");
             $stmt->execute([$report['title'], $report['category'], $report['subcategory'] ?: null, $report['content'], $report['date'], $report['author'], $report['published'], $report['social_link'] ?: null, $id]);
@@ -128,7 +131,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
-        flash('success', $isEdit ? 'Bericht wurde aktualisiert.' : 'Bericht wurde erstellt.');
+        logActivity($db, $wasCreate ? 'report.create' : 'report.update', $report['title']);
+        flash('success', $wasCreate ? 'Bericht wurde erstellt.' : 'Bericht wurde aktualisiert.');
         header("Location: report-edit.php?id=$id");
         exit;
     }
