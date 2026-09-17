@@ -77,8 +77,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['jugend_submit'])) {
     }
 }
 ?>
-    <!-- Hero: großes Foto mit Titel, wie im Vorbild neo.ffr.at/jugend/ -->
-    <section class="jugend-hero-banner" style="background-image: linear-gradient(rgba(15,15,15,0.6), rgba(15,15,15,0.6)), url('assets/images/jugend_gruppe.jpg');">
+    <!-- Hero: Original-Grafik der Referenzseite -->
+    <section class="jugend-hero-banner" style="background-image: url('assets/images/jugend_banner.jpg'); background-color: #e4002b;">
         <div class="container">
             <h1>Gemeinsam Stark<br>Für Morgen</h1>
         </div>
