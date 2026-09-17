@@ -135,76 +135,13 @@ a:hover {
 }
 
 .nav-logo-img {
-    height: 44px;
+    height: 56px;
     width: auto;
 }
 
-.nav-logo-text {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 0 6px;
-    max-width: 210px;
-}
-
-.nav-logo-title {
-    font-family: var(--font-family-display);
-    color: var(--color-white);
-    font-weight: 700;
-    font-size: 1.3rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    line-height: 1.2;
-}
-
-.nav-logo-subtitle {
-    color: var(--color-gray-400);
-    font-size: 0.75rem;
-    font-weight: 400;
-}
-
-.nav-logo-divider {
-    width: 1px;
-    height: 34px;
-    background: rgba(255,255,255,0.2);
-}
-
-.nav-logo-line {
-    display: inline-block;
-    font-family: var(--font-family-display);
-    font-weight: 700;
-    text-transform: uppercase;
-    font-size: 0.85rem;
-    line-height: 1.3;
-    letter-spacing: 0.3px;
-    white-space: nowrap;
-}
-
-.nav-logo-line-light {
-    font-weight: 400;
-    color: rgba(255,255,255,0.6);
-    font-size: 0.72rem;
-    letter-spacing: 0.5px;
-}
-
-.nav-logo-line-brand {
-    color: var(--color-primary-light);
-}
-
-.nav-logo-line-dark {
-    color: var(--color-white);
-}
-
 @media (max-width: 480px) {
-    .nav-logo-line-light {
-        display: none;
-    }
-    .nav-logo-text {
-        max-width: 140px;
-    }
-    .nav-logo-line {
-        font-size: 0.75rem;
+    .nav-logo-img {
+        height: 44px;
     }
 }
 
