@@ -4,6 +4,7 @@ require_once __DIR__ . '/permissions.php';
 require_once __DIR__ . '/../config/gate.php';
 require_once __DIR__ . '/../config/stats.php';
 require_once __DIR__ . '/../config/analytics.php';
+require_once __DIR__ . '/../config/berichte.php';
 require_once __DIR__ . '/../config/logging.php';
 requireLogin();
 
@@ -79,6 +80,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             setGaMeasurementId($gaId);
             logActivity($db, 'settings.ga_id', $gaId !== '' ? "Gesetzt auf $gaId" : 'Deaktiviert');
             flash('success', $gaId !== '' ? 'Google Analytics wurde eingerichtet.' : 'Google Analytics wurde deaktiviert.');
+        }
+    }
+
+    if ($action === 'save_berichte_jahre') {
+        if (!userHasPermission('settings.manage')) {
+            flash('error', 'Dir fehlt die Berechtigung, die Berichtsjahre zu ändern.');
+            header('Location: settings.php');
+            exit;
+        }
+        $aktuellesJahr = (int) ($_POST['berichte_aktuelles_jahr'] ?? 0);
+        $vorjahr = (int) ($_POST['berichte_vorjahr'] ?? 0);
+
+        if ($aktuellesJahr < 2000 || $aktuellesJahr > 2100 || $vorjahr < 2000 || $vorjahr > 2100) {
+            flash('error', 'Bitte gültige Jahreszahlen angeben.');
+        } elseif ($vorjahr >= $aktuellesJahr) {
+            flash('error', 'Das vergangene Jahr muss vor dem aktuellen Kalenderjahr liegen.');
+        } else {
+            setBerichteJahre($aktuellesJahr, $vorjahr);
+            logActivity($db, 'settings.berichte_jahre', "Aktuelles Jahr: $aktuellesJahr, Vorjahr: $vorjahr");
+            flash('success', 'Die Berichtsjahre wurden gespeichert.');
         }
     }
 
@@ -191,6 +212,34 @@ require_once __DIR__ . '/includes/admin-header.php';
             <input type="hidden" name="action" value="reset_stats_period">
             <button type="submit" class="btn btn-primary">
                 <i class="fas fa-rotate-right"></i> Zähler zurücksetzen
+            </button>
+        </form>
+    </div>
+</div>
+<?php endif; ?>
+
+<?php if (userHasPermission('settings.manage')): ?>
+<div class="admin-card" style="max-width: 600px; margin-top: 24px;">
+    <div class="admin-card-header"><h2><i class="fas fa-calendar-days"></i> Berichtsjahre</h2></div>
+    <div class="admin-card-body">
+        <p style="margin-bottom: 16px; color: #6c757d;">Legt fest, welche Berichte auf der Berichte-Seite unter "<?php echo getBerichteAktuellesJahr(); ?>" bzw. "<?php echo getBerichteVorjahr(); ?>" erscheinen. Alle anderen Jahre landen automatisch im Archiv. Ohne Eintrag wird automatisch das echte Kalenderjahr verwendet - die Felder müssen also nur zum Jahreswechsel angepasst werden.</p>
+        <form method="POST" class="admin-form">
+            <?php echo csrfField(); ?>
+            <input type="hidden" name="action" value="save_berichte_jahre">
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="berichte_aktuelles_jahr">Aktuelles Kalenderjahr</label>
+                    <input type="number" id="berichte_aktuelles_jahr" name="berichte_aktuelles_jahr" required min="2000" max="2100" value="<?php echo getBerichteAktuellesJahr(); ?>">
+                </div>
+                <div class="form-group">
+                    <label for="berichte_vorjahr">Vergangenes Jahr</label>
+                    <input type="number" id="berichte_vorjahr" name="berichte_vorjahr" required min="2000" max="2100" value="<?php echo getBerichteVorjahr(); ?>">
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i> Speichern
             </button>
         </form>
     </div>

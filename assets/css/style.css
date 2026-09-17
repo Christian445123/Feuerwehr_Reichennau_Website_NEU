@@ -101,9 +101,9 @@ a:hover {
     position: absolute;
     inset: 0;
     z-index: -1;
-    background: rgba(26, 26, 46, 0.95);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    background: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
     transition: var(--transition);
 }
 
@@ -112,7 +112,9 @@ a:hover {
 }
 
 .navbar.scrolled::before {
-    background: rgba(26, 26, 46, 0.98);
+    background: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
 }
 
 .nav-container {
@@ -263,17 +265,6 @@ a:hover {
 .dropdown-menu li a:hover {
     color: var(--color-white);
     background: rgba(255,255,255,0.1);
-}
-
-.dropdown-menu-heading {
-    padding: 10px 14px 4px;
-    margin-top: 6px;
-    border-top: 1px solid rgba(255,255,255,0.1);
-    color: rgba(255,255,255,0.4);
-    font-size: 0.68rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
 }
 
 /* Mobile Toggle */
@@ -2090,6 +2081,17 @@ body.nav-open {
     flex-wrap: wrap;
     margin-bottom: 30px;
     justify-content: center;
+}
+
+.filter-tabs-years {
+    margin-bottom: 16px;
+}
+
+.filter-tabs-years .filter-tab {
+    padding: 12px 30px;
+    font-size: 1rem;
+    font-weight: 700;
+    border-width: 2px;
 }
 
 .filter-tab {

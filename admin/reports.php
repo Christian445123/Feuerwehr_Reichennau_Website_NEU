@@ -2,6 +2,7 @@
 require_once __DIR__ . '/auth.php';
 require_once __DIR__ . '/permissions.php';
 require_once __DIR__ . '/../config/logging.php';
+require_once __DIR__ . '/../config/berichte.php';
 requireLogin();
 requirePermission('reports.manage');
 
@@ -38,17 +39,19 @@ $category = $_GET['category'] ?? 'all';
 $validCategories = ['all', 'einsatz', 'uebung', 'jugend', 'veranstaltungen', 'sonstige', 'archiv'];
 if (!in_array($category, $validCategories, true)) $category = 'all';
 
-$archivCutoff = date('Y-m-d', strtotime('-2 years')); // Älter als 2 Jahre gilt automatisch als archiviert
+$berichteAktuellesJahr = getBerichteAktuellesJahr();
+$berichteVorjahr = getBerichteVorjahr();
 
 // "Alle" zeigt wirklich alle Berichte (auch archivierte). Die Archivierung
-// ist nur eine automatische Kennzeichnung (Badge) anhand des Alters, kein
-// Ausschlusskriterium - "Archiv" ist ein zusätzlicher Filter dafür.
+// ist nur eine automatische Kennzeichnung (Badge) anhand des Jahres (siehe
+// Admin -> Einstellungen -> Berichtsjahre), kein Ausschlusskriterium -
+// "Archiv" ist ein zusätzlicher Filter dafür.
 if ($category === 'all') {
     $stmt = $db->query("SELECT r.*, COUNT(ri.id) as image_count FROM reports r LEFT JOIN report_images ri ON r.id = ri.report_id GROUP BY r.id ORDER BY r.date DESC, r.created_at DESC");
     $reports = $stmt->fetchAll();
 } elseif ($category === 'archiv') {
-    $stmt = $db->prepare("SELECT r.*, COUNT(ri.id) as image_count FROM reports r LEFT JOIN report_images ri ON r.id = ri.report_id WHERE r.date < ? GROUP BY r.id ORDER BY r.date DESC, r.created_at DESC");
-    $stmt->execute([$archivCutoff]);
+    $stmt = $db->prepare("SELECT r.*, COUNT(ri.id) as image_count FROM reports r LEFT JOIN report_images ri ON r.id = ri.report_id WHERE YEAR(r.date) NOT IN (?, ?) GROUP BY r.id ORDER BY r.date DESC, r.created_at DESC");
+    $stmt->execute([$berichteAktuellesJahr, $berichteVorjahr]);
     $reports = $stmt->fetchAll();
 } else {
     $stmt = $db->prepare("SELECT r.*, COUNT(ri.id) as image_count FROM reports r LEFT JOIN report_images ri ON r.id = ri.report_id WHERE r.category = ? GROUP BY r.id ORDER BY r.date DESC, r.created_at DESC");
@@ -101,7 +104,7 @@ require_once __DIR__ . '/includes/admin-header.php';
             </thead>
             <tbody>
                 <?php foreach ($reports as $r): ?>
-                    <?php $isArchiv = $r['date'] < $archivCutoff; ?>
+                    <?php $isArchiv = !in_array((int) substr($r['date'], 0, 4), [$berichteAktuellesJahr, $berichteVorjahr], true); ?>
                     <tr>
                         <td><strong><?php echo e($r['title']); ?></strong></td>
                         <td>
@@ -120,7 +123,7 @@ require_once __DIR__ . '/includes/admin-header.php';
                                 <span class="badge badge-draft">Entwurf</span>
                             <?php endif; ?>
                             <?php if ($isArchiv): ?>
-                                <span class="badge badge-archiv" title="Älter als 2 Jahre - erscheint automatisch im Archiv"><i class="fas fa-archive"></i> Archiviert</span>
+                                <span class="badge badge-archiv" title="Weder aktuelles Jahr noch Vorjahr - erscheint automatisch im Archiv"><i class="fas fa-archive"></i> Archiviert</span>
                             <?php endif; ?>
                         </td>
                         <td class="actions-cell">

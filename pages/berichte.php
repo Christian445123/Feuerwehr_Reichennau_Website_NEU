@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../config/gate.php';
 requireSiteAccess();
 require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../config/berichte.php';
 $db = getDB();
 
 // Einzelbericht anzeigen?
@@ -33,7 +34,8 @@ $subcategoryBadges = [
     'brand' => 'badge-brand', 'technisch' => 'badge-technisch', 'abc' => 'badge-abc',
     'unterstuetzung' => 'badge-unterstuetzung', 'sonstiges' => 'badge-sonstige',
 ];
-$archivCutoff = date('Y-m-d', strtotime('-2 years')); // Älter als 2 Jahre gilt als Archiv
+$berichteAktuellesJahr = getBerichteAktuellesJahr();
+$berichteVorjahr = getBerichteVorjahr();
 ?>
 
 <?php if ($reportId > 0 && $report): ?>
@@ -122,23 +124,37 @@ $archivCutoff = date('Y-m-d', strtotime('-2 years')); // Älter als 2 Jahre gilt
     </section>
 
     <?php
-    // Filterung läuft serverseitig über den URL-Parameter ?category=,
-    // genau wie im Admindashboard (admin/reports.php) - kein Client-JS mehr.
+    // Filterung läuft serverseitig über die URL-Parameter ?year= und
+    // ?category=, genau wie im Admindashboard (admin/reports.php) - kein
+    // Client-JS nötig.
+    $year = $_GET['year'] ?? 'current';
+    $validYears = ['current', 'previous', 'archiv'];
+    if (!in_array($year, $validYears, true)) $year = 'current';
+
     $category = $_GET['category'] ?? 'all';
-    $validCategories = ['all', 'einsatz', 'uebung', 'jugend', 'veranstaltungen', 'sonstige', 'archiv'];
+    $validCategories = ['all', 'einsatz', 'uebung', 'jugend', 'veranstaltungen', 'sonstige'];
     if (!in_array($category, $validCategories, true)) $category = 'all';
 
-    // "Alle" zeigt wirklich alle Berichte (auch archivierte). Die Archivierung
-    // ist nur eine automatische Kennzeichnung (Badge) anhand des Alters, kein
-    // Ausschlusskriterium - "Archiv" ist ein zusätzlicher Filter dafür.
-    if ($category === 'all') {
-        $stmt = $db->query("SELECT r.*, (SELECT ri.filename FROM report_images ri WHERE ri.report_id = r.id ORDER BY ri.sort_order LIMIT 1) as thumb FROM reports r WHERE r.published = 1 ORDER BY r.date DESC, r.created_at DESC");
-    } elseif ($category === 'archiv') {
-        $stmt = $db->prepare("SELECT r.*, (SELECT ri.filename FROM report_images ri WHERE ri.report_id = r.id ORDER BY ri.sort_order LIMIT 1) as thumb FROM reports r WHERE r.published = 1 AND r.date < ? ORDER BY r.date DESC, r.created_at DESC");
-        $stmt->execute([$archivCutoff]);
+    // "Aktuelles Jahr" und "Vorjahr" sind über Admin -> Einstellungen
+    // konfigurierbar (config/berichte.php). "Archiv" fasst automatisch alle
+    // übrigen Jahre zusammen, egal welche Jahre das gerade sind.
+    if ($year === 'current') {
+        $yearCondition = 'AND YEAR(r.date) = ?';
+        $yearParams = [$berichteAktuellesJahr];
+    } elseif ($year === 'previous') {
+        $yearCondition = 'AND YEAR(r.date) = ?';
+        $yearParams = [$berichteVorjahr];
     } else {
-        $stmt = $db->prepare("SELECT r.*, (SELECT ri.filename FROM report_images ri WHERE ri.report_id = r.id ORDER BY ri.sort_order LIMIT 1) as thumb FROM reports r WHERE r.published = 1 AND r.category = ? ORDER BY r.date DESC, r.created_at DESC");
-        $stmt->execute([$category]);
+        $yearCondition = 'AND YEAR(r.date) NOT IN (?, ?)';
+        $yearParams = [$berichteAktuellesJahr, $berichteVorjahr];
+    }
+
+    if ($category === 'all') {
+        $stmt = $db->prepare("SELECT r.*, (SELECT ri.filename FROM report_images ri WHERE ri.report_id = r.id ORDER BY ri.sort_order LIMIT 1) as thumb FROM reports r WHERE r.published = 1 $yearCondition ORDER BY r.date DESC, r.created_at DESC");
+        $stmt->execute($yearParams);
+    } else {
+        $stmt = $db->prepare("SELECT r.*, (SELECT ri.filename FROM report_images ri WHERE ri.report_id = r.id ORDER BY ri.sort_order LIMIT 1) as thumb FROM reports r WHERE r.published = 1 AND r.category = ? $yearCondition ORDER BY r.date DESC, r.created_at DESC");
+        $stmt->execute(array_merge([$category], $yearParams));
     }
     $reports = $stmt->fetchAll();
     ?>
@@ -146,15 +162,21 @@ $archivCutoff = date('Y-m-d', strtotime('-2 years')); // Älter als 2 Jahre gilt
     <section class="section">
         <div class="container">
 
-            <!-- Filter-Tabs -->
+            <!-- Jahres-Tabs -->
+            <div class="filter-tabs filter-tabs-years">
+                <a href="index.php?page=berichte&year=current&category=<?php echo urlencode($category); ?>" class="filter-tab <?php echo $year === 'current' ? 'active' : ''; ?>"><?php echo $berichteAktuellesJahr; ?></a>
+                <a href="index.php?page=berichte&year=previous&category=<?php echo urlencode($category); ?>" class="filter-tab <?php echo $year === 'previous' ? 'active' : ''; ?>"><?php echo $berichteVorjahr; ?></a>
+                <a href="index.php?page=berichte&year=archiv&category=<?php echo urlencode($category); ?>" class="filter-tab <?php echo $year === 'archiv' ? 'active' : ''; ?>"><i class="fas fa-archive"></i> Archiv</a>
+            </div>
+
+            <!-- Kategorie-Tabs -->
             <div class="filter-tabs">
-                <a href="index.php?page=berichte&category=all" class="filter-tab <?php echo $category === 'all' ? 'active' : ''; ?>">Alle</a>
-                <a href="index.php?page=berichte&category=einsatz" class="filter-tab <?php echo $category === 'einsatz' ? 'active' : ''; ?>">Einsatz</a>
-                <a href="index.php?page=berichte&category=uebung" class="filter-tab <?php echo $category === 'uebung' ? 'active' : ''; ?>">Übung</a>
-                <a href="index.php?page=berichte&category=jugend" class="filter-tab <?php echo $category === 'jugend' ? 'active' : ''; ?>">Jugend</a>
-                <a href="index.php?page=berichte&category=veranstaltungen" class="filter-tab <?php echo $category === 'veranstaltungen' ? 'active' : ''; ?>">Veranstaltungen</a>
-                <a href="index.php?page=berichte&category=sonstige" class="filter-tab <?php echo $category === 'sonstige' ? 'active' : ''; ?>">Sonstige</a>
-                <a href="index.php?page=berichte&category=archiv" class="filter-tab <?php echo $category === 'archiv' ? 'active' : ''; ?>"><i class="fas fa-archive"></i> Archiv</a>
+                <a href="index.php?page=berichte&year=<?php echo urlencode($year); ?>&category=all" class="filter-tab <?php echo $category === 'all' ? 'active' : ''; ?>">Alle</a>
+                <a href="index.php?page=berichte&year=<?php echo urlencode($year); ?>&category=einsatz" class="filter-tab <?php echo $category === 'einsatz' ? 'active' : ''; ?>">Einsatz</a>
+                <a href="index.php?page=berichte&year=<?php echo urlencode($year); ?>&category=uebung" class="filter-tab <?php echo $category === 'uebung' ? 'active' : ''; ?>">Übung</a>
+                <a href="index.php?page=berichte&year=<?php echo urlencode($year); ?>&category=jugend" class="filter-tab <?php echo $category === 'jugend' ? 'active' : ''; ?>">Jugend</a>
+                <a href="index.php?page=berichte&year=<?php echo urlencode($year); ?>&category=veranstaltungen" class="filter-tab <?php echo $category === 'veranstaltungen' ? 'active' : ''; ?>">Veranstaltungen</a>
+                <a href="index.php?page=berichte&year=<?php echo urlencode($year); ?>&category=sonstige" class="filter-tab <?php echo $category === 'sonstige' ? 'active' : ''; ?>">Sonstige</a>
             </div>
             <p class="filter-result-count"><?php echo count($reports); ?> <?php echo count($reports) === 1 ? 'Bericht' : 'Berichte'; ?></p>
 
@@ -166,7 +188,6 @@ $archivCutoff = date('Y-m-d', strtotime('-2 years')); // Älter als 2 Jahre gilt
             <?php else: ?>
                 <div class="berichte-grid <?php echo $category === 'all' ? 'timeline-view' : ''; ?>">
                     <?php foreach ($reports as $r): ?>
-                        <?php $isArchiv = $r['date'] < $archivCutoff; ?>
                         <a href="index.php?page=berichte&id=<?php echo $r['id']; ?>" class="bericht-card bericht-card-link">
                             <?php if ($r['thumb']): ?>
                                 <div class="bericht-thumb">
@@ -181,9 +202,6 @@ $archivCutoff = date('Y-m-d', strtotime('-2 years')); // Älter als 2 Jahre gilt
                                 <div class="bericht-badge <?php echo $categoryBadges[$r['category']] ?? 'badge-sonstige'; ?>">
                                     <?php echo htmlspecialchars(ucfirst($r['category'])); ?>
                                 </div>
-                            <?php endif; ?>
-                            <?php if ($isArchiv): ?>
-                                <div class="bericht-badge badge-archiv"><i class="fas fa-archive"></i> Archiviert</div>
                             <?php endif; ?>
                             <h3><i class="fas <?php echo $categoryIcons[$r['category']] ?? 'fa-newspaper'; ?>"></i> <?php echo htmlspecialchars($r['title']); ?></h3>
                             <p class="bericht-date"><i class="fas fa-calendar"></i> <?php echo htmlspecialchars($r['date']); ?></p>
