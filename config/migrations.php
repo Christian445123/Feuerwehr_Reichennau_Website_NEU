@@ -261,6 +261,162 @@ function getMigrations(): array {
             },
         ],
 
+        [
+            'id' => '2026_09_17_update_org_chart_structure',
+            'run' => function (PDO $db) {
+                // Namens-Korrekturen laut aktuellem Organigramm (Kommandant und
+                // Kommandant-Stv. waren im alten Datenstand vertauscht)
+                $nameUpdates = [
+                    'kommandant' => 'Helmut Plank',
+                    'kommandant_stv' => 'David Danner',
+                    'kassier' => 'Martin Rainalter',
+                    'schriftfuehrer' => 'Nina Rippl',
+                    'geraetewart' => 'Michael Pelzl',
+                    'obermaschinist' => 'Martin Tiefnig',
+                    'jugendbetreuer' => 'Angela Pelzl',
+                    'funkbeauftragter' => 'Martin Rainalter',
+                    'atemschutzbeauftragter' => 'David Fuchs',
+                    'gruppenkdt_1' => 'Martin Tiefnig',
+                    'gruppenkdt_2' => 'Harald Glenda',
+                    'gruppenkdt_3' => 'Johannes Bauernfeind',
+                    'gruppenkdt_4' => 'Matthias Stauder',
+                    'gruppenkdt_5' => 'Dominik Gasser',
+                    'gruppenkdt_stv_1' => 'Marcel Achs',
+                    'gruppenkdt_stv_2' => 'Fabian Langer',
+                    'gruppenkdt_stv_3' => 'Angela Pelzl',
+                    'gruppenkdt_stv_4' => 'Michel Hilweg',
+                    'gruppenkdt_stv_5' => 'Martin Rainalter',
+                ];
+                $updateName = $db->prepare("UPDATE org_chart_positions SET name = ? WHERE position_key = ?");
+                foreach ($nameUpdates as $key => $name) {
+                    $updateName->execute([$name, $key]);
+                }
+
+                // Label-Korrekturen (an aktuelles Organigramm angeglichen)
+                $labelUpdates = [
+                    'kommandant_stv' => 'Kommandant-Stv.',
+                    'atemschutzbeauftragter' => 'Atemschutz',
+                    'gruppenkdt_stv_1' => 'Gruppenkdt.-Stv.',
+                    'gruppenkdt_stv_2' => 'Gruppenkdt.-Stv.',
+                    'gruppenkdt_stv_3' => 'Gruppenkdt.-Stv.',
+                    'gruppenkdt_stv_4' => 'Gruppenkdt.-Stv.',
+                    'gruppenkdt_stv_5' => 'Gruppenkdt.-Stv.',
+                ];
+                $updateLabel = $db->prepare("UPDATE org_chart_positions SET label = ? WHERE position_key = ?");
+                foreach ($labelUpdates as $key => $label) {
+                    $updateLabel->execute([$label, $key]);
+                }
+
+                // Positionen, die im aktuellen Organigramm nicht mehr vorkommen
+                $db->exec("DELETE FROM org_chart_positions WHERE position_key IN ('zugskommandant', 'feuerwehrkurat')");
+
+                // Neue Beauftragten-Positionen aus dem aktuellen Organigramm
+                $newPositions = [
+                    ['geraetewart_gehilfe', 'Gerätewart-Gehilfe', 'Fabian Langer', 22],
+                    ['obermaschinist_gehilfe', 'Obermaschinist-Gehilfe', 'Fabian Langer', 23],
+                    ['jugendbetreuer_gehilfe', 'JB-Gehilfe', 'Matthias Glenda', 24],
+                    ['ausbildung', 'Ausbildung', 'David Danner', 25],
+                    ['ausbildung_hoehensicherung', 'Ausb. Höhensicherung', 'Matthias Glenda', 26],
+                    ['atemschutz_gehilfe', 'Atemschutz-Gehilfe', 'Marcel Achs', 27],
+                    ['oeffentlichkeitsarbeit', 'Öffentlichkeitsarbeit und EDV', 'Nina Rippl', 28],
+                    ['nachschub_kantine_1', 'Nachschub / Kantine', 'Harald Glenda', 29],
+                    ['nachschub_kantine_2', 'Nachschub / Kantine', 'Matthias Glenda', 30],
+                    ['fahne_1', 'Fahne', 'Harald Glenda', 31],
+                    ['fahne_2', 'Fahne', 'Michael Pelzl', 32],
+                    ['fahne_3', 'Fahne', 'Matthias Stauder', 33],
+                    ['bekleidung', 'Bekleidung', 'Leo Gschnaller', 34],
+                ];
+                $check = $db->prepare("SELECT COUNT(*) FROM org_chart_positions WHERE position_key = ?");
+                $insert = $db->prepare("INSERT INTO org_chart_positions (position_key, label, name, sort_order) VALUES (?,?,?,?)");
+                foreach ($newPositions as [$key, $label, $name, $order]) {
+                    $check->execute([$key]);
+                    if ($check->fetchColumn() > 0) continue;
+                    $insert->execute([$key, $label, $name, $order]);
+                }
+            },
+        ],
+
+        [
+            'id' => '2026_09_17_update_ausschuss_functions',
+            'run' => function (PDO $db) {
+                // Ausschuss-Rollen der abgebildeten Ausschussmitglieder an das
+                // aktuelle Organigramm angleichen (members.functions treibt die
+                // Foto-Kacheln auf Über Uns -> Ausschuss)
+                $updates = [
+                    ['Helmut', 'Plank', [
+                        ['section' => 'Kommando', 'role' => 'Kommandant'],
+                    ]],
+                    ['David', 'Danner', [
+                        ['section' => 'Kommando', 'role' => 'Kommandant-Stv.'],
+                        ['section' => 'Ausschuss', 'role' => 'Ausbildung'],
+                    ]],
+                    ['Martin', 'Rainalter', [
+                        ['section' => 'Kommando', 'role' => 'Kassier'],
+                        ['section' => 'Ausschuss', 'role' => 'Funk'],
+                    ]],
+                    ['Nina', 'Rippl', [
+                        ['section' => 'Kommando', 'role' => 'Schriftführerin'],
+                        ['section' => 'Ausschuss', 'role' => 'Öffentlichkeitsarbeit & EDV'],
+                    ]],
+                    ['Johannes', 'Bauernfeind', [
+                        ['section' => 'Ausschuss', 'role' => 'Gruppenkommandant'],
+                    ]],
+                    ['Matthias', 'Stauder', [
+                        ['section' => 'Ausschuss', 'role' => 'Gruppenkommandant'],
+                        ['section' => 'Ausschuss', 'role' => 'Fahne'],
+                    ]],
+                    ['Harald', 'Glenda', [
+                        ['section' => 'Ausschuss', 'role' => 'Gruppenkommandant'],
+                        ['section' => 'Ausschuss', 'role' => 'Nachschub & Kantine'],
+                        ['section' => 'Ausschuss', 'role' => 'Fahne'],
+                    ]],
+                    ['Martin', 'Tiefnig', [
+                        ['section' => 'Ausschuss', 'role' => 'Gruppenkommandant'],
+                        ['section' => 'Ausschuss', 'role' => 'Obermaschinist'],
+                    ]],
+                    ['Michael', 'Pelzl', [
+                        ['section' => 'Ausschuss', 'role' => 'Gerätewart'],
+                        ['section' => 'Ausschuss', 'role' => 'Fahne'],
+                    ]],
+                    ['Angela', 'Pelzl', [
+                        ['section' => 'Ausschuss', 'role' => 'Jugendbetreuerin'],
+                        ['section' => 'Ausschuss', 'role' => 'Gruppenkommandant-Stv.'],
+                    ]],
+                    ['Dominik', 'Gasser', [
+                        ['section' => 'Ausschuss', 'role' => 'Gruppenkommandant'],
+                    ]],
+                ];
+                $stmt = $db->prepare("UPDATE members SET functions = ? WHERE firstname = ? AND lastname = ?");
+                foreach ($updates as [$fn, $ln, $funcs]) {
+                    $stmt->execute([json_encode($funcs, JSON_UNESCAPED_UNICODE), $fn, $ln]);
+                }
+            },
+        ],
+
+        [
+            'id' => '2026_09_17_update_ausschuss_photos',
+            'run' => function (PDO $db) {
+                // Aktuelle Portraitfotos der Ausschussmitglieder (2025er Fotoserie)
+                $photoUpdates = [
+                    ['Helmut', 'Plank', 'members/2025_plank.jpg'],
+                    ['David', 'Danner', 'members/2025_danner.jpg'],
+                    ['Martin', 'Rainalter', 'members/2025_rainalter.jpg'],
+                    ['Nina', 'Rippl', 'members/2025_rippl.jpg'],
+                    ['Johannes', 'Bauernfeind', 'members/2025_bauernfeind.jpg'],
+                    ['Dominik', 'Gasser', 'members/2025_gasser.jpg'],
+                    ['Harald', 'Glenda', 'members/2025_glenda_harald.jpg'],
+                    ['Angela', 'Pelzl', 'members/2025_pelzl_angela.jpg'],
+                    ['Michael', 'Pelzl', 'members/2025_pelzl_michael.jpg'],
+                    ['Matthias', 'Stauder', 'members/2025_stauder.jpg'],
+                    ['Martin', 'Tiefnig', 'members/2025_tiefnig.jpg'],
+                ];
+                $stmt = $db->prepare("UPDATE members SET photo = ? WHERE firstname = ? AND lastname = ?");
+                foreach ($photoUpdates as [$fn, $ln, $photo]) {
+                    $stmt->execute([$photo, $fn, $ln]);
+                }
+            },
+        ],
+
     ];
 }
 

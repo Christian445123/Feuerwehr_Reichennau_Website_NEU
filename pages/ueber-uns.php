@@ -106,6 +106,10 @@ foreach ($allMembers as $am) {
                     <div class="content-card-body">
                         <p><?php echo htmlspecialchars($groupDescriptions[$group] ?? ''); ?></p>
 
+                        <?php if ($group === 'Ausschuss'): ?>
+                            <img src="assets/images/ausschuss_gruppenbild.jpg" alt="Der Ausschuss der FF Reichenau" class="content-image ausschuss-gruppenbild" data-lightbox-group="ausschuss-gruppenbild">
+                        <?php endif; ?>
+
                         <?php if (!empty($groupMembers)): ?>
                             <?php $gridClass = ($group === 'Kommando') ? 'grid-kommando' : ''; ?>
                             <div class="members-public-grid <?php echo $gridClass; ?>">
@@ -241,17 +245,19 @@ foreach ($allMembers as $am) {
 
                 <!-- Organigramm -->
                 <?php
-                function orgBox(array $org, array $memberRankByName, string $key, string $label, string $colorClass, string $gridColumn = ''): void {
+                function orgBox2(array $org, array $memberRankByName, string $key, string $label): void {
                     $name = orgName($org, $key);
                     $isVacant = ($name === 'derzeit nicht besetzt');
                     $badge = !$isVacant ? orgRankBadge($memberRankByName, $name) : null;
                     ?>
-                    <div class="org2-box <?php echo $colorClass; ?><?php echo $isVacant ? ' org2-vacant' : ''; ?>" <?php echo $gridColumn ? 'style="grid-column:' . $gridColumn . ';"' : ''; ?>>
-                        <?php if ($badge): ?>
-                            <img src="<?php echo htmlspecialchars($badge); ?>" alt="" class="org2-rank-badge">
-                        <?php endif; ?>
-                        <strong><?php echo htmlspecialchars($name); ?></strong>
-                        <span><?php echo htmlspecialchars($label); ?></span>
+                    <div class="orgchart-item">
+                        <div class="orgchart-item-label"><?php echo htmlspecialchars($label); ?></div>
+                        <div class="orgchart-item-name<?php echo $isVacant ? ' orgchart-item-vacant' : ''; ?>">
+                            <?php if ($badge): ?>
+                                <img src="<?php echo htmlspecialchars($badge); ?>" alt="" class="orgchart-rank-badge">
+                            <?php endif; ?>
+                            <span><?php echo htmlspecialchars($name); ?></span>
+                        </div>
                     </div>
                     <?php
                 }
@@ -262,37 +268,79 @@ foreach ($allMembers as $am) {
                         <h2>Organigramm</h2>
                     </div>
                     <div class="content-card-body">
-                        <div class="org2">
-                            <div class="org2-row">
-                                <?php orgBox($org, $memberRankByName, 'kommandant', 'Kommandant', 'org2-gold'); ?>
+                        <div class="orgchart">
+
+                            <div class="orgchart-section">
+                                <div class="orgchart-section-title"><span>Kommando</span></div>
+                                <div class="orgchart-section-body">
+                                    <div class="orgchart-row">
+                                        <?php orgBox2($org, $memberRankByName, 'kommandant', 'Kommandant'); ?>
+                                    </div>
+                                    <div class="orgchart-row">
+                                        <?php orgBox2($org, $memberRankByName, 'schriftfuehrer', 'Schriftführerin'); ?>
+                                        <?php orgBox2($org, $memberRankByName, 'kommandant_stv', 'Kommandant-Stv.'); ?>
+                                        <?php orgBox2($org, $memberRankByName, 'kassier', 'Kassier'); ?>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="org2-row">
-                                <?php orgBox($org, $memberRankByName, 'kassier', 'Kassier', 'org2-navy'); ?>
-                                <?php orgBox($org, $memberRankByName, 'kommandant_stv', 'Kommandant-Stv.', 'org2-gold'); ?>
-                                <?php orgBox($org, $memberRankByName, 'schriftfuehrer', 'Schriftführer', 'org2-navy'); ?>
+
+                            <div class="orgchart-section">
+                                <div class="orgchart-section-title"><span>Gruppen</span></div>
+                                <div class="orgchart-section-body">
+                                    <div class="orgchart-row-5">
+                                        <?php for ($i = 1; $i <= 5; $i++): ?>
+                                            <?php orgBox2($org, $memberRankByName, "gruppenkdt_$i", 'Gruppenkommandant'); ?>
+                                        <?php endfor; ?>
+                                    </div>
+                                    <div class="orgchart-row-5">
+                                        <?php for ($i = 1; $i <= 5; $i++): ?>
+                                            <?php orgBox2($org, $memberRankByName, "gruppenkdt_stv_$i", 'Gruppenkdt.-Stv'); ?>
+                                        <?php endfor; ?>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="org2-row">
-                                <?php orgBox($org, $memberRankByName, 'zugskommandant', 'Zugskommandant', 'org2-gray'); ?>
+
+                            <div class="orgchart-section">
+                                <div class="orgchart-section-title"><span>Beauftragte</span></div>
+                                <div class="orgchart-section-body">
+                                    <div class="orgchart-row-5">
+                                        <?php orgBox2($org, $memberRankByName, 'geraetewart', 'Gerätewart'); ?>
+                                        <?php orgBox2($org, $memberRankByName, 'obermaschinist', 'Obermaschinist'); ?>
+                                        <?php orgBox2($org, $memberRankByName, 'jugendbetreuer', 'Jugendbetreuerin'); ?>
+                                        <?php orgBox2($org, $memberRankByName, 'ausbildung', 'Ausbildung'); ?>
+                                        <?php orgBox2($org, $memberRankByName, 'atemschutzbeauftragter', 'Atemschutz'); ?>
+                                    </div>
+                                    <div class="orgchart-row-5">
+                                        <?php orgBox2($org, $memberRankByName, 'geraetewart_gehilfe', 'Gerätewart-Gehilfe'); ?>
+                                        <?php orgBox2($org, $memberRankByName, 'obermaschinist_gehilfe', 'Obermaschinist-Gehilfe'); ?>
+                                        <?php orgBox2($org, $memberRankByName, 'jugendbetreuer_gehilfe', 'JB-Gehilfe'); ?>
+                                        <?php orgBox2($org, $memberRankByName, 'ausbildung_hoehensicherung', 'Ausb. Höhensicherung'); ?>
+                                        <?php orgBox2($org, $memberRankByName, 'atemschutz_gehilfe', 'Atemschutz-Gehilfe'); ?>
+                                    </div>
+                                    <div class="orgchart-row-5">
+                                        <?php orgBox2($org, $memberRankByName, 'funkbeauftragter', 'Funk'); ?>
+                                        <?php orgBox2($org, $memberRankByName, 'oeffentlichkeitsarbeit', 'Öffentlichkeitsarbeit und EDV'); ?>
+                                        <?php orgBox2($org, $memberRankByName, 'nachschub_kantine_1', 'Nachschub / Kantine'); ?>
+                                        <?php orgBox2($org, $memberRankByName, 'fahne_1', 'Fahne'); ?>
+                                        <?php orgBox2($org, $memberRankByName, 'bekleidung', 'Bekleidung'); ?>
+                                    </div>
+                                    <div class="orgchart-row-5">
+                                        <div class="orgchart-empty"></div>
+                                        <div class="orgchart-empty"></div>
+                                        <?php orgBox2($org, $memberRankByName, 'nachschub_kantine_2', 'Nachschub / Kantine'); ?>
+                                        <?php orgBox2($org, $memberRankByName, 'fahne_2', 'Fahne'); ?>
+                                        <div class="orgchart-empty"></div>
+                                    </div>
+                                    <div class="orgchart-row-5">
+                                        <div class="orgchart-empty"></div>
+                                        <div class="orgchart-empty"></div>
+                                        <div class="orgchart-empty"></div>
+                                        <?php orgBox2($org, $memberRankByName, 'fahne_3', 'Fahne'); ?>
+                                        <div class="orgchart-empty"></div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="org2-row org2-grid">
-                                <?php for ($i = 1; $i <= 5; $i++): $col = ($i - 1) * 2 + 1; ?>
-                                    <?php orgBox($org, $memberRankByName, "gruppenkdt_$i", 'Gruppenkommandant', 'org2-red', "$col / " . ($col + 2)); ?>
-                                <?php endfor; ?>
-                            </div>
-                            <div class="org2-row org2-grid">
-                                <?php for ($i = 1; $i <= 5; $i++): $col = ($i - 1) * 2 + 1; ?>
-                                    <?php orgBox($org, $memberRankByName, "gruppenkdt_stv_$i", 'Gkdt.-Stv.', 'org2-red', "$col / " . ($col + 2)); ?>
-                                <?php endfor; ?>
-                            </div>
-                            <div class="org2-row org2-grid">
-                                <?php orgBox($org, $memberRankByName, 'obermaschinist', 'Obermaschinist', 'org2-red', '2 / 4'); ?>
-                                <?php orgBox($org, $memberRankByName, 'geraetewart', 'Gerätewart', 'org2-red', '5 / 7'); ?>
-                                <?php orgBox($org, $memberRankByName, 'jugendbetreuer', 'Jugendbetreuer', 'org2-red', '8 / 10'); ?>
-                            </div>
-                            <div class="org2-row org2-grid">
-                                <?php orgBox($org, $memberRankByName, 'funkbeauftragter', 'Funkbeauftragter', 'org2-red', '3 / 5'); ?>
-                                <?php orgBox($org, $memberRankByName, 'atemschutzbeauftragter', 'Atemschutzwart', 'org2-red', '6 / 8'); ?>
-                            </div>
+
                         </div>
                     </div>
                 </div>
