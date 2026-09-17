@@ -4,7 +4,7 @@
             <div class="footer-grid">
                 <div class="footer-col">
                     <div class="footer-logo">
-                        <img src="assets/images/logo.png?v=2" alt="FF Reichenau Logo">
+                        <img src="assets/images/logo_feuerwehr_tirol.png" alt="Freiwillige Feuerwehr Reichenau">
                         <h3>FF Reichenau</h3>
                     </div>
                     <p>Freiwillige Feuerwehr Reichenau<br>Innsbruck Stadt</p>

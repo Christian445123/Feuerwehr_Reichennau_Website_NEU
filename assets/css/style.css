@@ -344,7 +344,8 @@ body.nav-open {
 }
 
 .hero-logo {
-    width: 120px;
+    width: 320px;
+    max-width: 100%;
     height: auto;
     margin-bottom: 30px;
     filter: drop-shadow(0 4px 20px rgba(0,0,0,0.3));
@@ -2665,14 +2666,15 @@ body.nav-open {
 
 .footer-logo {
     display: flex;
-    align-items: center;
-    gap: 12px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
     margin-bottom: 16px;
 }
 
 .footer-logo img {
-    height: 40px;
-    width: auto;
+    width: 190px;
+    height: auto;
 }
 
 .footer-logo h3 {
@@ -3151,7 +3153,7 @@ body.lightbox-open {
     }
 
     .hero-logo {
-        width: 80px;
+        width: 220px;
     }
 
     .stats-section {

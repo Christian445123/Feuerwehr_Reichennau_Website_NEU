@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="login-container">
         <div class="login-card">
             <div class="login-header">
-                <img src="../assets/images/logo.png?v=2" alt="FF Reichenau" class="login-logo">
+                <img src="../assets/images/logo_feuerwehr_tirol.png" alt="Freiwillige Feuerwehr Reichenau" class="login-logo">
                 <h1>Admin-Bereich</h1>
                 <p>Freiwillige Feuerwehr Reichenau</p>
             </div>

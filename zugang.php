@@ -115,7 +115,8 @@ if (!isMaintenanceModeEnabled() || siteAccessGranted()) {
             text-align: center;
         }
         .maintenance-logo {
-            width: 76px;
+            width: 260px;
+            max-width: 100%;
             margin-bottom: 10px;
         }
         .maintenance-org {
@@ -218,7 +219,7 @@ if (!isMaintenanceModeEnabled() || siteAccessGranted()) {
         <div class="lock-card">
             <div class="maintenance-stripe"></div>
             <div class="lock-card-body">
-                <img src="assets/images/logo.png?v=2" alt="FF Reichenau Wappen" class="maintenance-logo">
+                <img src="assets/images/logo_feuerwehr_tirol.png" alt="Freiwillige Feuerwehr Reichenau" class="maintenance-logo">
                 <p class="maintenance-org">Freiwillige Feuerwehr Reichenau</p>
 
                 <div class="maintenance-icon-wrap">

@@ -3,7 +3,7 @@
     <section class="hero">
         <div class="hero-overlay"></div>
         <div class="hero-content">
-            <img src="assets/images/logo.png?v=2" alt="FF Reichenau Logo" class="hero-logo">
+            <img src="assets/images/logo_feuerwehr_tirol.png" alt="Freiwillige Feuerwehr Reichenau" class="hero-logo">
             <h1 class="hero-title">Herzlich Willkommen</h1>
             <p class="hero-subtitle">bei der</p>
             <h2 class="hero-heading">Freiwilligen Feuerwehr Reichenau</h2>
