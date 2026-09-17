@@ -1847,6 +1847,24 @@ body.nav-open {
     font-size: 1rem;
 }
 
+.jugend-photo-large {
+    max-height: 460px;
+    object-fit: cover;
+    margin-bottom: 40px;
+}
+
+.jugend-dark-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+}
+
+@media (max-width: 900px) {
+    .jugend-dark-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 .jugend-contact-photo {
     width: 90px;
     height: 90px;
