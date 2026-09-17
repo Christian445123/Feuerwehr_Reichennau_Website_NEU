@@ -29,6 +29,16 @@ function sendContactMail(string $subject, string $body, string $replyToEmail, st
 }
 
 function sendViaPhpMail(string $to, string $fromEmail, string $fromName, string $subject, string $body, string $replyToEmail, string $replyToName, ?string &$error): bool {
+    // Viele Hoster deaktivieren mail() serverseitig (disable_functions) gegen
+    // Spam-Missbrauch. Ein Aufruf einer deaktivierten Funktion ist ein
+    // fataler Fehler, den @ NICHT unterdrückt - ohne diese Prüfung würde das
+    // Kontaktformular dann mit einer leeren weißen Seite abstürzen statt
+    // eine Fehlermeldung anzuzeigen.
+    if (!function_exists('mail')) {
+        $error = 'Der Mailversand (mail()) ist auf diesem Server deaktiviert.';
+        return false;
+    }
+
     $headers = [
         'From: ' . encodeHeaderWord($fromName) . ' <' . $fromEmail . '>',
         'Reply-To: ' . encodeHeaderWord($replyToName) . ' <' . $replyToEmail . '>',

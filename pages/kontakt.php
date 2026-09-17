@@ -57,7 +57,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['kontakt_submit'])) {
             $formData['nachricht'],
         ];
         $mailError = null;
-        $sent = sendContactMail($subject, implode("\n", $bodyLines), $formData['email'], $formData['vorname'] . ' ' . $formData['nachname'], $mailError);
+        // Fängt auch fatale Fehler ab (z.B. wenn der Hoster mail() deaktiviert
+        // hat), damit hier nie eine leere weiße Seite statt einer
+        // verständlichen Fehlermeldung erscheint.
+        try {
+            $sent = sendContactMail($subject, implode("\n", $bodyLines), $formData['email'], $formData['vorname'] . ' ' . $formData['nachname'], $mailError);
+        } catch (\Throwable $e) {
+            error_log('Kontaktformular-Mailversand fehlgeschlagen: ' . $e->getMessage());
+            $sent = false;
+        }
 
         if ($sent) {
             unset($_SESSION['kontakt_csrf']);
@@ -216,7 +224,7 @@ $formSent = isset($_GET['sent']);
                         </div>
                         <div class="content-card-body">
                             <h4><i class="fas fa-child"></i> Jugendfeuerwehr</h4>
-                            <p>Unsere Jugendfeuerwehrgruppe trifft sich jeden Montag (ausgenommen Ferien und Feiertage) um 19:00 Uhr in der Wache. Wenn auch du Lust hast unserer Jugendfeuerwehrgruppe beizutreten, komm einfach an einem Montag vorbei und schau es dir an.</p>
+                            <p>Unsere Jugendfeuerwehrgruppe trifft sich jeden Dienstag von 19 bis 21 Uhr in der Wache. Wenn auch du Lust hast unserer Jugendfeuerwehrgruppe beizutreten, komm einfach an einem Dienstag vorbei und schau es dir an.</p>
                             <p>Die Jugendfeuerwehr lernt nicht nur spielerisch das Feuerwehrwesen kennen, sondern macht auch Übungen und theoretische Ausbildungen. Einmal im Jahr kann man dann das Erlernte beim Wissenstest unter Beweis stellen und erhält dafür eine Auszeichnung.</p>
                             <p><strong>Alter:</strong> 11 bis 15 Jahre</p>
 
@@ -274,7 +282,11 @@ $formSent = isset($_GET['sent']);
                                     Freiwillige Feuerwehr Reichenau / Innsbruck Stadt<br>
                                     Roßaugasse 4, A-6020 Innsbruck
                                 </p>
-                                <p><strong>Vertreten durch:</strong> Kommandant David Danner</p>
+                                <p><strong>Vertreten durch:</strong><br>
+                                    Kommandant: Helmut Plank<br>
+                                    Schriftführerin: Nina Rippl<br>
+                                    Kassier: Martin Rainalter
+                                </p>
                                 <p>
                                     Tel.: <a href="tel:+43512345160">+43 (0)512 / 345160</a><br>
                                     E-Mail: <a href="mailto:reichenau@feuerwehr.tirol">reichenau@feuerwehr.tirol</a>
@@ -308,7 +320,7 @@ $formSent = isset($_GET['sent']);
                         <p>Wir erstellen die Inhalte dieser Website mit größtmöglicher Sorgfalt. Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte – insbesondere von Terminen, Einsatzberichten und Statistiken – können wir dennoch keine Gewähr übernehmen. Änderungen ohne vorherige Ankündigung sind möglich.</p>
 
                         <h4><i class="fas fa-link"></i> Eingebettete Inhalte Dritter</h4>
-                        <p>Auf einzelnen Seiten binden wir Inhalte externer Anbieter ein, z.&nbsp;B. eine Kartendarstellung (OpenStreetMap/CARTO) unter Kontakt sowie die Alarmierungsübersicht des Landes-Feuerwehrverbands Tirol unter Service&nbsp;&rarr;&nbsp;Alarmierungen. Für diese Inhalte ist der jeweilige externe Anbieter verantwortlich. Details dazu finden Sie in unserer <a href="index.php?page=datenschutz">Datenschutzerklärung</a>.</p>
+                        <p>Auf einzelnen Seiten binden wir Inhalte externer Anbieter ein, z.&nbsp;B. die Alarmierungsübersicht des Landes-Feuerwehrverbands Tirol unter Service&nbsp;&rarr;&nbsp;Alarmierungen. Für diese Inhalte ist der jeweilige externe Anbieter verantwortlich. Details dazu finden Sie in unserer <a href="index.php?page=datenschutz">Datenschutzerklärung</a>.</p>
 
                         <h4><i class="fas fa-clock-rotate-left"></i> Status dieser Website</h4>
                         <p>Diese Website befindet sich derzeit im Aufbau und ist noch nicht die offizielle, öffentlich zugängliche Internetpräsenz der Freiwilligen Feuerwehr Reichenau. Der Zugriff ist übergangsweise passwortgeschützt.</p>

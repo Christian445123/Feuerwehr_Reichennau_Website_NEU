@@ -2,12 +2,80 @@
 require_once __DIR__ . '/../config/gate.php';
 requireSiteAccess();
 require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../config/mail.php';
+require_once __DIR__ . '/../config/logging.php';
 $db = getDB();
 
 // Jugendbetreuer:in dynamisch aus der Mitgliederliste holen, damit sich die
 // Kontakt-Karte automatisch aktualisiert, wenn sich die Funktion mal ändert.
 $jbStmt = $db->query("SELECT * FROM members WHERE active = 1 AND functions LIKE '%Jugendbetreuer%' LIMIT 1");
 $jugendbetreuerin = $jbStmt->fetch();
+
+// Eigenes kleines Kontaktformular für die Jugendfeuerwehr (wie im Vorbild),
+// nutzt denselben Mailversand wie das große Kontaktformular.
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+if (empty($_SESSION['jugend_csrf'])) {
+    $_SESSION['jugend_csrf'] = bin2hex(random_bytes(32));
+}
+
+$jugendFormData = ['vorname' => '', 'nachname' => '', 'email' => '', 'nachricht' => ''];
+$jugendFormErrors = [];
+$jugendFormSent = isset($_GET['jugend_sent']);
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['jugend_submit'])) {
+    foreach ($jugendFormData as $key => $_) {
+        $jugendFormData[$key] = trim($_POST[$key] ?? '');
+    }
+
+    if (!checkRateLimit($db, 'jugend_contact_form', 5, 3600)) {
+        $jugendFormErrors[] = 'Zu viele Anfragen. Bitte versuche es später erneut.';
+    }
+
+    $csrfOk = hash_equals($_SESSION['jugend_csrf'], $_POST['csrf_token'] ?? '');
+    $honeypotOk = ($_POST['website'] ?? '') === '';
+
+    if (!$csrfOk || !$honeypotOk) {
+        $jugendFormErrors[] = 'Ungültige Anfrage. Bitte lade die Seite neu und versuche es erneut.';
+    }
+    if ($jugendFormData['vorname'] === '' || $jugendFormData['nachname'] === '') {
+        $jugendFormErrors[] = 'Bitte gib Vor- und Nachname an.';
+    }
+    if ($jugendFormData['email'] === '' || !filter_var($jugendFormData['email'], FILTER_VALIDATE_EMAIL)) {
+        $jugendFormErrors[] = 'Bitte gib eine gültige E-Mail-Adresse an.';
+    }
+    if ($jugendFormData['nachricht'] === '') {
+        $jugendFormErrors[] = 'Bitte gib eine Nachricht ein.';
+    }
+
+    if (empty($jugendFormErrors)) {
+        $subject = 'Jugendfeuerwehr-Anfrage von ' . $jugendFormData['vorname'] . ' ' . $jugendFormData['nachname'];
+        $bodyLines = [
+            'Neue Anfrage über das Jugendfeuerwehr-Formular der Website',
+            '',
+            'Name: ' . $jugendFormData['vorname'] . ' ' . $jugendFormData['nachname'],
+            'E-Mail: ' . $jugendFormData['email'],
+            '',
+            'Nachricht:',
+            $jugendFormData['nachricht'],
+        ];
+        $mailError = null;
+        try {
+            $sent = sendContactMail($subject, implode("\n", $bodyLines), $jugendFormData['email'], $jugendFormData['vorname'] . ' ' . $jugendFormData['nachname'], $mailError);
+        } catch (\Throwable $e) {
+            error_log('Jugend-Kontaktformular fehlgeschlagen: ' . $e->getMessage());
+            $sent = false;
+        }
+
+        if ($sent) {
+            unset($_SESSION['jugend_csrf']);
+            header('Location: index.php?page=jugend&jugend_sent=1#machmit');
+            exit;
+        }
+        $jugendFormErrors[] = 'Die Nachricht konnte leider nicht versendet werden. Bitte versuche es später erneut oder schreibe direkt an reichenau@feuerwehr.tirol.';
+    }
+}
 ?>
     <!-- Page Header -->
     <section class="page-header">
@@ -107,12 +175,54 @@ $jugendbetreuerin = $jbStmt->fetch();
                 <p>
                     Du hast Fragen oder willst gleich loslegen?
                     <?php if ($jugendbetreuerin): ?>
-                        Dann melde dich bei unserer Jugendbetreuerin <strong><?php echo htmlspecialchars($jugendbetreuerin['firstname'] . ' ' . $jugendbetreuerin['lastname']); ?></strong> per E-Mail:
+                        Dann melde dich bei unserer Jugendbetreuerin <strong><?php echo htmlspecialchars($jugendbetreuerin['firstname'] . ' ' . $jugendbetreuerin['lastname']); ?></strong> über das Formular oder per E-Mail:
                     <?php else: ?>
-                        Dann schick uns einfach ein Mail:
+                        Dann schick uns einfach eine Nachricht über das Formular oder per E-Mail:
                     <?php endif; ?>
                 </p>
-                <a href="mailto:reichenau@feuerwehr.tirol" class="btn btn-primary"><i class="fas fa-envelope"></i> reichenau@feuerwehr.tirol</a>
+                <a href="mailto:reichenau@feuerwehr.tirol" class="btn btn-outline" style="margin-bottom: 30px;"><i class="fas fa-envelope"></i> reichenau@feuerwehr.tirol</a>
+
+                <?php if ($jugendFormSent): ?>
+                    <div class="form-alert form-alert-success">
+                        <p>Vielen Dank für deine Nachricht! Wir melden uns bei dir.</p>
+                    </div>
+                <?php else: ?>
+                    <?php if (!empty($jugendFormErrors)): ?>
+                        <div class="form-alert form-alert-error">
+                            <?php foreach ($jugendFormErrors as $err): ?>
+                                <p><?php echo htmlspecialchars($err); ?></p>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+                    <form method="POST" class="public-form jugend-contact-form" style="max-width: 560px; margin: 0 auto; text-align: left;">
+                        <input type="hidden" name="jugend_submit" value="1">
+                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['jugend_csrf']); ?>">
+                        <input type="text" name="website" value="" class="form-honeypot" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="jf_vorname">Vorname <span class="req">(*)</span></label>
+                                <input type="text" id="jf_vorname" name="vorname" required value="<?php echo htmlspecialchars($jugendFormData['vorname']); ?>">
+                            </div>
+                            <div class="form-group">
+                                <label for="jf_nachname">Nachname <span class="req">(*)</span></label>
+                                <input type="text" id="jf_nachname" name="nachname" required value="<?php echo htmlspecialchars($jugendFormData['nachname']); ?>">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="jf_email">E-Mail-Adresse <span class="req">(*)</span></label>
+                            <input type="email" id="jf_email" name="email" required value="<?php echo htmlspecialchars($jugendFormData['email']); ?>">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="jf_nachricht">Deine Nachricht <span class="req">(*)</span></label>
+                            <textarea id="jf_nachricht" name="nachricht" rows="4" required><?php echo htmlspecialchars($jugendFormData['nachricht']); ?></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Abschicken</button>
+                    </form>
+                <?php endif; ?>
             </div>
         </div>
     </section>
