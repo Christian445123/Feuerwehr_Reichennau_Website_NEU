@@ -21,6 +21,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $action = $_POST['action'] ?? '';
 
+    if ($action === 'toggle_maintenance') {
+        if (!userHasPermission('settings.manage')) {
+            flash('error', 'Dir fehlt die Berechtigung, den Wartungsmodus zu ändern.');
+            header('Location: settings.php');
+            exit;
+        }
+        $enable = ($_POST['enable'] ?? '1') === '1';
+        setMaintenanceMode($enable);
+        logActivity($db, 'settings.maintenance_mode', $enable ? 'Aktiviert' : 'Deaktiviert');
+        flash('success', $enable ? 'Wartungsmodus wurde aktiviert.' : 'Wartungsmodus wurde deaktiviert - die Website ist jetzt für alle frei zugänglich.');
+        header('Location: settings.php');
+        exit;
+    }
+
     if ($action === 'change_site_password') {
         if (!userHasPermission('settings.manage')) {
             flash('error', 'Dir fehlt die Berechtigung, das Zugangspasswort zu ändern.');
@@ -121,9 +135,29 @@ require_once __DIR__ . '/includes/admin-header.php';
 </div>
 
 <div class="admin-card" style="max-width: 600px; margin-top: 24px;">
-    <div class="admin-card-header"><h2><i class="fas fa-lock"></i> Website-Zugangssperre</h2></div>
+    <div class="admin-card-header"><h2><i class="fas fa-lock"></i> Website-Zugangssperre / Wartungsmodus</h2></div>
     <div class="admin-card-body">
-        <p style="margin-bottom: 16px; color: #6c757d;">Solange die Website nicht offiziell ist, müssen Besucher dieses Passwort eingeben, bevor sie die Seite sehen können.</p>
+        <p style="margin-bottom: 16px; color: #6c757d;">Solange die Website nicht offiziell ist, müssen Besucher das Zugangspasswort eingeben, bevor sie die Seite sehen können. Statt der Passwort-Abfrage sehen sie dabei eine freundliche Wartungsmodus-Seite.</p>
+
+        <div style="margin-bottom: 24px; padding: 14px 16px; background: <?php echo isMaintenanceModeEnabled() ? 'rgba(213,0,28,0.06)' : 'rgba(39,174,96,0.08)'; ?>; border-radius: var(--radius); display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;">
+            <div>
+                <strong><?php echo isMaintenanceModeEnabled() ? 'Wartungsmodus ist AKTIV' : 'Wartungsmodus ist DEAKTIVIERT'; ?></strong>
+                <p style="margin: 4px 0 0; font-size: 0.85rem; color: #6c757d;">
+                    <?php echo isMaintenanceModeEnabled()
+                        ? 'Besucher sehen die Wartungsseite und müssen das Zugangspasswort eingeben.'
+                        : 'Die Website ist für alle Besucher frei zugänglich - keine Passwort-Abfrage.'; ?>
+                </p>
+            </div>
+            <form method="POST">
+                <?php echo csrfField(); ?>
+                <input type="hidden" name="action" value="toggle_maintenance">
+                <input type="hidden" name="enable" value="<?php echo isMaintenanceModeEnabled() ? '0' : '1'; ?>">
+                <button type="submit" class="btn <?php echo isMaintenanceModeEnabled() ? 'btn-secondary' : 'btn-primary'; ?>">
+                    <i class="fas fa-power-off"></i> <?php echo isMaintenanceModeEnabled() ? 'Deaktivieren' : 'Aktivieren'; ?>
+                </button>
+            </form>
+        </div>
+
         <form method="POST" class="admin-form">
             <?php echo csrfField(); ?>
             <input type="hidden" name="action" value="change_site_password">

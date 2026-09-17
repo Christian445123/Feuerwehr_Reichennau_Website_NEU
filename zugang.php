@@ -1,6 +1,6 @@
 <?php
 /**
- * Zugangssperre für die noch nicht offizielle Website.
+ * Wartungsmodus-Seite mit Zugangssperre für die noch nicht offizielle Website.
  */
 require_once __DIR__ . '/config/gate.php';
 require_once __DIR__ . '/config/logging.php';
@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-if (siteAccessGranted()) {
+if (!isMaintenanceModeEnabled() || siteAccessGranted()) {
     header('Location: index.php');
     exit;
 }
@@ -50,7 +50,7 @@ if (siteAccessGranted()) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zugang erforderlich - FF Reichenau</title>
+    <title>Wartungsmodus - FF Reichenau</title>
     <meta name="robots" content="noindex, nofollow">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -69,19 +69,42 @@ if (siteAccessGranted()) {
         .lock-card {
             background: #fff;
             border-radius: var(--radius-xl, 16px);
-            padding: 48px 40px;
-            max-width: 420px;
+            padding: 44px 40px 40px;
+            max-width: 440px;
             width: 100%;
             text-align: center;
             box-shadow: 0 20px 60px rgba(0,0,0,0.35);
         }
-        .lock-card img {
-            width: 80px;
-            margin-bottom: 20px;
+        .maintenance-icon-wrap {
+            position: relative;
+            width: 92px;
+            height: 92px;
+            margin: 0 auto 22px;
+        }
+        .maintenance-gear {
+            font-size: 4.6rem;
+            color: var(--color-primary, #d5001c);
+            display: inline-block;
+            animation: maintenance-spin 3.2s linear infinite;
+        }
+        .maintenance-badge {
+            position: absolute;
+            bottom: -2px;
+            right: -10px;
+            font-size: 1.5rem;
+            color: #ffb700;
+            background: #fff;
+            border-radius: 50%;
+            padding: 8px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.18);
+        }
+        @keyframes maintenance-spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
         .lock-card h1 {
             font-family: 'Barlow Condensed', var(--font-family, sans-serif);
-            font-size: 1.6rem;
+            font-size: 1.8rem;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.3px;
@@ -129,14 +152,31 @@ if (siteAccessGranted()) {
             font-size: 0.9rem;
             margin-bottom: 18px;
         }
+        .lock-footer {
+            margin-top: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .lock-footer img {
+            width: 32px;
+        }
+        .lock-footer span {
+            font-size: 0.8rem;
+            color: var(--color-gray-500, #adb5bd);
+        }
     </style>
 </head>
 <body>
     <div class="lock-screen">
         <div class="lock-card">
-            <img src="assets/images/logo.png?v=2" alt="FF Reichenau Logo">
-            <h1>Interner Vorschau-Zugang</h1>
-            <p>Diese Website befindet sich im Aufbau und ist noch nicht offiziell. Der Zugriff ist derzeit nur mit Passwort möglich.</p>
+            <div class="maintenance-icon-wrap">
+                <i class="fas fa-gear maintenance-gear"></i>
+                <i class="fas fa-person-digging maintenance-badge"></i>
+            </div>
+            <h1>Wartungsmodus</h1>
+            <p>Die Website ist in Wartung.<br>Solltest du dennoch darauf zugreifen wollen, bitte Passwort eingeben.</p>
             <?php if ($error): ?>
                 <div class="lock-error"><?php echo htmlspecialchars($error); ?></div>
             <?php endif; ?>
@@ -144,6 +184,10 @@ if (siteAccessGranted()) {
                 <input type="password" name="password" placeholder="Passwort" required autofocus>
                 <button type="submit"><i class="fas fa-unlock"></i> Zugang freischalten</button>
             </form>
+            <div class="lock-footer">
+                <img src="assets/images/logo.png?v=2" alt="FF Reichenau Logo">
+                <span>Freiwillige Feuerwehr Reichenau</span>
+            </div>
         </div>
     </div>
 </body>

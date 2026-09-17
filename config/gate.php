@@ -36,10 +36,42 @@ function setSitePassword(string $plainPassword): void {
 }
 
 /**
- * Bricht die aktuelle Anfrage ab und leitet zur Zugangssperre um,
- * falls der Besucher das Seitenpasswort noch nicht eingegeben hat.
+ * Ob der Wartungsmodus (Zugangssperre der öffentlichen Website) aktiv ist.
+ * Ohne gespeicherten Wert gilt er als aktiv, damit sich das bisherige
+ * Verhalten (Seite immer gesperrt) nicht unbemerkt ändert.
+ */
+function isMaintenanceModeEnabled(): bool {
+    $db = getDB();
+    $stmt = $db->prepare("SELECT value FROM site_settings WHERE setting_key = 'maintenance_mode'");
+    $stmt->execute();
+    $row = $stmt->fetch();
+    return $row === false || $row['value'] !== '0';
+}
+
+function setMaintenanceMode(bool $enabled): void {
+    $db = getDB();
+    $value = $enabled ? '1' : '0';
+    $stmt = $db->prepare("SELECT COUNT(*) FROM site_settings WHERE setting_key = 'maintenance_mode'");
+    $stmt->execute();
+    if ($stmt->fetchColumn() > 0) {
+        $stmt = $db->prepare("UPDATE site_settings SET value = ? WHERE setting_key = 'maintenance_mode'");
+    } else {
+        $stmt = $db->prepare("INSERT INTO site_settings (setting_key, value) VALUES ('maintenance_mode', ?)");
+    }
+    $stmt->execute([$value]);
+}
+
+/**
+ * Bricht die aktuelle Anfrage ab und leitet zur Wartungs-/Zugangssperre um,
+ * falls der Wartungsmodus aktiv ist und der Besucher das Seitenpasswort noch
+ * nicht eingegeben hat. Ist der Wartungsmodus deaktiviert, ist die Website
+ * für alle frei zugänglich.
  */
 function requireSiteAccess(): void {
+    if (!isMaintenanceModeEnabled()) {
+        return;
+    }
+
     if (siteAccessGranted()) {
         return;
     }
