@@ -8,6 +8,7 @@
             <p class="hero-subtitle">bei der</p>
             <h2 class="hero-heading">Freiwilligen Feuerwehr Reichenau</h2>
             <p class="hero-location"><i class="fas fa-map-marker-alt"></i> Innsbruck Stadt</p>
+            <p class="hero-tagline">Ob Brandeinsatz, technische Hilfe oder Gefahrguteinsatz – wir sind rund um die Uhr für die Reichenau, Pradl und die Rossau im Einsatz.</p>
             <div class="hero-buttons">
                 <a href="index.php?page=kontakt" class="btn btn-primary"><i class="fas fa-hands-helping"></i> Mitmachen</a>
                 <a href="index.php?page=ueber-uns" class="btn btn-outline"><i class="fas fa-info-circle"></i> Mehr erfahren</a>
@@ -69,21 +70,34 @@
             </div>
 
             <?php
-            $recentReports = $db->query("SELECT * FROM reports WHERE published = 1 ORDER BY date DESC, created_at DESC LIMIT 6")->fetchAll();
+            $recentReports = $db->query("SELECT r.*, (SELECT ri.filename FROM report_images ri WHERE ri.report_id = r.id ORDER BY ri.sort_order LIMIT 1) as thumb FROM reports r WHERE r.published = 1 ORDER BY r.date DESC, r.created_at DESC LIMIT 6")->fetchAll();
             $categoryIcons = ['einsatz' => 'fa-fire', 'uebung' => 'fa-dumbbell', 'jugend' => 'fa-child', 'veranstaltungen' => 'fa-calendar-alt', 'sonstige' => 'fa-newspaper'];
-            $categoryBadges = ['einsatz' => 'badge-brand', 'uebung' => 'badge-uebung', 'jugend' => 'badge-jugend', 'veranstaltungen' => 'badge-veranstaltungen', 'sonstige' => 'badge-sonstige'];
+            $categoryLabels = ['einsatz' => 'Einsatz', 'uebung' => 'Übung', 'jugend' => 'Jugend', 'veranstaltungen' => 'Veranstaltung', 'sonstige' => 'Sonstiges'];
+            $subcategoryLabelsHome = ['brand' => 'Brand', 'technisch' => 'Technisch', 'abc' => 'ABC', 'unterstuetzung' => 'Unterstützung', 'sonstiges' => 'Sonstiges'];
             ?>
 
             <?php if (!empty($recentReports)): ?>
-            <div class="cards-grid">
+            <div class="news-grid">
                 <?php foreach ($recentReports as $r): ?>
-                <div class="card">
-                    <div class="card-badge <?php echo $categoryBadges[$r['category']] ?? 'badge-sonstige'; ?>"><?php echo htmlspecialchars(ucfirst($r['category'])); ?></div>
-                    <div class="card-icon"><i class="fas <?php echo $categoryIcons[$r['category']] ?? 'fa-newspaper'; ?>"></i></div>
-                    <h3 class="card-title"><?php echo htmlspecialchars($r['title']); ?></h3>
-                    <p class="card-text"><?php echo htmlspecialchars(mb_substr($r['content'], 0, 100)) . (mb_strlen($r['content']) > 100 ? '...' : ''); ?></p>
-                    <a href="index.php?page=berichte&id=<?php echo $r['id']; ?>" class="card-link">Details <i class="fas fa-arrow-right"></i></a>
-                </div>
+                <a href="index.php?page=berichte&id=<?php echo $r['id']; ?>" class="news-card">
+                    <div class="news-card-media<?php echo !$r['thumb'] ? ' news-card-media-fallback' : ''; ?>">
+                        <?php if ($r['thumb']): ?>
+                            <img src="uploads/<?php echo htmlspecialchars($r['thumb']); ?>" alt="<?php echo htmlspecialchars($r['title']); ?>" loading="lazy">
+                        <?php else: ?>
+                            <i class="fas <?php echo $categoryIcons[$r['category']] ?? 'fa-newspaper'; ?>"></i>
+                        <?php endif; ?>
+                    </div>
+                    <div class="news-card-tags">
+                        <span class="news-card-badge news-badge-<?php echo htmlspecialchars($r['category']); ?>"><?php echo htmlspecialchars($categoryLabels[$r['category']] ?? ucfirst($r['category'])); ?></span>
+                        <?php if (!empty($r['subcategory']) && isset($subcategoryLabelsHome[$r['subcategory']])): ?>
+                            <span class="news-card-badge news-badge-sub"><?php echo htmlspecialchars($subcategoryLabelsHome[$r['subcategory']]); ?></span>
+                        <?php endif; ?>
+                    </div>
+                    <div class="news-card-overlay">
+                        <h3 class="news-card-title"><?php echo htmlspecialchars($r['title']); ?></h3>
+                        <div class="news-card-date"><i class="fas fa-calendar-alt"></i> <?php echo date('d.m.Y', strtotime($r['date'])); ?></div>
+                    </div>
+                </a>
                 <?php endforeach; ?>
             </div>
             <?php else: ?>
@@ -125,17 +139,24 @@
     </section>
     <?php endif; ?>
 
-    <!-- Info-Bereich -->
+    <!-- Social Media -->
     <section class="section section-dark">
         <div class="container">
             <div class="section-header">
-                <h2 class="section-title">Jahreshauptversammlung</h2>
-                <p class="section-subtitle">41. Jahreshauptversammlung der FF Reichenau</p>
+                <h2 class="section-title">Folge uns auf Social Media</h2>
+                <p class="section-subtitle">Aktuelle Einsätze, Übungen &amp; Neuigkeiten direkt auf Instagram und Facebook</p>
             </div>
-            <div class="info-highlight">
-                <div class="info-icon"><i class="fas fa-gavel"></i></div>
-                <p>Die 41. Jahreshauptversammlung unserer Feuerwehr hat stattgefunden. Für Details und Berichte klicken Sie auf den untenstehenden Button.</p>
-                <a href="index.php?page=berichte&category=sonstige" class="btn btn-primary"><i class="fas fa-info-circle"></i> Details ansehen</a>
+            <div class="social-cta-grid">
+                <a href="https://www.instagram.com/ffreichenau_innsbruck/" target="_blank" rel="noopener" class="social-cta-card social-cta-instagram">
+                    <div class="social-cta-icon"><i class="fab fa-instagram"></i></div>
+                    <h3>Instagram</h3>
+                    <p>@ffreichenau_innsbruck</p>
+                </a>
+                <a href="http://facebook.ffr.at/" target="_blank" rel="noopener" class="social-cta-card social-cta-facebook">
+                    <div class="social-cta-icon"><i class="fab fa-facebook-f"></i></div>
+                    <h3>Facebook</h3>
+                    <p>FF Reichenau</p>
+                </a>
             </div>
         </div>
     </section>
