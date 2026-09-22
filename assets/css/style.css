@@ -3356,6 +3356,17 @@ body.lightbox-open {
     font-size: 0.68rem;
 }
 
+/* Funktionsliste kann mehrere Einträge lang sein (z.B. mehrere
+   Beauftragter-Rollen) - deshalb Mehrzeilig statt einzeiliger Flex-Reihe,
+   mit Begrenzung damit die feste Kartenhöhe nicht gesprengt wird. */
+.member-card-back-functions {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-align: left;
+}
+
 .member-card-back-bio {
     font-size: 0.7rem;
     color: rgba(255,255,255,0.7);

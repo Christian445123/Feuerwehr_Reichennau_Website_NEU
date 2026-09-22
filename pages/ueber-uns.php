@@ -136,6 +136,11 @@ foreach ($allMembers as $am) {
                                                 break;
                                             }
                                         }
+                                        // Alle Funktionen (auch aus anderen Bereichen wie "Beauftragter" oder
+                                        // "Sonstige") für die Kachel-Rückseite - nicht nur die zur aktuellen
+                                        // Kartengruppe passende, damit z.B. Beauftragte-Rollen bei der
+                                        // Mannschaft nicht unter den Tisch fallen.
+                                        $allFuncLabels = array_map(fn($f) => trim(($f['role'] ?? '') . ' (' . ($f['section'] ?? '') . ')'), $funcs);
                                         ?>
                                         <div class="member-public-card" data-member-id="<?php echo (int)$m['id']; ?>" onclick="showMemberDetail(<?php echo (int)$m['id']; ?>)">
                                             <div class="member-card-flip">
@@ -178,13 +183,13 @@ foreach ($allMembers as $am) {
                                                 foreach ([$m['badge1'] ?? null, $m['badge2'] ?? null] as $bc) {
                                                     if ($bc) $backBadgeNames[] = getBadgeName($bc);
                                                 }
-                                                $hasBackDetails = $roleInSection || $backShowRank || !empty($backBadgeNames) || !empty($m['entry_date']) || !empty($m['phone']) || !empty($m['email']) || !empty($m['bio']);
+                                                $hasBackDetails = !empty($allFuncLabels) || $backShowRank || !empty($backBadgeNames) || !empty($m['entry_date']) || !empty($m['phone']) || !empty($m['email']) || !empty($m['bio']);
                                                 ?>
                                                 <div class="member-card-face member-card-back">
                                                     <?php if ($hasBackDetails): ?>
                                                         <strong class="member-card-back-name"><?php echo htmlspecialchars($m['firstname'] . ' ' . $m['lastname']); ?></strong>
-                                                        <?php if ($roleInSection): ?>
-                                                            <span class="member-card-back-line"><i class="fas fa-briefcase"></i> <?php echo htmlspecialchars($roleInSection); ?></span>
+                                                        <?php if (!empty($allFuncLabels)): ?>
+                                                            <span class="member-card-back-line member-card-back-functions"><i class="fas fa-briefcase"></i> <?php echo htmlspecialchars(implode(' · ', $allFuncLabels)); ?></span>
                                                         <?php endif; ?>
                                                         <?php if ($backShowRank): ?>
                                                             <span class="member-card-back-line"><i class="fas fa-star"></i> <?php echo htmlspecialchars($m['rank'] . ' – ' . getRankName($m['rank'])); ?></span>
