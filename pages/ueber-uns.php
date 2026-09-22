@@ -54,12 +54,18 @@ foreach ($allMembers as $am) {
     foreach ([$am['badge1'] ?? null, $am['badge2'] ?? null] as $bc) {
         if ($bc) $badgeList[] = ['code' => $bc, 'name' => getBadgeName($bc), 'color' => getBadgeColor($bc), 'image' => getBadgeImage($bc)];
     }
+    // Der Rang wird nur beim Ausschuss angezeigt (auch im Mitglieder-Detail) -
+    // bei allen anderen Gruppen bleibt er komplett verborgen.
+    $inAusschuss = false;
+    foreach ($funcs as $f) {
+        if (($f['section'] ?? '') === 'Ausschuss') { $inAusschuss = true; break; }
+    }
     $membersJson[$am['id']] = [
         'name' => $am['firstname'] . ' ' . $am['lastname'],
         'photo' => $am['photo'] ? 'uploads/' . $am['photo'] : '',
-        'rank' => $am['rank'],
-        'rankName' => $am['rank'] ? getRankName($am['rank']) : '',
-        'rankBadge' => $am['rank'] ? getRankBadgePath($am['rank']) : '',
+        'rank' => $inAusschuss ? $am['rank'] : '',
+        'rankName' => ($inAusschuss && $am['rank']) ? getRankName($am['rank']) : '',
+        'rankBadge' => ($inAusschuss && $am['rank']) ? getRankBadgePath($am['rank']) : '',
         'badges' => $badgeList,
         'functions' => $funcLabels,
         'group' => $am['group_name'],
@@ -139,11 +145,10 @@ foreach ($allMembers as $am) {
                                                 <?php if ($roleInSection): ?>
                                                     <span class="member-public-function"><?php echo htmlspecialchars($roleInSection); ?></span>
                                                 <?php endif; ?>
-                                                <?php // Bei der Mannschaft wird der Rang bewusst nicht in der Kachel
-                                                // angezeigt (zu viele Abzeichen wirken unruhig) - er bleibt aber
-                                                // optional pflegbar und ist weiterhin in der Detailansicht
-                                                // (Mitglieder-Modal) sichtbar, wenn er gesetzt ist. ?>
-                                                <?php if ($m['rank'] && $group !== 'Mannschaft'): ?>
+                                                <?php // Der Rang wird ausschließlich beim Ausschuss angezeigt
+                                                // (auch im Mitglieder-Detail-Modal) - bei allen anderen Gruppen
+                                                // bleibt er komplett verborgen, auch wenn er gepflegt ist. ?>
+                                                <?php if ($m['rank'] && $group === 'Ausschuss'): ?>
                                                     <span class="member-public-rank">
                                                         <img src="<?php echo htmlspecialchars(getRankBadgePath($m['rank'])); ?>"
                                                              alt="<?php echo htmlspecialchars(getRankName($m['rank'])); ?>"

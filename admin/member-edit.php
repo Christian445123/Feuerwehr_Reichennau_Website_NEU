@@ -185,7 +185,7 @@ require_once __DIR__ . '/includes/admin-header.php';
                         <div class="form-row form-row-3">
                             <div class="form-group">
                                 <label for="rank">Dienstgrad</label>
-                                <p class="form-hint">Optional - kann frei gelassen werden. Bei Kommando, Ausschuss und Ehrenmitgliedern wird der Rang als Abzeichen angezeigt; bei der Mannschaft erscheint er bewusst nicht in der Kachel, aber weiterhin im Mitglieder-Detail, falls gesetzt.</p>
+                                <p class="form-hint">Optional - kann frei gelassen werden. Der Rang wird ausschließlich beim Ausschuss angezeigt (auch im Mitglieder-Detail); bei Kommando, Mannschaft und Ehrenmitgliedern bleibt er komplett verborgen, selbst wenn er hier gesetzt ist.</p>
                                 <select id="rank" name="rank" class="rank-select" <?php echo $canEditFunctions ? '' : 'disabled'; ?>>
                                     <option value="">-- Kein Dienstgrad --</option>
                                     <?php foreach (getRanksGrouped() as $category => $ranks): ?>
