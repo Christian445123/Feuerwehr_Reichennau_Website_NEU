@@ -131,36 +131,56 @@ foreach ($allMembers as $am) {
                                         }
                                         ?>
                                         <div class="member-public-card" data-member-id="<?php echo (int)$m['id']; ?>" onclick="showMemberDetail(<?php echo (int)$m['id']; ?>)">
-                                            <?php if ($m['photo']): ?>
-                                                <img src="uploads/<?php echo htmlspecialchars($m['photo']); ?>"
-                                                     alt="<?php echo htmlspecialchars($m['firstname'] . ' ' . $m['lastname']); ?>"
-                                                     class="member-public-photo">
-                                            <?php else: ?>
-                                                <div class="member-public-placeholder">
-                                                    <i class="fas fa-user"></i>
-                                                </div>
-                                            <?php endif; ?>
-                                            <div class="member-public-info">
-                                                <strong><?php echo htmlspecialchars($m['firstname'] . ' ' . $m['lastname']); ?></strong>
-                                                <?php if ($roleInSection): ?>
-                                                    <span class="member-public-function"><?php echo htmlspecialchars($roleInSection); ?></span>
-                                                <?php endif; ?>
-                                                <?php // Der Rang wird ausschließlich beim Ausschuss angezeigt
-                                                // (auch im Mitglieder-Detail-Modal) - bei allen anderen Gruppen
-                                                // bleibt er komplett verborgen, auch wenn er gepflegt ist. ?>
-                                                <?php if ($m['rank'] && $group === 'Ausschuss'): ?>
-                                                    <span class="member-public-rank">
-                                                        <img src="<?php echo htmlspecialchars(getRankBadgePath($m['rank'])); ?>"
-                                                             alt="<?php echo htmlspecialchars(getRankName($m['rank'])); ?>"
-                                                             class="rank-badge-inline"
-                                                             title="<?php echo htmlspecialchars($m['rank'] . ' – ' . getRankName($m['rank'])); ?>">
-                                                    </span>
-                                                <?php endif; ?>
-                                                <?php foreach ([$m['badge1'] ?? null, $m['badge2'] ?? null] as $bc): ?>
-                                                    <?php if ($bc): ?>
-                                                        <img src="<?php echo htmlspecialchars(getBadgeImage($bc)); ?>" alt="<?php echo htmlspecialchars($bc); ?>" class="badge-inline-img" title="<?php echo htmlspecialchars(getBadgeName($bc)); ?>">
+                                            <div class="member-card-flip">
+                                                <div class="member-card-face member-card-front">
+                                                    <?php if ($m['photo']): ?>
+                                                        <img src="uploads/<?php echo htmlspecialchars($m['photo']); ?>"
+                                                             alt="<?php echo htmlspecialchars($m['firstname'] . ' ' . $m['lastname']); ?>"
+                                                             class="member-public-photo">
+                                                    <?php else: ?>
+                                                        <div class="member-public-placeholder">
+                                                            <i class="fas fa-user"></i>
+                                                        </div>
                                                     <?php endif; ?>
-                                                <?php endforeach; ?>
+                                                    <div class="member-public-info">
+                                                        <strong><?php echo htmlspecialchars($m['firstname'] . ' ' . $m['lastname']); ?></strong>
+                                                        <?php if ($roleInSection): ?>
+                                                            <span class="member-public-function"><?php echo htmlspecialchars($roleInSection); ?></span>
+                                                        <?php endif; ?>
+                                                        <?php // Der Rang wird ausschließlich beim Ausschuss angezeigt
+                                                        // (auch im Mitglieder-Detail-Modal) - bei allen anderen Gruppen
+                                                        // bleibt er komplett verborgen, auch wenn er gepflegt ist. ?>
+                                                        <?php if ($m['rank'] && $group === 'Ausschuss'): ?>
+                                                            <span class="member-public-rank">
+                                                                <img src="<?php echo htmlspecialchars(getRankBadgePath($m['rank'])); ?>"
+                                                                     alt="<?php echo htmlspecialchars(getRankName($m['rank'])); ?>"
+                                                                     class="rank-badge-inline"
+                                                                     title="<?php echo htmlspecialchars($m['rank'] . ' – ' . getRankName($m['rank'])); ?>">
+                                                            </span>
+                                                        <?php endif; ?>
+                                                        <?php foreach ([$m['badge1'] ?? null, $m['badge2'] ?? null] as $bc): ?>
+                                                            <?php if ($bc): ?>
+                                                                <img src="<?php echo htmlspecialchars(getBadgeImage($bc)); ?>" alt="<?php echo htmlspecialchars($bc); ?>" class="badge-inline-img" title="<?php echo htmlspecialchars(getBadgeName($bc)); ?>">
+                                                            <?php endif; ?>
+                                                        <?php endforeach; ?>
+                                                    </div>
+                                                </div>
+                                                <div class="member-card-face member-card-back">
+                                                    <strong class="member-card-back-name"><?php echo htmlspecialchars($m['firstname'] . ' ' . $m['lastname']); ?></strong>
+                                                    <?php if ($roleInSection): ?>
+                                                        <span class="member-card-back-line"><i class="fas fa-briefcase"></i> <?php echo htmlspecialchars($roleInSection); ?></span>
+                                                    <?php endif; ?>
+                                                    <?php if ($m['rank'] && $group === 'Ausschuss'): ?>
+                                                        <span class="member-card-back-line"><i class="fas fa-star"></i> <?php echo htmlspecialchars($m['rank'] . ' – ' . getRankName($m['rank'])); ?></span>
+                                                    <?php endif; ?>
+                                                    <?php if (!empty($m['entry_date'])): ?>
+                                                        <span class="member-card-back-line"><i class="fas fa-calendar-alt"></i> Seit <?php echo htmlspecialchars($m['entry_date']); ?></span>
+                                                    <?php endif; ?>
+                                                    <?php if (!empty($m['bio'])): ?>
+                                                        <p class="member-card-back-bio"><?php echo htmlspecialchars(mb_substr($m['bio'], 0, 90)) . (mb_strlen($m['bio']) > 90 ? '…' : ''); ?></p>
+                                                    <?php endif; ?>
+                                                    <span class="member-card-back-more"><i class="fas fa-circle-info"></i> Für mehr Details klicken</span>
+                                                </div>
                                             </div>
                                         </div>
                                     <?php endforeach; ?>
@@ -303,17 +323,31 @@ foreach ($allMembers as $am) {
                             <div class="members-public-grid">
                                 <?php foreach ($jugendMembers as $m): ?>
                                     <div class="member-public-card" data-member-id="<?php echo (int)$m['id']; ?>" onclick="showMemberDetail(<?php echo (int)$m['id']; ?>)">
-                                        <?php if ($m['photo']): ?>
-                                            <img src="uploads/<?php echo htmlspecialchars($m['photo']); ?>"
-                                                 alt="<?php echo htmlspecialchars($m['firstname'] . ' ' . $m['lastname']); ?>"
-                                                 class="member-public-photo">
-                                        <?php else: ?>
-                                            <div class="member-public-placeholder">
-                                                <i class="fas fa-user"></i>
+                                        <div class="member-card-flip">
+                                            <div class="member-card-face member-card-front">
+                                                <?php if ($m['photo']): ?>
+                                                    <img src="uploads/<?php echo htmlspecialchars($m['photo']); ?>"
+                                                         alt="<?php echo htmlspecialchars($m['firstname'] . ' ' . $m['lastname']); ?>"
+                                                         class="member-public-photo">
+                                                <?php else: ?>
+                                                    <div class="member-public-placeholder">
+                                                        <i class="fas fa-user"></i>
+                                                    </div>
+                                                <?php endif; ?>
+                                                <div class="member-public-info">
+                                                    <strong><?php echo htmlspecialchars($m['firstname'] . ' ' . $m['lastname']); ?></strong>
+                                                </div>
                                             </div>
-                                        <?php endif; ?>
-                                        <div class="member-public-info">
-                                            <strong><?php echo htmlspecialchars($m['firstname'] . ' ' . $m['lastname']); ?></strong>
+                                            <div class="member-card-face member-card-back">
+                                                <strong class="member-card-back-name"><?php echo htmlspecialchars($m['firstname'] . ' ' . $m['lastname']); ?></strong>
+                                                <?php if (!empty($m['entry_date'])): ?>
+                                                    <span class="member-card-back-line"><i class="fas fa-calendar-alt"></i> Seit <?php echo htmlspecialchars($m['entry_date']); ?></span>
+                                                <?php endif; ?>
+                                                <?php if (!empty($m['bio'])): ?>
+                                                    <p class="member-card-back-bio"><?php echo htmlspecialchars(mb_substr($m['bio'], 0, 90)) . (mb_strlen($m['bio']) > 90 ? '…' : ''); ?></p>
+                                                <?php endif; ?>
+                                                <span class="member-card-back-more"><i class="fas fa-circle-info"></i> Für mehr Details klicken</span>
+                                            </div>
                                         </div>
                                     </div>
                                 <?php endforeach; ?>
