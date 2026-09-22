@@ -3377,6 +3377,34 @@ body.lightbox-open {
     gap: 4px;
 }
 
+/* Rückseite ohne gepflegte Zusatzdaten (kein Eintrittsdatum/Bio/Funktion) -
+   zeigt statt einer fast leeren Zeile einen bewusst gestalteten Hinweis,
+   damit die Kachel nicht "leer" wirkt. */
+.member-card-back-emptystate {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    text-align: center;
+}
+
+.member-card-back-emptystate i {
+    font-size: 1.5rem;
+    color: var(--color-primary-light);
+    margin-bottom: 2px;
+}
+
+.member-card-back-emptystate strong {
+    font-size: 0.85rem;
+    color: var(--color-white);
+}
+
+.member-card-back-emptystate span {
+    font-size: 0.72rem;
+    color: rgba(255,255,255,0.75);
+    line-height: 1.4;
+}
+
 .member-public-photo {
     width: 100px;
     height: 100px;

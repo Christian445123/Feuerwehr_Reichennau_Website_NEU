@@ -172,38 +172,47 @@ foreach ($allMembers as $am) {
                                                         <?php endforeach; ?>
                                                     </div>
                                                 </div>
+                                                <?php
+                                                $backShowRank = $m['rank'] && in_array($group, ['Kommando', 'Ausschuss'], true);
+                                                $backBadgeNames = [];
+                                                foreach ([$m['badge1'] ?? null, $m['badge2'] ?? null] as $bc) {
+                                                    if ($bc) $backBadgeNames[] = getBadgeName($bc);
+                                                }
+                                                $hasBackDetails = $roleInSection || $backShowRank || !empty($backBadgeNames) || !empty($m['entry_date']) || !empty($m['phone']) || !empty($m['email']) || !empty($m['bio']);
+                                                ?>
                                                 <div class="member-card-face member-card-back">
-                                                    <strong class="member-card-back-name"><?php echo htmlspecialchars($m['firstname'] . ' ' . $m['lastname']); ?></strong>
-                                                    <?php if ($roleInSection): ?>
-                                                        <span class="member-card-back-line"><i class="fas fa-briefcase"></i> <?php echo htmlspecialchars($roleInSection); ?></span>
+                                                    <?php if ($hasBackDetails): ?>
+                                                        <strong class="member-card-back-name"><?php echo htmlspecialchars($m['firstname'] . ' ' . $m['lastname']); ?></strong>
+                                                        <?php if ($roleInSection): ?>
+                                                            <span class="member-card-back-line"><i class="fas fa-briefcase"></i> <?php echo htmlspecialchars($roleInSection); ?></span>
+                                                        <?php endif; ?>
+                                                        <?php if ($backShowRank): ?>
+                                                            <span class="member-card-back-line"><i class="fas fa-star"></i> <?php echo htmlspecialchars($m['rank'] . ' – ' . getRankName($m['rank'])); ?></span>
+                                                        <?php endif; ?>
+                                                        <?php if (!empty($backBadgeNames)): ?>
+                                                            <span class="member-card-back-line"><i class="fas fa-award"></i> <?php echo htmlspecialchars(implode(', ', $backBadgeNames)); ?></span>
+                                                        <?php endif; ?>
+                                                        <?php if (!empty($m['entry_date'])): ?>
+                                                            <span class="member-card-back-line"><i class="fas fa-calendar-alt"></i> Seit <?php echo htmlspecialchars($m['entry_date']); ?></span>
+                                                        <?php endif; ?>
+                                                        <?php if (!empty($m['phone'])): ?>
+                                                            <span class="member-card-back-line"><i class="fas fa-phone"></i> <?php echo htmlspecialchars($m['phone']); ?></span>
+                                                        <?php endif; ?>
+                                                        <?php if (!empty($m['email'])): ?>
+                                                            <span class="member-card-back-line"><i class="fas fa-envelope"></i> <?php echo htmlspecialchars($m['email']); ?></span>
+                                                        <?php endif; ?>
+                                                        <?php if (!empty($m['bio'])): ?>
+                                                            <p class="member-card-back-bio"><?php echo htmlspecialchars(mb_substr($m['bio'], 0, 90)) . (mb_strlen($m['bio']) > 90 ? '…' : ''); ?></p>
+                                                        <?php endif; ?>
+                                                        <span class="member-card-back-more"><i class="fas fa-circle-info"></i> Für mehr Details klicken</span>
                                                     <?php else: ?>
-                                                        <span class="member-card-back-line"><i class="fas fa-briefcase"></i> <?php echo htmlspecialchars($group); ?></span>
+                                                        <div class="member-card-back-emptystate">
+                                                            <i class="fas fa-fire-extinguisher"></i>
+                                                            <strong><?php echo htmlspecialchars($m['firstname'] . ' ' . $m['lastname']); ?></strong>
+                                                            <span>Aktives Mitglied der<br><?php echo htmlspecialchars($group); ?></span>
+                                                        </div>
+                                                        <span class="member-card-back-more"><i class="fas fa-circle-info"></i> Für mehr Details klicken</span>
                                                     <?php endif; ?>
-                                                    <?php if ($m['rank'] && in_array($group, ['Kommando', 'Ausschuss'], true)): ?>
-                                                        <span class="member-card-back-line"><i class="fas fa-star"></i> <?php echo htmlspecialchars($m['rank'] . ' – ' . getRankName($m['rank'])); ?></span>
-                                                    <?php endif; ?>
-                                                    <?php
-                                                    $backBadgeNames = [];
-                                                    foreach ([$m['badge1'] ?? null, $m['badge2'] ?? null] as $bc) {
-                                                        if ($bc) $backBadgeNames[] = getBadgeName($bc);
-                                                    }
-                                                    ?>
-                                                    <?php if (!empty($backBadgeNames)): ?>
-                                                        <span class="member-card-back-line"><i class="fas fa-award"></i> <?php echo htmlspecialchars(implode(', ', $backBadgeNames)); ?></span>
-                                                    <?php endif; ?>
-                                                    <?php if (!empty($m['entry_date'])): ?>
-                                                        <span class="member-card-back-line"><i class="fas fa-calendar-alt"></i> Seit <?php echo htmlspecialchars($m['entry_date']); ?></span>
-                                                    <?php endif; ?>
-                                                    <?php if (!empty($m['phone'])): ?>
-                                                        <span class="member-card-back-line"><i class="fas fa-phone"></i> <?php echo htmlspecialchars($m['phone']); ?></span>
-                                                    <?php endif; ?>
-                                                    <?php if (!empty($m['email'])): ?>
-                                                        <span class="member-card-back-line"><i class="fas fa-envelope"></i> <?php echo htmlspecialchars($m['email']); ?></span>
-                                                    <?php endif; ?>
-                                                    <?php if (!empty($m['bio'])): ?>
-                                                        <p class="member-card-back-bio"><?php echo htmlspecialchars(mb_substr($m['bio'], 0, 90)) . (mb_strlen($m['bio']) > 90 ? '…' : ''); ?></p>
-                                                    <?php endif; ?>
-                                                    <span class="member-card-back-more"><i class="fas fa-circle-info"></i> Für mehr Details klicken</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -367,16 +376,26 @@ foreach ($allMembers as $am) {
                                                     <strong><?php echo htmlspecialchars($m['firstname'] . ' ' . $m['lastname']); ?></strong>
                                                 </div>
                                             </div>
+                                            <?php $hasJugendBackDetails = !empty($m['entry_date']) || !empty($m['bio']); ?>
                                             <div class="member-card-face member-card-back">
-                                                <strong class="member-card-back-name"><?php echo htmlspecialchars($m['firstname'] . ' ' . $m['lastname']); ?></strong>
-                                                <span class="member-card-back-line"><i class="fas fa-briefcase"></i> Jugend</span>
-                                                <?php if (!empty($m['entry_date'])): ?>
-                                                    <span class="member-card-back-line"><i class="fas fa-calendar-alt"></i> Seit <?php echo htmlspecialchars($m['entry_date']); ?></span>
+                                                <?php if ($hasJugendBackDetails): ?>
+                                                    <strong class="member-card-back-name"><?php echo htmlspecialchars($m['firstname'] . ' ' . $m['lastname']); ?></strong>
+                                                    <span class="member-card-back-line"><i class="fas fa-briefcase"></i> Jugend</span>
+                                                    <?php if (!empty($m['entry_date'])): ?>
+                                                        <span class="member-card-back-line"><i class="fas fa-calendar-alt"></i> Seit <?php echo htmlspecialchars($m['entry_date']); ?></span>
+                                                    <?php endif; ?>
+                                                    <?php if (!empty($m['bio'])): ?>
+                                                        <p class="member-card-back-bio"><?php echo htmlspecialchars(mb_substr($m['bio'], 0, 90)) . (mb_strlen($m['bio']) > 90 ? '…' : ''); ?></p>
+                                                    <?php endif; ?>
+                                                    <span class="member-card-back-more"><i class="fas fa-circle-info"></i> Für mehr Details klicken</span>
+                                                <?php else: ?>
+                                                    <div class="member-card-back-emptystate">
+                                                        <i class="fas fa-fire-extinguisher"></i>
+                                                        <strong><?php echo htmlspecialchars($m['firstname'] . ' ' . $m['lastname']); ?></strong>
+                                                        <span>Aktives Mitglied der<br>Jugendfeuerwehr</span>
+                                                    </div>
+                                                    <span class="member-card-back-more"><i class="fas fa-circle-info"></i> Für mehr Details klicken</span>
                                                 <?php endif; ?>
-                                                <?php if (!empty($m['bio'])): ?>
-                                                    <p class="member-card-back-bio"><?php echo htmlspecialchars(mb_substr($m['bio'], 0, 90)) . (mb_strlen($m['bio']) > 90 ? '…' : ''); ?></p>
-                                                <?php endif; ?>
-                                                <span class="member-card-back-more"><i class="fas fa-circle-info"></i> Für mehr Details klicken</span>
                                             </div>
                                         </div>
                                     </div>
