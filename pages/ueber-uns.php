@@ -169,6 +169,8 @@ foreach ($allMembers as $am) {
                                                     <strong class="member-card-back-name"><?php echo htmlspecialchars($m['firstname'] . ' ' . $m['lastname']); ?></strong>
                                                     <?php if ($roleInSection): ?>
                                                         <span class="member-card-back-line"><i class="fas fa-briefcase"></i> <?php echo htmlspecialchars($roleInSection); ?></span>
+                                                    <?php else: ?>
+                                                        <span class="member-card-back-line"><i class="fas fa-briefcase"></i> <?php echo htmlspecialchars($group); ?></span>
                                                     <?php endif; ?>
                                                     <?php if ($m['rank'] && $group === 'Ausschuss'): ?>
                                                         <span class="member-card-back-line"><i class="fas fa-star"></i> <?php echo htmlspecialchars($m['rank'] . ' – ' . getRankName($m['rank'])); ?></span>
@@ -340,6 +342,7 @@ foreach ($allMembers as $am) {
                                             </div>
                                             <div class="member-card-face member-card-back">
                                                 <strong class="member-card-back-name"><?php echo htmlspecialchars($m['firstname'] . ' ' . $m['lastname']); ?></strong>
+                                                <span class="member-card-back-line"><i class="fas fa-briefcase"></i> Jugend</span>
                                                 <?php if (!empty($m['entry_date'])): ?>
                                                     <span class="member-card-back-line"><i class="fas fa-calendar-alt"></i> Seit <?php echo htmlspecialchars($m['entry_date']); ?></span>
                                                 <?php endif; ?>
