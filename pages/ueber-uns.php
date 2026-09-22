@@ -139,7 +139,11 @@ foreach ($allMembers as $am) {
                                                 <?php if ($roleInSection): ?>
                                                     <span class="member-public-function"><?php echo htmlspecialchars($roleInSection); ?></span>
                                                 <?php endif; ?>
-                                                <?php if ($m['rank']): ?>
+                                                <?php // Bei der Mannschaft wird der Rang bewusst nicht in der Kachel
+                                                // angezeigt (zu viele Abzeichen wirken unruhig) - er bleibt aber
+                                                // optional pflegbar und ist weiterhin in der Detailansicht
+                                                // (Mitglieder-Modal) sichtbar, wenn er gesetzt ist. ?>
+                                                <?php if ($m['rank'] && $group !== 'Mannschaft'): ?>
                                                     <span class="member-public-rank">
                                                         <img src="<?php echo htmlspecialchars(getRankBadgePath($m['rank'])); ?>"
                                                              alt="<?php echo htmlspecialchars(getRankName($m['rank'])); ?>"
