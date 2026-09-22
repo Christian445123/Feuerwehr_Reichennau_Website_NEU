@@ -54,18 +54,19 @@ foreach ($allMembers as $am) {
     foreach ([$am['badge1'] ?? null, $am['badge2'] ?? null] as $bc) {
         if ($bc) $badgeList[] = ['code' => $bc, 'name' => getBadgeName($bc), 'color' => getBadgeColor($bc), 'image' => getBadgeImage($bc)];
     }
-    // Der Rang wird nur beim Ausschuss angezeigt (auch im Mitglieder-Detail) -
-    // bei allen anderen Gruppen bleibt er komplett verborgen.
-    $inAusschuss = false;
+    // Der Rang wird nur bei Kommando und Ausschuss angezeigt (auch im
+    // Mitglieder-Detail) - bei allen anderen Gruppen bleibt er komplett
+    // verborgen.
+    $showRank = false;
     foreach ($funcs as $f) {
-        if (($f['section'] ?? '') === 'Ausschuss') { $inAusschuss = true; break; }
+        if (in_array($f['section'] ?? '', ['Kommando', 'Ausschuss'], true)) { $showRank = true; break; }
     }
     $membersJson[$am['id']] = [
         'name' => $am['firstname'] . ' ' . $am['lastname'],
         'photo' => $am['photo'] ? 'uploads/' . $am['photo'] : '',
-        'rank' => $inAusschuss ? $am['rank'] : '',
-        'rankName' => ($inAusschuss && $am['rank']) ? getRankName($am['rank']) : '',
-        'rankBadge' => ($inAusschuss && $am['rank']) ? getRankBadgePath($am['rank']) : '',
+        'rank' => $showRank ? $am['rank'] : '',
+        'rankName' => ($showRank && $am['rank']) ? getRankName($am['rank']) : '',
+        'rankBadge' => ($showRank && $am['rank']) ? getRankBadgePath($am['rank']) : '',
         'badges' => $badgeList,
         'functions' => $funcLabels,
         'group' => $am['group_name'],
@@ -147,10 +148,10 @@ foreach ($allMembers as $am) {
                                                         <?php if ($roleInSection): ?>
                                                             <span class="member-public-function"><?php echo htmlspecialchars($roleInSection); ?></span>
                                                         <?php endif; ?>
-                                                        <?php // Der Rang wird ausschließlich beim Ausschuss angezeigt
+                                                        <?php // Der Rang wird bei Kommando und Ausschuss angezeigt
                                                         // (auch im Mitglieder-Detail-Modal) - bei allen anderen Gruppen
                                                         // bleibt er komplett verborgen, auch wenn er gepflegt ist. ?>
-                                                        <?php if ($m['rank'] && $group === 'Ausschuss'): ?>
+                                                        <?php if ($m['rank'] && in_array($group, ['Kommando', 'Ausschuss'], true)): ?>
                                                             <span class="member-public-rank">
                                                                 <img src="<?php echo htmlspecialchars(getRankBadgePath($m['rank'])); ?>"
                                                                      alt="<?php echo htmlspecialchars(getRankName($m['rank'])); ?>"
@@ -172,11 +173,26 @@ foreach ($allMembers as $am) {
                                                     <?php else: ?>
                                                         <span class="member-card-back-line"><i class="fas fa-briefcase"></i> <?php echo htmlspecialchars($group); ?></span>
                                                     <?php endif; ?>
-                                                    <?php if ($m['rank'] && $group === 'Ausschuss'): ?>
+                                                    <?php if ($m['rank'] && in_array($group, ['Kommando', 'Ausschuss'], true)): ?>
                                                         <span class="member-card-back-line"><i class="fas fa-star"></i> <?php echo htmlspecialchars($m['rank'] . ' – ' . getRankName($m['rank'])); ?></span>
+                                                    <?php endif; ?>
+                                                    <?php
+                                                    $backBadgeNames = [];
+                                                    foreach ([$m['badge1'] ?? null, $m['badge2'] ?? null] as $bc) {
+                                                        if ($bc) $backBadgeNames[] = getBadgeName($bc);
+                                                    }
+                                                    ?>
+                                                    <?php if (!empty($backBadgeNames)): ?>
+                                                        <span class="member-card-back-line"><i class="fas fa-award"></i> <?php echo htmlspecialchars(implode(', ', $backBadgeNames)); ?></span>
                                                     <?php endif; ?>
                                                     <?php if (!empty($m['entry_date'])): ?>
                                                         <span class="member-card-back-line"><i class="fas fa-calendar-alt"></i> Seit <?php echo htmlspecialchars($m['entry_date']); ?></span>
+                                                    <?php endif; ?>
+                                                    <?php if (!empty($m['phone'])): ?>
+                                                        <span class="member-card-back-line"><i class="fas fa-phone"></i> <?php echo htmlspecialchars($m['phone']); ?></span>
+                                                    <?php endif; ?>
+                                                    <?php if (!empty($m['email'])): ?>
+                                                        <span class="member-card-back-line"><i class="fas fa-envelope"></i> <?php echo htmlspecialchars($m['email']); ?></span>
                                                     <?php endif; ?>
                                                     <?php if (!empty($m['bio'])): ?>
                                                         <p class="member-card-back-bio"><?php echo htmlspecialchars(mb_substr($m['bio'], 0, 90)) . (mb_strlen($m['bio']) > 90 ? '…' : ''); ?></p>
