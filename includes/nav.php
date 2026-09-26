@@ -32,10 +32,10 @@
                     </ul>
                 </li>
                 <li class="nav-dropdown">
-                    <a href="index.php?page=ausruestung" class="nav-link <?php echo $current_page === 'ausruestung' ? 'active' : ''; ?>"><i class="fas fa-fire-extinguisher"></i> Ausrüstung <i class="fas fa-chevron-down dropdown-arrow"></i></a>
+                    <span class="nav-link nav-label <?php echo in_array($current_page, ['fuhrpark', 'geraetehaus'], true) ? 'active' : ''; ?>" tabindex="0"><i class="fas fa-fire-extinguisher"></i> Ausrüstung <i class="fas fa-chevron-down dropdown-arrow"></i></span>
                     <ul class="dropdown-menu">
-                        <li><a href="index.php?page=ausruestung#wache">Gerätehaus</a></li>
-                        <li><a href="index.php?page=ausruestung#fuhrpark">Fahrzeuge</a></li>
+                        <li><a href="index.php?page=geraetehaus">Gerätehaus</a></li>
+                        <li><a href="index.php?page=fuhrpark">Fuhrpark</a></li>
                     </ul>
                 </li>
                 <li class="nav-dropdown">

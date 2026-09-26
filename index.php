@@ -27,6 +27,12 @@ $allowed_pages = [
     'mitmachen',
 ];
 
+// Alte Sammelseite "Ausrüstung" wurde in Fuhrpark und Gerätehaus aufgeteilt
+if ($page === 'ausruestung') {
+    header('Location: index.php?page=fuhrpark', true, 301);
+    exit;
+}
+
 // Sicherheitscheck: Nur erlaubte Seiten laden
 if (!in_array($page, $allowed_pages, true)) {
     $page = 'home';
