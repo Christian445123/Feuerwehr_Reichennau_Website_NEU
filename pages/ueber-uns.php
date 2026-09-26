@@ -172,7 +172,7 @@ foreach ($allMembers as $am) {
                                                     <?php if ($hasBackDetails): ?>
                                                         <strong class="member-card-back-name"><?php echo htmlspecialchars($m['firstname'] . ' ' . $m['lastname']); ?></strong>
                                                         <?php if (!empty($allFuncLabels)): ?>
-                                                            <span class="member-card-back-line member-card-back-functions"><i class="fas fa-briefcase"></i> <?php echo htmlspecialchars(implode(' · ', $allFuncLabels)); ?></span>
+                                                            <?php foreach ($allFuncLabels as $fl): ?><span class="member-card-back-line member-card-back-functions"><i class="fas fa-briefcase"></i> <?php echo htmlspecialchars($fl); ?></span><?php endforeach; ?>
                                                         <?php endif; ?>
                                                         <?php if ($backShowRank): ?>
                                                             <span class="member-card-back-line"><i class="fas fa-star"></i> <?php echo htmlspecialchars($m['rank'] . ' – ' . getRankName($m['rank'])); ?></span>
@@ -477,13 +477,9 @@ function showMemberDetail(id) {
     // Name & Functions
     document.getElementById('modalName').textContent = m.name;
     var funcEl = document.getElementById('modalFunction');
-    if (m.functions && m.functions.length > 0) {
-        funcEl.textContent = m.functions.join(' · ');
-        funcEl.style.display = '';
-    } else {
-        funcEl.textContent = '';
-        funcEl.style.display = 'none';
-    }
+    // Funktionen stehen übersichtlich als Liste im Detailbereich (nicht hier)
+    funcEl.textContent = '';
+    funcEl.style.display = 'none';
 
     // Rank
     var rankEl = document.getElementById('modalRank');
@@ -518,7 +514,7 @@ function showMemberDetail(id) {
             html += '<li><i class="fas fa-users"></i> ' + escHtml(m.group) + '</li>';
         }
         if (m.functions && m.functions.length > 0) {
-            html += '<li><i class="fas fa-briefcase"></i> ' + m.functions.map(escHtml).join(', ') + '</li>';
+            html += '<li class="member-modal-funcs"><i class="fas fa-briefcase"></i><div><strong>Funktionen</strong><ul>' + m.functions.map(function (f) { return '<li>' + escHtml(f) + '</li>'; }).join('') + '</ul></div></li>';
         }
         if (m.entry_date) {
             html += '<li><i class="fas fa-calendar-alt"></i> Eintritt: ' + escHtml(m.entry_date) + '</li>';

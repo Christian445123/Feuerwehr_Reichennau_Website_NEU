@@ -3923,3 +3923,24 @@ body.lightbox-open {
     height: 210px;
     border-radius: var(--radius-sm);
 }
+
+/* Mitglieder-Detail: Funktionen als saubere Liste */
+.member-modal-funcs strong {
+    display: block;
+    margin-bottom: 4px;
+    color: var(--color-dark);
+}
+
+.member-modal-funcs ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.member-modal-details .member-modal-funcs ul li {
+    display: list-item;
+    list-style: disc;
+    margin-left: 18px;
+    padding: 3px 0;
+    border-bottom: none;
+}
