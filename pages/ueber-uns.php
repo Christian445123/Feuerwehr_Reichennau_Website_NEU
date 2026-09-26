@@ -150,10 +150,11 @@ foreach ($allMembers as $am) {
                                                     <?php endif; ?>
                                                     <div class="member-public-info">
                                                         <strong><?php echo htmlspecialchars($m['firstname'] . ' ' . $m['lastname']); ?></strong>
-                                                        <?php if ($roleInSection): ?>
+                                                        <?php $isStaticGroup = in_array($group, ["Mannschaft", "Ehrenmitglieder"], true); ?>
+                                                        <?php if ($roleInSection && !$isStaticGroup): ?>
                                                             <span class="member-public-function"><?php echo htmlspecialchars($roleInSection); ?></span>
                                                         <?php endif; ?>
-                                                        <?php foreach ([$m['badge1'] ?? null, $m['badge2'] ?? null] as $bc): ?>
+                                                        <?php foreach ($isStaticGroup ? [] : [$m['badge1'] ?? null, $m['badge2'] ?? null] as $bc): ?>
                                                             <?php if ($bc): ?>
                                                                 <img src="<?php echo htmlspecialchars(getBadgeImage($bc)); ?>" alt="<?php echo htmlspecialchars($bc); ?>" class="badge-inline-img" title="<?php echo htmlspecialchars(getBadgeName($bc)); ?>">
                                                             <?php endif; ?>
