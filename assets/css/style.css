@@ -3861,3 +3861,10 @@ body.lightbox-open {
     max-width: 100%;
     height: auto;
 }
+
+/* Jugend-Seite: roter Hintergrund -> Navigationsleiste immer schwarz und deckend */
+.page-jugend .navbar::before {
+    background: #000;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
