@@ -125,7 +125,7 @@ a:hover {
     align-items: center;
     justify-content: space-between;
     gap: 16px;
-    height: 72px;
+    height: 88px;
 }
 
 .nav-logo {
@@ -137,13 +137,13 @@ a:hover {
 }
 
 .nav-logo-img {
-    height: 66px;
+    height: 80px;
     width: auto;
 }
 
 @media (max-width: 480px) {
     .nav-logo-img {
-        height: 44px;
+        height: 56px;
     }
 }
 
@@ -156,9 +156,9 @@ a:hover {
 
 .nav-link {
     color: rgba(255,255,255,0.8);
-    padding: 8px 14px;
+    padding: 8px 12px;
     border-radius: var(--radius-sm);
-    font-size: 0.88rem;
+    font-size: 1rem;
     font-weight: 500;
     display: flex;
     align-items: center;
@@ -2973,7 +2973,7 @@ body.lightbox-open {
 
     .nav-menu {
         position: fixed;
-        top: 72px;
+        top: 88px;
         left: 0;
         right: 0;
         bottom: 0;
