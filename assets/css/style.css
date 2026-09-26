@@ -3791,7 +3791,7 @@ body.lightbox-open {
     align-items: center;
     gap: 0;
     padding: 22px 32px;
-    background: rgba(200, 30, 35, 0.95);
+    background: #c81e23;
     box-shadow: 0 6px 24px rgba(0,0,0,0.3);
     text-align: left;
     color: var(--color-white);
