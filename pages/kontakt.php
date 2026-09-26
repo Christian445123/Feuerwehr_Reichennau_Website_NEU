@@ -268,65 +268,12 @@ $formSent = isset($_GET['sent']);
             </div>
 
             <!-- Impressum -->
-            <div class="impressum-section">
-                <div class="content-card">
-                    <div class="content-card-header">
-                        <div class="content-card-icon"><i class="fas fa-gavel"></i></div>
-                        <h2>Impressum</h2>
-                    </div>
-                    <div class="content-card-body">
-                        <div class="impressum-grid">
-                            <div>
-                                <h4>Medieninhaberin &amp; Herausgeberin</h4>
-                                <p>
-                                    Freiwillige Feuerwehr Reichenau / Innsbruck Stadt<br>
-                                    Roßaugasse 4, A-6020 Innsbruck
-                                </p>
-                                <p><strong>Vertreten durch:</strong><br>
-                                    Kommandant: Helmut Plank<br>
-                                    Schriftführerin: Nina Rippl<br>
-                                    Kassier: Martin Rainalter
-                                </p>
-                                <p>
-                                    Tel.: <a href="tel:+43512345160">+43 (0)512 / 345160</a><br>
-                                    E-Mail: <a href="mailto:reichenau@feuerwehr.tirol">reichenau@feuerwehr.tirol</a>
-                                </p>
-                            </div>
-                            <div>
-                                <h4>Vereinszweck &amp; Blattlinie</h4>
-                                <p>Die Freiwillige Feuerwehr Reichenau ist eine öffentliche Einrichtung der Gefahrenabwehr (Brand- und Katastrophenschutz) im Schutzgebiet Reichenau/Innsbruck. Diese Website dient der Information der Öffentlichkeit über Einsätze, Aktivitäten und Angebote der Feuerwehr sowie der Mitgliederwerbung.</p>
-                            </div>
-                        </div>
-                        <hr>
-                        <h4>Copyright</h4>
-                        <p>Alle Rechte vorbehalten. Verantwortlich für Inhalt und Gestaltung der Internetpräsentation ist die Freiwillige Feuerwehr Reichenau. Layout und Gestaltung dieser Präsentation sowie die enthaltenen Informationen sind gemäß dem Urheberrechtsgesetz geschützt.</p>
-                        <p>Die Feuerwehr Reichenau erteilt die Erlaubnis, alle auf diesen Internetseiten erscheinenden Inhalte zur Informationsgewinnung des Anwenders zu nutzen und einen Ausdruck zu erstellen. Für eine gewerbliche Nutzung gilt dies nur nach einer vorher erteilten Zustimmung der Verantwortlichen.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Allgemeine Hinweise -->
-            <div class="impressum-section">
-                <div class="content-card">
-                    <div class="content-card-header">
-                        <div class="content-card-icon"><i class="fas fa-circle-info"></i></div>
-                        <h2>Allgemeine Hinweise</h2>
-                    </div>
-                    <div class="content-card-body">
-                        <h4><i class="fas fa-phone-volume"></i> Im Notfall</h4>
-                        <p>Diese Website, das Kontaktformular und unsere E-Mail-Adresse werden <strong>nicht laufend rund um die Uhr überwacht</strong> und sind daher für echte Notfälle ungeeignet. Wählen Sie im Ernstfall immer den <strong>Euronotruf 112</strong> oder die <strong>Feuerwehr 122</strong>.</p>
-
-                        <h4><i class="fas fa-triangle-exclamation"></i> Keine Gewähr für Inhalte</h4>
-                        <p>Wir erstellen die Inhalte dieser Website mit größtmöglicher Sorgfalt. Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte – insbesondere von Terminen, Einsatzberichten und Statistiken – können wir dennoch keine Gewähr übernehmen. Änderungen ohne vorherige Ankündigung sind möglich.</p>
-
-                        <h4><i class="fas fa-link"></i> Eingebettete Inhalte Dritter</h4>
-                        <p>Auf einzelnen Seiten binden wir Inhalte externer Anbieter ein, z.&nbsp;B. die Alarmierungsübersicht des Landes-Feuerwehrverbands Tirol unter Service&nbsp;&rarr;&nbsp;Alarmierungen. Für diese Inhalte ist der jeweilige externe Anbieter verantwortlich. Details dazu finden Sie in unserer <a href="index.php?page=datenschutz">Datenschutzerklärung</a>.</p>
-
-                        <h4><i class="fas fa-clock-rotate-left"></i> Status dieser Website</h4>
-                        <p>Diese Website befindet sich derzeit im Aufbau und ist noch nicht die offizielle, öffentlich zugängliche Internetpräsenz der Freiwilligen Feuerwehr Reichenau. Der Zugriff ist übergangsweise passwortgeschützt.</p>
-                    </div>
-                </div>
-            </div>
+            <?php
+            require_once __DIR__ . '/../config/legal.php';
+            $legalDb = getDB();
+            renderLegalSections(getLegalSections($legalDb, 'impressum'), 'impressum-section');
+            renderLegalSections(getLegalSections($legalDb, 'hinweise'), 'impressum-section');
+            ?>
 
         </div>
     </section>

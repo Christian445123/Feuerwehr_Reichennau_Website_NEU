@@ -51,6 +51,12 @@ require_once __DIR__ . '/../permissions.php';
 
             <div class="sidebar-divider"></div>
 
+            <?php if (userHasPermission('legal.manage')): ?>
+                <a href="legal.php" class="sidebar-link <?php echo ($activePage ?? '') === 'legal' ? 'active' : ''; ?>">
+                    <i class="fas fa-scale-balanced"></i> Rechtstexte
+                </a>
+            <?php endif; ?>
+
             <?php if (userHasPermission('logs.manage')): ?>
                 <a href="logs.php" class="sidebar-link <?php echo ($activePage ?? '') === 'logs' ? 'active' : ''; ?>">
                     <i class="fas fa-clipboard-list"></i> Aktivitäts-Log
