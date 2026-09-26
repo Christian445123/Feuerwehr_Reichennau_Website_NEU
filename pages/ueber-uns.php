@@ -117,7 +117,7 @@ foreach ($allMembers as $am) {
                             <?php endif; ?>
 
                             <?php if (!empty($groupMembers)): ?>
-                                <?php $gridClass = ['Kommando' => 'grid-kommando', 'Ausschuss' => 'grid-ausschuss', 'Mannschaft' => 'grid-static'][$group] ?? ''; ?>
+                                <?php $gridClass = ['Kommando' => 'grid-kommando', 'Ausschuss' => 'grid-ausschuss', 'Mannschaft' => 'grid-static', 'Ehrenmitglieder' => 'grid-static'][$group] ?? ''; ?>
                                 <div class="members-public-grid <?php echo $gridClass; ?>">
                                     <?php foreach ($groupMembers as $m): ?>
                                         <?php
