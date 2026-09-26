@@ -156,28 +156,6 @@
     </section>
     <?php endif; ?>
 
-    <!-- Social Media -->
-    <section class="section section-dark">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Folge uns auf Social Media</h2>
-                <p class="section-subtitle">Aktuelle Einsätze, Übungen &amp; Neuigkeiten direkt auf Instagram und Facebook</p>
-            </div>
-            <div class="social-cta-grid">
-                <a href="https://www.instagram.com/ffreichenau_innsbruck/" target="_blank" rel="noopener" class="social-cta-card social-cta-instagram">
-                    <div class="social-cta-icon"><i class="fab fa-instagram"></i></div>
-                    <h3>Instagram</h3>
-                    <p>@ffreichenau_innsbruck</p>
-                </a>
-                <a href="http://facebook.ffr.at/" target="_blank" rel="noopener" class="social-cta-card social-cta-facebook">
-                    <div class="social-cta-icon"><i class="fab fa-facebook-f"></i></div>
-                    <h3>Facebook</h3>
-                    <p>FF Reichenau</p>
-                </a>
-            </div>
-        </div>
-    </section>
-
     <!-- Schnellzugriff -->
     <section class="section">
         <div class="container">
