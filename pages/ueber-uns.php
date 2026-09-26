@@ -224,7 +224,7 @@ foreach ($allMembers as $am) {
                 function orgBox2(array $org, array $memberRankByName, array $memberIdByName, string $key, string $label): void {
                     $name = orgName($org, $key);
                     $isVacant = ($name === 'derzeit nicht besetzt');
-                    $badge = !$isVacant ? orgRankBadge($memberRankByName, $name) : null;
+                    $badge = null; // keine Rang-Anzeige im Organigramm
                     // Namen im Organigramm werden gegen die Mitgliederliste gematcht, damit
                     // ein Klick dieselben (eingegebenen) Details wie bei den Mitglieder-Kacheln
                     // öffnet - keine separate Datenpflege nötig.
