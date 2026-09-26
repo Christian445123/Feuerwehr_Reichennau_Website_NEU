@@ -492,7 +492,8 @@ body.nav-open {
 .stats-section {
     background: var(--color-white);
     padding: 60px 0;
-    margin-top: -90px;
+    margin-top: 0;
+    padding-top: 115px;
     position: relative;
     z-index: 10;
     border-radius: var(--radius-xl) var(--radius-xl) 0 0;
@@ -3018,7 +3019,7 @@ body.lightbox-open {
     }
 
     .stats-section {
-        margin-top: -20px;
+        padding-top: 130px;
     }
 
     .stats-grid {
@@ -3782,10 +3783,9 @@ body.lightbox-open {
 
 /* --- Roter Info-Balken am unteren Rand des Hero --- */
 .hero-bar {
-    position: absolute;
-    left: 50%;
-    bottom: 110px;
-    transform: translateX(-50%);
+    position: relative;
+    z-index: 20;
+    margin: -55px auto -55px;
     width: min(1100px, calc(100% - 40px));
     display: flex;
     align-items: center;
@@ -3839,7 +3839,7 @@ body.lightbox-open {
         flex-wrap: wrap;
         gap: 14px;
         padding: 16px;
-        bottom: 90px;
+        margin: -90px auto -90px;
     }
     .hero-bar-item {
         padding: 0 12px;
