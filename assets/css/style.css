@@ -118,9 +118,9 @@ a:hover {
 }
 
 .nav-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px 0 12px;
+    max-width: none;
+    margin: 0;
+    padding: 0 24px 0 8px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -137,7 +137,7 @@ a:hover {
 }
 
 .nav-logo-img {
-    height: 56px;
+    height: 66px;
     width: auto;
 }
 
@@ -208,8 +208,8 @@ a:hover {
 }
 
 .nav-cta {
-    background: #bbdce7 !important;
-    color: var(--color-dark) !important;
+    background: #fff !important;
+    color: #000 !important;
     font-weight: 700 !important;
     text-transform: uppercase;
     font-size: 0.8rem !important;
@@ -218,7 +218,12 @@ a:hover {
 }
 
 .nav-cta:hover {
-    background: #a5cfdd !important;
+    background: var(--color-primary) !important;
+    color: #fff !important;
+}
+
+.nav-label {
+    cursor: default;
 }
 
 /* Dropdown */
