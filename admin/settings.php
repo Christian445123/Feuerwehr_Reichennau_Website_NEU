@@ -4,6 +4,7 @@ require_once __DIR__ . '/permissions.php';
 require_once __DIR__ . '/../config/gate.php';
 require_once __DIR__ . '/../config/analytics.php';
 require_once __DIR__ . '/../config/berichte.php';
+require_once __DIR__ . '/../config/instagram.php';
 require_once __DIR__ . '/../config/logging.php';
 requireLogin();
 
@@ -52,6 +53,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             setSitePassword($newPw);
             logActivity($db, 'settings.site_password');
             flash('success', 'Das Zugangspasswort der Website wurde geändert.');
+        }
+    }
+
+    if ($action === 'save_instagram') {
+        if (!userHasPermission('settings.manage')) {
+            flash('error', 'Dir fehlt die Berechtigung, den Instagram-Feed einzurichten.');
+            header('Location: settings.php');
+            exit;
+        }
+        $token = trim($_POST['instagram_token'] ?? '');
+        if ($token !== '') {
+            saveInstagramToken($db, $token);
+        }
+        if (isset($_POST['instagram_remove'])) {
+            saveInstagramToken($db, '');
+            setHeroSetting($db, 'instagram_posts', '[]');
+            logActivity($db, 'settings.instagram', 'Entfernt');
+            flash('success', 'Instagram-Feed wurde deaktiviert.');
+        } elseif (getInstagramToken($db) === '') {
+            flash('error', 'Bitte ein Zugriffstoken eintragen.');
+        } else {
+            $err = refreshInstagramFeed($db);
+            logActivity($db, 'settings.instagram', $err ?? 'Aktualisiert');
+            flash($err ? 'error' : 'success', $err ?? 'Instagram-Feed wurde geladen.');
         }
     }
 
@@ -190,6 +215,28 @@ require_once __DIR__ . '/includes/admin-header.php';
 <?php endif; ?>
 
 <?php if (userHasPermission('settings.manage')): ?>
+<?php if (userHasPermission('settings.manage')): ?>
+<div class="admin-card" style="max-width: 600px; margin-top: 24px;">
+    <div class="admin-card-header"><h2><i class="fab fa-instagram"></i> Instagram-Feed (Startseite)</h2></div>
+    <div class="admin-card-body">
+        <p style="margin-bottom: 8px; color: #6c757d;">Zeigt die letzten Beiträge als Kacheln am Ende der Startseite. Die Bilder werden auf dem eigenen Server gespeichert, Besucher verbinden sich nicht mit Meta. Voraussetzung: Instagram-Business- oder Creator-Konto und ein Zugriffstoken (langlebig) aus einer Meta-Developer-App mit dem Produkt "Instagram API". Das Token wird automatisch verlängert.</p>
+        <p style="margin-bottom: 16px; color: #6c757d;">Status: <strong><?php echo getInstagramToken($db) !== '' ? 'Token hinterlegt, ' . count(getInstagramPosts($db)) . ' Beiträge geladen' : 'nicht eingerichtet (Block bleibt unsichtbar)'; ?></strong></p>
+        <form method="POST" class="admin-form">
+            <?php echo csrfField(); ?>
+            <input type="hidden" name="action" value="save_instagram">
+            <div class="form-group">
+                <label for="instagram_token">Zugriffstoken</label>
+                <input type="password" id="instagram_token" name="instagram_token" autocomplete="off" placeholder="<?php echo getInstagramToken($db) !== '' ? 'Gespeichert - leer lassen zum Behalten' : 'IGQ...'; ?>">
+            </div>
+            <button type="submit" class="btn btn-primary"><i class="fas fa-rotate"></i> Speichern &amp; jetzt laden</button>
+            <?php if (getInstagramToken($db) !== ''): ?>
+            <button type="submit" name="instagram_remove" value="1" class="btn btn-danger" onclick="return confirm('Instagram-Feed wirklich deaktivieren?');"><i class="fas fa-trash"></i> Entfernen</button>
+            <?php endif; ?>
+        </form>
+    </div>
+</div>
+<?php endif; ?>
+
 <div class="admin-card" style="max-width: 600px; margin-top: 24px;">
     <div class="admin-card-header"><h2><i class="fas fa-calendar-days"></i> Berichtsjahre</h2></div>
     <div class="admin-card-body">

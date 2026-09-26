@@ -156,3 +156,30 @@
     </section>
     <?php endif; ?>
 
+
+    <!-- Instagram-Vorschau -->
+    <?php
+    require_once __DIR__ . '/../config/instagram.php';
+    $instagramPosts = getInstagramFeed($db);
+    ?>
+    <?php if (!empty($instagramPosts)): ?>
+    <section class="section section-dark">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Aktuell auf Instagram</h2>
+                <p class="section-subtitle">@ffreichenau_innsbruck</p>
+            </div>
+            <div class="instagram-grid">
+                <?php foreach ($instagramPosts as $p): ?>
+                <a href="<?php echo htmlspecialchars($p['link']); ?>" target="_blank" rel="noopener" class="instagram-tile" title="<?php echo htmlspecialchars($p['caption']); ?>">
+                    <img src="<?php echo htmlspecialchars($p['image']); ?>" alt="<?php echo htmlspecialchars($p['caption'] ?: 'Instagram-Beitrag der FF Reichenau'); ?>" loading="lazy">
+                    <span class="instagram-tile-icon"><i class="fab fa-instagram"></i></span>
+                </a>
+                <?php endforeach; ?>
+            </div>
+            <div class="section-cta">
+                <a href="https://www.instagram.com/ffreichenau_innsbruck/" target="_blank" rel="noopener" class="btn btn-primary"><i class="fab fa-instagram"></i> Auf Instagram folgen</a>
+            </div>
+        </div>
+    </section>
+    <?php endif; ?>
