@@ -34,6 +34,24 @@ if ($isEdit) {
     $images = $imgStmt->fetchAll();
 }
 
+// Bild als Titelbild (Startfoto) festlegen: bekommt die kleinste Reihenfolge-Nummer
+if (isset($_GET['cover_image']) && is_numeric($_GET['cover_image']) && $isEdit) {
+    if (isset($_GET['token']) && hash_equals(csrfToken(), $_GET['token'])) {
+        $imgId = (int)$_GET['cover_image'];
+        $chk = $db->prepare("SELECT id FROM report_images WHERE id = ? AND report_id = ?");
+        $chk->execute([$imgId, $id]);
+        if ($chk->fetch()) {
+            $min = $db->prepare("SELECT COALESCE(MIN(sort_order), 0) FROM report_images WHERE report_id = ?");
+            $min->execute([$id]);
+            $db->prepare("UPDATE report_images SET sort_order = ? WHERE id = ?")->execute([((int)$min->fetchColumn()) - 1, $imgId]);
+            logActivity($db, 'report.image_cover', "Bericht #$id: Bild #$imgId");
+            flash('success', 'Titelbild wurde festgelegt.');
+        }
+    }
+    header("Location: report-edit.php?id=$id");
+    exit;
+}
+
 // Bild löschen
 if (isset($_GET['delete_image']) && is_numeric($_GET['delete_image']) && $isEdit) {
     if (isset($_GET['token']) && hash_equals(csrfToken(), $_GET['token'])) {
@@ -230,9 +248,13 @@ require_once __DIR__ . '/includes/admin-header.php';
                     <div class="existing-images-grid">
                         <?php foreach ($images as $img): ?>
                             <div class="existing-image">
+                                <?php if ($img === $images[0]): ?><span class="badge badge-success" style="position:absolute;top:6px;left:6px;z-index:2;">Titelbild</span><?php endif; ?>
                                 <img src="../<?php echo e(UPLOAD_URL . $img['filename']); ?>" alt="<?php echo e($img['caption']); ?>">
                                 <div class="existing-image-overlay">
                                     <span class="existing-image-caption"><?php echo e($img['caption'] ?: 'Ohne Beschreibung'); ?></span>
+                                    <?php if ($img !== $images[0]): ?>
+                                    <a href="report-edit.php?id=<?php echo $id; ?>&cover_image=<?php echo $img['id']; ?>&token=<?php echo e(csrfToken()); ?>" class="btn btn-sm btn-primary" title="Als Titelbild verwenden"><i class="fas fa-star"></i></a>
+                                    <?php endif; ?>
                                     <a href="report-edit.php?id=<?php echo $id; ?>&delete_image=<?php echo $img['id']; ?>&token=<?php echo e(csrfToken()); ?>"
                                        class="btn btn-sm btn-danger"
                                        onclick="return confirm('Bild löschen?')">
