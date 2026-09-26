@@ -156,35 +156,3 @@
     </section>
     <?php endif; ?>
 
-    <!-- Schnellzugriff -->
-    <section class="section">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Unsere Feuerwehr</h2>
-                <p class="section-subtitle">Erfahren Sie mehr über uns</p>
-            </div>
-            <div class="quick-links-grid">
-                <a href="index.php?page=ueber-uns" class="quick-link-card">
-                    <div class="quick-link-icon"><i class="fas fa-users"></i></div>
-                    <h3>Über Uns</h3>
-                    <p>Kommando, Mannschaft &amp; Geschichte</p>
-                </a>
-                <a href="index.php?page=ausruestung" class="quick-link-card">
-                    <div class="quick-link-icon"><i class="fas fa-truck"></i></div>
-                    <h3>Ausrüstung</h3>
-                    <p>Fuhrpark &amp; Wache</p>
-                </a>
-                <a href="index.php?page=jugend" class="quick-link-card">
-                    <div class="quick-link-icon"><i class="fas fa-child"></i></div>
-                    <h3>Jugend</h3>
-                    <p>Unsere Jugendfeuerwehr</p>
-                </a>
-                <a href="index.php?page=termine" class="quick-link-card">
-                    <div class="quick-link-icon"><i class="fas fa-calendar-alt"></i></div>
-                    <h3>Termine</h3>
-                    <p>Veranstaltungen &amp; Übungen</p>
-                </a>
-            </div>
-        </div>
-    </section>
-
