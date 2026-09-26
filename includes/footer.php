@@ -23,19 +23,6 @@
                     </ul>
                 </div>
 
-                <div class="footer-col">
-                    <h4>Navigation</h4>
-                    <ul class="footer-links">
-                        <li><a href="index.php?page=home">Home</a></li>
-                        <li><a href="index.php?page=ueber-uns">Über Uns</a></li>
-                        <li><a href="index.php?page=ausruestung">Ausrüstung</a></li>
-                        <li><a href="index.php?page=jugend">Jugend</a></li>
-                        <li><a href="index.php?page=berichte">Berichte</a></li>
-                        <li><a href="index.php?page=termine">Termine</a></li>
-                        <li><a href="index.php?page=kontakt">Kontakt & Impressum</a></li>
-                        <li><a href="index.php?page=datenschutz">Datenschutzerklärung</a></li>
-                    </ul>
-                </div>
             </div>
 
             <div class="footer-bottom footer-bottom-split">
