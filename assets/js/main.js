@@ -249,3 +249,18 @@ document.addEventListener('DOMContentLoaded', function () {
         counterEls.forEach(function (el) { counterObserver.observe(el); });
     }
 });
+
+// Startseiten-Diashow: blendet die Hintergrundbilder nacheinander ein
+(function () {
+    var box = document.querySelector('.hero-slides');
+    if (!box) return;
+    var slides = box.querySelectorAll('.hero-slide');
+    if (slides.length < 2) return;
+    var current = 0;
+    var interval = parseInt(box.getAttribute('data-interval'), 10) || 6000;
+    setInterval(function () {
+        slides[current].classList.remove('active');
+        current = (current + 1) % slides.length;
+        slides[current].classList.add('active');
+    }, interval);
+})();

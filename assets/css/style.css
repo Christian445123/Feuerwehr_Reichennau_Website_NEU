@@ -492,7 +492,7 @@ body.nav-open {
 .stats-section {
     background: var(--color-white);
     padding: 60px 0;
-    margin-top: -40px;
+    margin-top: -90px;
     position: relative;
     z-index: 10;
     border-radius: var(--radius-xl) var(--radius-xl) 0 0;
@@ -528,104 +528,6 @@ body.nav-open {
     color: var(--color-gray-600);
     font-size: 0.9rem;
     font-weight: 500;
-}
-
-/* --- Einsatzgebiete (Startseite) --- */
-.einsatzgebiete-section {
-    background: var(--color-secondary);
-    padding: 70px 0;
-}
-
-.einsatzgebiete-title {
-    font-family: var(--font-family-display);
-    font-size: clamp(2.4rem, 6vw, 4rem);
-    font-weight: 800;
-    text-transform: uppercase;
-    line-height: 1.05;
-    color: var(--color-white);
-    margin-bottom: 30px;
-}
-
-.einsatzgebiete-intro {
-    max-width: 780px;
-    font-size: 1.05rem;
-    font-weight: 500;
-    line-height: 1.7;
-    color: rgba(255,255,255,0.75);
-    margin-bottom: 16px;
-}
-
-.einsatzgebiete-subtitle {
-    font-family: var(--font-family-display);
-    font-size: clamp(1.6rem, 3vw, 2.2rem);
-    font-weight: 800;
-    text-transform: uppercase;
-    line-height: 1.1;
-    color: var(--color-white);
-    margin: 40px 0 24px;
-}
-
-.einsatzgebiete-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
-}
-
-.einsatzgebiete-card {
-    border-radius: var(--radius-md);
-    overflow: hidden;
-    box-shadow: var(--shadow-md);
-}
-
-.einsatzgebiete-image {
-    aspect-ratio: 4 / 3;
-    overflow: hidden;
-    background: var(--color-gray-200);
-}
-
-.einsatzgebiete-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    cursor: zoom-in;
-    transition: transform 0.5s ease;
-}
-
-.einsatzgebiete-card:hover .einsatzgebiete-image img {
-    transform: scale(1.06);
-}
-
-.einsatzgebiete-label {
-    background: var(--color-dark);
-    color: var(--color-white);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    padding: 24px 16px;
-}
-
-.einsatzgebiete-label i {
-    font-size: 1.8rem;
-    color: var(--color-primary-light);
-}
-
-.einsatzgebiete-label span {
-    font-family: var(--font-family-display);
-    font-weight: 700;
-    font-size: 1.2rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-@media (max-width: 768px) {
-    .einsatzgebiete-section {
-        padding: 50px 0;
-    }
-    .einsatzgebiete-grid {
-        grid-template-columns: 1fr;
-    }
 }
 
 /* --- Sections --- */
@@ -1668,46 +1570,6 @@ body.nav-open {
     .alarm-timeline-dot {
         left: -26px;
     }
-}
-
-/* Sponsors */
-.section-sponsors {
-    padding: 40px 0;
-    background: var(--color-gray-100);
-}
-
-.sponsors-grid {
-    display: flex;
-    justify-content: center;
-    gap: 40px;
-    flex-wrap: wrap;
-}
-
-.sponsor-link {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    padding: 20px 32px;
-    background: var(--color-white);
-    border-radius: var(--radius-md);
-    color: var(--color-gray-600);
-    font-weight: 500;
-    text-decoration: none;
-    transition: var(--transition);
-    box-shadow: var(--shadow-sm);
-}
-
-.sponsor-link:hover {
-    color: var(--color-primary);
-    box-shadow: var(--shadow-md);
-    transform: translateY(-2px);
-}
-
-.sponsor-logo {
-    height: 40px;
-    width: auto;
-    object-fit: contain;
 }
 
 /* --- Jugend Page --- */
@@ -2786,23 +2648,6 @@ body.nav-open {
 .footer-links a:hover {
     color: var(--color-white);
     padding-left: 6px;
-}
-
-.footer-sponsors {
-    list-style: none;
-}
-
-.footer-sponsors li {
-    margin-bottom: 8px;
-}
-
-.footer-sponsors a {
-    color: rgba(255,255,255,0.7);
-    font-size: 0.9rem;
-}
-
-.footer-sponsors a:hover {
-    color: var(--color-white);
 }
 
 .footer-bottom {
@@ -3903,4 +3748,34 @@ body.lightbox-open {
     .member-modal-body {
         padding: 20px;
     }
+}
+
+/* --- Startseiten-Hintergrund (Diashow / stehendes Bild) --- */
+.hero-slides {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+}
+
+.hero-slide {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    opacity: 0;
+    transition: opacity 1.2s ease;
+}
+
+.hero-slide.active {
+    opacity: 1;
+}
+
+/* Abdunklung, damit der weiße Text auf jedem Bild lesbar bleibt */
+.hero-has-images::before {
+    z-index: 1;
+    background: rgba(0, 0, 0, 0.55);
+}
+
+.hero-has-images .hero-overlay {
+    z-index: 1;
 }

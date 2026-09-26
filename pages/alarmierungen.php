@@ -36,19 +36,9 @@ $subcategoryLabels = [
                     <div class="stat-label">Technische Einsätze</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon"><i class="fas fa-hands-helping"></i></div>
-                    <div class="stat-number" data-count="<?php echo $stats['unterstuetzung']; ?>"><?php echo $stats['unterstuetzung']; ?></div>
-                    <div class="stat-label">Unterstützungseinsätze</div>
-                </div>
-                <div class="stat-card">
                     <div class="stat-icon"><i class="fas fa-biohazard"></i></div>
                     <div class="stat-number" data-count="<?php echo $stats['abc']; ?>"><?php echo $stats['abc']; ?></div>
                     <div class="stat-label">ABC-Einsätze</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon"><i class="fas fa-dumbbell"></i></div>
-                    <div class="stat-number" data-count="<?php echo $stats['uebung']; ?>"><?php echo $stats['uebung']; ?></div>
-                    <div class="stat-label">Übungen</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon"><i class="fas fa-bell"></i></div>

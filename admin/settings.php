@@ -2,7 +2,6 @@
 require_once __DIR__ . '/auth.php';
 require_once __DIR__ . '/permissions.php';
 require_once __DIR__ . '/../config/gate.php';
-require_once __DIR__ . '/../config/stats.php';
 require_once __DIR__ . '/../config/analytics.php';
 require_once __DIR__ . '/../config/berichte.php';
 require_once __DIR__ . '/../config/logging.php';
@@ -54,17 +53,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             logActivity($db, 'settings.site_password');
             flash('success', 'Das Zugangspasswort der Website wurde geändert.');
         }
-    }
-
-    if ($action === 'reset_stats_period') {
-        if (!userHasPermission('settings.manage')) {
-            flash('error', 'Dir fehlt die Berechtigung, den Statistik-Zeitraum zurückzusetzen.');
-            header('Location: settings.php');
-            exit;
-        }
-        $newStart = resetStatsPeriod($db);
-        logActivity($db, 'settings.stats_reset', 'Neuer Zählbeginn: ' . $newStart);
-        flash('success', 'Der Einsatz-Statistik-Zähler wurde zurückgesetzt. Gezählt wird ab ' . date('d.m.Y', strtotime($newStart)) . '.');
     }
 
     if ($action === 'save_ga_id') {
@@ -195,23 +183,6 @@ require_once __DIR__ . '/includes/admin-header.php';
 
             <button type="submit" class="btn btn-primary">
                 <i class="fas fa-save"></i> Zugangspasswort ändern
-            </button>
-        </form>
-    </div>
-</div>
-<?php endif; ?>
-
-<?php if (userHasPermission('settings.manage')): ?>
-<div class="admin-card" style="max-width: 600px; margin-top: 24px;">
-    <div class="admin-card-header"><h2><i class="fas fa-stopwatch"></i> Einsatz-Statistik-Zähler</h2></div>
-    <div class="admin-card-body">
-        <p style="margin-bottom: 8px; color: #6c757d;">Die Statistik-Kacheln (Brand-, Technische-, Unterstützungs- und ABC-Einsätze) auf der Website zählen ab einem festen Startdatum, das <strong>nicht</strong> automatisch weiterspringt, sondern hier manuell zurückgesetzt werden muss (z.B. nach der Jahreshauptversammlung).</p>
-        <p style="margin-bottom: 16px; color: #6c757d;">Aktueller Zählbeginn: <strong><?php echo date('d.m.Y', strtotime(getStatsPeriodStart($db))); ?></strong></p>
-        <form method="POST" class="admin-form" onsubmit="return confirm('Zähler wirklich zurücksetzen? Es wird ab dem 1. Freitag im März neu gezählt.');">
-            <?php echo csrfField(); ?>
-            <input type="hidden" name="action" value="reset_stats_period">
-            <button type="submit" class="btn btn-primary">
-                <i class="fas fa-rotate-right"></i> Zähler zurücksetzen
             </button>
         </form>
     </div>

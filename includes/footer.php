@@ -37,15 +37,6 @@
                         <li><a href="index.php?page=datenschutz">Datenschutzerklärung</a></li>
                     </ul>
                 </div>
-
-                <div class="footer-col">
-                    <h4>Unsere Sponsoren</h4>
-                    <ul class="footer-sponsors">
-                        <li><a href="http://www.farbmacher-sanremo.at/" target="_blank" rel="noopener">Farbmacher</a></li>
-                        <li><a href="http://www.pilser.at/" target="_blank" rel="noopener">Seat Pilser</a></li>
-                        <li><a href="http://www.pw-design.at/" target="_blank" rel="noopener">Paul Weber Design</a></li>
-                    </ul>
-                </div>
             </div>
 
             <div class="footer-bottom footer-bottom-split">

@@ -1,6 +1,20 @@
 <?php require_once __DIR__ . '/../config/gate.php'; requireSiteAccess(); ?>
     <!-- Hero Section -->
-    <section class="hero">
+    <?php
+    require_once __DIR__ . '/../config/database.php';
+    require_once __DIR__ . '/../config/hero.php';
+    $heroDb = getDB();
+    $heroImages = getActiveHeroImages($heroDb);
+    $heroInterval = getHeroInterval($heroDb);
+    ?>
+    <section class="hero<?php echo $heroImages ? ' hero-has-images' : ''; ?>">
+        <?php if ($heroImages): ?>
+        <div class="hero-slides" data-interval="<?php echo $heroInterval * 1000; ?>">
+            <?php foreach ($heroImages as $i => $img): ?>
+            <div class="hero-slide<?php echo $i === 0 ? ' active' : ''; ?>" style="background-image: url('<?php echo htmlspecialchars($img, ENT_QUOTES); ?>');"></div>
+            <?php endforeach; ?>
+        </div>
+        <?php endif; ?>
         <div class="hero-overlay"></div>
         <div class="hero-content">
             <img src="assets/images/logo_feuerwehr_tirol.png" alt="Freiwillige Feuerwehr Reichenau" class="hero-logo">
@@ -38,11 +52,6 @@
                     <div class="stat-label">Technische Einsätze</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon"><i class="fas fa-hands-helping"></i></div>
-                    <div class="stat-number" data-count="<?php echo $stats['unterstuetzung']; ?>"><?php echo $stats['unterstuetzung']; ?></div>
-                    <div class="stat-label">Unterstützungseinsätze</div>
-                </div>
-                <div class="stat-card">
                     <div class="stat-icon"><i class="fas fa-biohazard"></i></div>
                     <div class="stat-number" data-count="<?php echo $stats['abc']; ?>"><?php echo $stats['abc']; ?></div>
                     <div class="stat-label">ABC-Einsätze</div>
@@ -56,47 +65,6 @@
                     <div class="stat-icon"><i class="fas fa-users"></i></div>
                     <div class="stat-number">24/7</div>
                     <div class="stat-label">Einsatzbereit</div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Wer wir sind / Unsere Einsatzgebiete -->
-    <section class="einsatzgebiete-section">
-        <div class="container">
-            <h2 class="einsatzgebiete-title">Freiwillige<br>Feuerwehr<br>Reichenau</h2>
-            <p class="einsatzgebiete-intro">Wir sind eine der Freiwilligen Feuerwehren der Stadt Innsbruck und arbeiten gemeinsam mit der Berufsfeuerwehr und neun weiteren Freiwilligen-Einheiten für die Sicherheit der Innsbrucker Bevölkerung.</p>
-            <p class="einsatzgebiete-intro">Neben Brandeinsätzen, technischer Hilfeleistung und Katastrophenschutz sind wir auch als Stützpunktfeuerwehr im Spezialgebiet Gefahrgut tätig.</p>
-
-            <h3 class="einsatzgebiete-subtitle">Unsere Einsatzgebiete</h3>
-
-            <div class="einsatzgebiete-grid">
-                <div class="einsatzgebiete-card">
-                    <div class="einsatzgebiete-image">
-                        <img src="assets/images/einsatzgebiet_feuer.jpg" alt="Feuerwehrmänner im Brandeinsatz" data-lightbox-group="einsatzgebiete" loading="lazy">
-                    </div>
-                    <div class="einsatzgebiete-label">
-                        <i class="fas fa-fire"></i>
-                        <span>Feuer</span>
-                    </div>
-                </div>
-                <div class="einsatzgebiete-card">
-                    <div class="einsatzgebiete-image">
-                        <img src="assets/images/einsatzgebiet_technik.jpg" alt="Feuerwehrleute im technischen Einsatz" data-lightbox-group="einsatzgebiete" loading="lazy">
-                    </div>
-                    <div class="einsatzgebiete-label">
-                        <i class="fas fa-wrench"></i>
-                        <span>Technik</span>
-                    </div>
-                </div>
-                <div class="einsatzgebiete-card">
-                    <div class="einsatzgebiete-image">
-                        <img src="assets/images/einsatzgebiet_gefahrgut.jpg" alt="Feuerwehr im Gefahrgut-Einsatz" data-lightbox-group="einsatzgebiete" loading="lazy">
-                    </div>
-                    <div class="einsatzgebiete-label">
-                        <i class="fas fa-skull-crossbones"></i>
-                        <span>Gefahrgut</span>
-                    </div>
                 </div>
             </div>
         </div>
@@ -234,25 +202,3 @@
         </div>
     </section>
 
-    <!-- Sponsoren -->
-    <section class="section section-sponsors">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Unsere Unterstützer</h2>
-            </div>
-            <div class="sponsors-grid">
-                <a href="http://www.farbmacher-sanremo.at/" target="_blank" rel="noopener" class="sponsor-link">
-                    <img src="assets/images/sponsor_farbmacher.jpg" alt="Farbmacher" class="sponsor-logo">
-                    <span>Farbmacher</span>
-                </a>
-                <a href="http://www.pilser.at/" target="_blank" rel="noopener" class="sponsor-link">
-                    <img src="assets/images/sponsor_pilser.gif" alt="Seat Pilser" class="sponsor-logo">
-                    <span>Seat Pilser</span>
-                </a>
-                <a href="http://www.pw-design.at/" target="_blank" rel="noopener" class="sponsor-link">
-                    <img src="assets/images/sponsor_weber.jpg" alt="Paul Weber" class="sponsor-logo">
-                    <span>Paul Weber</span>
-                </a>
-            </div>
-        </div>
-    </section>

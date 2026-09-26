@@ -41,6 +41,9 @@ require_once __DIR__ . '/../permissions.php';
                 </a>
             <?php endif; ?>
             <?php if (userHasPermission('media.manage')): ?>
+                <a href="hero.php" class="sidebar-link <?php echo ($activePage ?? '') === 'hero' ? 'active' : ''; ?>">
+                    <i class="fas fa-panorama"></i> Startseiten-Hintergrund
+                </a>
                 <a href="vehicle-photos.php" class="sidebar-link <?php echo ($activePage ?? '') === 'vehicle-photos' ? 'active' : ''; ?>">
                     <i class="fas fa-images"></i> Fahrzeug- & Wache-Fotos
                 </a>
