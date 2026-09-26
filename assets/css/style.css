@@ -1393,10 +1393,10 @@ body.nav-open {
 }
 
 .orgchart-row-5 {
-    display: grid;
-    grid-template-columns: repeat(5, minmax(120px, 1fr));
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 22px 16px;
-    min-width: 620px;
     margin-bottom: 22px;
 }
 
@@ -1404,16 +1404,27 @@ body.nav-open {
     margin-bottom: 0;
 }
 
+.orgchart {
+    --org-item-w: clamp(104px, 16vw, 176px);
+}
+
+/* Alle Kacheln gleich breit und gleich hoch; Breite und Schrift passen sich der Bildschirmgröße an */
 .orgchart-item {
     text-align: center;
-    min-width: 130px;
+    width: var(--org-item-w);
+    flex: 0 0 var(--org-item-w);
 }
 
 .orgchart-empty {
-    min-width: 130px;
+    width: var(--org-item-w);
+    flex: 0 0 var(--org-item-w);
 }
 
 .orgchart-item-label {
+    min-height: 2.6em;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
     color: rgba(255,255,255,0.65);
     font-size: 0.66rem;
     font-weight: 700;
@@ -1430,9 +1441,11 @@ body.nav-open {
     background: #ffb700;
     color: var(--color-dark);
     font-weight: 800;
-    font-size: 0.88rem;
+    font-size: clamp(0.68rem, 1.3vw, 0.88rem);
     text-transform: uppercase;
-    padding: 10px 14px;
+    min-height: 3.6em;
+    text-align: center;
+    padding: 8px 10px;
     border-radius: 4px;
     line-height: 1.25;
 }
@@ -1464,10 +1477,6 @@ body.nav-open {
 @media (max-width: 768px) {
     .orgchart {
         padding: 20px 12px;
-    }
-    .orgchart-item-name {
-        font-size: 0.8rem;
-        padding: 9px 12px;
     }
 }
 
