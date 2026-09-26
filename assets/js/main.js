@@ -213,7 +213,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // --- Zähler-Animation (Statistik-Kacheln zählen beim Sichtbarwerden hoch) ---
-    var counterEls = document.querySelectorAll('.stat-number[data-count]');
+    var counterEls = document.querySelectorAll('.stat-number[data-count], .hero-bar-item strong[data-count]');
     if (counterEls.length > 0) {
         function animateCounter(el) {
             var target = parseInt(el.getAttribute('data-count'), 10);

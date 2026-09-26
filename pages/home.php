@@ -28,9 +28,9 @@
                 <a href="index.php?page=ueber-uns" class="btn btn-outline"><i class="fas fa-info-circle"></i> Mehr erfahren</a>
             </div>
             <div class="hero-bar">
-                <div class="hero-bar-item"><strong>24</strong><span>Stunden am Tag</span></div>
-                <div class="hero-bar-item"><strong>7</strong><span>Tage die Woche</span></div>
-                <div class="hero-bar-item"><strong>365</strong><span>Tage im Jahr</span></div>
+                <div class="hero-bar-item"><strong data-count="24">24</strong><span>Stunden am Tag</span></div>
+                <div class="hero-bar-item"><strong data-count="7">7</strong><span>Tage die Woche</span></div>
+                <div class="hero-bar-item"><strong data-count="365">365</strong><span>Tage im Jahr</span></div>
                 <a href="tel:122" class="hero-bar-call"><i class="fas fa-phone"></i> 122 Feuerwehr Notruf</a>
             </div>
         </div>
