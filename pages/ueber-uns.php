@@ -60,13 +60,7 @@ foreach ($allMembers as $am) {
     foreach ([$am['badge1'] ?? null, $am['badge2'] ?? null] as $bc) {
         if ($bc) $badgeList[] = ['code' => $bc, 'name' => getBadgeName($bc), 'color' => getBadgeColor($bc), 'image' => getBadgeImage($bc)];
     }
-    // Der Rang wird nur bei Kommando und Ausschuss angezeigt (auch im
-    // Mitglieder-Detail) - bei allen anderen Gruppen bleibt er komplett
-    // verborgen.
-    $showRank = false;
-    foreach ($funcs as $f) {
-        if (in_array($f['section'] ?? '', ['Kommando', 'Ausschuss'], true)) { $showRank = true; break; }
-    }
+    $showRank = false; // Ränge werden öffentlich nirgends mehr angezeigt
     $membersJson[$am['id']] = [
         'name' => $am['firstname'] . ' ' . $am['lastname'],
         'photo' => $am['photo'] ? 'uploads/' . $am['photo'] : '',
@@ -123,7 +117,7 @@ foreach ($allMembers as $am) {
                             <?php endif; ?>
 
                             <?php if (!empty($groupMembers)): ?>
-                                <?php $gridClass = ($group === 'Kommando') ? 'grid-kommando' : ''; ?>
+                                <?php $gridClass = ['Kommando' => 'grid-kommando', 'Ausschuss' => 'grid-ausschuss', 'Mannschaft' => 'grid-static'][$group] ?? ''; ?>
                                 <div class="members-public-grid <?php echo $gridClass; ?>">
                                     <?php foreach ($groupMembers as $m): ?>
                                         <?php
@@ -159,17 +153,6 @@ foreach ($allMembers as $am) {
                                                         <?php if ($roleInSection): ?>
                                                             <span class="member-public-function"><?php echo htmlspecialchars($roleInSection); ?></span>
                                                         <?php endif; ?>
-                                                        <?php // Der Rang wird bei Kommando und Ausschuss angezeigt
-                                                        // (auch im Mitglieder-Detail-Modal) - bei allen anderen Gruppen
-                                                        // bleibt er komplett verborgen, auch wenn er gepflegt ist. ?>
-                                                        <?php if ($m['rank'] && in_array($group, ['Kommando', 'Ausschuss'], true)): ?>
-                                                            <span class="member-public-rank">
-                                                                <img src="<?php echo htmlspecialchars(getRankBadgePath($m['rank'])); ?>"
-                                                                     alt="<?php echo htmlspecialchars(getRankName($m['rank'])); ?>"
-                                                                     class="rank-badge-inline"
-                                                                     title="<?php echo htmlspecialchars($m['rank'] . ' – ' . getRankName($m['rank'])); ?>">
-                                                            </span>
-                                                        <?php endif; ?>
                                                         <?php foreach ([$m['badge1'] ?? null, $m['badge2'] ?? null] as $bc): ?>
                                                             <?php if ($bc): ?>
                                                                 <img src="<?php echo htmlspecialchars(getBadgeImage($bc)); ?>" alt="<?php echo htmlspecialchars($bc); ?>" class="badge-inline-img" title="<?php echo htmlspecialchars(getBadgeName($bc)); ?>">
@@ -178,7 +161,7 @@ foreach ($allMembers as $am) {
                                                     </div>
                                                 </div>
                                                 <?php
-                                                $backShowRank = $m['rank'] && in_array($group, ['Kommando', 'Ausschuss'], true);
+                                                $backShowRank = false; // keine Rang-Anzeige
                                                 $backBadgeNames = [];
                                                 foreach ([$m['badge1'] ?? null, $m['badge2'] ?? null] as $bc) {
                                                     if ($bc) $backBadgeNames[] = getBadgeName($bc);

@@ -3868,3 +3868,49 @@ body.lightbox-open {
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
 }
+
+/* Mannschaft: einfache Kacheln ohne Umdrehen */
+.grid-static .member-public-card {
+    height: auto;
+    cursor: default;
+}
+
+.grid-static .member-card-flip,
+.grid-static .member-public-card:hover .member-card-flip {
+    transform: none;
+    transition: none;
+}
+
+.grid-static .member-card-face {
+    position: static;
+}
+
+.grid-static .member-card-back {
+    display: none;
+}
+
+/* Ausschuss: ganzes Bild (nicht rund, nicht beschnitten), darunter die Funktion */
+.members-public-grid.grid-ausschuss {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 24px;
+}
+
+.grid-ausschuss .member-public-card {
+    height: 340px;
+}
+
+.grid-ausschuss .member-public-photo {
+    width: 100%;
+    height: 210px;
+    border-radius: var(--radius-sm);
+    border-width: 0;
+    object-fit: contain;
+    object-position: center;
+    background: var(--color-white);
+}
+
+.grid-ausschuss .member-public-placeholder {
+    width: 100%;
+    height: 210px;
+    border-radius: var(--radius-sm);
+}
