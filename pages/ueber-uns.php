@@ -136,7 +136,7 @@ foreach ($allMembers as $am) {
                                         // Mannschaft nicht unter den Tisch fallen.
                                         $allFuncLabels = array_map(fn($f) => trim(($f['role'] ?? '') . ' (' . ($f['section'] ?? '') . ')'), $funcs);
                                         ?>
-                                        <div class="member-public-card" data-member-id="<?php echo (int)$m['id']; ?>" onclick="showMemberDetail(<?php echo (int)$m['id']; ?>)">
+                                        <div class="member-public-card" data-member-id="<?php echo (int)$m['id']; ?>"<?php if (!in_array($group, ['Mannschaft', 'Ehrenmitglieder'], true)): ?> onclick="showMemberDetail(<?php echo (int)$m['id']; ?>)"<?php endif; ?>>
                                             <div class="member-card-flip">
                                                 <div class="member-card-face member-card-front">
                                                     <?php if ($m['photo']): ?>
@@ -346,9 +346,9 @@ foreach ($allMembers as $am) {
                         $jugendMembers = $jugendStmt->fetchAll();
                         ?>
                         <?php if (!empty($jugendMembers)): ?>
-                            <div class="members-public-grid">
+                            <div class="members-public-grid grid-static">
                                 <?php foreach ($jugendMembers as $m): ?>
-                                    <div class="member-public-card" data-member-id="<?php echo (int)$m['id']; ?>" onclick="showMemberDetail(<?php echo (int)$m['id']; ?>)">
+                                    <div class="member-public-card" data-member-id="<?php echo (int)$m['id']; ?>">
                                         <div class="member-card-flip">
                                             <div class="member-card-face member-card-front">
                                                 <?php if ($m['photo']): ?>

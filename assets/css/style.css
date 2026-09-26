@@ -3944,3 +3944,34 @@ body.lightbox-open {
     padding: 3px 0;
     border-bottom: none;
 }
+
+/* Kachel-Rückseite (Kommando/Ausschuss): Details sauber untereinander */
+.member-card-back {
+    align-items: stretch;
+    text-align: left;
+    padding: 16px 14px;
+    gap: 8px;
+}
+
+.member-card-back-name {
+    text-align: center;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+    margin-bottom: 2px;
+}
+
+.member-card-back-line {
+    align-items: flex-start;
+    gap: 8px;
+    line-height: 1.35;
+}
+
+.member-card-back-more,
+.member-card-back-emptystate {
+    text-align: center;
+    align-self: center;
+}
+
+.grid-ausschuss .member-public-card {
+    height: 360px;
+}
