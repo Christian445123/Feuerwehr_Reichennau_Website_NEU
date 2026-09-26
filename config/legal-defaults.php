@@ -155,6 +155,9 @@ EOT,
 <p>Diese Website nutzt zur Darstellung von Icons den Dienst Font Awesome, bereitgestellt von Fonticons, Inc. Beim Aufruf einer Seite lädt Ihr Browser die benötigten Icons von einem CDN (Content Delivery Network). Dabei wird Ihre IP-Adresse an den Betreiber des CDN übermittelt.</p>
 <p>Weitere Informationen finden Sie in der Datenschutzerklärung von Font Awesome: <a href="https://fontawesome.com/privacy" target="_blank" rel="noopener">fontawesome.com/privacy</a>.</p>
 
+<h4>Wetterwarnungen (GeoSphere Austria)</h4>
+<p>Im Footer der Website zeigen wir die aktuelle Wetterwarnkarte von GeoSphere Austria (warnungen.zamg.at) als Bild an. Beim Aufruf einer Seite lädt Ihr Browser dieses Bild direkt vom Server von GeoSphere Austria, wodurch Ihre IP-Adresse an diesen übermittelt wird. Die Karte aktualisiert sich automatisch.</p>
+
 <h4>Facebook-Link</h4>
 <p>Unsere Website enthält einen Link zu unserer Facebook-Seite. Es handelt sich dabei um einen einfachen Hyperlink, der keine Daten an Facebook überträgt. Erst wenn Sie den Link anklicken und die Facebook-Seite besuchen, gelten die Datenschutzbestimmungen von Facebook (Meta Platforms Ireland Ltd.).</p>
 

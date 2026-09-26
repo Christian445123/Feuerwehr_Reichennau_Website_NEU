@@ -2537,7 +2537,7 @@ body.nav-open {
 
 .footer-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr auto;
     gap: 40px;
     padding-bottom: 40px;
     border-bottom: 1px solid rgba(255,255,255,0.08);
@@ -3850,4 +3850,14 @@ body.lightbox-open {
         flex: 1 1 100%;
         text-align: center;
     }
+}
+
+.footer-warnwidget {
+    display: inline-block;
+    line-height: 0;
+}
+
+.footer-warnwidget img {
+    max-width: 100%;
+    height: auto;
 }

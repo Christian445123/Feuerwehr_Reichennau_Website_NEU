@@ -4,7 +4,7 @@
             <div class="footer-grid">
                 <div class="footer-col">
                     <div class="footer-logo">
-                        <img src="assets/images/logo_feuerwehr_tirol.png" alt="Freiwillige Feuerwehr Reichenau">
+                        <img src="assets/images/logo_feuerwehr_tirol.png" alt="Freiwillige Feuerwehr Reichenau">
                     </div>
                     <p>Freiwillige Feuerwehr Reichenau<br>Innsbruck Stadt</p>
                     <div class="footer-social">
@@ -21,6 +21,13 @@
                         <li><i class="fas fa-envelope"></i> <a href="mailto:reichenau@feuerwehr.tirol">reichenau@feuerwehr.tirol</a></li>
                         <li><i class="fas fa-globe"></i> <a href="http://www.ffr.at">www.ffr.at</a></li>
                     </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Wetterwarnungen</h4>
+                    <a href="https://warnungen.zamg.at/html/de/heute/alle/at/" target="_blank" rel="noopener" class="footer-warnwidget">
+                        <img src="https://warnungen.zamg.at/warnwidget/de/heute/alle/at/" alt="GeoSphere-Wetterwarnungen Österreich" title="GeoSphere-Wetterwarnungen" loading="lazy">
+                    </a>
                 </div>
 
             </div>
