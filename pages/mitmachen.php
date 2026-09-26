@@ -72,11 +72,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['mitmachen_submit'])) 
     }
 }
 
+// Ansprechpartner: Kommandant (immer oben) und Kommandant-Stv. (immer unten)
+// kommen aus dem Organigramm (Admin -> Organigramm) und werden über den
+// Namen mit dem passenden Mitglied verknüpft - Änderungen dort wirken sich
+// hier automatisch aus.
 $contactPersons = [];
-foreach ([['Helmut', 'Plank', 'Kommandant'], ['David', 'Danner', 'Kommandant-Stv.']] as [$fn, $ln, $role]) {
-    $stmt = $db->prepare("SELECT * FROM members WHERE firstname = ? AND lastname = ? LIMIT 1");
-    $stmt->execute([$fn, $ln]);
-    $m = $stmt->fetch();
+$orgStmt = $db->prepare("SELECT name FROM org_chart_positions WHERE position_key = ?");
+$memberStmt = $db->prepare("SELECT * FROM members WHERE CONCAT(firstname, ' ', lastname) = ? LIMIT 1");
+foreach ([['kommandant', 'Kommandant'], ['kommandant_stv', 'Kommandant-Stv.']] as [$posKey, $role]) {
+    $orgStmt->execute([$posKey]);
+    $fullName = trim((string) $orgStmt->fetchColumn());
+    if ($fullName === '') continue;
+    $memberStmt->execute([$fullName]);
+    $m = $memberStmt->fetch();
     if ($m) {
         $contactPersons[] = ['member' => $m, 'role' => $role];
     }
