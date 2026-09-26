@@ -198,7 +198,6 @@ function ensureUploadDirs(): void {
         UPLOAD_PATH . 'vehicles/',
         UPLOAD_PATH . 'wache/',
         UPLOAD_PATH . 'hero/',
-        UPLOAD_PATH . 'instagram/',
     ];
     foreach ($dirs as $dir) {
         if (!is_dir($dir)) {
