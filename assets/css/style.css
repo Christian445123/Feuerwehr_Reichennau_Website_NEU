@@ -357,33 +357,6 @@ body.nav-open {
     animation: fadeInDown 0.8s ease;
 }
 
-.hero-title {
-    font-size: clamp(2rem, 5vw, 3.5rem);
-    font-weight: 300;
-    color: var(--color-white);
-    margin-bottom: 8px;
-    animation: fadeInUp 0.8s ease 0.2s both;
-}
-
-.hero-subtitle {
-    font-size: 1.2rem;
-    color: rgba(255,255,255,0.6);
-    font-weight: 300;
-    margin-bottom: 8px;
-    animation: fadeInUp 0.8s ease 0.3s both;
-}
-
-.hero-heading {
-    font-family: var(--font-family-display);
-    font-size: clamp(2rem, 5.5vw, 3.6rem);
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: var(--color-primary-light);
-    margin-bottom: 16px;
-    animation: fadeInUp 0.8s ease 0.4s both;
-}
-
 .hero-location {
     color: rgba(255,255,255,0.5);
     font-size: 1rem;
