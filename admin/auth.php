@@ -13,32 +13,118 @@ function isLoggedIn(): bool {
     return isset($_SESSION['admin_user_id']);
 }
 
+/**
+ * Seiten, die auch in einem "eingeloggt, aber noch nicht fertig"-Zustand
+ * erreichbar bleiben müssen (erzwungener Passwortwechsel, Logout selbst) -
+ * sonst würde requireLogin() eine Endlos-Weiterleitung erzeugen.
+ */
+function isPasswordChangeExempt(): bool {
+    return in_array(basename($_SERVER['SCRIPT_NAME'] ?? ''), ['change-password.php', 'logout.php'], true);
+}
+
 function requireLogin(): void {
     if (!isLoggedIn()) {
         header('Location: login.php');
         exit;
     }
+    if (!empty($_SESSION['admin_must_change_password']) && !isPasswordChangeExempt()) {
+        header('Location: change-password.php');
+        exit;
+    }
 }
 
-function login(string $username, string $password): bool {
+/**
+ * Prüft Benutzername/Passwort. Rückgabe:
+ * - 'ok'   Login abgeschlossen, Session vollständig gesetzt
+ * - '2fa'  Passwort korrekt, Zwei-Faktor-Code wird noch benötigt
+ * - false  Benutzername/Passwort falsch
+ */
+function login(string $username, string $password) {
     $db = getDB();
-    $stmt = $db->prepare("SELECT id, password, name, permissions FROM users WHERE username = ?");
+    $stmt = $db->prepare("SELECT id, password, name, permissions, must_change_password, totp_enabled FROM users WHERE username = ?");
     $stmt->execute([$username]);
     $user = $stmt->fetch();
 
     if ($user && password_verify($password, $user['password'])) {
-        session_regenerate_id(true);
-        $_SESSION['admin_user_id'] = $user['id'];
-        $_SESSION['admin_user_name'] = $user['name'];
-        $_SESSION['admin_permissions'] = isProtectedAdminUsername($username)
-            ? ['*']
-            : (json_decode($user['permissions'] ?? '[]', true) ?: []);
-        logLoginAttempt($db, 'admin', $username, true);
-        logActivity($db, 'auth.login', 'Erfolgreich angemeldet', $user['id'], $user['name']);
-        return true;
+        if (!empty($user['totp_enabled'])) {
+            session_regenerate_id(true);
+            $_SESSION['admin_2fa_pending_id'] = $user['id'];
+            logLoginAttempt($db, 'admin', $username, true);
+            return '2fa';
+        }
+        completeLogin($db, $user, $username);
+        return 'ok';
     }
     logLoginAttempt($db, 'admin', $username, false);
     return false;
+}
+
+/**
+ * Setzt die vollständige Admin-Session (nach Passwort + ggf. 2FA-Code).
+ */
+function completeLogin(PDO $db, array $user, string $username): void {
+    session_regenerate_id(true);
+    $_SESSION['admin_user_id'] = $user['id'];
+    $_SESSION['admin_user_name'] = $user['name'];
+    $_SESSION['admin_permissions'] = isProtectedAdminUsername($username)
+        ? ['*']
+        : (json_decode($user['permissions'] ?? '[]', true) ?: []);
+    $_SESSION['admin_must_change_password'] = !empty($user['must_change_password']);
+    unset($_SESSION['admin_2fa_pending_id']);
+    logActivity($db, 'auth.login', 'Erfolgreich angemeldet', $user['id'], $user['name']);
+}
+
+/**
+ * Erzeugt ein zufälliges, gut lesbares Passwort (ohne leicht verwechselbare
+ * Zeichen wie 0/O oder 1/l/I) mit 10 bis 12 Zeichen Länge.
+ */
+function generateRandomPassword(): string {
+    $length = random_int(10, 12);
+    $chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#%&*';
+    $max = strlen($chars) - 1;
+    $password = '';
+    for ($i = 0; $i < $length; $i++) {
+        $password .= $chars[random_int(0, $max)];
+    }
+    return $password;
+}
+
+/**
+ * Entfernt Umlaute/Sonderzeichen für einen sauberen Benutzernamen.
+ */
+function transliterateForUsername(string $text): string {
+    $map = ['ä' => 'ae', 'ö' => 'oe', 'ü' => 'ue', 'Ä' => 'Ae', 'Ö' => 'Oe', 'Ü' => 'Ue', 'ß' => 'ss'];
+    $text = strtr($text, $map);
+    return strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $text));
+}
+
+/**
+ * Generiert einen Benutzernamen aus Nachname+Vorname (in dieser Reihenfolge)
+ * und hängt bei Kollisionen eine fortlaufende Nummer an, damit er eindeutig
+ * bleibt (username ist UNIQUE).
+ */
+function generateUsernameFromName(PDO $db, string $firstname, string $lastname, ?int $excludeId = null): string {
+    $base = transliterateForUsername($lastname) . transliterateForUsername($firstname);
+    if ($base === '') {
+        $base = 'benutzer';
+    }
+    $username = $base;
+    $suffix = 2;
+    while (true) {
+        $sql = "SELECT COUNT(*) FROM users WHERE username = ?";
+        $params = [$username];
+        if ($excludeId !== null) {
+            $sql .= " AND id != ?";
+            $params[] = $excludeId;
+        }
+        $stmt = $db->prepare($sql);
+        $stmt->execute($params);
+        if ((int) $stmt->fetchColumn() === 0) {
+            return $username;
+        }
+        $username = $base . $suffix;
+        $suffix++;
+    }
 }
 
 function logout(): void {

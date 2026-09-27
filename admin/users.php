@@ -35,11 +35,30 @@ if (isset($_GET['delete']) && is_numeric($_GET['delete'])) {
     exit;
 }
 
-$users = $db->query("SELECT id, username, name, permissions, created_at FROM users ORDER BY name")->fetchAll();
+$users = $db->query("SELECT id, username, name, email, permissions, must_change_password, totp_enabled, created_at FROM users ORDER BY name")->fetchAll();
 $allPermissions = getAllPermissions();
 
 require_once __DIR__ . '/includes/admin-header.php';
+
+$newUserCredentials = $_SESSION['new_user_credentials'] ?? null;
+unset($_SESSION['new_user_credentials']);
 ?>
+
+<?php if ($newUserCredentials): ?>
+    <div class="admin-card" style="border: 2px solid var(--primary); margin-bottom: 20px;">
+        <div class="admin-card-header"><h2><i class="fas fa-key"></i> Zugangsdaten für neuen Benutzer</h2></div>
+        <div class="admin-card-body">
+            <?php if ($newUserCredentials['mail_sent']): ?>
+                <p style="color:var(--success);"><i class="fas fa-check-circle"></i> Die Zugangsdaten wurden an <strong><?php echo e($newUserCredentials['email']); ?></strong> geschickt.</p>
+            <?php else: ?>
+                <p style="color:var(--danger);"><i class="fas fa-exclamation-triangle"></i> Der Mailversand ist fehlgeschlagen - bitte gib die Zugangsdaten manuell weiter.</p>
+            <?php endif; ?>
+            <p><strong>Benutzername:</strong> <code><?php echo e($newUserCredentials['username']); ?></code></p>
+            <p><strong>Passwort:</strong> <code><?php echo e($newUserCredentials['password']); ?></code></p>
+            <p class="form-hint">Diese Anzeige erscheint nur einmal - das Passwort wird nirgends im Klartext gespeichert. Der Benutzer muss es beim ersten Login sofort ändern.</p>
+        </div>
+    </div>
+<?php endif; ?>
 
 <div class="page-actions">
     <a href="user-edit.php" class="btn btn-primary"><i class="fas fa-plus"></i> Neuer Benutzer</a>
@@ -51,7 +70,9 @@ require_once __DIR__ . '/includes/admin-header.php';
             <tr>
                 <th>Name</th>
                 <th>Benutzername</th>
+                <th>E-Mail</th>
                 <th>Rechte</th>
+                <th>Status</th>
                 <th>Aktionen</th>
             </tr>
         </thead>
@@ -66,6 +87,7 @@ require_once __DIR__ . '/includes/admin-header.php';
                         <?php if ($isProtected): ?><span class="badge badge-success" title="Hauptkonto mit fest eingebautem Vollzugriff"><i class="fas fa-shield-alt"></i> Geschützt</span><?php endif; ?>
                     </td>
                     <td><?php echo e($u['username']); ?></td>
+                    <td><?php echo $u['email'] !== '' ? e($u['email']) : '<span style="color:var(--gray-600);">–</span>'; ?></td>
                     <td>
                         <?php if (in_array('*', $perms, true)): ?>
                             <span class="badge badge-success"><i class="fas fa-star"></i> Vollzugriff</span>
@@ -75,6 +97,14 @@ require_once __DIR__ . '/includes/admin-header.php';
                             <?php foreach ($perms as $p): ?>
                                 <span class="badge badge-secondary" title="<?php echo e($allPermissions[$p] ?? $p); ?>"><?php echo e(explode('.', $p)[0]); ?></span>
                             <?php endforeach; ?>
+                        <?php endif; ?>
+                    </td>
+                    <td>
+                        <?php if (!empty($u['must_change_password'])): ?>
+                            <span class="badge badge-draft" title="Muss beim nächsten Login ein neues Passwort vergeben"><i class="fas fa-key"></i> Passwortwechsel ausstehend</span>
+                        <?php endif; ?>
+                        <?php if (!empty($u['totp_enabled'])): ?>
+                            <span class="badge badge-success" title="Zwei-Faktor-Authentifizierung aktiv"><i class="fas fa-shield-halved"></i> 2FA</span>
                         <?php endif; ?>
                     </td>
                     <td class="actions-cell">

@@ -537,6 +537,22 @@ function getMigrations(): array {
             },
         ],
 
+        [
+            'id' => '2026_09_27_add_user_account_columns',
+            'run' => function (PDO $db) {
+                // E-Mail (für Zugangsdaten-Mails), Vorname/Nachname (für die
+                // automatische Benutzername-Generierung), erzwungener
+                // Passwortwechsel beim nächsten Login sowie optionale
+                // Zwei-Faktor-Authentifizierung (TOTP) je Benutzer.
+                addColumnIfMissing($db, 'users', 'email', "VARCHAR(150) DEFAULT ''");
+                addColumnIfMissing($db, 'users', 'firstname', "VARCHAR(100) DEFAULT ''");
+                addColumnIfMissing($db, 'users', 'lastname', "VARCHAR(100) DEFAULT ''");
+                addColumnIfMissing($db, 'users', 'must_change_password', "TINYINT DEFAULT 0");
+                addColumnIfMissing($db, 'users', 'totp_secret', "VARCHAR(255) DEFAULT NULL");
+                addColumnIfMissing($db, 'users', 'totp_enabled', "TINYINT DEFAULT 0");
+            },
+        ],
+
     ];
 }
 

@@ -17,15 +17,26 @@ require_once __DIR__ . '/crypto.php';
  */
 function sendContactMail(string $subject, string $body, string $replyToEmail, string $replyToName, ?string &$error = null): bool {
     $to = env('SMTP_TO_EMAIL', 'reichenau@feuerwehr.tirol');
-    $fromEmail = env('SMTP_FROM_EMAIL') ?: $to;
+    return sendMail($to, '', $subject, $body, $error, $replyToEmail, $replyToName);
+}
+
+/**
+ * Sendet eine E-Mail an eine beliebige Adresse (z.B. Zugangsdaten an einen
+ * neu angelegten Admin-Benutzer). Nutzt denselben SMTP/mail()-Versand wie
+ * das Kontaktformular, nur mit frei wählbarem Empfänger.
+ */
+function sendMail(string $toEmail, string $toName, string $subject, string $body, ?string &$error = null, ?string $replyToEmail = null, ?string $replyToName = null): bool {
+    $fromEmail = env('SMTP_FROM_EMAIL') ?: env('SMTP_TO_EMAIL', 'reichenau@feuerwehr.tirol');
     $fromName = env('SMTP_FROM_NAME', 'FF Reichenau Website');
     $host = env('SMTP_HOST');
+    $replyToEmail = $replyToEmail ?: $fromEmail;
+    $replyToName = $replyToName ?: $fromName;
 
     if ($host) {
-        return sendViaSmtp($host, $to, $fromEmail, $fromName, $subject, $body, $replyToEmail, $replyToName, $error);
+        return sendViaSmtp($host, $toEmail, $fromEmail, $fromName, $subject, $body, $replyToEmail, $replyToName, $error);
     }
 
-    return sendViaPhpMail($to, $fromEmail, $fromName, $subject, $body, $replyToEmail, $replyToName, $error);
+    return sendViaPhpMail($toEmail, $fromEmail, $fromName, $subject, $body, $replyToEmail, $replyToName, $error);
 }
 
 function sendViaPhpMail(string $to, string $fromEmail, string $fromName, string $subject, string $body, string $replyToEmail, string $replyToName, ?string &$error): bool {

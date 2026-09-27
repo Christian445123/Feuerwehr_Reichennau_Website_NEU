@@ -88,10 +88,10 @@ require_once __DIR__ . '/../permissions.php';
         </nav>
 
         <div class="sidebar-footer">
-            <div class="sidebar-user">
+            <a href="account.php" class="sidebar-user <?php echo ($activePage ?? '') === 'account' ? 'active' : ''; ?>" title="Mein Konto">
                 <i class="fas fa-user-circle"></i>
                 <span><?php echo e($_SESSION['admin_user_name'] ?? 'Admin'); ?></span>
-            </div>
+            </a>
             <a href="logout.php" class="sidebar-link logout-link">
                 <i class="fas fa-sign-out-alt"></i> Abmelden
             </a>

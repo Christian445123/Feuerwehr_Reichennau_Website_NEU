@@ -98,6 +98,13 @@ img { max-width: 100%; height: auto; }
     display: flex; align-items: center; gap: 10px;
     color: rgba(255,255,255,0.7); font-size: 0.85rem;
     padding: 8px 14px;
+    border-radius: var(--radius);
+    transition: all 0.2s;
+}
+
+.sidebar-user:hover, .sidebar-user.active {
+    color: var(--white);
+    background: rgba(255,255,255,0.08);
 }
 
 .sidebar-user i { font-size: 1.4rem; }

@@ -14,11 +14,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (!checkRateLimit(getDB(), 'admin_login', 8, 600)) {
         $error = 'Zu viele Anmeldeversuche. Bitte versuche es später erneut.';
-    } elseif (login($username, $password)) {
-        header('Location: index.php');
-        exit;
     } else {
-        $error = 'Benutzername oder Passwort falsch.';
+        $result = login($username, $password);
+        if ($result === 'ok') {
+            header('Location: index.php');
+            exit;
+        } elseif ($result === '2fa') {
+            header('Location: login-2fa.php');
+            exit;
+        } else {
+            $error = 'Benutzername oder Passwort falsch.';
+        }
     }
 }
 ?>
