@@ -2542,6 +2542,26 @@ body.nav-open {
     background: var(--color-dark);
     color: rgba(255,255,255,0.7);
     padding-top: 60px;
+    position: relative;
+}
+
+/* Bewusst kaum sichtbarer Admin-Zugang in der Fußzeilen-Ecke - auf den
+   ersten Blick unauffällig, aber per Hover/Fokus (und für Screenreader über
+   aria-label) auffindbar. */
+.footer-admin-access {
+    position: absolute;
+    bottom: 8px;
+    right: 12px;
+    color: rgba(255,255,255,0.06);
+    font-size: 0.75rem;
+    line-height: 1;
+    padding: 6px;
+    transition: color 0.3s ease;
+}
+
+.footer-admin-access:hover,
+.footer-admin-access:focus {
+    color: rgba(255,255,255,0.45);
 }
 
 .footer-grid {

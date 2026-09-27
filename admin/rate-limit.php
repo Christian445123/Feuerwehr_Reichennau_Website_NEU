@@ -53,6 +53,9 @@ $prefillIp = trim($_GET['block_ip'] ?? '');
 
 $blockedIps = $db->query("SELECT * FROM blocked_ips ORDER BY created_at DESC")->fetchAll();
 $events = $db->query("SELECT * FROM rate_limit_events ORDER BY created_at DESC LIMIT 200")->fetchAll();
+$visitsByIp = $db->query("SELECT ip_address, COUNT(*) as visits, MIN(created_at) as first_seen, MAX(created_at) as last_seen FROM site_visits GROUP BY ip_address ORDER BY visits DESC LIMIT 100")->fetchAll();
+$recentVisits = $db->query("SELECT * FROM site_visits ORDER BY created_at DESC LIMIT 200")->fetchAll();
+$totalVisits = (int) $db->query("SELECT COUNT(*) FROM site_visits")->fetchColumn();
 
 require_once __DIR__ . '/includes/admin-header.php';
 ?>
@@ -166,6 +169,69 @@ require_once __DIR__ . '/includes/admin-header.php';
                 </tbody>
             </table>
             <p style="margin-top:12px; color: var(--gray-600); font-size:0.85rem;">Es werden maximal die letzten 200 Ereignisse angezeigt.</p>
+        <?php endif; ?>
+    </div>
+</div>
+
+<div class="admin-card" style="margin-top: 24px;">
+    <div class="admin-card-header"><h2><i class="fas fa-chart-bar"></i> Website-Zugriffe nach IP-Adresse (letzter Monat, <?php echo $totalVisits; ?> gesamt)</h2></div>
+    <div class="admin-card-body" style="overflow-x:auto;">
+        <p style="margin-bottom: 12px; color: var(--gray-600); font-size: 0.85rem;">Erfasst jeden Seitenaufruf der öffentlichen Website. Ältere Einträge als ein Monat werden automatisch gelöscht, damit das Log klein bleibt.</p>
+        <?php if (empty($visitsByIp)): ?>
+            <p style="color: var(--gray-600);">Noch keine Zugriffe erfasst.</p>
+        <?php else: ?>
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>IP-Adresse</th>
+                        <th>Zugriffe</th>
+                        <th>Erster Zugriff</th>
+                        <th>Letzter Zugriff</th>
+                        <th>Aktionen</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($visitsByIp as $v): ?>
+                        <tr>
+                            <td><strong><?php echo e($v['ip_address']); ?></strong></td>
+                            <td><?php echo (int) $v['visits']; ?></td>
+                            <td><?php echo e(date('d.m.Y H:i', strtotime($v['first_seen']))); ?></td>
+                            <td><?php echo e(date('d.m.Y H:i', strtotime($v['last_seen']))); ?></td>
+                            <td><a href="rate-limit.php?block_ip=<?php echo urlencode($v['ip_address']); ?>#ip_address" class="btn-icon" title="IP sperren"><i class="fas fa-ban"></i></a></td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+            <p style="margin-top:12px; color: var(--gray-600); font-size:0.85rem;">Es werden maximal die 100 aktivsten IP-Adressen angezeigt.</p>
+        <?php endif; ?>
+    </div>
+</div>
+
+<div class="admin-card" style="margin-top: 24px;">
+    <div class="admin-card-header"><h2><i class="fas fa-list"></i> Letzte Zugriffe</h2></div>
+    <div class="admin-card-body" style="overflow-x:auto;">
+        <?php if (empty($recentVisits)): ?>
+            <p style="color: var(--gray-600);">Noch keine Zugriffe erfasst.</p>
+        <?php else: ?>
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Zeitpunkt</th>
+                        <th>IP-Adresse</th>
+                        <th>Seite</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($recentVisits as $v): ?>
+                        <tr>
+                            <td><?php echo e(date('d.m.Y H:i:s', strtotime($v['created_at']))); ?></td>
+                            <td><?php echo e($v['ip_address']); ?></td>
+                            <td><code><?php echo e($v['page']); ?></code></td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+            <p style="margin-top:12px; color: var(--gray-600); font-size:0.85rem;">Es werden maximal die letzten 200 Zugriffe angezeigt.</p>
         <?php endif; ?>
     </div>
 </div>

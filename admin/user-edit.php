@@ -7,6 +7,7 @@ requireLogin();
 requirePermission('users.manage');
 
 $db = getDB();
+$roles = $db->query("SELECT id, name, permissions FROM roles ORDER BY name")->fetchAll();
 
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 $isEdit = $id > 0;
@@ -246,6 +247,24 @@ $isSuperadmin = in_array('*', $user['permissions'], true);
             <?php if ($isProtected): ?>
                 <p class="permission-note"><i class="fas fa-shield-alt"></i> Das Hauptkonto <strong>admin</strong> hat fest eingebauten Vollzugriff und kann nicht eingeschränkt werden.</p>
             <?php endif; ?>
+
+            <?php if (!empty($roles) && !$isProtected): ?>
+                <div class="form-group">
+                    <label for="role_template">Rolle übernehmen (setzt die Rechte unten als Vorschlag)</label>
+                    <div style="display:flex; gap:8px;">
+                        <select id="role_template">
+                            <option value="">-- Rolle wählen --</option>
+                            <?php foreach ($roles as $r): ?>
+                                <option value="<?php echo (int) $r['id']; ?>"><?php echo e($r['name']); ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                        <button type="button" class="btn btn-secondary btn-sm" id="applyRoleBtn"><i class="fas fa-arrow-down"></i> Übernehmen</button>
+                    </div>
+                    <p class="form-hint">Setzt einmalig die Häkchen unten entsprechend der Rolle - danach frei anpassbar. Spätere Änderungen an der Rolle wirken sich nicht automatisch aus.</p>
+                </div>
+                <hr>
+            <?php endif; ?>
+
             <div class="form-group">
                 <label class="checkbox-label">
                     <input type="checkbox" name="is_superadmin" id="is_superadmin" <?php echo $isSuperadmin ? 'checked' : ''; ?> <?php echo $isProtected ? 'disabled' : ''; ?>>
@@ -285,6 +304,25 @@ function togglePermCheckboxes() {
     permCheckboxes.forEach(function (cb) { cb.disabled = superadminCheckbox.checked; });
 }
 superadminCheckbox.addEventListener('change', togglePermCheckboxes);
+
+var roleData = <?php echo json_encode(array_column(array_map(function ($r) {
+    return ['id' => (int) $r['id'], 'permissions' => json_decode($r['permissions'] ?? '[]', true) ?: []];
+}, $roles), 'permissions', 'id'), JSON_UNESCAPED_UNICODE); ?>;
+var applyRoleBtn = document.getElementById('applyRoleBtn');
+if (applyRoleBtn) {
+    applyRoleBtn.addEventListener('click', function () {
+        var roleSelect = document.getElementById('role_template');
+        var perms = roleData[roleSelect.value];
+        if (!perms) return;
+        if (perms.indexOf('*') !== -1) {
+            superadminCheckbox.checked = true;
+        } else {
+            superadminCheckbox.checked = false;
+            permCheckboxes.forEach(function (cb) { cb.checked = perms.indexOf(cb.value) !== -1; });
+        }
+        togglePermCheckboxes();
+    });
+}
 
 <?php if (!$isEdit): ?>
 // Benutzername live aus Vor-/Nachname vorschlagen (Nachname zuerst), solange

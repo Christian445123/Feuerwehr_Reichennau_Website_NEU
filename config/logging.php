@@ -115,6 +115,23 @@ function logLoginAttempt(PDO $db, string $type, string $username, bool $success)
     ]);
 }
 
+/**
+ * Protokolliert jeden Seitenaufruf der öffentlichen Website (IP + Seite +
+ * Zeitpunkt, bewusst schlank gehalten). Es wird nur der letzte Monat
+ * behalten - ältere Einträge werden automatisch entfernt, damit die Tabelle
+ * klein bleibt. Das Aufräumen läuft nicht bei jedem Aufruf (unnötige Last),
+ * sondern nur mit geringer Wahrscheinlichkeit pro Aufruf.
+ */
+function logSiteVisit(PDO $db, string $page): void {
+    $ip = getClientIp();
+    $stmt = $db->prepare("INSERT INTO site_visits (ip_address, page) VALUES (?, ?)");
+    $stmt->execute([$ip, mb_substr($page, 0, 100)]);
+
+    if (random_int(1, 50) === 1) {
+        $db->exec("DELETE FROM site_visits WHERE created_at < DATE_SUB(NOW(), INTERVAL 1 MONTH)");
+    }
+}
+
 function isIpBlocked(PDO $db, string $ip): bool {
     $stmt = $db->prepare("SELECT COUNT(*) FROM blocked_ips WHERE ip_address = ? AND (expires_at IS NULL OR expires_at > NOW())");
     $stmt->execute([$ip]);

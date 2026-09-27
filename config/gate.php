@@ -5,6 +5,7 @@
  */
 
 require_once __DIR__ . '/database.php';
+require_once __DIR__ . '/logging.php';
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -68,6 +69,26 @@ function setMaintenanceMode(bool $enabled): void {
  * für alle frei zugänglich.
  */
 function requireSiteAccess(): void {
+    // Wird pro Seitenaufruf mehrfach aufgerufen (einmal von index.php, einmal
+    // von der jeweiligen Seite selbst) - Protokollierung und Rate-Limit
+    // sollen aber nur einmal pro tatsächlichem Request greifen.
+    static $tracked = false;
+    if (!$tracked) {
+        $tracked = true;
+        $db = getDB();
+        $page = $_GET['page'] ?? 'home';
+        logSiteVisit($db, is_string($page) ? $page : 'home');
+
+        if (!checkRateLimit($db, 'site_access', 20, 60)) {
+            http_response_code(429);
+            header('Content-Type: text/html; charset=UTF-8');
+            echo '<!DOCTYPE html><html lang="de"><head><meta charset="UTF-8"><title>Zu viele Anfragen</title></head>'
+                . '<body style="font-family:sans-serif;text-align:center;padding:80px 20px;color:#333;">'
+                . '<h1>Zu viele Anfragen</h1><p>Bitte warte kurz und versuche es erneut.</p></body></html>';
+            exit;
+        }
+    }
+
     if (!isMaintenanceModeEnabled()) {
         return;
     }

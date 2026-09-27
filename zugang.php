@@ -5,6 +5,8 @@
 require_once __DIR__ . '/config/gate.php';
 require_once __DIR__ . '/config/logging.php';
 
+logSiteVisit(getDB(), 'zugang');
+
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

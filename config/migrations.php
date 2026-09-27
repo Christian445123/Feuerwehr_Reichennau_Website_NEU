@@ -538,6 +538,42 @@ function getMigrations(): array {
         ],
 
         [
+            'id' => '2026_09_27_create_roles',
+            'run' => function (PDO $db) {
+                // Rollen sind nur eine wiederverwendbare Vorlage für
+                // Berechtigungs-Standardwerte beim Anlegen/Bearbeiten von
+                // Benutzern (admin/user-edit.php übernimmt die Rechte einer
+                // gewählten Rolle in die Checkboxen) - keine feste
+                // Verknüpfung zum Benutzer, damit spätere Rollenänderungen
+                // bestehende Benutzer nicht rückwirkend verändern.
+                $db->exec("CREATE TABLE IF NOT EXISTS roles (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    name VARCHAR(100) UNIQUE NOT NULL,
+                    permissions TEXT DEFAULT NULL,
+                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+            },
+        ],
+
+        [
+            'id' => '2026_09_27_create_site_visits',
+            'run' => function (PDO $db) {
+                // Bewusst schlank gehalten (nur IP, Seite, Zeitpunkt) und wird
+                // automatisch auf den letzten Monat begrenzt (siehe
+                // logSiteVisit() in config/logging.php), damit die Tabelle
+                // nicht unbegrenzt wächst.
+                $db->exec("CREATE TABLE IF NOT EXISTS site_visits (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    ip_address VARCHAR(45) NOT NULL,
+                    page VARCHAR(100) DEFAULT '',
+                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    INDEX idx_ip (ip_address),
+                    INDEX idx_created (created_at)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+            },
+        ],
+
+        [
             'id' => '2026_09_27_add_user_account_columns',
             'run' => function (PDO $db) {
                 // E-Mail (für Zugangsdaten-Mails), Vorname/Nachname (für die

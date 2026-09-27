@@ -73,6 +73,9 @@ require_once __DIR__ . '/../permissions.php';
                 <a href="users.php" class="sidebar-link <?php echo ($activePage ?? '') === 'users' ? 'active' : ''; ?>">
                     <i class="fas fa-user-shield"></i> Benutzer
                 </a>
+                <a href="roles.php" class="sidebar-link <?php echo ($activePage ?? '') === 'roles' ? 'active' : ''; ?>">
+                    <i class="fas fa-user-tag"></i> Rollen
+                </a>
             <?php endif; ?>
             <?php if (userHasPermission('deploy.manage')): ?>
                 <a href="deploy.php" class="sidebar-link <?php echo ($activePage ?? '') === 'deploy' ? 'active' : ''; ?>">

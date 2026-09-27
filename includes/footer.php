@@ -44,6 +44,7 @@
                 </div>
             </div>
         </div>
+        <a href="admin/login.php" class="footer-admin-access" aria-label="Admin-Anmeldung" title="Admin-Anmeldung"><i class="fas fa-lock"></i></a>
     </footer>
 
     <!-- Back to Top -->
