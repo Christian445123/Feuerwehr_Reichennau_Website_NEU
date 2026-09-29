@@ -9,6 +9,7 @@
 require_once __DIR__ . '/env.php';
 require_once __DIR__ . '/crypto.php';
 require_once __DIR__ . '/migrations.php';
+require_once __DIR__ . '/images.php';
 
 // Server/Hosting läuft standardmäßig auf UTC - für Logs, Zeitstempel und
 // Datumsanzeigen soll aber überall die österreichische Zeit (inkl.
@@ -221,15 +222,21 @@ function ensureUploadDirs(): void {
 }
 
 /**
- * Bild-Upload verarbeiten
+ * Bild-Upload verarbeiten. $error wird bei Rückgabe von null mit einem für
+ * Admins verständlichen Grund befüllt (z.B. für eine Fehlermeldung im
+ * Formular), damit ein fehlgeschlagener Upload nicht stillschweigend
+ * ignoriert wird.
  */
-function handleImageUpload(array $file, string $subdir): ?string {
+function handleImageUpload(array $file, string $subdir, ?string &$error = null): ?string {
     ensureUploadDirs();
 
     $allowed = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
     $maxSize = 10 * 1024 * 1024; // 10MB
 
     if ($file['error'] !== UPLOAD_ERR_OK || $file['size'] === 0) {
+        $error = in_array($file['error'], [UPLOAD_ERR_INI_SIZE, UPLOAD_ERR_FORM_SIZE], true)
+            ? 'Datei ist größer als vom Server erlaubt.'
+            : 'Datei konnte nicht hochgeladen werden.';
         return null;
     }
 
@@ -237,10 +244,12 @@ function handleImageUpload(array $file, string $subdir): ?string {
     $finfo = new finfo(FILEINFO_MIME_TYPE);
     $mime = $finfo->file($file['tmp_name']);
     if (!in_array($mime, $allowed, true)) {
+        $error = 'Nicht unterstütztes Dateiformat (nur JPG, PNG, GIF, WebP).';
         return null;
     }
 
     if ($file['size'] > $maxSize) {
+        $error = 'Datei ist größer als 10MB.';
         return null;
     }
 
@@ -255,11 +264,16 @@ function handleImageUpload(array $file, string $subdir): ?string {
     $filename = bin2hex(random_bytes(16)) . '.' . $ext;
     $target = UPLOAD_PATH . $subdir . '/' . $filename;
 
-    if (move_uploaded_file($file['tmp_name'], $target)) {
-        return $subdir . '/' . $filename;
+    if (!move_uploaded_file($file['tmp_name'], $target)) {
+        $error = 'Datei konnte nicht gespeichert werden (Berechtigungsproblem am Server?).';
+        return null;
     }
 
-    return null;
+    // Automatisch verkleinern/komprimieren, um Speicherplatz zu sparen -
+    // läuft nur mit GD-Erweiterung, sonst bleibt die Originaldatei stehen.
+    resizeAndCompressImage($target, $mime);
+
+    return $subdir . '/' . $filename;
 }
 
 // Datenbank beim ersten Laden initialisieren

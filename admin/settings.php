@@ -199,8 +199,10 @@ require_once __DIR__ . '/includes/admin-header.php';
         <table class="admin-table">
             <tr><td><strong>PHP Version</strong></td><td><?php echo phpversion(); ?></td></tr>
             <tr><td><strong>Datenbank</strong></td><td><?php echo 'MariaDB/MySQL ' . $db->query("SELECT VERSION()")->fetchColumn(); ?></td></tr>
-            <tr><td><strong>Upload Max</strong></td><td><?php echo ini_get('upload_max_filesize'); ?></td></tr>
-            <tr><td><strong>Post Max</strong></td><td><?php echo ini_get('post_max_size'); ?></td></tr>
+            <tr><td><strong>Upload Max (pro Datei)</strong></td><td><?php echo ini_get('upload_max_filesize'); ?></td></tr>
+            <tr><td><strong>Post Max (ganze Anfrage)</strong></td><td><?php echo ini_get('post_max_size'); ?></td></tr>
+            <tr><td><strong>Max. Dateien pro Upload</strong></td><td><?php echo ini_get('max_file_uploads'); ?></td></tr>
+            <tr><td><strong>Automatische Bildverkleinerung</strong></td><td><?php echo extension_loaded('gd') ? '<span class="badge badge-success">Aktiv (GD verfügbar)</span>' : '<span class="badge badge-danger">Inaktiv (GD-Erweiterung fehlt am Server)</span>'; ?></td></tr>
         </table>
     </div>
 </div>

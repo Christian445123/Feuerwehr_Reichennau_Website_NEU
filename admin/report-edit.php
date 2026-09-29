@@ -73,6 +73,16 @@ if (isset($_GET['delete_image']) && is_numeric($_GET['delete_image']) && $isEdit
 
 // Formular verarbeiten
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Wenn die Anfrage zusammen größer als post_max_size ist, leert PHP
+    // $_POST/$_FILES komplett und OHNE Fehlermeldung - das sah bisher wie ein
+    // ungültiger Sicherheits-Token oder ein fehlender Titel aus und war der
+    // Hauptgrund, warum "keine Bilder hinzugefügt werden konnten".
+    if (empty($_POST) && empty($_FILES) && (int) ($_SERVER['CONTENT_LENGTH'] ?? 0) > 0) {
+        flash('error', 'Die ausgewählten Dateien sind zusammen zu groß für den Server (aktuelles Limit: ' . ini_get('post_max_size') . '). Bitte weniger Bilder auf einmal hochladen.');
+        header("Location: report-edit.php" . ($isEdit ? "?id=$id" : ""));
+        exit;
+    }
+
     if (!verifyCsrf()) {
         flash('error', 'Ungültiger Sicherheits-Token.');
         header("Location: report-edit.php" . ($isEdit ? "?id=$id" : ""));
@@ -122,14 +132,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $isEdit = true;
         }
 
-        // Bilder hochladen
+        // Bilder hochladen (beliebig viele - jede Datei wird automatisch
+        // verkleinert/komprimiert, siehe handleImageUpload()/resizeAndCompressImage())
+        $uploadErrors = [];
         if (!empty($_FILES['images']['name'][0])) {
             $maxSort = $db->prepare("SELECT COALESCE(MAX(sort_order),0) FROM report_images WHERE report_id = ?");
             $maxSort->execute([$id]);
             $sortOrder = (int)$maxSort->fetchColumn();
 
             foreach ($_FILES['images']['name'] as $i => $name) {
-                if ($_FILES['images']['error'][$i] !== UPLOAD_ERR_OK) continue;
+                if ($_FILES['images']['error'][$i] === UPLOAD_ERR_NO_FILE) continue;
 
                 $file = [
                     'name' => $_FILES['images']['name'][$i],
@@ -139,18 +151,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'size' => $_FILES['images']['size'][$i],
                 ];
 
-                $filename = handleImageUpload($file, 'reports');
+                $uploadError = null;
+                $filename = handleImageUpload($file, 'reports', $uploadError);
                 if ($filename) {
                     $sortOrder++;
                     $caption = trim($_POST['image_captions'][$i] ?? '');
                     $stmt = $db->prepare("INSERT INTO report_images (report_id, filename, caption, sort_order) VALUES (?,?,?,?)");
                     $stmt->execute([$id, $filename, $caption, $sortOrder]);
+                } else {
+                    $uploadErrors[] = ($name ?: 'Bild ' . ($i + 1)) . ': ' . ($uploadError ?? 'Unbekannter Fehler');
                 }
             }
         }
 
         logActivity($db, $wasCreate ? 'report.create' : 'report.update', $report['title']);
-        flash('success', $wasCreate ? 'Bericht wurde erstellt.' : 'Bericht wurde aktualisiert.');
+        if (!empty($uploadErrors)) {
+            flash('error', 'Bericht gespeichert, aber einige Bilder konnten nicht hochgeladen werden: ' . implode('; ', $uploadErrors));
+        } else {
+            flash('success', $wasCreate ? 'Bericht wurde erstellt.' : 'Bericht wurde aktualisiert.');
+        }
         header("Location: report-edit.php?id=$id");
         exit;
     }
@@ -232,7 +251,7 @@ require_once __DIR__ . '/includes/admin-header.php';
                     <div class="upload-area" id="uploadArea">
                         <i class="fas fa-cloud-upload-alt"></i>
                         <p>Bilder hierher ziehen oder klicken zum Auswählen</p>
-                        <p class="text-small">JPG, PNG, GIF, WebP - max. 10MB pro Bild</p>
+                        <p class="text-small">JPG, PNG, GIF, WebP - max. 10MB pro Bild - auch 10 oder mehr Bilder auf einmal möglich. Bilder werden automatisch für die Website verkleinert.</p>
                         <input type="file" name="images[]" id="imageInput" multiple accept="image/*" class="file-input">
                     </div>
 
