@@ -93,22 +93,15 @@ $berichteVorjahr = getBerichteVorjahr();
                 </div>
             <?php endif; ?>
 
-            <?php if (!empty($report['social_link'])): ?>
-                <?php
-                $socialIconClass = 'fas fa-external-link-alt';
-                $socialLabel = 'Weitere Informationen';
-                if (stripos($report['social_link'], 'instagram.com') !== false) {
-                    $socialIconClass = 'fab fa-instagram';
-                    $socialLabel = 'Auf Instagram ansehen';
-                } elseif (stripos($report['social_link'], 'facebook.com') !== false) {
-                    $socialIconClass = 'fab fa-facebook';
-                    $socialLabel = 'Auf Facebook ansehen';
-                }
-                ?>
+            <?php $reportLinks = getReportLinks($report); ?>
+            <?php if (!empty($reportLinks)): ?>
                 <div class="bericht-social-link">
-                    <a href="<?php echo htmlspecialchars($report['social_link']); ?>" target="_blank" rel="noopener" class="btn btn-outline-dark">
-                        <i class="<?php echo $socialIconClass; ?>"></i> <?php echo $socialLabel; ?>
-                    </a>
+                    <?php foreach ($reportLinks as $link): ?>
+                        <?php $linkMeta = detectReportLinkIcon($link); ?>
+                        <a href="<?php echo htmlspecialchars($link); ?>" target="_blank" rel="noopener" class="btn btn-outline-dark">
+                            <i class="<?php echo $linkMeta['icon']; ?>"></i> <?php echo htmlspecialchars($linkMeta['label']); ?>
+                        </a>
+                    <?php endforeach; ?>
                 </div>
             <?php endif; ?>
         </div>

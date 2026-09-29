@@ -2,6 +2,7 @@
 require_once __DIR__ . '/auth.php';
 require_once __DIR__ . '/permissions.php';
 require_once __DIR__ . '/../config/logging.php';
+require_once __DIR__ . '/../config/berichte.php';
 requireLogin();
 requirePermission('reports.manage');
 
@@ -14,9 +15,10 @@ $pageTitle = $isEdit ? 'Bericht bearbeiten' : 'Neuer Bericht';
 
 $report = [
     'title' => '', 'category' => 'einsatz', 'subcategory' => '', 'content' => '',
-    'date' => date('Y-m-d'), 'author' => '', 'published' => 1, 'social_link' => ''
+    'date' => date('Y-m-d'), 'author' => '', 'published' => 1,
 ];
 $images = [];
+$links = [];
 
 if ($isEdit) {
     $stmt = $db->prepare("SELECT * FROM reports WHERE id = ?");
@@ -28,6 +30,7 @@ if ($isEdit) {
         exit;
     }
     $report = $found;
+    $links = getReportLinks($report);
 
     $imgStmt = $db->prepare("SELECT * FROM report_images WHERE report_id = ? ORDER BY sort_order ASC");
     $imgStmt->execute([$id]);
@@ -96,7 +99,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $report['date'] = $_POST['date'] ?? date('Y-m-d');
     $report['author'] = trim($_POST['author'] ?? '');
     $report['published'] = isset($_POST['published']) ? 1 : 0;
-    $report['social_link'] = trim($_POST['social_link'] ?? '');
+
+    // Beliebig viele Links - leere Felder werden ignoriert, jede
+    // ausgefüllte URL muss gültig sein.
+    $links = [];
+    $linkErrors = [];
+    foreach ($_POST['links'] ?? [] as $rawLink) {
+        $url = trim($rawLink);
+        if ($url === '') continue;
+        if (!filter_var($url, FILTER_VALIDATE_URL)) {
+            $linkErrors[] = $url;
+            continue;
+        }
+        $links[] = $url;
+    }
 
     $validCats = ['einsatz', 'uebung', 'jugend', 'veranstaltungen', 'sonstige'];
     if (!in_array($report['category'], $validCats, true)) {
@@ -118,16 +134,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($report['title'])) {
         flash('error', 'Titel ist erforderlich.');
-    } elseif ($report['social_link'] !== '' && !filter_var($report['social_link'], FILTER_VALIDATE_URL)) {
-        flash('error', 'Der Social-Media-Link ist keine gültige URL (z.B. https://www.instagram.com/p/...).');
+    } elseif (!empty($linkErrors)) {
+        flash('error', 'Ungültige Link-URL: ' . implode(', ', $linkErrors) . ' (z.B. https://www.instagram.com/p/...).');
     } else {
+        $linksJson = !empty($links) ? json_encode($links) : null;
         $wasCreate = !$isEdit;
         if ($isEdit) {
-            $stmt = $db->prepare("UPDATE reports SET title=?, category=?, subcategory=?, content=?, date=?, author=?, published=?, social_link=?, updated_at=CURRENT_TIMESTAMP WHERE id=?");
-            $stmt->execute([$report['title'], $report['category'], $report['subcategory'] ?: null, $report['content'], $report['date'], $report['author'], $report['published'], $report['social_link'] ?: null, $id]);
+            $stmt = $db->prepare("UPDATE reports SET title=?, category=?, subcategory=?, content=?, date=?, author=?, published=?, links=?, updated_at=CURRENT_TIMESTAMP WHERE id=?");
+            $stmt->execute([$report['title'], $report['category'], $report['subcategory'] ?: null, $report['content'], $report['date'], $report['author'], $report['published'], $linksJson, $id]);
         } else {
-            $stmt = $db->prepare("INSERT INTO reports (title, category, subcategory, content, date, author, published, social_link) VALUES (?,?,?,?,?,?,?,?)");
-            $stmt->execute([$report['title'], $report['category'], $report['subcategory'] ?: null, $report['content'], $report['date'], $report['author'], $report['published'], $report['social_link'] ?: null]);
+            $stmt = $db->prepare("INSERT INTO reports (title, category, subcategory, content, date, author, published, links) VALUES (?,?,?,?,?,?,?,?)");
+            $stmt->execute([$report['title'], $report['category'], $report['subcategory'] ?: null, $report['content'], $report['date'], $report['author'], $report['published'], $linksJson]);
             $id = $db->lastInsertId();
             $isEdit = true;
         }
@@ -237,9 +254,18 @@ require_once __DIR__ . '/includes/admin-header.php';
                     </div>
 
                     <div class="form-group">
-                        <label for="social_link"><i class="fab fa-instagram"></i> Instagram-Beitrag oder Website verlinken</label>
-                        <input type="url" id="social_link" name="social_link" value="<?php echo e($report['social_link'] ?? ''); ?>" placeholder="z.B. https://www.instagram.com/p/... oder eine externe Website">
-                        <p class="form-hint">Optional: Link zu einem Instagram-Beitrag oder einer externen Website (z.B. Zeitungsartikel, feuerwehr.tirol). Wird beim veröffentlichten Bericht als Button angezeigt.</p>
+                        <label><i class="fas fa-link"></i> Links (Instagram, Facebook, externe Website, ...)</label>
+                        <div id="linksList">
+                            <?php $linkRows = !empty($links) ? $links : ['']; ?>
+                            <?php foreach ($linkRows as $link): ?>
+                                <div class="link-row" style="display:flex; gap:8px; margin-bottom:8px;">
+                                    <input type="url" name="links[]" value="<?php echo e($link); ?>" placeholder="z.B. https://www.instagram.com/p/... oder eine externe Website" style="flex:1;">
+                                    <button type="button" class="btn btn-sm btn-secondary remove-link-row" title="Link entfernen"><i class="fas fa-times"></i></button>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                        <button type="button" id="addLinkRow" class="btn btn-sm btn-secondary"><i class="fas fa-plus"></i> Weiteren Link hinzufügen</button>
+                        <p class="form-hint">Optional: beliebig viele Links zu Instagram-Beiträgen, Facebook, YouTube oder externen Websites (z.B. Zeitungsartikel, feuerwehr.tirol). Icon wird automatisch anhand der URL erkannt, jeder Link erscheint beim veröffentlichten Bericht als eigener Button.</p>
                     </div>
                 </div>
             </div>
@@ -372,6 +398,33 @@ function showPreviews() {
         reader.readAsDataURL(file);
     });
 }
+
+// Links: weitere Zeilen hinzufügen/entfernen
+var linksList = document.getElementById('linksList');
+
+function makeLinkRow() {
+    var div = document.createElement('div');
+    div.className = 'link-row';
+    div.style.cssText = 'display:flex; gap:8px; margin-bottom:8px;';
+    div.innerHTML = '<input type="url" name="links[]" placeholder="z.B. https://www.instagram.com/p/... oder eine externe Website" style="flex:1;">' +
+        '<button type="button" class="btn btn-sm btn-secondary remove-link-row" title="Link entfernen"><i class="fas fa-times"></i></button>';
+    return div;
+}
+
+document.getElementById('addLinkRow').addEventListener('click', function() {
+    linksList.appendChild(makeLinkRow());
+});
+
+linksList.addEventListener('click', function(e) {
+    var btn = e.target.closest('.remove-link-row');
+    if (!btn) return;
+    var rows = linksList.querySelectorAll('.link-row');
+    if (rows.length > 1) {
+        btn.closest('.link-row').remove();
+    } else {
+        btn.closest('.link-row').querySelector('input').value = '';
+    }
+});
 </script>
 
 <?php require_once __DIR__ . '/includes/admin-footer.php'; ?>

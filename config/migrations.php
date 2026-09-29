@@ -589,6 +589,25 @@ function getMigrations(): array {
             },
         ],
 
+        [
+            'id' => '2026_09_29_add_report_links',
+            'run' => function (PDO $db) {
+                // Ersetzt das einzelne "social_link"-Feld durch beliebig viele
+                // Links (JSON-Array von URLs) - Icon/Beschriftung wird beim
+                // Anzeigen weiterhin automatisch aus der URL erkannt (siehe
+                // detectReportLinkIcon() in config/berichte.php). Bestehende
+                // social_link-Werte werden als erster Link übernommen, damit
+                // nichts verloren geht.
+                addColumnIfMissing($db, 'reports', 'links', 'TEXT DEFAULT NULL');
+
+                $rows = $db->query("SELECT id, social_link FROM reports WHERE social_link IS NOT NULL AND social_link != '' AND (links IS NULL OR links = '')")->fetchAll();
+                $update = $db->prepare("UPDATE reports SET links = ? WHERE id = ?");
+                foreach ($rows as $row) {
+                    $update->execute([json_encode([$row['social_link']]), $row['id']]);
+                }
+            },
+        ],
+
     ];
 }
 

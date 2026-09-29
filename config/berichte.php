@@ -41,3 +41,31 @@ function setBerichteJahre(int $aktuellesJahr, int $vorjahr): void {
         }
     }
 }
+
+/**
+ * Beliebig viele externe Links pro Bericht (Instagram, Facebook, externe
+ * Website, ...). Werden als JSON-Array von URLs in reports.links
+ * gespeichert (siehe Migration 2026_09_29_add_report_links) und über
+ * Admin -> Berichte mit einem "+"-Button gepflegt.
+ */
+function getReportLinks(array $report): array {
+    $links = json_decode($report['links'] ?? '', true);
+    return is_array($links) ? array_values(array_filter($links, fn($l) => is_string($l) && trim($l) !== '')) : [];
+}
+
+/**
+ * Icon + Beschriftung werden automatisch aus der URL erkannt, damit beim
+ * Bearbeiten kein zusätzliches Icon-Auswahlfeld gepflegt werden muss.
+ */
+function detectReportLinkIcon(string $url): array {
+    if (stripos($url, 'instagram.com') !== false) {
+        return ['icon' => 'fab fa-instagram', 'label' => 'Auf Instagram ansehen'];
+    }
+    if (stripos($url, 'facebook.com') !== false) {
+        return ['icon' => 'fab fa-facebook', 'label' => 'Auf Facebook ansehen'];
+    }
+    if (stripos($url, 'youtube.com') !== false || stripos($url, 'youtu.be') !== false) {
+        return ['icon' => 'fab fa-youtube', 'label' => 'Auf YouTube ansehen'];
+    }
+    return ['icon' => 'fas fa-external-link-alt', 'label' => 'Weitere Informationen'];
+}

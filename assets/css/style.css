@@ -3768,6 +3768,9 @@ body.lightbox-open {
 
 .bericht-social-link {
     margin-top: 30px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
 }
 
 @media (max-width: 768px) {
