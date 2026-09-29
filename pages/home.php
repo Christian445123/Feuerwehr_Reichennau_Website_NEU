@@ -3,9 +3,11 @@
     <?php
     require_once __DIR__ . '/../config/database.php';
     require_once __DIR__ . '/../config/hero.php';
+    require_once __DIR__ . '/../config/einsatzbereitschaft.php';
     $heroDb = getDB();
     $heroImages = getActiveHeroImages($heroDb);
     $heroInterval = getHeroInterval($heroDb);
+    $einsatzbereit = isEinsatzbereit();
     ?>
     <section class="hero<?php echo $heroImages ? ' hero-has-images' : ''; ?>">
         <?php if ($heroImages): ?>
@@ -23,6 +25,13 @@
             <div class="hero-buttons">
                 <a href="index.php?page=kontakt" class="btn btn-primary"><i class="fas fa-hands-helping"></i> Mitmachen</a>
                 <a href="index.php?page=ueber-uns" class="btn btn-outline"><i class="fas fa-info-circle"></i> Mehr erfahren</a>
+            </div>
+
+            <div class="hero-readiness" role="img" aria-label="Status: <?php echo $einsatzbereit ? 'Einsatzbereit' : 'Nicht einsatzbereit'; ?>">
+                <span class="hero-readiness-track <?php echo $einsatzbereit ? 'is-ready' : 'is-not-ready'; ?>">
+                    <span class="hero-readiness-thumb"><i class="fas <?php echo $einsatzbereit ? 'fa-check' : 'fa-xmark'; ?>"></i></span>
+                </span>
+                <span class="hero-readiness-label <?php echo $einsatzbereit ? 'is-ready' : 'is-not-ready'; ?>"><?php echo $einsatzbereit ? 'Einsatzbereit' : 'Nicht einsatzbereit'; ?></span>
             </div>
         </div>
     </section>

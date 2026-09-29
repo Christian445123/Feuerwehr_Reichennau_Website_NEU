@@ -26,6 +26,11 @@ require_once __DIR__ . '/../permissions.php';
             <a href="index.php" class="sidebar-link <?php echo ($activePage ?? '') === 'dashboard' ? 'active' : ''; ?>">
                 <i class="fas fa-tachometer-alt"></i> Dashboard
             </a>
+            <?php if (userHasPermission('settings.manage')): ?>
+                <a href="einsatzbereitschaft.php" class="sidebar-link <?php echo ($activePage ?? '') === 'einsatzbereitschaft' ? 'active' : ''; ?>">
+                    <i class="fas fa-truck-medical"></i> Einsatzbereitschaft
+                </a>
+            <?php endif; ?>
             <a href="reports.php" class="sidebar-link <?php echo ($activePage ?? '') === 'reports' ? 'active' : ''; ?>">
                 <i class="fas fa-newspaper"></i> Berichte
             </a>

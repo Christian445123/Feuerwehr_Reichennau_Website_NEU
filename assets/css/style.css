@@ -385,6 +385,76 @@ body.nav-open {
     animation: fadeInUp 0.8s ease 0.6s both;
 }
 
+/* --- Einsatzbereitschaft-Anzeige (Start) --- */
+.hero-readiness {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 30px;
+    animation: fadeInUp 0.8s ease 0.7s both;
+}
+
+.hero-readiness-track {
+    position: relative;
+    width: 56px;
+    height: 30px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.25);
+    flex-shrink: 0;
+    transition: var(--transition);
+}
+
+.hero-readiness-track.is-ready {
+    background: rgba(39,174,96,0.9);
+    border-color: rgba(39,174,96,0.9);
+}
+
+.hero-readiness-track.is-not-ready {
+    background: rgba(213,0,28,0.85);
+    border-color: rgba(213,0,28,0.85);
+}
+
+.hero-readiness-thumb {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--color-white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    color: var(--color-dark);
+    transition: var(--transition);
+}
+
+.hero-readiness-track.is-ready .hero-readiness-thumb {
+    left: 28px;
+    color: var(--color-success);
+}
+
+.hero-readiness-track.is-not-ready .hero-readiness-thumb {
+    color: var(--color-primary);
+}
+
+.hero-readiness-label {
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 0.3px;
+}
+
+.hero-readiness-label.is-ready {
+    color: #6fe0a0;
+}
+
+.hero-readiness-label.is-not-ready {
+    color: #ff8f8f;
+}
+
 /* --- Buttons --- */
 .btn {
     display: inline-flex;
