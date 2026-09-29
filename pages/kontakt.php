@@ -124,7 +124,7 @@ $formSent = isset($_GET['sent']);
                                 </div>
                                 <div class="kontakt-item">
                                     <i class="fas fa-globe"></i>
-                                    <div><a href="http://www.ffr.at">www.ffr.at</a></div>
+                                    <div><a href="http://www.ff-reichennau.at">www.ff-reichennau.at</a></div>
                                 </div>
                             </div>
                         </div>

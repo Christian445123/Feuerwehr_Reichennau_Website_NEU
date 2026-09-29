@@ -19,7 +19,7 @@
                         <li><i class="fas fa-map-marker-alt"></i> Rossaugasse 4, A-6020 Innsbruck</li>
                         <li><i class="fas fa-phone"></i> <a href="tel:+43512345160">+43 (0)512 / 345160</a></li>
                         <li><i class="fas fa-envelope"></i> <a href="mailto:reichenau@feuerwehr.tirol">reichenau@feuerwehr.tirol</a></li>
-                        <li><i class="fas fa-globe"></i> <a href="http://www.ffr.at">www.ffr.at</a></li>
+                        <li><i class="fas fa-globe"></i> <a href="http://www.ff-reichennau.at">www.ff-reichennau.at</a></li>
                     </ul>
                 </div>
 
