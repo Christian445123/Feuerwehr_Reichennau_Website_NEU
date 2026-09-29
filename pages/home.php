@@ -21,7 +21,7 @@
         <div class="hero-content">
             <img src="assets/images/logo_feuerwehr_tirol.png" alt="Freiwillige Feuerwehr Reichenau" class="hero-logo">
             <p class="hero-location"><i class="fas fa-map-marker-alt"></i> Innsbruck Stadt</p>
-            <p class="hero-tagline">Mit Herz und Zusammenhalt im Einsatz für unsere Nachbarschaft – ehrenamtlich, rund um die Uhr, für Reichenau, Pradl und die Rossau.</p>
+            <p class="hero-tagline">Mit Herz und Zusammenhalt im Einsatz - ehrenamtlich, rund um die Uhr, für Innsbruck und darüber hinaus.</p>
             <div class="hero-buttons">
                 <a href="index.php?page=kontakt" class="btn btn-primary"><i class="fas fa-hands-helping"></i> Mitmachen</a>
                 <a href="index.php?page=ueber-uns" class="btn btn-outline"><i class="fas fa-info-circle"></i> Mehr erfahren</a>
