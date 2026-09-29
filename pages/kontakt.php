@@ -155,6 +155,16 @@ $formSent = isset($_GET['sent']);
                 <div class="kontakt-map">
                     <div class="content-card">
                         <div class="content-card-header">
+                            <div class="content-card-icon"><i class="fas fa-location-dot"></i></div>
+                            <h2>Standort</h2>
+                        </div>
+                        <div class="content-card-body">
+                            <div id="kontakt-standort-map" class="kontakt-standort-map" role="img" aria-label="Karte mit dem Standort der Feuerwache Reichenau"></div>
+                        </div>
+                    </div>
+
+                    <div class="content-card">
+                        <div class="content-card-header">
                             <div class="content-card-icon"><i class="fas fa-map"></i></div>
                             <h2>Unser Schutzgebiet</h2>
                         </div>
@@ -277,3 +287,33 @@ $formSent = isset($_GET['sent']);
             </div>
         </div>
     </section>
+
+<!-- Standort-Karte (Leaflet + OpenStreetMap, nur ein Marker - für die
+     Schutzgebiets-Fläche siehe die eigene Karte unter "Schutzbereich").
+     Kartenkacheln laufen über tile-proxy.php, siehe Kommentar dort. -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var mapEl = document.getElementById('kontakt-standort-map');
+    if (!mapEl || typeof L === 'undefined') return;
+
+    var wacheCoords = [47.27245, 11.43098];
+    var map = L.map('kontakt-standort-map', { scrollWheelZoom: false }).setView(wacheCoords, 16);
+
+    L.tileLayer('tile-proxy.php?z={z}&x={x}&y={y}', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>-Mitwirkende'
+    }).addTo(map);
+
+    L.marker(wacheCoords).addTo(map)
+        .bindPopup('<strong>Feuerwache Reichenau</strong><br>Rossaugasse 4, 6020 Innsbruck')
+        .openPopup();
+
+    mapEl.addEventListener('click', function () {
+        map.scrollWheelZoom.enable();
+    });
+    mapEl.addEventListener('mouseleave', function () {
+        map.scrollWheelZoom.disable();
+    });
+});
+</script>

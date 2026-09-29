@@ -1372,6 +1372,14 @@ body.nav-open {
     z-index: 1;
 }
 
+.kontakt-standort-map {
+    width: 100%;
+    height: 280px;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    z-index: 1;
+}
+
 .schutzbereich-map-note {
     color: var(--color-gray-600);
     font-size: 0.85rem;
