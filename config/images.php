@@ -13,9 +13,14 @@
  * nur eben ohne automatische Verkleinerung).
  */
 
+// Die Speicherersparnis soll vor allem durch das Verkleinern der
+// Bildabmessungen entstehen, nicht durch sichtbaren Qualitätsverlust -
+// deshalb hohe Qualitätswerte (kaum wahrnehmbare Kompression) und PNG
+// bleibt ohnehin verlustfrei (die Komprimierungsstufe ändert nur die
+// Kodier-Effizienz, nicht die Bildqualität).
 const IMAGE_MAX_DIMENSION = 1920;
-const IMAGE_JPEG_QUALITY = 82;
-const IMAGE_WEBP_QUALITY = 82;
+const IMAGE_JPEG_QUALITY = 90;
+const IMAGE_WEBP_QUALITY = 90;
 const IMAGE_PNG_COMPRESSION = 6;
 
 function resizeAndCompressImage(string $path, string $mime): void {
