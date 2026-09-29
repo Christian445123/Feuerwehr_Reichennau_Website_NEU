@@ -3,6 +3,7 @@ require_once __DIR__ . '/../config/gate.php';
 requireSiteAccess();
 require_once __DIR__ . '/../config/mail.php';
 require_once __DIR__ . '/../config/logging.php';
+require_once __DIR__ . '/../config/schutzbereich.php';
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -169,7 +170,7 @@ $formSent = isset($_GET['sent']);
                             <h2>Unser Schutzgebiet</h2>
                         </div>
                         <div class="content-card-body">
-                            <img src="assets/images/schutzgebiet_karte.jpg" alt="Schutzbereich der FF Reichenau (amtliche Karte, Stadt Innsbruck)" class="content-image" data-lightbox-group="schutzgebiet-karte-kontakt">
+                            <div id="kontakt-schutzgebiet-map" class="kontakt-schutzgebiet-map" role="img" aria-label="Karte des Schutzbereichs der FF Reichenau"></div>
                             <p class="schutzgebiet-map-hint">
                                 <a href="https://www.google.com/maps/search/?api=1&query=Freiwillige+Feuerwehr+Reichenau+Ro%C3%9Faugasse+4+Innsbruck" target="_blank" rel="noopener">Standort auf Google Maps öffnen <i class="fas fa-external-link-alt"></i></a>
                             </p>
@@ -288,9 +289,11 @@ $formSent = isset($_GET['sent']);
         </div>
     </section>
 
-<!-- Standort-Karte (Leaflet + OpenStreetMap, nur ein Marker - für die
-     Schutzgebiets-Fläche siehe die eigene Karte unter "Schutzbereich").
-     Kartenkacheln laufen über tile-proxy.php, siehe Kommentar dort. -->
+<!-- Standort- und Schutzgebiets-Karte (Leaflet + OpenStreetMap). Die
+     Schutzgebiets-Fläche ist dieselbe wie auf der Seite "Schutzbereich"
+     (Über uns) - Koordinaten kommen aus site_settings/schutzbereich_polygon,
+     siehe config/schutzbereich.php und admin/schutzbereich.php. Kartenkacheln
+     laufen über tile-proxy.php, siehe Kommentar dort. -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
@@ -308,6 +311,36 @@ document.addEventListener('DOMContentLoaded', function () {
     L.marker(wacheCoords).addTo(map)
         .bindPopup('<strong>Feuerwache Reichenau</strong><br>Rossaugasse 4, 6020 Innsbruck')
         .openPopup();
+
+    mapEl.addEventListener('click', function () {
+        map.scrollWheelZoom.enable();
+    });
+    mapEl.addEventListener('mouseleave', function () {
+        map.scrollWheelZoom.disable();
+    });
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    var mapEl = document.getElementById('kontakt-schutzgebiet-map');
+    if (!mapEl || typeof L === 'undefined') return;
+
+    var schutzbereichCoords = <?php echo json_encode(getSchutzbereichPolygon()); ?>;
+
+    var map = L.map('kontakt-schutzgebiet-map', { scrollWheelZoom: false });
+
+    L.tileLayer('tile-proxy.php?z={z}&x={x}&y={y}', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>-Mitwirkende'
+    }).addTo(map);
+
+    var schutzbereichPolygon = L.polygon(schutzbereichCoords, {
+        color: '#e4002b',
+        weight: 3,
+        fillColor: '#e4002b',
+        fillOpacity: 0.15
+    }).addTo(map);
+
+    map.fitBounds(schutzbereichPolygon.getBounds(), { padding: [10, 10] });
 
     mapEl.addEventListener('click', function () {
         map.scrollWheelZoom.enable();
