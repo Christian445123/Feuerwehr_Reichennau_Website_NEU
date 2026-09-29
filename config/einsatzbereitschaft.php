@@ -8,26 +8,7 @@
  * oder künftiger eigener API - beide nutzen denselben geheimen Token.
  */
 
-require_once __DIR__ . '/database.php';
-
-function getSiteSetting(string $key, string $default = ''): string {
-    $db = getDB();
-    $stmt = $db->prepare("SELECT value FROM site_settings WHERE setting_key = ?");
-    $stmt->execute([$key]);
-    $value = $stmt->fetchColumn();
-    return $value !== false ? $value : $default;
-}
-
-function setSiteSetting(string $key, string $value): void {
-    $db = getDB();
-    $stmt = $db->prepare("SELECT COUNT(*) FROM site_settings WHERE setting_key = ?");
-    $stmt->execute([$key]);
-    if ($stmt->fetchColumn() > 0) {
-        $db->prepare("UPDATE site_settings SET value = ? WHERE setting_key = ?")->execute([$value, $key]);
-    } else {
-        $db->prepare("INSERT INTO site_settings (setting_key, value) VALUES (?, ?)")->execute([$key, $value]);
-    }
-}
+require_once __DIR__ . '/settings.php';
 
 /**
  * Ohne gespeicherten Wert gilt die Wehr als einsatzbereit (Normalzustand).

@@ -31,6 +31,11 @@ require_once __DIR__ . '/../permissions.php';
                     <i class="fas fa-truck-medical"></i> Einsatzbereitschaft
                 </a>
             <?php endif; ?>
+            <?php if (userHasPermission('schutzbereich.manage')): ?>
+                <a href="schutzbereich.php" class="sidebar-link <?php echo ($activePage ?? '') === 'schutzbereich' ? 'active' : ''; ?>">
+                    <i class="fas fa-map-location-dot"></i> Schutzbereich
+                </a>
+            <?php endif; ?>
             <a href="reports.php" class="sidebar-link <?php echo ($activePage ?? '') === 'reports' ? 'active' : ''; ?>">
                 <i class="fas fa-newspaper"></i> Berichte
             </a>

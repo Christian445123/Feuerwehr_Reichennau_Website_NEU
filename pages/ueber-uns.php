@@ -4,6 +4,7 @@ requireSiteAccess();
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../config/ranks.php';
 require_once __DIR__ . '/../config/badges.php';
+require_once __DIR__ . '/../config/schutzbereich.php';
 $db = getDB();
 
 // Organigramm-Namen (Struktur ist fest unten im Template, nur die Namen sind
@@ -450,8 +451,10 @@ foreach ($allMembers as $am) {
      anhand von realen Straßen/Orten (Feuerwache Rossaugasse 4, Hauptbahnhof,
      Pradl, Pradler Saggen, Gewerbegebiet Rossau, Amraser-See-Straße)
      nachgezogen und ist keine exakte amtliche Grenze - siehe Hinweistext auf
-     der Seite. Bei Bedarf hier die Koordinaten in "schutzbereichCoords"
-     anpassen. Die Kartenkacheln laufen über tile-proxy.php (siehe dort):
+     der Seite. Die Koordinaten kommen aus site_settings (schutzbereich_polygon)
+     und sind über Admin -> Schutzbereich mit einer interaktiven Karte
+     bearbeitbar (siehe config/schutzbereich.php und admin/schutzbereich.php).
+     Die Kartenkacheln laufen über tile-proxy.php (siehe dort):
      OpenStreetMap blockt direktes Einbinden von tile.openstreetmap.org im
      Browser ohne erkennbare, richtlinienkonforme Kennung ("403 Access
      blocked") - der Proxy holt jede Kachel stattdessen serverseitig mit
@@ -464,30 +467,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var mapEl = document.getElementById('schutzbereich-map');
     if (!mapEl || typeof L === 'undefined') return;
 
-    var schutzbereichCoords = [
-        [47.2780, 11.4010],
-        [47.2810, 11.4100],
-        [47.2830, 11.4210],
-        [47.2825, 11.4330],
-        [47.2795, 11.4425],
-        [47.2765, 11.4475],
-        [47.2735, 11.4455],
-        [47.2705, 11.4415],
-        [47.2685, 11.4390],
-        [47.2665, 11.4360],
-        [47.2648, 11.4350],
-        [47.2662, 11.4315],
-        [47.2640, 11.4260],
-        [47.2620, 11.4200],
-        [47.2605, 11.4140],
-        [47.2600, 11.4090],
-        [47.2612, 11.4043],
-        [47.2633, 11.4010],
-        [47.2598, 11.3998],
-        [47.2650, 11.3985],
-        [47.2700, 11.3990],
-        [47.2745, 11.4000]
-    ];
+    var schutzbereichCoords = <?php echo json_encode(getSchutzbereichPolygon()); ?>;
 
     var map = L.map('schutzbereich-map', { scrollWheelZoom: false });
 
