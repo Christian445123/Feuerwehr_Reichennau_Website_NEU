@@ -10,6 +10,11 @@ require_once __DIR__ . '/env.php';
 require_once __DIR__ . '/crypto.php';
 require_once __DIR__ . '/migrations.php';
 
+// Server/Hosting läuft standardmäßig auf UTC - für Logs, Zeitstempel und
+// Datumsanzeigen soll aber überall die österreichische Zeit (inkl.
+// automatischer Sommer-/Winterzeit-Umstellung) gelten.
+date_default_timezone_set('Europe/Vienna');
+
 // ── MariaDB/MySQL-Konfiguration (aus .env) ──
 // DB_PASSWORD ist in der .env verschlüsselt hinterlegt (Präfix "enc:"),
 // siehe config/crypto.php. Ein noch unverschlüsselter Klartext-Wert
@@ -40,6 +45,15 @@ function getDB(): PDO {
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
     $db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+
+    // MySQL kennt die Zeitzone "Europe/Vienna" nur, wenn die
+    // mysql.time_zone-Tabellen befüllt sind (auf vielen Hostings/XAMPP nicht
+    // der Fall) - deshalb wird stattdessen der aktuelle Offset (z.B. "+02:00"
+    // im Sommer, "+01:00" im Winter) berechnet und gesetzt. Damit stimmen
+    // CURRENT_TIMESTAMP/NOW() (u.a. in den Log-Tabellen) mit der
+    // österreichischen Zeit überein statt mit der Server-UTC-Zeit.
+    $offset = (new DateTime('now', new DateTimeZone('Europe/Vienna')))->format('P');
+    $db->exec("SET time_zone = " . $db->quote($offset));
 
     return $db;
 }
