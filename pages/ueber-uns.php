@@ -451,11 +451,13 @@ foreach ($allMembers as $am) {
      Pradl, Pradler Saggen, Gewerbegebiet Rossau, Amraser-See-Straße)
      nachgezogen und ist keine exakte amtliche Grenze - siehe Hinweistext auf
      der Seite. Bei Bedarf hier die Koordinaten in "schutzbereichCoords"
-     anpassen. Kachel-Quelle ist der offizielle OSM-Server
-     (tile.openstreetmap.org) - dieselbe Quelle, die z.B. auch die FF Zirl
-     für ihre Einsatzbereich-Karte nutzt; frühere 403-Fehler kamen von
-     übermäßigen Testaufrufen während der Entwicklung, nicht von einer
-     grundsätzlichen Sperre für Produktiv-Websites mit normalem Traffic. -->
+     anpassen. Die Kartenkacheln laufen über tile-proxy.php (siehe dort):
+     OpenStreetMap blockt direktes Einbinden von tile.openstreetmap.org im
+     Browser ohne erkennbare, richtlinienkonforme Kennung ("403 Access
+     blocked") - der Proxy holt jede Kachel stattdessen serverseitig mit
+     korrektem User-Agent und liefert sie danach aus dem eigenen Cache aus,
+     genau wie es OSMs Nutzungsrichtlinie für mehr als gelegentliche Nutzung
+     vorsieht. -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
@@ -489,7 +491,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     var map = L.map('schutzbereich-map', { scrollWheelZoom: false });
 
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    L.tileLayer('tile-proxy.php?z={z}&x={x}&y={y}', {
         maxZoom: 19,
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>-Mitwirkende'
     }).addTo(map);
