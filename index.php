@@ -12,7 +12,6 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'home';
 // Erlaubte Seiten (Whitelist)
 $allowed_pages = [
     'home',
-    'ueber-uns',
     'mannschaft',
     'ausschuss',
     'geschichte',
@@ -38,6 +37,14 @@ if ($page === 'ausruestung') {
     exit;
 }
 
+// "Über Uns" war eine Übersichtsseite mit Links auf Mannschaft/Ausschuss/
+// Geschichte/Schutzbereich - ist jetzt (wie die anderen Menüpunkte mit
+// Dropdown) nur noch eine Kategorie ohne eigene Seite.
+if ($page === 'ueber-uns') {
+    header('Location: index.php?page=mannschaft', true, 301);
+    exit;
+}
+
 // Sicherheitscheck: Nur erlaubte Seiten laden
 if (!in_array($page, $allowed_pages, true)) {
     $page = 'home';
@@ -53,7 +60,6 @@ if (!file_exists($page_file)) {
 // Seitentitel
 $page_titles = [
     'home'             => 'Startseite',
-    'ueber-uns'        => 'Über Uns',
     'mannschaft'       => 'Mannschaft',
     'ausschuss'        => 'Ausschuss & Organigramm',
     'geschichte'       => 'Geschichte',

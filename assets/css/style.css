@@ -1378,17 +1378,6 @@ body.nav-open {
     margin-top: 10px;
 }
 
-.schutzbereich-images {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin-top: 24px;
-}
-
-.schutzbereich-images .content-image {
-    margin-top: 0;
-}
-
 /* --- Organigramm (dunkles Layout mit Sektionen, Vorbild: offizielles
    Organigramm der FF Reichenau) --- */
 .ausschuss-gruppenbild {
@@ -3145,11 +3134,6 @@ body.lightbox-open {
 
     .geschichte-gallery {
         grid-template-columns: 1fr;
-    }
-
-    .schutzbereich-images {
-        grid-template-columns: 1fr;
-        gap: 30px;
     }
 
     .wache-gallery {

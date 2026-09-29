@@ -29,11 +29,6 @@ require_once __DIR__ . '/../config/schutzbereich.php';
                         <h4>Karte des Schutzgebiets:</h4>
                         <div id="schutzbereich-map" class="schutzbereich-map" role="img" aria-label="Interaktive Karte des Schutzbereichs der FF Reichenau"></div>
                         <p class="schutzbereich-map-note"><i class="fas fa-circle-info"></i> Der eingezeichnete Bereich ist eine Annäherung an das offizielle Schutzgebiet.</p>
-
-                        <div class="schutzbereich-images">
-                            <img src="assets/images/schutzgebiet_karte.jpg" alt="Karte Schutzgebiet" class="content-image" data-lightbox-group="schutzbereich">
-                            <img src="assets/images/schutzgebiet.jpg" alt="Schutzgebiet der FF Reichenau" class="content-image" data-lightbox-group="schutzbereich">
-                        </div>
                     </div>
                 </div>
 

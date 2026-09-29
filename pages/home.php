@@ -24,7 +24,7 @@
             <p class="hero-tagline">Mit Herz und Zusammenhalt im Einsatz - ehrenamtlich, rund um die Uhr, für Innsbruck und darüber hinaus.</p>
             <div class="hero-buttons">
                 <a href="index.php?page=kontakt" class="btn btn-primary"><i class="fas fa-hands-helping"></i> Mitmachen</a>
-                <a href="index.php?page=ueber-uns" class="btn btn-outline"><i class="fas fa-info-circle"></i> Mehr erfahren</a>
+                <a href="index.php?page=mannschaft" class="btn btn-outline"><i class="fas fa-info-circle"></i> Mehr erfahren</a>
             </div>
 
             <div class="hero-readiness" role="img" aria-label="Status: <?php echo $einsatzbereit ? 'Einsatzbereit' : 'Nicht einsatzbereit'; ?>">
