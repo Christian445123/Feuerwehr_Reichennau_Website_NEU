@@ -167,7 +167,7 @@ foreach ([['kommandant', 'Kommandant'], ['kommandant_stv', 'Kommandant-Stv.']] a
                 </div>
                 <div class="content-card-body">
                     <p>Nimm Kontakt mit uns auf und komm zu einem unserer Übungs- oder Schulungsabende vorbei. Wir zeigen dir gerne, wie die Feuerwehr Reichenau arbeitet und beantworten alle deine Fragen.</p>
-                    <p><strong>Wichtiger Hinweis:</strong> Um aktives Mitglied der FF Reichenau zu werden, musst du deinen ständigen Wohnsitz im Schutzgebiet unserer Feuerwehr haben. Alle Infos dazu findest du <a href="index.php?page=ueber-uns#schutzbereich">hier</a>.</p>
+                    <p><strong>Wichtiger Hinweis:</strong> Um aktives Mitglied der FF Reichenau zu werden, musst du deinen ständigen Wohnsitz im Schutzgebiet unserer Feuerwehr haben. Alle Infos dazu findest du <a href="index.php?page=schutzbereich">hier</a>.</p>
                 </div>
             </div>
         </div>

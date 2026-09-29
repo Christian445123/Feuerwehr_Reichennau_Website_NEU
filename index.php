@@ -13,6 +13,10 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'home';
 $allowed_pages = [
     'home',
     'ueber-uns',
+    'mannschaft',
+    'ausschuss',
+    'geschichte',
+    'schutzbereich',
     'fuhrpark',
     'geraetehaus',
     'jugend',
@@ -50,6 +54,10 @@ if (!file_exists($page_file)) {
 $page_titles = [
     'home'             => 'Startseite',
     'ueber-uns'        => 'Über Uns',
+    'mannschaft'       => 'Mannschaft',
+    'ausschuss'        => 'Ausschuss & Organigramm',
+    'geschichte'       => 'Geschichte',
+    'schutzbereich'    => 'Schutzbereich',
     'fuhrpark'         => 'Fuhrpark',
     'geraetehaus'      => 'Gerätehaus',
     'jugend'           => 'Jugend',

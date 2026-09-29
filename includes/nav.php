@@ -15,12 +15,12 @@
                     <a href="index.php?page=berichte" class="nav-link <?php echo $current_page === 'berichte' ? 'active' : ''; ?>"><i class="fas fa-newspaper"></i> Aktuelles</a>
                 </li>
                 <li class="nav-dropdown">
-                    <span class="nav-link nav-label <?php echo $current_page === 'ueber-uns' ? 'active' : ''; ?>" tabindex="0"><i class="fas fa-users"></i> Über Uns <i class="fas fa-chevron-down dropdown-arrow"></i></span>
+                    <span class="nav-link nav-label <?php echo in_array($current_page, ['ueber-uns', 'mannschaft', 'ausschuss', 'geschichte', 'schutzbereich'], true) ? 'active' : ''; ?>" tabindex="0"><i class="fas fa-users"></i> Über Uns <i class="fas fa-chevron-down dropdown-arrow"></i></span>
                     <ul class="dropdown-menu">
-                        <li><a href="index.php?page=ueber-uns#mannschaft">Mannschaft</a></li>
-                        <li><a href="index.php?page=ueber-uns#kommando">Ausschuss</a></li>
-                        <li><a href="index.php?page=ueber-uns#geschichte">Geschichte</a></li>
-                        <li><a href="index.php?page=ueber-uns#schutzbereich">Schutzbereich</a></li>
+                        <li><a href="index.php?page=mannschaft">Mannschaft</a></li>
+                        <li><a href="index.php?page=ausschuss">Ausschuss</a></li>
+                        <li><a href="index.php?page=geschichte">Geschichte</a></li>
+                        <li><a href="index.php?page=schutzbereich">Schutzbereich</a></li>
                     </ul>
                 </li>
                 <li class="nav-dropdown">
