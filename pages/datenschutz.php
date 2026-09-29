@@ -30,8 +30,13 @@ document.addEventListener('DOMContentLoaded', function () {
     var revokeBtn = document.getElementById('revokeGaConsent');
     if (!revokeBtn) return;
     revokeBtn.addEventListener('click', function () {
-        try { localStorage.setItem('ga_consent', 'denied'); } catch (e) {}
-        alert('Deine Einwilligung wurde widerrufen. Beim nächsten Laden der Seite wird Google Analytics nicht mehr geladen.');
+        // Einwilligung nicht nur auf "abgelehnt" setzen, sondern komplett
+        // zurücksetzen - so erscheint beim Neuladen wieder der
+        // Cookie-Banner und man kann erneut frei wählen (statt für immer
+        // stillschweigend auf "abgelehnt" festzustecken).
+        try { localStorage.removeItem('ga_consent'); } catch (e) {}
+        alert('Deine Cookie-Einwilligung wurde zurückgesetzt. Die Seite wird neu geladen, damit du erneut wählen kannst.');
+        window.location.reload();
     });
 });
 </script>
