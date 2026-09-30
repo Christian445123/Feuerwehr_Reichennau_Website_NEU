@@ -1783,6 +1783,9 @@ body.nav-open {
 @media (max-width: 640px) {
     .jugend-hero-banner {
         min-height: 46vh;
+        /* "right center" schneidet auf schmalen Handy-Seitenverhältnissen
+           den Kopf der Figur ab - oben ausrichten zeigt sie vollständiger. */
+        background-position: right top;
     }
 }
 
@@ -3254,6 +3257,7 @@ body.lightbox-open {
     padding: 20px 12px 16px;
     border-radius: var(--radius-md);
     transition: var(--transition);
+    overflow: hidden;
 }
 
 .member-card-front {
@@ -3270,7 +3274,6 @@ body.lightbox-open {
     transform: rotateY(180deg);
     justify-content: center;
     gap: 6px;
-    overflow: hidden;
 }
 
 .member-card-back-name {

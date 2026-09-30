@@ -608,6 +608,21 @@ function getMigrations(): array {
             },
         ],
 
+        [
+            'id' => '2026_09_30_fix_report5_umlaut_encoding',
+            'run' => function (PDO $db) {
+                // Bericht #5 hatte einen kaputt kodierten Titel ("Gemeinschafts?bung
+                // mit der FF M?hlau" statt "...übung... Mühlau" - die Umlaute waren
+                // als literales "?" gespeichert, kein Anzeige-/Charset-Problem).
+                $stmt = $db->prepare("UPDATE reports SET title = ? WHERE id = ? AND title = ?");
+                $stmt->execute([
+                    'Gemeinschaftsübung mit der FF Mühlau',
+                    5,
+                    'Gemeinschafts?bung mit der FF M?hlau',
+                ]);
+            },
+        ],
+
     ];
 }
 
