@@ -176,21 +176,23 @@ $berichteVorjahr = getBerichteVorjahr();
                                     <img src="uploads/<?php echo htmlspecialchars($r['thumb']); ?>" alt="<?php echo htmlspecialchars($r['title']); ?>">
                                 </div>
                             <?php endif; ?>
-                            <div class="bericht-badge-row">
-                                <?php $cardBadge1 = getReportBadgeInfo($r['category'], $r['subcategory']); ?>
-                                <?php if ($cardBadge1): ?>
-                                    <div class="bericht-badge <?php echo $cardBadge1['class']; ?>"><?php echo htmlspecialchars($cardBadge1['label']); ?></div>
-                                <?php endif; ?>
-                                <?php $cardBadge2 = getReportBadgeInfo($r['category2'] ?? '', $r['subcategory2'] ?? null); ?>
-                                <?php if ($cardBadge2): ?>
-                                    <div class="bericht-badge <?php echo $cardBadge2['class']; ?>"><?php echo htmlspecialchars($cardBadge2['label']); ?></div>
+                            <div class="bericht-card-body">
+                                <div class="bericht-badge-row">
+                                    <?php $cardBadge1 = getReportBadgeInfo($r['category'], $r['subcategory']); ?>
+                                    <?php if ($cardBadge1): ?>
+                                        <div class="bericht-badge <?php echo $cardBadge1['class']; ?>"><?php echo htmlspecialchars($cardBadge1['label']); ?></div>
+                                    <?php endif; ?>
+                                    <?php $cardBadge2 = getReportBadgeInfo($r['category2'] ?? '', $r['subcategory2'] ?? null); ?>
+                                    <?php if ($cardBadge2): ?>
+                                        <div class="bericht-badge <?php echo $cardBadge2['class']; ?>"><?php echo htmlspecialchars($cardBadge2['label']); ?></div>
+                                    <?php endif; ?>
+                                </div>
+                                <h3><i class="fas <?php echo $categoryIcons[$r['category']] ?? 'fa-newspaper'; ?>"></i> <?php echo htmlspecialchars($r['title']); ?></h3>
+                                <p class="bericht-date"><i class="fas fa-calendar"></i> <?php echo htmlspecialchars($r['date']); ?></p>
+                                <?php if ($r['content']): ?>
+                                    <p><?php echo htmlspecialchars(mb_substr($r['content'], 0, 120)) . (mb_strlen($r['content']) > 120 ? '...' : ''); ?></p>
                                 <?php endif; ?>
                             </div>
-                            <h3><i class="fas <?php echo $categoryIcons[$r['category']] ?? 'fa-newspaper'; ?>"></i> <?php echo htmlspecialchars($r['title']); ?></h3>
-                            <p class="bericht-date"><i class="fas fa-calendar"></i> <?php echo htmlspecialchars($r['date']); ?></p>
-                            <?php if ($r['content']): ?>
-                                <p><?php echo htmlspecialchars(mb_substr($r['content'], 0, 120)) . (mb_strlen($r['content']) > 120 ? '...' : ''); ?></p>
-                            <?php endif; ?>
                         </a>
                     <?php endforeach; ?>
                 </div>

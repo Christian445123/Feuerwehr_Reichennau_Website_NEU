@@ -2094,10 +2094,16 @@ body.nav-open {
     margin-bottom: 50px;
 }
 
+/* Bild immer ganz links, daneben Kategorie/Titel/Kurzinfo mit einheitlichem
+   Abstand (siehe .bericht-card-body gap) - gilt für alle Filter, nicht nur
+   die Zeitstrahl-Ansicht "Alle". */
 .bericht-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
     background: var(--color-white);
     border-radius: var(--radius-md);
-    padding: 28px;
+    padding: 18px;
     box-shadow: var(--shadow-sm);
     border: 1px solid var(--color-gray-200);
     transition: var(--transition);
@@ -2108,6 +2114,14 @@ body.nav-open {
     box-shadow: var(--shadow-md);
 }
 
+.bericht-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+    min-width: 0;
+}
+
 .bericht-badge {
     display: inline-block;
     padding: 3px 10px;
@@ -2116,14 +2130,12 @@ body.nav-open {
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    margin-bottom: 14px;
 }
 
 .bericht-card h3 {
     font-size: 1.05rem;
     font-weight: 700;
     color: var(--color-dark);
-    margin-bottom: 10px;
 }
 
 .bericht-card h3 i {
@@ -2138,6 +2150,8 @@ body.nav-open {
 }
 
 /* --- Berichte Zeitstrahl-Ansicht ("Alle") --- */
+/* Die Karten selbst sehen überall gleich aus (Bild links, siehe .bericht-card
+   oben) - die Zeitstrahl-Ansicht ergänzt nur die Linie mit den Punkten. */
 .berichte-grid.timeline-view {
     display: block;
     position: relative;
@@ -2158,12 +2172,8 @@ body.nav-open {
 }
 
 .berichte-grid.timeline-view .bericht-card {
-    display: flex;
-    align-items: flex-start;
-    gap: 20px;
     position: relative;
     margin-bottom: 18px;
-    padding: 18px 22px;
 }
 
 .berichte-grid.timeline-view .bericht-card::before {
@@ -2179,40 +2189,14 @@ body.nav-open {
     box-shadow: 0 0 0 2px var(--color-gray-300);
 }
 
-.berichte-grid.timeline-view .bericht-thumb {
-    flex: 0 0 90px;
-    width: 90px;
-    height: 90px;
-    margin: 0;
-    border-radius: var(--radius-sm);
-}
-
-.berichte-grid.timeline-view .bericht-thumb img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.berichte-grid.timeline-view .bericht-card > div.bericht-badge,
-.berichte-grid.timeline-view .bericht-badge-row,
-.berichte-grid.timeline-view h3,
-.berichte-grid.timeline-view .bericht-date,
-.berichte-grid.timeline-view p {
-    margin-bottom: 4px;
-}
-
-.berichte-grid.timeline-view .bericht-badge-row .bericht-badge {
-    margin-bottom: 0;
-}
-
 @media (max-width: 640px) {
     .berichte-grid.timeline-view {
         padding-left: 20px;
     }
-    .berichte-grid.timeline-view .bericht-card {
+    .bericht-card {
         flex-direction: column;
     }
-    .berichte-grid.timeline-view .bericht-thumb {
+    .bericht-thumb {
         width: 100%;
         flex-basis: auto;
         height: 160px;
@@ -3716,7 +3700,6 @@ body.lightbox-open {
 /* --- Bericht Cards Linked --- */
 .bericht-card-link {
     text-decoration: none;
-    display: block;
     color: inherit;
     cursor: pointer;
 }
@@ -3726,13 +3709,16 @@ body.lightbox-open {
 }
 
 .bericht-thumb {
-    margin: -28px -28px 16px -28px;
+    flex: 0 0 110px;
+    width: 110px;
+    height: 110px;
+    border-radius: var(--radius-sm);
     overflow: hidden;
 }
 
 .bericht-thumb img {
     width: 100%;
-    height: 180px;
+    height: 100%;
     object-fit: cover;
     display: block;
 }
@@ -3740,7 +3726,6 @@ body.lightbox-open {
 .bericht-date {
     font-size: 0.82rem;
     color: var(--color-gray-600);
-    margin-bottom: 8px;
 }
 
 .bericht-date i {
@@ -4070,10 +4055,6 @@ body.lightbox-open {
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
-}
-
-.bericht-badge-row .bericht-badge {
-    margin-bottom: 14px;
 }
 
 /* Einzelbericht-Ansicht etwas breiter als der Standard-Container */
