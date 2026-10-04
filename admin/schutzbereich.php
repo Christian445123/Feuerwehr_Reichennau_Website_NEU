@@ -48,16 +48,54 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         flash('success', 'Die Fläche wurde auf die ursprüngliche Form zurückgesetzt.');
     }
 
+    if ($action === 'toggle_check') {
+        $enable = ($_POST['enable'] ?? '0') === '1';
+        setSchutzgebietCheckEnabled($enable);
+        logActivity($db, 'schutzbereich.check_toggle', $enable ? 'Aktiviert' : 'Deaktiviert');
+        flash('success', $enable ? 'Der Adress-Check ist jetzt auf der Mitmachen-Seite sichtbar.' : 'Der Adress-Check ist jetzt auf der Mitmachen-Seite ausgeblendet.');
+    }
+
     header('Location: schutzbereich.php');
     exit;
 }
 
 $currentPolygon = getSchutzbereichPolygon();
+$checkEnabled = isSchutzgebietCheckEnabled();
 
 require_once __DIR__ . '/includes/admin-header.php';
 ?>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css">
+
+<div class="admin-card" style="margin-bottom: 24px;">
+    <div class="admin-card-header"><h2><i class="fas fa-location-crosshairs"></i> Adress-Check auf der Mitmachen-Seite</h2></div>
+    <div class="admin-card-body">
+        <p style="color: var(--gray-600); margin-bottom: 16px;">
+            Blendet auf der Mitmachen-Seite ein Feld ein, in dem Interessierte ihre Straße und Hausnummer eingeben können.
+            Die Website sagt ihnen dann, ob sie im Schutzgebiet der FF Reichenau liegen oder sich an eine andere
+            Freiwillige Feuerwehr wenden müssen (anhand der oben eingezeichneten Fläche). Noch nicht offiziell freigegeben,
+            deshalb standardmäßig ausgeblendet.
+        </p>
+        <div style="padding: 14px 16px; background: <?php echo $checkEnabled ? 'rgba(39,174,96,0.08)' : 'rgba(213,0,28,0.06)'; ?>; border-radius: var(--radius); display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;">
+            <div>
+                <strong><?php echo $checkEnabled ? 'Adress-Check ist AKTIV' : 'Adress-Check ist AUSGEBLENDET'; ?></strong>
+                <p style="margin: 4px 0 0; font-size: 0.85rem; color: #6c757d;">
+                    <?php echo $checkEnabled
+                        ? 'Besucher sehen das Feld auf der Mitmachen-Seite.'
+                        : 'Das Feld ist auf der Website derzeit nicht zu sehen.'; ?>
+                </p>
+            </div>
+            <form method="POST">
+                <?php echo csrfField(); ?>
+                <input type="hidden" name="action" value="toggle_check">
+                <input type="hidden" name="enable" value="<?php echo $checkEnabled ? '0' : '1'; ?>">
+                <button type="submit" class="btn <?php echo $checkEnabled ? 'btn-secondary' : 'btn-primary'; ?>">
+                    <i class="fas fa-power-off"></i> <?php echo $checkEnabled ? 'Ausblenden' : 'Auf der Website anzeigen'; ?>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
 
 <div class="admin-card">
     <div class="admin-card-header"><h2><i class="fas fa-map-location-dot"></i> Schutzgebiets-Fläche bearbeiten</h2></div>

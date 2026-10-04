@@ -67,3 +67,38 @@ function setSchutzbereichPolygon(array $coords): void {
 function resetSchutzbereichPolygon(): void {
     setSiteSetting('schutzbereich_polygon', json_encode(SCHUTZBEREICH_DEFAULT_POLYGON));
 }
+
+/**
+ * Adress-Check auf der Mitmachen-Seite ("Bin ich im Schutzgebiet?"): noch
+ * nicht fertig/offiziell, deshalb standardmäßig ausgeblendet und nur über
+ * Admin -> Schutzbereich einschaltbar.
+ */
+function isSchutzgebietCheckEnabled(): bool {
+    return getSiteSetting('schutzgebiet_check_enabled', '0') === '1';
+}
+
+function setSchutzgebietCheckEnabled(bool $enabled): void {
+    setSiteSetting('schutzgebiet_check_enabled', $enabled ? '1' : '0');
+}
+
+/**
+ * Punkt-in-Polygon-Test (Ray-Casting), um zu prüfen, ob eine Adresse
+ * innerhalb der eingezeichneten Schutzgebiets-Fläche liegt.
+ */
+function isPointInPolygon(float $lat, float $lng, array $polygon): bool {
+    $inside = false;
+    $count = count($polygon);
+    for ($i = 0, $j = $count - 1; $i < $count; $j = $i++) {
+        $latI = $polygon[$i][0];
+        $lngI = $polygon[$i][1];
+        $latJ = $polygon[$j][0];
+        $lngJ = $polygon[$j][1];
+
+        $intersects = (($lngI > $lng) !== ($lngJ > $lng))
+            && ($lat < ($latJ - $latI) * ($lng - $lngI) / ($lngJ - $lngI) + $latI);
+        if ($intersects) {
+            $inside = !$inside;
+        }
+    }
+    return $inside;
+}

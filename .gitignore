@@ -2,3 +2,4 @@ autocommit.bat
 .env
 config/secret_key.php
 cache/tiles/
+cache/geocode/

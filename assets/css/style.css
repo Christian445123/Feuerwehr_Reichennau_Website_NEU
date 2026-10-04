@@ -4100,3 +4100,44 @@ body.lightbox-open {
 .page-subtitle .bericht-badge-group-label {
     color: rgba(255, 255, 255, 0.6);
 }
+
+/* --- Schutzgebiets-Check (Mitmachen-Seite, über Admin ein-/ausblendbar) --- */
+.schutzgebiet-check-form .form-row {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    align-items: flex-end;
+}
+
+.schutzgebiet-check-form .form-group {
+    flex: 1 1 220px;
+    margin-bottom: 16px;
+}
+
+.schutzgebiet-check-result {
+    margin-top: 18px;
+    padding: 14px 16px;
+    border-radius: var(--radius-md);
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.schutzgebiet-check-result.sg-yes {
+    background: rgba(39, 174, 96, 0.1);
+    color: #1e7e46;
+}
+
+.schutzgebiet-check-result.sg-no {
+    background: rgba(213, 0, 28, 0.08);
+    color: var(--color-primary-dark);
+}
+
+.schutzgebiet-check-result.sg-unknown,
+.schutzgebiet-check-result.sg-error {
+    background: var(--color-gray-100);
+    color: var(--color-gray-700);
+}
+
+.schutzgebiet-check-hint {
+    margin-top: 14px;
+}
