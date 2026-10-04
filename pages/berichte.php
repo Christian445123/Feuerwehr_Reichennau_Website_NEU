@@ -18,22 +18,10 @@ if ($reportId > 0) {
     $reportImages = $imgStmt->fetchAll();
 }
 
-$categoryIcons = [
-    'einsatz' => 'fa-fire', 'uebung' => 'fa-dumbbell',
-    'jugend' => 'fa-child', 'veranstaltungen' => 'fa-calendar-alt', 'sonstige' => 'fa-newspaper'
-];
-$categoryBadges = [
-    'einsatz' => 'badge-brand', 'uebung' => 'badge-uebung',
-    'jugend' => 'badge-jugend', 'veranstaltungen' => 'badge-veranstaltungen', 'sonstige' => 'badge-sonstige'
-];
-$subcategoryLabels = [
-    'brand' => 'Brand', 'technisch' => 'Technisch', 'abc' => 'ABC',
-    'unterstuetzung' => 'Unterstützung', 'sonstiges' => 'Sonstiges',
-];
-$subcategoryBadges = [
-    'brand' => 'badge-brand', 'technisch' => 'badge-technisch', 'abc' => 'badge-abc',
-    'unterstuetzung' => 'badge-unterstuetzung', 'sonstiges' => 'badge-sonstige',
-];
+$categoryIcons = getReportCategoryIcons();
+$categoryBadges = getReportCategoryBadges();
+$subcategoryLabels = getReportSubcategoryLabels();
+$subcategoryBadges = getReportSubcategoryBadges();
 $berichteAktuellesJahr = getBerichteAktuellesJahr();
 $berichteVorjahr = getBerichteVorjahr();
 ?>
@@ -44,14 +32,13 @@ $berichteVorjahr = getBerichteVorjahr();
         <div class="container">
             <h1 class="page-title"><?php echo htmlspecialchars($report['title']); ?></h1>
             <p class="page-subtitle">
-                <?php if (!empty($report['subcategory']) && isset($subcategoryLabels[$report['subcategory']])): ?>
-                    <span class="bericht-badge <?php echo $subcategoryBadges[$report['subcategory']]; ?>">
-                        <?php echo htmlspecialchars($subcategoryLabels[$report['subcategory']]); ?>
-                    </span>
-                <?php else: ?>
-                    <span class="bericht-badge <?php echo $categoryBadges[$report['category']] ?? 'badge-sonstige'; ?>">
-                        <?php echo htmlspecialchars(ucfirst($report['category'])); ?>
-                    </span>
+                <?php $badge1 = getReportBadgeInfo($report['category'], $report['subcategory']); ?>
+                <?php if ($badge1): ?>
+                    <span class="bericht-badge <?php echo $badge1['class']; ?>"><?php echo htmlspecialchars($badge1['label']); ?></span>
+                <?php endif; ?>
+                <?php $badge2 = getReportBadgeInfo($report['category2'] ?? '', $report['subcategory2'] ?? null); ?>
+                <?php if ($badge2): ?>
+                    <span class="bericht-badge <?php echo $badge2['class']; ?>"><?php echo htmlspecialchars($badge2['label']); ?></span>
                 <?php endif; ?>
                 &middot; <?php echo htmlspecialchars($report['date']); ?>
                 <?php if ($report['author']): ?>
@@ -146,8 +133,10 @@ $berichteVorjahr = getBerichteVorjahr();
         $stmt = $db->prepare("SELECT r.*, (SELECT ri.filename FROM report_images ri WHERE ri.report_id = r.id ORDER BY ri.sort_order LIMIT 1) as thumb FROM reports r WHERE r.published = 1 $yearCondition ORDER BY r.date DESC, r.created_at DESC");
         $stmt->execute($yearParams);
     } else {
-        $stmt = $db->prepare("SELECT r.*, (SELECT ri.filename FROM report_images ri WHERE ri.report_id = r.id ORDER BY ri.sort_order LIMIT 1) as thumb FROM reports r WHERE r.published = 1 AND r.category = ? $yearCondition ORDER BY r.date DESC, r.created_at DESC");
-        $stmt->execute(array_merge([$category], $yearParams));
+        // Ein Bericht erscheint unter einem Kategorie-Filter, wenn er die
+        // Kategorie als erste ODER als zweite Kategorie trägt.
+        $stmt = $db->prepare("SELECT r.*, (SELECT ri.filename FROM report_images ri WHERE ri.report_id = r.id ORDER BY ri.sort_order LIMIT 1) as thumb FROM reports r WHERE r.published = 1 AND (r.category = ? OR r.category2 = ?) $yearCondition ORDER BY r.date DESC, r.created_at DESC");
+        $stmt->execute(array_merge([$category, $category], $yearParams));
     }
     $reports = $stmt->fetchAll();
     ?>
@@ -187,15 +176,16 @@ $berichteVorjahr = getBerichteVorjahr();
                                     <img src="uploads/<?php echo htmlspecialchars($r['thumb']); ?>" alt="<?php echo htmlspecialchars($r['title']); ?>">
                                 </div>
                             <?php endif; ?>
-                            <?php if (!empty($r['subcategory']) && isset($subcategoryLabels[$r['subcategory']])): ?>
-                                <div class="bericht-badge <?php echo $subcategoryBadges[$r['subcategory']]; ?>">
-                                    <?php echo htmlspecialchars($subcategoryLabels[$r['subcategory']]); ?>
-                                </div>
-                            <?php else: ?>
-                                <div class="bericht-badge <?php echo $categoryBadges[$r['category']] ?? 'badge-sonstige'; ?>">
-                                    <?php echo htmlspecialchars(ucfirst($r['category'])); ?>
-                                </div>
-                            <?php endif; ?>
+                            <div class="bericht-badge-row">
+                                <?php $cardBadge1 = getReportBadgeInfo($r['category'], $r['subcategory']); ?>
+                                <?php if ($cardBadge1): ?>
+                                    <div class="bericht-badge <?php echo $cardBadge1['class']; ?>"><?php echo htmlspecialchars($cardBadge1['label']); ?></div>
+                                <?php endif; ?>
+                                <?php $cardBadge2 = getReportBadgeInfo($r['category2'] ?? '', $r['subcategory2'] ?? null); ?>
+                                <?php if ($cardBadge2): ?>
+                                    <div class="bericht-badge <?php echo $cardBadge2['class']; ?>"><?php echo htmlspecialchars($cardBadge2['label']); ?></div>
+                                <?php endif; ?>
+                            </div>
                             <h3><i class="fas <?php echo $categoryIcons[$r['category']] ?? 'fa-newspaper'; ?>"></i> <?php echo htmlspecialchars($r['title']); ?></h3>
                             <p class="bericht-date"><i class="fas fa-calendar"></i> <?php echo htmlspecialchars($r['date']); ?></p>
                             <?php if ($r['content']): ?>

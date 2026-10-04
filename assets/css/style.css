@@ -2194,10 +2194,15 @@ body.nav-open {
 }
 
 .berichte-grid.timeline-view .bericht-card > div.bericht-badge,
+.berichte-grid.timeline-view .bericht-badge-row,
 .berichte-grid.timeline-view h3,
 .berichte-grid.timeline-view .bericht-date,
 .berichte-grid.timeline-view p {
     margin-bottom: 4px;
+}
+
+.berichte-grid.timeline-view .bericht-badge-row .bericht-badge {
+    margin-bottom: 0;
 }
 
 @media (max-width: 640px) {
@@ -4058,4 +4063,15 @@ body.lightbox-open {
 
 .grid-ausschuss .member-public-card {
     height: 360px;
+}
+
+/* Zweite Kategorie: Badges nebeneinander statt untereinander */
+.bericht-badge-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.bericht-badge-row .bericht-badge {
+    margin-bottom: 14px;
 }

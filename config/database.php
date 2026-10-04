@@ -101,6 +101,8 @@ function initDatabase(): void {
         title VARCHAR(255) NOT NULL,
         category VARCHAR(50) NOT NULL DEFAULT 'einsatz',
         subcategory VARCHAR(50) DEFAULT NULL,
+        category2 VARCHAR(50) DEFAULT NULL,
+        subcategory2 VARCHAR(50) DEFAULT NULL,
         content TEXT DEFAULT NULL,
         date DATE NOT NULL,
         author VARCHAR(100) DEFAULT '',

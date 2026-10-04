@@ -54,8 +54,11 @@ if ($category === 'all') {
     $stmt->execute([$berichteAktuellesJahr, $berichteVorjahr]);
     $reports = $stmt->fetchAll();
 } else {
-    $stmt = $db->prepare("SELECT r.*, COUNT(ri.id) as image_count FROM reports r LEFT JOIN report_images ri ON r.id = ri.report_id WHERE r.category = ? GROUP BY r.id ORDER BY r.date DESC, r.created_at DESC");
-    $stmt->execute([$category]);
+    // Ein Bericht erscheint unter einem Kategorie-Filter, wenn er die
+    // Kategorie als erste ODER als zweite Kategorie trägt (z.B. eine
+    // Übung mit Einsatz-Zuordnung erscheint auch unter "Einsatz").
+    $stmt = $db->prepare("SELECT r.*, COUNT(ri.id) as image_count FROM reports r LEFT JOIN report_images ri ON r.id = ri.report_id WHERE r.category = ? OR r.category2 = ? GROUP BY r.id ORDER BY r.date DESC, r.created_at DESC");
+    $stmt->execute([$category, $category]);
     $reports = $stmt->fetchAll();
 }
 
@@ -112,6 +115,13 @@ require_once __DIR__ . '/includes/admin-header.php';
                                 <span class="badge badge-<?php echo e($r['subcategory']); ?>"><?php echo e($subcategoryLabels[$r['subcategory']]); ?></span>
                             <?php else: ?>
                                 <span class="badge badge-<?php echo e($r['category']); ?>"><?php echo e(ucfirst($r['category'])); ?></span>
+                            <?php endif; ?>
+                            <?php if (!empty($r['category2'])): ?>
+                                <?php if (!empty($r['subcategory2']) && isset($subcategoryLabels[$r['subcategory2']])): ?>
+                                    <span class="badge badge-<?php echo e($r['subcategory2']); ?>"><?php echo e($subcategoryLabels[$r['subcategory2']]); ?></span>
+                                <?php else: ?>
+                                    <span class="badge badge-<?php echo e($r['category2']); ?>"><?php echo e(ucfirst($r['category2'])); ?></span>
+                                <?php endif; ?>
                             <?php endif; ?>
                         </td>
                         <td><?php echo e($r['date']); ?></td>

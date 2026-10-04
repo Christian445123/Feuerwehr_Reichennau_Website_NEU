@@ -69,3 +69,93 @@ function detectReportLinkIcon(string $url): array {
     }
     return ['icon' => 'fas fa-external-link-alt', 'label' => 'Weitere Informationen'];
 }
+
+/**
+ * Kategorien/Unterkategorien für Berichte, zentral an einer Stelle, damit
+ * Admin und öffentliche Seiten dieselben Labels/Icons/Badges verwenden.
+ *
+ * Jeder Bericht kann zwei Kategorien zugeordnet werden (category/subcategory
+ * und category2/subcategory2), z.B. "Übung" + "Einsatz/Brand", falls während
+ * einer Übung tatsächlich ein Einsatz stattfand. Beide sind gleichwertig.
+ */
+function getReportCategories(): array {
+    return [
+        'einsatz' => 'Einsatz', 'uebung' => 'Übung', 'jugend' => 'Jugend',
+        'veranstaltungen' => 'Veranstaltung', 'sonstige' => 'Sonstiges',
+    ];
+}
+
+function getReportCategoryIcons(): array {
+    return [
+        'einsatz' => 'fa-fire', 'uebung' => 'fa-dumbbell',
+        'jugend' => 'fa-child', 'veranstaltungen' => 'fa-calendar-alt', 'sonstige' => 'fa-newspaper',
+    ];
+}
+
+function getReportCategoryBadges(): array {
+    return [
+        'einsatz' => 'badge-brand', 'uebung' => 'badge-uebung',
+        'jugend' => 'badge-jugend', 'veranstaltungen' => 'badge-veranstaltungen', 'sonstige' => 'badge-sonstige',
+    ];
+}
+
+function getReportSubcategoriesByCategory(): array {
+    return [
+        'einsatz' => ['brand', 'technisch', 'abc', 'unterstuetzung', 'sonstiges'],
+        'uebung' => ['brand', 'technisch', 'abc', 'sonstiges'],
+    ];
+}
+
+function getReportSubcategoryLabels(): array {
+    return [
+        'brand' => 'Brand', 'technisch' => 'Technisch', 'abc' => 'ABC',
+        'unterstuetzung' => 'Unterstützung', 'sonstiges' => 'Sonstiges',
+    ];
+}
+
+function getReportSubcategoryBadges(): array {
+    return [
+        'brand' => 'badge-brand', 'technisch' => 'badge-technisch', 'abc' => 'badge-abc',
+        'unterstuetzung' => 'badge-unterstuetzung', 'sonstiges' => 'badge-sonstige',
+    ];
+}
+
+/**
+ * Gültige Kategorie/Unterkategorie-Kombination zurückgeben; ungültige
+ * Unterkategorien werden auf leer zurückgesetzt. Für die zweite Kategorie
+ * ist eine leere Kategorie ("keine zweite Kategorie") erlaubt.
+ */
+function sanitizeReportCategory(string $category, string $subcategory, bool $allowEmpty = false): array {
+    $validCats = array_keys(getReportCategories());
+    if ($allowEmpty && $category === '') {
+        return ['', ''];
+    }
+    if (!in_array($category, $validCats, true)) {
+        $category = $allowEmpty ? '' : 'einsatz';
+    }
+    if ($category === '') {
+        return ['', ''];
+    }
+    $allowedSubcats = getReportSubcategoriesByCategory()[$category] ?? [];
+    if (!in_array($subcategory, $allowedSubcats, true)) {
+        $subcategory = '';
+    }
+    return [$category, $subcategory];
+}
+
+/**
+ * Badge-HTML (Klasse + Beschriftung) für eine Kategorie/Unterkategorie-
+ * Kombination - die Unterkategorie wird bevorzugt angezeigt, falls
+ * vorhanden, sonst die Kategorie selbst.
+ */
+function getReportBadgeInfo(string $category, ?string $subcategory): ?array {
+    if ($category === '') return null;
+    $subLabels = getReportSubcategoryLabels();
+    $subBadges = getReportSubcategoryBadges();
+    if ($subcategory && isset($subLabels[$subcategory])) {
+        return ['class' => $subBadges[$subcategory], 'label' => $subLabels[$subcategory]];
+    }
+    $catLabels = getReportCategories();
+    $catBadges = getReportCategoryBadges();
+    return ['class' => $catBadges[$category] ?? 'badge-sonstige', 'label' => $catLabels[$category] ?? ucfirst($category)];
+}

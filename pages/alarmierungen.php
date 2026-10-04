@@ -5,7 +5,10 @@ require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../config/stats.php';
 $db = getDB();
 
-$latestEinsaetze = $db->query("SELECT title, subcategory, date FROM reports WHERE published = 1 AND category = 'einsatz' ORDER BY date DESC, created_at DESC LIMIT 5")->fetchAll();
+// Berücksichtigt auch Berichte, bei denen "Einsatz" nur die zweite Kategorie
+// ist (z.B. eine Übung, bei der tatsächlich ein Einsatz stattfand) - die
+// Einsatzart (subcategory) kommt dann aus der passenden Kategorie-Spalte.
+$latestEinsaetze = $db->query("SELECT title, date, IF(category = 'einsatz', subcategory, subcategory2) as subcategory FROM reports WHERE published = 1 AND (category = 'einsatz' OR category2 = 'einsatz') ORDER BY date DESC, created_at DESC LIMIT 5")->fetchAll();
 $stats = getEinsatzStats($db);
 
 $subcategoryLabels = [

@@ -17,9 +17,13 @@ function getEinsatzStats(PDO $db): array {
     $start = "$year-01-01";
     $end = "$year-12-31";
 
+    // Zählt auch Berichte, bei denen "Einsatz" nur die zweite Kategorie ist
+    // (z.B. eine Übung, bei der tatsächlich ein Einsatz stattfand) - ein
+    // Bericht wird dabei nicht doppelt gezählt, selbst wenn beide Kategorien
+    // zufällig gleich wären.
     $count = function (string $subcategory) use ($db, $start, $end): int {
-        $stmt = $db->prepare("SELECT COUNT(*) FROM reports WHERE published = 1 AND category = 'einsatz' AND subcategory = ? AND date BETWEEN ? AND ?");
-        $stmt->execute([$subcategory, $start, $end]);
+        $stmt = $db->prepare("SELECT COUNT(*) FROM reports WHERE published = 1 AND date BETWEEN ? AND ? AND ((category = 'einsatz' AND subcategory = ?) OR (category2 = 'einsatz' AND subcategory2 = ?))");
+        $stmt->execute([$start, $end, $subcategory, $subcategory]);
         return (int)$stmt->fetchColumn();
     };
 

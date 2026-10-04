@@ -623,6 +623,19 @@ function getMigrations(): array {
             },
         ],
 
+        [
+            'id' => '2026_10_04_add_report_second_category',
+            'run' => function (PDO $db) {
+                // Ein Bericht kann einer zweiten Kategorie/Unterkategorie
+                // zugeordnet werden (z.B. "Übung" + "Einsatz/Brand"), falls
+                // z.B. während einer Übung tatsächlich ein Einsatz stattfand.
+                // Beide Zuordnungen bleiben gleichwertig - es gibt keine
+                // "Hauptkategorie" unter den beiden.
+                addColumnIfMissing($db, 'reports', 'category2', 'VARCHAR(50) DEFAULT NULL');
+                addColumnIfMissing($db, 'reports', 'subcategory2', 'VARCHAR(50) DEFAULT NULL');
+            },
+        ],
+
     ];
 }
 
