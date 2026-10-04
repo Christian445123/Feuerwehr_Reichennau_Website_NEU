@@ -4102,42 +4102,200 @@ body.lightbox-open {
 }
 
 /* --- Schutzgebiets-Check (Mitmachen-Seite, über Admin ein-/ausblendbar) --- */
+.schutzgebiet-check-card {
+    position: relative;
+    background: linear-gradient(135deg, #181818 0%, #241414 100%);
+    color: var(--color-white);
+    border-radius: var(--radius-xl);
+    padding: 40px clamp(20px, 5vw, 48px);
+    text-align: center;
+    overflow: hidden;
+}
+
+.schutzgebiet-check-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 15% 20%, rgba(213, 0, 28, 0.22) 0%, transparent 55%),
+                radial-gradient(circle at 85% 85%, rgba(213, 0, 28, 0.15) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+.schutzgebiet-check-card > * {
+    position: relative;
+    z-index: 1;
+}
+
+.schutzgebiet-check-badge {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 18px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    color: var(--color-white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    box-shadow: 0 8px 24px rgba(213, 0, 28, 0.4);
+}
+
+.schutzgebiet-check-card h2 {
+    font-family: var(--font-family-display);
+    font-size: clamp(1.4rem, 3vw, 1.9rem);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin-bottom: 10px;
+}
+
+.schutzgebiet-check-card > p {
+    color: rgba(255, 255, 255, 0.72);
+    max-width: 520px;
+    margin: 0 auto 28px;
+    line-height: 1.6;
+}
+
+.schutzgebiet-check-form {
+    max-width: 560px;
+    margin: 0 auto;
+}
+
 .schutzgebiet-check-form .form-row {
     display: flex;
-    gap: 16px;
+    gap: 12px;
     flex-wrap: wrap;
     align-items: flex-end;
 }
 
 .schutzgebiet-check-form .form-group {
     flex: 1 1 220px;
-    margin-bottom: 16px;
+    margin-bottom: 0;
+    text-align: left;
+}
+
+.schutzgebiet-check-form .form-group.schutzgebiet-check-hausnr {
+    flex: 0 1 100px;
+}
+
+.schutzgebiet-check-form label {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: rgba(255, 255, 255, 0.55);
+    margin-bottom: 6px;
+}
+
+.schutzgebiet-check-form input {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: var(--radius-sm);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: rgba(255, 255, 255, 0.07);
+    color: var(--color-white);
+    font-size: 0.95rem;
+    transition: var(--transition);
+}
+
+.schutzgebiet-check-form input::placeholder {
+    color: rgba(255, 255, 255, 0.35);
+}
+
+.schutzgebiet-check-form input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.schutzgebiet-check-form .btn {
+    flex: 0 0 auto;
+    white-space: nowrap;
 }
 
 .schutzgebiet-check-result {
-    margin-top: 18px;
-    padding: 14px 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    text-align: left;
+    max-width: 560px;
+    margin: 26px auto 0;
+    padding: 18px 20px;
     border-radius: var(--radius-md);
-    font-size: 0.95rem;
-    line-height: 1.5;
+    background: rgba(255, 255, 255, 0.95);
+    opacity: 0;
+    transform: translateY(6px);
 }
 
-.schutzgebiet-check-result.sg-yes {
-    background: rgba(39, 174, 96, 0.1);
-    color: #1e7e46;
+.schutzgebiet-check-result.sg-reveal {
+    animation: sgResultReveal 0.35s ease forwards;
 }
 
-.schutzgebiet-check-result.sg-no {
-    background: rgba(213, 0, 28, 0.08);
-    color: var(--color-primary-dark);
+@keyframes sgResultReveal {
+    to { opacity: 1; transform: translateY(0); }
 }
 
-.schutzgebiet-check-result.sg-unknown,
-.schutzgebiet-check-result.sg-error {
-    background: var(--color-gray-100);
+.schutzgebiet-check-result-icon {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    color: var(--color-white);
+}
+
+.schutzgebiet-check-result-title {
+    display: block;
+    font-size: 1rem;
+    color: var(--color-dark);
+    margin-bottom: 3px;
+}
+
+.schutzgebiet-check-result-desc {
+    font-size: 0.9rem;
     color: var(--color-gray-700);
+    line-height: 1.55;
+}
+
+.schutzgebiet-check-result-desc strong {
+    color: var(--color-dark);
+}
+
+.schutzgebiet-check-result.sg-yes .schutzgebiet-check-result-icon {
+    background: #27ae60;
+}
+
+.schutzgebiet-check-result.sg-no .schutzgebiet-check-result-icon {
+    background: var(--color-primary);
+}
+
+.schutzgebiet-check-result.sg-unknown .schutzgebiet-check-result-icon,
+.schutzgebiet-check-result.sg-error .schutzgebiet-check-result-icon {
+    background: var(--color-gray-600);
 }
 
 .schutzgebiet-check-hint {
-    margin-top: 14px;
+    margin-top: 22px;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.schutzgebiet-check-hint a {
+    color: rgba(255, 255, 255, 0.75);
+    text-decoration: underline;
+}
+
+@media (max-width: 560px) {
+    .schutzgebiet-check-form .form-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .schutzgebiet-check-form .form-group.schutzgebiet-check-hausnr {
+        flex: 1 1 auto;
+    }
+    .schutzgebiet-check-form .btn {
+        width: 100%;
+    }
 }

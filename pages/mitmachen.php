@@ -139,29 +139,34 @@ foreach ([['kommandant', 'Kommandant'], ['kommandant_stv', 'Kommandant-Stv.']] a
     <?php if (isSchutzgebietCheckEnabled()): ?>
     <section class="section" style="padding-top: 0;">
         <div class="container jugend-narrow">
-            <div class="content-card schutzgebiet-check-card">
-                <div class="content-card-header">
-                    <div class="content-card-icon"><i class="fas fa-location-crosshairs"></i></div>
-                    <h2>Bin ich im Schutzgebiet der FF Reichenau?</h2>
-                </div>
-                <div class="content-card-body">
-                    <p>Gib deine Straße und Hausnummer ein - wir sagen dir, ob du im Schutzgebiet der Freiwilligen Feuerwehr Reichenau wohnst oder dich an eine andere Freiwillige Feuerwehr wenden musst.</p>
-                    <form id="schutzgebietCheckForm" class="schutzgebiet-check-form" onsubmit="return false;">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="sgStrasse">Straße</label>
-                                <input type="text" id="sgStrasse" name="strasse" placeholder="z.&nbsp;B. Rossaugasse" required>
-                            </div>
-                            <div class="form-group" style="max-width:140px;">
-                                <label for="sgHausnummer">Hausnummer</label>
-                                <input type="text" id="sgHausnummer" name="hausnummer" placeholder="z.&nbsp;B. 4">
-                            </div>
+            <div class="schutzgebiet-check-card">
+                <div class="schutzgebiet-check-badge"><i class="fas fa-location-crosshairs"></i></div>
+                <h2>Bin ich im Schutzgebiet der FF Reichenau?</h2>
+                <p>Gib deine Straße und Hausnummer ein - wir sagen dir, ob du im Schutzgebiet der Freiwilligen Feuerwehr Reichenau wohnst oder dich an eine andere Freiwillige Feuerwehr wenden musst.</p>
+
+                <form id="schutzgebietCheckForm" class="schutzgebiet-check-form" onsubmit="return false;">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="sgStrasse">Straße</label>
+                            <input type="text" id="sgStrasse" name="strasse" placeholder="z.&nbsp;B. Rossaugasse" required>
+                        </div>
+                        <div class="form-group schutzgebiet-check-hausnr">
+                            <label for="sgHausnummer">Hausnr.</label>
+                            <input type="text" id="sgHausnummer" name="hausnummer" placeholder="4">
                         </div>
                         <button type="submit" class="btn btn-primary" id="sgCheckBtn"><i class="fas fa-magnifying-glass-location"></i> Prüfen</button>
-                    </form>
-                    <div id="schutzgebietCheckResult" class="schutzgebiet-check-result" style="display:none;"></div>
-                    <p class="form-hint schutzgebiet-check-hint"><i class="fas fa-circle-info"></i> Die Prüfung basiert auf der <a href="index.php?page=schutzbereich">eingezeichneten Fläche</a> und ist eine Annäherung, keine amtliche Auskunft.</p>
+                    </div>
+                </form>
+
+                <div id="schutzgebietCheckResult" class="schutzgebiet-check-result" style="display:none;">
+                    <div class="schutzgebiet-check-result-icon"><i class="fas"></i></div>
+                    <div class="schutzgebiet-check-result-text">
+                        <strong class="schutzgebiet-check-result-title"></strong>
+                        <span class="schutzgebiet-check-result-desc"></span>
+                    </div>
                 </div>
+
+                <p class="form-hint schutzgebiet-check-hint"><i class="fas fa-circle-info"></i> Die Prüfung basiert auf der <a href="index.php?page=schutzbereich">eingezeichneten Fläche</a> und ist eine Annäherung, keine amtliche Auskunft.</p>
             </div>
         </div>
     </section>
@@ -281,6 +286,21 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!form) return;
     var btn = document.getElementById('sgCheckBtn');
     var resultBox = document.getElementById('schutzgebietCheckResult');
+    var resultIcon = resultBox.querySelector('.schutzgebiet-check-result-icon i');
+    var resultTitle = resultBox.querySelector('.schutzgebiet-check-result-title');
+    var resultDesc = resultBox.querySelector('.schutzgebiet-check-result-desc');
+
+    function showResult(state, icon, title, desc) {
+        resultBox.className = 'schutzgebiet-check-result sg-' + state;
+        resultIcon.className = 'fas ' + icon;
+        resultTitle.textContent = title;
+        resultDesc.innerHTML = desc;
+        resultBox.style.display = 'flex';
+        // Kurzes Einblenden, statt dass das Ergebnis einfach da ist
+        resultBox.classList.remove('sg-reveal');
+        void resultBox.offsetWidth;
+        resultBox.classList.add('sg-reveal');
+    }
 
     form.addEventListener('submit', function () {
         var strasse = document.getElementById('sgStrasse').value.trim();
@@ -293,24 +313,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
         var url = 'schutzgebiet-check.php?strasse=' + encodeURIComponent(strasse) + '&hausnummer=' + encodeURIComponent(hausnummer);
         fetch(url).then(function (r) { return r.json(); }).then(function (data) {
-            resultBox.style.display = 'block';
             if (data.error) {
-                resultBox.className = 'schutzgebiet-check-result sg-error';
-                resultBox.innerHTML = '<i class="fas fa-triangle-exclamation"></i> ' + data.error;
+                showResult('error', 'fa-triangle-exclamation', 'Das hat nicht geklappt', data.error);
             } else if (!data.found) {
-                resultBox.className = 'schutzgebiet-check-result sg-unknown';
-                resultBox.innerHTML = '<i class="fas fa-circle-question"></i> Diese Adresse konnte nicht gefunden werden. Bitte Schreibweise prüfen.';
+                showResult('unknown', 'fa-circle-question', 'Adresse nicht gefunden', 'Bitte die Schreibweise von Straße und Hausnummer prüfen.');
             } else if (data.in_schutzgebiet) {
-                resultBox.className = 'schutzgebiet-check-result sg-yes';
-                resultBox.innerHTML = '<i class="fas fa-circle-check"></i> Du liegst im Schutzgebiet der <strong>Freiwilligen Feuerwehr Reichenau</strong> - schön, dass du dabei sein möchtest!';
+                showResult('yes', 'fa-circle-check', 'Du bist im Schutzgebiet!', 'Schön, dass du bei der <strong>Freiwilligen Feuerwehr Reichenau</strong> dabei sein möchtest.');
             } else {
-                resultBox.className = 'schutzgebiet-check-result sg-no';
-                resultBox.innerHTML = '<i class="fas fa-circle-info"></i> Diese Adresse liegt <strong>nicht</strong> im Schutzgebiet der FF Reichenau. Bitte wende dich an die für deinen Wohnort zuständige Freiwillige Feuerwehr.';
+                showResult('no', 'fa-circle-info', 'Außerhalb unseres Schutzgebiets', 'Bitte wende dich an die für deinen Wohnort zuständige Freiwillige Feuerwehr.');
             }
         }).catch(function () {
-            resultBox.style.display = 'block';
-            resultBox.className = 'schutzgebiet-check-result sg-error';
-            resultBox.innerHTML = '<i class="fas fa-triangle-exclamation"></i> Die Prüfung ist gerade nicht möglich. Bitte später erneut versuchen.';
+            showResult('error', 'fa-triangle-exclamation', 'Das hat nicht geklappt', 'Die Prüfung ist gerade nicht möglich. Bitte später erneut versuchen.');
         }).finally(function () {
             btn.disabled = false;
             btn.innerHTML = '<i class="fas fa-magnifying-glass-location"></i> Prüfen';
