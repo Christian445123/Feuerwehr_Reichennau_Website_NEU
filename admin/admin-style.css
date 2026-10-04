@@ -673,3 +673,10 @@ img { max-width: 100%; height: auto; }
 .subcat-checkboxes input[type="checkbox"] {
     width: auto;
 }
+
+/* Badges gruppiert nach Kategorie in der Berichte-Liste */
+.badge-group-label {
+    font-size: 0.75rem;
+    color: var(--gray-600);
+    margin-right: 2px;
+}

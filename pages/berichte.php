@@ -32,11 +32,17 @@ $berichteVorjahr = getBerichteVorjahr();
         <div class="container bericht-detail-container">
             <h1 class="page-title"><?php echo htmlspecialchars($report['title']); ?></h1>
             <p class="page-subtitle">
-                <?php foreach (getReportBadges($report['category'], $report['subcategory']) as $badge): ?>
-                    <span class="bericht-badge <?php echo $badge['class']; ?>"><?php echo htmlspecialchars($badge['label']); ?></span>
-                <?php endforeach; ?>
-                <?php foreach (getReportBadges($report['category2'] ?? '', $report['subcategory2'] ?? '') as $badge): ?>
-                    <span class="bericht-badge <?php echo $badge['class']; ?>"><?php echo htmlspecialchars($badge['label']); ?></span>
+                <?php foreach (getReportBadgeGroups($report) as $group): ?>
+                    <span class="bericht-badge-group">
+                        <?php if ($group['badges']): ?>
+                            <span class="bericht-badge-group-label"><?php echo htmlspecialchars($group['label']); ?>:</span>
+                            <?php foreach ($group['badges'] as $badge): ?>
+                                <span class="bericht-badge <?php echo $badge['class']; ?>"><?php echo htmlspecialchars($badge['label']); ?></span>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <span class="bericht-badge badge-sonstige"><?php echo htmlspecialchars($group['label']); ?></span>
+                        <?php endif; ?>
+                    </span>
                 <?php endforeach; ?>
                 &middot; <?php echo htmlspecialchars($report['date']); ?>
                 <?php if ($report['author']): ?>
@@ -176,11 +182,17 @@ $berichteVorjahr = getBerichteVorjahr();
                             <?php endif; ?>
                             <div class="bericht-card-body">
                                 <div class="bericht-badge-row">
-                                    <?php foreach (getReportBadges($r['category'], $r['subcategory']) as $cardBadge): ?>
-                                        <div class="bericht-badge <?php echo $cardBadge['class']; ?>"><?php echo htmlspecialchars($cardBadge['label']); ?></div>
-                                    <?php endforeach; ?>
-                                    <?php foreach (getReportBadges($r['category2'] ?? '', $r['subcategory2'] ?? '') as $cardBadge): ?>
-                                        <div class="bericht-badge <?php echo $cardBadge['class']; ?>"><?php echo htmlspecialchars($cardBadge['label']); ?></div>
+                                    <?php foreach (getReportBadgeGroups($r) as $cardGroup): ?>
+                                        <div class="bericht-badge-group">
+                                            <?php if ($cardGroup['badges']): ?>
+                                                <span class="bericht-badge-group-label"><?php echo htmlspecialchars($cardGroup['label']); ?>:</span>
+                                                <?php foreach ($cardGroup['badges'] as $cardBadge): ?>
+                                                    <span class="bericht-badge <?php echo $cardBadge['class']; ?>"><?php echo htmlspecialchars($cardBadge['label']); ?></span>
+                                                <?php endforeach; ?>
+                                            <?php else: ?>
+                                                <span class="bericht-badge badge-sonstige"><?php echo htmlspecialchars($cardGroup['label']); ?></span>
+                                            <?php endif; ?>
+                                        </div>
                                     <?php endforeach; ?>
                                 </div>
                                 <h3><i class="fas <?php echo $categoryIcons[$r['category']] ?? 'fa-newspaper'; ?>"></i> <?php echo htmlspecialchars($r['title']); ?></h3>

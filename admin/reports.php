@@ -111,11 +111,15 @@ require_once __DIR__ . '/includes/admin-header.php';
                     <tr>
                         <td><strong><?php echo e($r['title']); ?></strong></td>
                         <td>
-                            <?php foreach (getReportBadges($r['category'], $r['subcategory']) as $listBadge): ?>
-                                <span class="badge <?php echo e($listBadge['class']); ?>"><?php echo e($listBadge['label']); ?></span>
-                            <?php endforeach; ?>
-                            <?php foreach (getReportBadges($r['category2'] ?? '', $r['subcategory2'] ?? '') as $listBadge): ?>
-                                <span class="badge <?php echo e($listBadge['class']); ?>"><?php echo e($listBadge['label']); ?></span>
+                            <?php foreach (getReportBadgeGroups($r) as $listGroup): ?>
+                                <?php if ($listGroup['badges']): ?>
+                                    <strong class="badge-group-label"><?php echo e($listGroup['label']); ?>:</strong>
+                                    <?php foreach ($listGroup['badges'] as $listBadge): ?>
+                                        <span class="badge <?php echo e($listBadge['class']); ?>"><?php echo e($listBadge['label']); ?></span>
+                                    <?php endforeach; ?>
+                                <?php else: ?>
+                                    <span class="badge badge-sonstige"><?php echo e($listGroup['label']); ?></span>
+                                <?php endif; ?>
                             <?php endforeach; ?>
                         </td>
                         <td><?php echo e($r['date']); ?></td>

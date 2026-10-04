@@ -239,3 +239,26 @@ function getReportBadges(string $category, $subcategory): array {
     $catBadges = getReportCategoryBadges();
     return [['class' => $catBadges[$category] ?? 'badge-sonstige', 'label' => $catLabels[$category] ?? ucfirst($category)]];
 }
+
+/**
+ * Badges gruppiert nach Kategorie, mit der Kategorie als vorangestellter
+ * Beschriftung - z.B. bei einem Bezirksübungstag mit Einsatz-Anteil:
+ * "Einsatz: Brand" neben "Übung: Technisch, ABC". Ein Bericht hat höchstens
+ * zwei Gruppen (erste + optionale zweite Kategorie).
+ */
+function getReportBadgeGroups(array $report): array {
+    $groups = [];
+    $catLabels = getReportCategories();
+    foreach ([['category', 'subcategory'], ['category2', 'subcategory2']] as [$catKey, $subKey]) {
+        $category = $report[$catKey] ?? '';
+        if ($category === '') continue;
+        $subs = getReportSubcategoryList($report[$subKey] ?? '');
+        // Ohne gewählte Unterkategorie reicht die Kategorie-Beschriftung
+        // allein ("Jugend") - sonst gäbe es ein doppeltes "Jugend: Jugend".
+        $groups[] = [
+            'label' => $catLabels[$category] ?? ucfirst($category),
+            'badges' => $subs ? getReportBadges($category, $report[$subKey] ?? '') : [],
+        ];
+    }
+    return $groups;
+}

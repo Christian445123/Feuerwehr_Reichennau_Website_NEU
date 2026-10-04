@@ -4080,3 +4080,23 @@ body.lightbox-open {
     justify-content: center;
     font-size: 0.75rem;
 }
+
+/* Badges gruppiert nach Kategorie (z.B. "Einsatz: Brand" neben "Übung: ABC") */
+.bericht-badge-group {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.bericht-badge-group-label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--color-gray-600);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.page-subtitle .bericht-badge-group-label {
+    color: rgba(255, 255, 255, 0.6);
+}
