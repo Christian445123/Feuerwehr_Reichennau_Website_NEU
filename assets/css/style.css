@@ -4075,3 +4075,8 @@ body.lightbox-open {
 .bericht-badge-row .bericht-badge {
     margin-bottom: 14px;
 }
+
+/* Einzelbericht-Ansicht etwas breiter als der Standard-Container */
+.bericht-detail-container {
+    max-width: 1400px;
+}

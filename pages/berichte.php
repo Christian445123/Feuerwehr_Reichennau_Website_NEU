@@ -28,8 +28,8 @@ $berichteVorjahr = getBerichteVorjahr();
 
 <?php if ($reportId > 0 && $report): ?>
     <!-- Einzelbericht-Ansicht -->
-    <section class="page-header">
-        <div class="container">
+    <section class="page-header bericht-detail-page">
+        <div class="container bericht-detail-container">
             <h1 class="page-title"><?php echo htmlspecialchars($report['title']); ?></h1>
             <p class="page-subtitle">
                 <?php $badge1 = getReportBadgeInfo($report['category'], $report['subcategory']); ?>
@@ -49,7 +49,7 @@ $berichteVorjahr = getBerichteVorjahr();
     </section>
 
     <section class="section">
-        <div class="container">
+        <div class="container bericht-detail-container">
             <a href="index.php?page=berichte" class="btn btn-outline-dark" style="margin-bottom: 24px;">
                 <i class="fas fa-arrow-left"></i> Zurück zu allen Berichten
             </a>

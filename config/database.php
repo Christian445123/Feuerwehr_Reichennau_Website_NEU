@@ -233,7 +233,7 @@ function handleImageUpload(array $file, string $subdir, ?string &$error = null):
     ensureUploadDirs();
 
     $allowed = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-    $maxSize = 10 * 1024 * 1024; // 10MB
+    $maxSize = 70 * 1024 * 1024; // 70MB - Bilder werden danach automatisch verkleinert/komprimiert
 
     if ($file['error'] !== UPLOAD_ERR_OK || $file['size'] === 0) {
         $error = in_array($file['error'], [UPLOAD_ERR_INI_SIZE, UPLOAD_ERR_FORM_SIZE], true)
@@ -251,7 +251,7 @@ function handleImageUpload(array $file, string $subdir, ?string &$error = null):
     }
 
     if ($file['size'] > $maxSize) {
-        $error = 'Datei ist größer als 10MB.';
+        $error = 'Datei ist größer als 70MB.';
         return null;
     }
 
