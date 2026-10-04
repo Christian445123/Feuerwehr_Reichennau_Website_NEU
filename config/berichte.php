@@ -44,13 +44,52 @@ function setBerichteJahre(int $aktuellesJahr, int $vorjahr): void {
 
 /**
  * Beliebig viele externe Links pro Bericht (Instagram, Facebook, externe
- * Website, ...). Werden als JSON-Array von URLs in reports.links
+ * Website, ...), jeweils mit optionaler eigener Beschreibung (z.B. "Hier
+ * der TT-Bericht zu diesem Einsatz"). Werden als JSON-Array in reports.links
  * gespeichert (siehe Migration 2026_09_29_add_report_links) und über
  * Admin -> Berichte mit einem "+"-Button gepflegt.
+ *
+ * Älteres Format (einfaches Array von URL-Strings, vor der Beschreibungs-
+ * Funktion) wird weiterhin gelesen und automatisch in das neue Format
+ * ['url' => ..., 'label' => ''] übersetzt.
  */
 function getReportLinks(array $report): array {
-    $links = json_decode($report['links'] ?? '', true);
-    return is_array($links) ? array_values(array_filter($links, fn($l) => is_string($l) && trim($l) !== '')) : [];
+    $raw = json_decode($report['links'] ?? '', true);
+    if (!is_array($raw)) return [];
+    $links = [];
+    foreach ($raw as $item) {
+        if (is_string($item)) {
+            $url = trim($item);
+            $label = '';
+        } elseif (is_array($item)) {
+            $url = trim($item['url'] ?? '');
+            $label = trim($item['label'] ?? '');
+        } else {
+            continue;
+        }
+        if ($url === '') continue;
+        $links[] = ['url' => $url, 'label' => $label];
+    }
+    return $links;
+}
+
+/**
+ * Ob die Links eines Berichts öffentlich angezeigt werden (Admin -> Berichte
+ * -> Checkbox "Links nicht öffentlich anzeigen"). Die Links bleiben dabei
+ * gespeichert, erscheinen nur nicht auf der Website - praktisch, um einen
+ * Link vorerst nur intern zu notieren.
+ */
+function areReportLinksVisible(array $report): bool {
+    return empty($report['links_hidden']);
+}
+
+/**
+ * Anzeigename eines Links: die eigene Beschreibung, falls gepflegt, sonst
+ * die automatisch anhand der URL erkannte Standard-Beschriftung.
+ */
+function getReportLinkLabel(array $link): string {
+    $label = trim($link['label'] ?? '');
+    return $label !== '' ? $label : detectReportLinkIcon($link['url'])['label'];
 }
 
 /**
@@ -106,6 +145,16 @@ function getReportSubcategoriesByCategory(): array {
     ];
 }
 
+/**
+ * Maximale Anzahl gleichzeitig wählbarer Einsatz-/Übungsarten (Mehrfach-
+ * auswahl) - z.B. ein Einsatz, der von Brand in ABC überging, oder ein
+ * Bezirksübungstag mit Brand-, Technisch- und ABC-Teil. Kategorien ohne
+ * Eintrag hier haben keine Unterkategorien und damit keine Begrenzung nötig.
+ */
+function getReportSubcategoryLimit(string $category): int {
+    return ['einsatz' => 2, 'uebung' => 3][$category] ?? 99;
+}
+
 function getReportSubcategoryLabels(): array {
     return [
         'brand' => 'Brand', 'technisch' => 'Technisch', 'abc' => 'ABC',
@@ -121,11 +170,36 @@ function getReportSubcategoryBadges(): array {
 }
 
 /**
- * Gültige Kategorie/Unterkategorie-Kombination zurückgeben; ungültige
- * Unterkategorien werden auf leer zurückgesetzt. Für die zweite Kategorie
- * ist eine leere Kategorie ("keine zweite Kategorie") erlaubt.
+ * Eine Einsatz-/Übungsart-Spalte (reports.subcategory bzw. subcategory2)
+ * enthält seit der Mehrfachauswahl kommagetrennt mehrere Werte (z.B.
+ * "brand,technisch,abc" bei einem Bezirksübungstag). Diese Funktion liest
+ * sie unabhängig davon, ob der Aufrufer schon ein Array oder noch den
+ * rohen String aus der Datenbank hat.
  */
-function sanitizeReportCategory(string $category, string $subcategory, bool $allowEmpty = false): array {
+function getReportSubcategoryList($value): array {
+    $list = is_array($value) ? $value : explode(',', (string) $value);
+    return array_values(array_filter(array_map('trim', $list), fn($v) => $v !== ''));
+}
+
+/**
+ * Beschriftung einer (ggf. mehrfachen) Einsatz-/Übungsart als lesbarer Text,
+ * z.B. "Brand + ABC" - für Stellen, an denen kein Badge, sondern reiner
+ * Text gebraucht wird (z.B. die Alarmierungen-Zeitleiste).
+ */
+function getReportSubcategoryLabelText($value, string $fallback = 'Einsatz'): string {
+    $labels = getReportSubcategoryLabels();
+    $parts = array_map(fn($s) => $labels[$s] ?? $s, getReportSubcategoryList($value));
+    return $parts ? implode(' + ', $parts) : $fallback;
+}
+
+/**
+ * Gültige Kategorie/Unterkategorie-Kombination zurückgeben; ungültige oder
+ * zur Kategorie nicht passende Unterkategorien werden verworfen, mehrere
+ * gültige bleiben als kommagetrennte Liste erhalten (Mehrfachauswahl, z.B.
+ * eine Übung mit Brand- UND Technisch- UND ABC-Teil). Für die zweite
+ * Kategorie ist eine leere Kategorie ("keine zweite Kategorie") erlaubt.
+ */
+function sanitizeReportCategory(string $category, array $subcategories, bool $allowEmpty = false): array {
     $validCats = array_keys(getReportCategories());
     if ($allowEmpty && $category === '') {
         return ['', ''];
@@ -137,25 +211,31 @@ function sanitizeReportCategory(string $category, string $subcategory, bool $all
         return ['', ''];
     }
     $allowedSubcats = getReportSubcategoriesByCategory()[$category] ?? [];
-    if (!in_array($subcategory, $allowedSubcats, true)) {
-        $subcategory = '';
-    }
-    return [$category, $subcategory];
+    $valid = array_values(array_unique(array_intersect(getReportSubcategoryList($subcategories), $allowedSubcats)));
+    $valid = array_slice($valid, 0, getReportSubcategoryLimit($category));
+    return [$category, implode(',', $valid)];
 }
 
 /**
- * Badge-HTML (Klasse + Beschriftung) für eine Kategorie/Unterkategorie-
- * Kombination - die Unterkategorie wird bevorzugt angezeigt, falls
- * vorhanden, sonst die Kategorie selbst.
+ * Badges (Klasse + Beschriftung) für eine Kategorie/Unterkategorie-
+ * Kombination - bei mehreren Unterkategorien (Mehrfachauswahl) kommt je
+ * Unterkategorie ein eigenes Badge zurück, sonst ein einzelnes Kategorie-
+ * Badge. Gibt ein leeres Array zurück, wenn keine Kategorie gesetzt ist.
  */
-function getReportBadgeInfo(string $category, ?string $subcategory): ?array {
-    if ($category === '') return null;
+function getReportBadges(string $category, $subcategory): array {
+    if ($category === '') return [];
+    $subs = getReportSubcategoryList($subcategory ?? '');
     $subLabels = getReportSubcategoryLabels();
     $subBadges = getReportSubcategoryBadges();
-    if ($subcategory && isset($subLabels[$subcategory])) {
-        return ['class' => $subBadges[$subcategory], 'label' => $subLabels[$subcategory]];
+    $badges = [];
+    foreach ($subs as $s) {
+        if (isset($subLabels[$s])) {
+            $badges[] = ['class' => $subBadges[$s], 'label' => $subLabels[$s]];
+        }
     }
+    if (!empty($badges)) return $badges;
+
     $catLabels = getReportCategories();
     $catBadges = getReportCategoryBadges();
-    return ['class' => $catBadges[$category] ?? 'badge-sonstige', 'label' => $catLabels[$category] ?? ucfirst($category)];
+    return [['class' => $catBadges[$category] ?? 'badge-sonstige', 'label' => $catLabels[$category] ?? ucfirst($category)]];
 }

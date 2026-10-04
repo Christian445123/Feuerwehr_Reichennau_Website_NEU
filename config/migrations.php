@@ -636,6 +636,18 @@ function getMigrations(): array {
             },
         ],
 
+        [
+            'id' => '2026_10_05_add_report_links_hidden',
+            'run' => function (PDO $db) {
+                // Links können je Bericht öffentlich versteckt werden (z.B. um
+                // einen Link vorerst nur intern zu notieren). Jeder Link kann
+                // außerdem eine eigene Beschreibung bekommen - das ändert nur
+                // das Format des JSON in reports.links (String -> Objekt),
+                // keine weitere Spalte nötig, siehe getReportLinks().
+                addColumnIfMissing($db, 'reports', 'links_hidden', 'TINYINT DEFAULT 0');
+            },
+        ],
+
     ];
 }
 

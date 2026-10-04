@@ -15,7 +15,7 @@ $pageTitle = $isEdit ? 'Bericht bearbeiten' : 'Neuer Bericht';
 
 $report = [
     'title' => '', 'category' => 'einsatz', 'subcategory' => '', 'category2' => '', 'subcategory2' => '', 'content' => '',
-    'date' => date('Y-m-d'), 'author' => '', 'published' => 1,
+    'date' => date('Y-m-d'), 'author' => '', 'published' => 1, 'links_hidden' => 0,
 ];
 $images = [];
 $links = [];
@@ -94,26 +94,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $report['title'] = trim($_POST['title'] ?? '');
     $report['category'] = $_POST['category'] ?? 'einsatz';
-    $report['subcategory'] = $_POST['subcategory'] ?? '';
+    $report['subcategory'] = is_array($_POST['subcategory'] ?? null) ? $_POST['subcategory'] : [];
     $report['category2'] = $_POST['category2'] ?? '';
-    $report['subcategory2'] = $_POST['subcategory2'] ?? '';
+    $report['subcategory2'] = is_array($_POST['subcategory2'] ?? null) ? $_POST['subcategory2'] : [];
     $report['content'] = trim($_POST['content'] ?? '');
     $report['date'] = $_POST['date'] ?? date('Y-m-d');
     $report['author'] = trim($_POST['author'] ?? '');
     $report['published'] = isset($_POST['published']) ? 1 : 0;
+    $report['links_hidden'] = isset($_POST['links_hidden']) ? 1 : 0;
 
-    // Beliebig viele Links - leere Felder werden ignoriert, jede
-    // ausgefüllte URL muss gültig sein.
+    // Beliebig viele Links, je mit optionaler eigener Beschreibung - leere
+    // URL-Felder werden ignoriert, jede ausgefüllte URL muss gültig sein.
     $links = [];
     $linkErrors = [];
-    foreach ($_POST['links'] ?? [] as $rawLink) {
+    $linkLabels = $_POST['link_labels'] ?? [];
+    foreach ($_POST['links'] ?? [] as $i => $rawLink) {
         $url = trim($rawLink);
         if ($url === '') continue;
         if (!filter_var($url, FILTER_VALIDATE_URL)) {
             $linkErrors[] = $url;
             continue;
         }
-        $links[] = $url;
+        $links[] = ['url' => $url, 'label' => trim($linkLabels[$i] ?? '')];
     }
 
     // Subkategorie gibt es bei Einsätzen (Brand/Technisch/ABC/Unterstützung/
@@ -130,14 +132,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif (!empty($linkErrors)) {
         flash('error', 'Ungültige Link-URL: ' . implode(', ', $linkErrors) . ' (z.B. https://www.instagram.com/p/...).');
     } else {
-        $linksJson = !empty($links) ? json_encode($links) : null;
+        $linksJson = !empty($links) ? json_encode($links, JSON_UNESCAPED_UNICODE) : null;
         $wasCreate = !$isEdit;
         if ($isEdit) {
-            $stmt = $db->prepare("UPDATE reports SET title=?, category=?, subcategory=?, category2=?, subcategory2=?, content=?, date=?, author=?, published=?, links=?, updated_at=CURRENT_TIMESTAMP WHERE id=?");
-            $stmt->execute([$report['title'], $report['category'], $report['subcategory'] ?: null, $report['category2'] ?: null, $report['subcategory2'] ?: null, $report['content'], $report['date'], $report['author'], $report['published'], $linksJson, $id]);
+            $stmt = $db->prepare("UPDATE reports SET title=?, category=?, subcategory=?, category2=?, subcategory2=?, content=?, date=?, author=?, published=?, links=?, links_hidden=?, updated_at=CURRENT_TIMESTAMP WHERE id=?");
+            $stmt->execute([$report['title'], $report['category'], $report['subcategory'] ?: null, $report['category2'] ?: null, $report['subcategory2'] ?: null, $report['content'], $report['date'], $report['author'], $report['published'], $linksJson, $report['links_hidden'], $id]);
         } else {
-            $stmt = $db->prepare("INSERT INTO reports (title, category, subcategory, category2, subcategory2, content, date, author, published, links) VALUES (?,?,?,?,?,?,?,?,?,?)");
-            $stmt->execute([$report['title'], $report['category'], $report['subcategory'] ?: null, $report['category2'] ?: null, $report['subcategory2'] ?: null, $report['content'], $report['date'], $report['author'], $report['published'], $linksJson]);
+            $stmt = $db->prepare("INSERT INTO reports (title, category, subcategory, category2, subcategory2, content, date, author, published, links, links_hidden) VALUES (?,?,?,?,?,?,?,?,?,?,?)");
+            $stmt->execute([$report['title'], $report['category'], $report['subcategory'] ?: null, $report['category2'] ?: null, $report['subcategory2'] ?: null, $report['content'], $report['date'], $report['author'], $report['published'], $linksJson, $report['links_hidden']]);
             $id = $db->lastInsertId();
             $isEdit = true;
         }
@@ -223,17 +225,17 @@ require_once __DIR__ . '/includes/admin-header.php';
                     </div>
 
                     <?php $showSubcat = in_array($report['category'], ['einsatz', 'uebung'], true); ?>
+                    <?php $subcatValues = getReportSubcategoryList($report['subcategory'] ?? ''); ?>
                     <div class="form-group" id="subcategoryGroup" style="<?php echo $showSubcat ? '' : 'display:none;'; ?>">
-                        <label for="subcategory" id="subcategoryLabel"><?php echo $report['category'] === 'uebung' ? 'Übungsart' : 'Einsatzart'; ?></label>
-                        <select id="subcategory" name="subcategory">
-                            <option value="">-- Bitte wählen --</option>
-                            <option value="brand" <?php echo ($report['subcategory'] ?? '') === 'brand' ? 'selected' : ''; ?>>Brand</option>
-                            <option value="technisch" <?php echo ($report['subcategory'] ?? '') === 'technisch' ? 'selected' : ''; ?>>Technisch</option>
-                            <option value="abc" <?php echo ($report['subcategory'] ?? '') === 'abc' ? 'selected' : ''; ?>>ABC</option>
-                            <option value="unterstuetzung" class="subcat-unterstuetzung" <?php echo $report['category'] === 'uebung' ? 'style="display:none;" disabled' : ''; ?> <?php echo ($report['subcategory'] ?? '') === 'unterstuetzung' ? 'selected' : ''; ?>>Unterstützung</option>
-                            <option value="sonstiges" <?php echo ($report['subcategory'] ?? '') === 'sonstiges' ? 'selected' : ''; ?>>Sonstiges</option>
-                        </select>
-                        <p class="form-hint" id="subcategoryHint">Bestimmt die <?php echo $report['category'] === 'uebung' ? 'Übungsart' : 'Einsatzart für Statistik und Kennzeichnung'; ?> (Brand/Technisch/ABC<?php echo $report['category'] === 'uebung' ? '' : '/Unterstützung'; ?>/Sonstiges).</p>
+                        <label id="subcategoryLabel"><?php echo $report['category'] === 'uebung' ? 'Übungsart(en)' : 'Einsatzart(en)'; ?></label>
+                        <div class="subcat-checkboxes">
+                            <label><input type="checkbox" name="subcategory[]" value="brand" <?php echo in_array('brand', $subcatValues, true) ? 'checked' : ''; ?>> Brand</label>
+                            <label><input type="checkbox" name="subcategory[]" value="technisch" <?php echo in_array('technisch', $subcatValues, true) ? 'checked' : ''; ?>> Technisch</label>
+                            <label><input type="checkbox" name="subcategory[]" value="abc" <?php echo in_array('abc', $subcatValues, true) ? 'checked' : ''; ?>> ABC</label>
+                            <label class="subcat-unterstuetzung" style="<?php echo $report['category'] === 'uebung' ? 'display:none;' : ''; ?>"><input type="checkbox" name="subcategory[]" value="unterstuetzung" <?php echo in_array('unterstuetzung', $subcatValues, true) ? 'checked' : ''; ?> <?php echo $report['category'] === 'uebung' ? 'disabled' : ''; ?>> Unterstützung</label>
+                            <label><input type="checkbox" name="subcategory[]" value="sonstiges" <?php echo in_array('sonstiges', $subcatValues, true) ? 'checked' : ''; ?>> Sonstiges</label>
+                        </div>
+                        <p class="form-hint" id="subcategoryHint">Mehrfachauswahl möglich (max. <?php echo $report['category'] === 'uebung' ? '3 bei Übung' : '2 bei Einsatz'; ?>) - z.&nbsp;B. bei einem Bezirksübungstag mit Brand-, Technisch- und ABC-Teil, oder einem Einsatz, der von Brand in ABC überging. Bestimmt die <?php echo $report['category'] === 'uebung' ? 'Übungsart(en)' : 'Einsatzart(en) für Statistik und Kennzeichnung'; ?>.</p>
                     </div>
 
                     <div class="form-row" style="border-top: 1px dashed var(--gray-300); padding-top: 16px; margin-top: 4px;">
@@ -252,16 +254,16 @@ require_once __DIR__ . '/includes/admin-header.php';
                     </div>
 
                     <?php $showSubcat2 = in_array($report['category2'] ?? '', ['einsatz', 'uebung'], true); ?>
+                    <?php $subcatValues2 = getReportSubcategoryList($report['subcategory2'] ?? ''); ?>
                     <div class="form-group" id="subcategoryGroup2" style="<?php echo $showSubcat2 ? '' : 'display:none;'; ?>">
-                        <label for="subcategory2" id="subcategoryLabel2"><?php echo ($report['category2'] ?? '') === 'uebung' ? 'Übungsart' : 'Einsatzart'; ?></label>
-                        <select id="subcategory2" name="subcategory2">
-                            <option value="">-- Bitte wählen --</option>
-                            <option value="brand" <?php echo ($report['subcategory2'] ?? '') === 'brand' ? 'selected' : ''; ?>>Brand</option>
-                            <option value="technisch" <?php echo ($report['subcategory2'] ?? '') === 'technisch' ? 'selected' : ''; ?>>Technisch</option>
-                            <option value="abc" <?php echo ($report['subcategory2'] ?? '') === 'abc' ? 'selected' : ''; ?>>ABC</option>
-                            <option value="unterstuetzung" class="subcat2-unterstuetzung" <?php echo ($report['category2'] ?? '') === 'uebung' ? 'style="display:none;" disabled' : ''; ?> <?php echo ($report['subcategory2'] ?? '') === 'unterstuetzung' ? 'selected' : ''; ?>>Unterstützung</option>
-                            <option value="sonstiges" <?php echo ($report['subcategory2'] ?? '') === 'sonstiges' ? 'selected' : ''; ?>>Sonstiges</option>
-                        </select>
+                        <label id="subcategoryLabel2"><?php echo ($report['category2'] ?? '') === 'uebung' ? 'Übungsart(en)' : 'Einsatzart(en)'; ?></label>
+                        <div class="subcat-checkboxes">
+                            <label><input type="checkbox" name="subcategory2[]" value="brand" <?php echo in_array('brand', $subcatValues2, true) ? 'checked' : ''; ?>> Brand</label>
+                            <label><input type="checkbox" name="subcategory2[]" value="technisch" <?php echo in_array('technisch', $subcatValues2, true) ? 'checked' : ''; ?>> Technisch</label>
+                            <label><input type="checkbox" name="subcategory2[]" value="abc" <?php echo in_array('abc', $subcatValues2, true) ? 'checked' : ''; ?>> ABC</label>
+                            <label class="subcat2-unterstuetzung" style="<?php echo ($report['category2'] ?? '') === 'uebung' ? 'display:none;' : ''; ?>"><input type="checkbox" name="subcategory2[]" value="unterstuetzung" <?php echo in_array('unterstuetzung', $subcatValues2, true) ? 'checked' : ''; ?> <?php echo ($report['category2'] ?? '') === 'uebung' ? 'disabled' : ''; ?>> Unterstützung</label>
+                            <label><input type="checkbox" name="subcategory2[]" value="sonstiges" <?php echo in_array('sonstiges', $subcatValues2, true) ? 'checked' : ''; ?>> Sonstiges</label>
+                        </div>
                     </div>
 
                     <div class="form-group">
@@ -277,16 +279,21 @@ require_once __DIR__ . '/includes/admin-header.php';
                     <div class="form-group">
                         <label><i class="fas fa-link"></i> Links (Instagram, Facebook, externe Website, ...)</label>
                         <div id="linksList">
-                            <?php $linkRows = !empty($links) ? $links : ['']; ?>
+                            <?php $linkRows = !empty($links) ? $links : [['url' => '', 'label' => '']]; ?>
                             <?php foreach ($linkRows as $link): ?>
-                                <div class="link-row" style="display:flex; gap:8px; margin-bottom:8px;">
-                                    <input type="url" name="links[]" value="<?php echo e($link); ?>" placeholder="z.B. https://www.instagram.com/p/... oder eine externe Website" style="flex:1;">
+                                <div class="link-row" style="display:flex; gap:8px; margin-bottom:8px; flex-wrap:wrap;">
+                                    <input type="url" name="links[]" value="<?php echo e($link['url']); ?>" placeholder="z.B. https://www.instagram.com/p/... oder eine externe Website" style="flex:2; min-width:220px;">
+                                    <input type="text" name="link_labels[]" value="<?php echo e($link['label']); ?>" placeholder="Beschreibung (optional), z.B. &quot;TT-Bericht zu diesem Einsatz&quot;" style="flex:1; min-width:180px;">
                                     <button type="button" class="btn btn-sm btn-secondary remove-link-row" title="Link entfernen"><i class="fas fa-times"></i></button>
                                 </div>
                             <?php endforeach; ?>
                         </div>
                         <button type="button" id="addLinkRow" class="btn btn-sm btn-secondary"><i class="fas fa-plus"></i> Weiteren Link hinzufügen</button>
-                        <p class="form-hint">Optional: beliebig viele Links zu Instagram-Beiträgen, Facebook, YouTube oder externen Websites (z.B. Zeitungsartikel, feuerwehr.tirol). Icon wird automatisch anhand der URL erkannt, jeder Link erscheint beim veröffentlichten Bericht als eigener Button.</p>
+                        <p class="form-hint">Optional: beliebig viele Links zu Instagram-Beiträgen, Facebook, YouTube oder externen Websites (z.B. Zeitungsartikel, feuerwehr.tirol). Ohne eigene Beschreibung wird Icon &amp; Beschriftung automatisch anhand der URL erkannt; jeder Link erscheint beim veröffentlichten Bericht als eigener Button.</p>
+                        <label style="display:flex; align-items:center; gap:8px; margin-top:10px; font-weight:400;">
+                            <input type="checkbox" name="links_hidden" value="1" <?php echo !empty($report['links_hidden']) ? 'checked' : ''; ?> style="width:auto;">
+                            Links nicht öffentlich anzeigen (bleiben gespeichert, erscheinen aber nicht auf der Website)
+                        </label>
                     </div>
                 </div>
             </div>
@@ -356,14 +363,47 @@ require_once __DIR__ . '/includes/admin-header.php';
 </form>
 
 <script>
+// Mehrfachauswahl Einsatz-/Übungsart: max. 2 bei Einsatz (z.B. Brand, der in
+// ABC überging), max. 3 bei Übung (z.B. Bezirksübungstag mit Brand-,
+// Technisch- und ABC-Teil). Ist das Limit erreicht, werden die restlichen,
+// nicht angehakten Kästchen gesperrt, bis man eines wieder abwählt.
+var subcatLimits = { einsatz: 2, uebung: 3 };
+
+function enforceSubcatLimit(groupEl, categorySelectEl) {
+    if (!groupEl || !categorySelectEl) return;
+    var max = subcatLimits[categorySelectEl.value] || 99;
+    var allBoxes = groupEl.querySelectorAll('input[type=checkbox]');
+    var checkedCount = groupEl.querySelectorAll('input[type=checkbox]:checked').length;
+    allBoxes.forEach(function (cb) {
+        // Bereits anderweitig gesperrte Kästchen (z.B. "Unterstützung" bei
+        // Übung) unangetastet lassen, nur die eigene Limit-Sperre verwalten.
+        if (cb.disabled && !cb.hasAttribute('data-was-limited')) return;
+        if (!cb.checked && checkedCount >= max) {
+            cb.disabled = true;
+            cb.setAttribute('data-was-limited', '1');
+        } else if (cb.hasAttribute('data-was-limited')) {
+            cb.disabled = false;
+            cb.removeAttribute('data-was-limited');
+        }
+    });
+}
+
+function setupSubcatLimitGroup(groupId, categorySelectEl) {
+    var groupEl = document.getElementById(groupId);
+    if (!groupEl) return;
+    groupEl.addEventListener('change', function (e) {
+        if (e.target.type === 'checkbox') enforceSubcatLimit(groupEl, categorySelectEl);
+    });
+}
+
 // Einsatz-/Übungsart-Feld nur bei Kategorie "Einsatz" oder "Übung" anzeigen.
 // Bei "Übung" gibt es keine Option "Unterstützung" (reiner Einsatz-Begriff).
 var categorySelect = document.getElementById('category');
 var subcategoryGroup = document.getElementById('subcategoryGroup');
 var subcategoryLabel = document.getElementById('subcategoryLabel');
 var subcategoryHint = document.getElementById('subcategoryHint');
-var subcategorySelect = document.getElementById('subcategory');
 var subcatUnterstuetzung = document.querySelector('.subcat-unterstuetzung');
+var subcatUnterstuetzungInput = subcatUnterstuetzung ? subcatUnterstuetzung.querySelector('input') : null;
 
 if (categorySelect && subcategoryGroup) {
     categorySelect.addEventListener('change', function() {
@@ -371,46 +411,50 @@ if (categorySelect && subcategoryGroup) {
         var showSubcat = this.value === 'einsatz' || isUebung;
         subcategoryGroup.style.display = showSubcat ? '' : 'none';
 
-        if (subcategoryLabel) subcategoryLabel.textContent = isUebung ? 'Übungsart' : 'Einsatzart';
+        if (subcategoryLabel) subcategoryLabel.textContent = isUebung ? 'Übungsart(en)' : 'Einsatzart(en)';
         if (subcategoryHint) {
-            subcategoryHint.textContent = 'Bestimmt die ' + (isUebung ? 'Übungsart' : 'Einsatzart für Statistik und Kennzeichnung') +
-                ' (Brand/Technisch/ABC' + (isUebung ? '' : '/Unterstützung') + '/Sonstiges).';
+            subcategoryHint.textContent = 'Mehrfachauswahl möglich - z. B. bei einem Bezirksübungstag mit mehreren Übungsarten (Brand, Technisch, ABC). Bestimmt die ' +
+                (isUebung ? 'Übungsart(en)' : 'Einsatzart(en) für Statistik und Kennzeichnung') + '.';
         }
-        if (subcatUnterstuetzung) {
+        if (subcatUnterstuetzung && subcatUnterstuetzungInput) {
             subcatUnterstuetzung.style.display = isUebung ? 'none' : '';
-            subcatUnterstuetzung.disabled = isUebung;
-            if (isUebung && subcategorySelect.value === 'unterstuetzung') {
-                subcategorySelect.value = '';
-            }
+            subcatUnterstuetzungInput.disabled = isUebung;
+            if (isUebung) subcatUnterstuetzungInput.checked = false;
         }
+        enforceSubcatLimit(subcategoryGroup, categorySelect);
     });
 }
+setupSubcatLimitGroup('subcategoryGroup', categorySelect);
+enforceSubcatLimit(subcategoryGroup, categorySelect);
 
 // Dieselbe Logik wie oben, nur für die optionale zweite Kategorie - zusätzlich
 // wird das Einsatz-/Übungsart-Feld komplett ausgeblendet, wenn "Keine" gewählt ist.
 var categorySelect2 = document.getElementById('category2');
 var subcategoryGroup2 = document.getElementById('subcategoryGroup2');
 var subcategoryLabel2 = document.getElementById('subcategoryLabel2');
-var subcategorySelect2 = document.getElementById('subcategory2');
 var subcatUnterstuetzung2 = document.querySelector('.subcat2-unterstuetzung');
+var subcatUnterstuetzung2Input = subcatUnterstuetzung2 ? subcatUnterstuetzung2.querySelector('input') : null;
 
 if (categorySelect2 && subcategoryGroup2) {
     categorySelect2.addEventListener('change', function() {
         var isUebung = this.value === 'uebung';
         var showSubcat = this.value === 'einsatz' || isUebung;
         subcategoryGroup2.style.display = showSubcat ? '' : 'none';
-        if (!showSubcat) subcategorySelect2.value = '';
-
-        if (subcategoryLabel2) subcategoryLabel2.textContent = isUebung ? 'Übungsart' : 'Einsatzart';
-        if (subcatUnterstuetzung2) {
-            subcatUnterstuetzung2.style.display = isUebung ? 'none' : '';
-            subcatUnterstuetzung2.disabled = isUebung;
-            if (isUebung && subcategorySelect2.value === 'unterstuetzung') {
-                subcategorySelect2.value = '';
-            }
+        if (!showSubcat) {
+            subcategoryGroup2.querySelectorAll('input[type=checkbox]').forEach(function (cb) { cb.checked = false; });
         }
+
+        if (subcategoryLabel2) subcategoryLabel2.textContent = isUebung ? 'Übungsart(en)' : 'Einsatzart(en)';
+        if (subcatUnterstuetzung2 && subcatUnterstuetzung2Input) {
+            subcatUnterstuetzung2.style.display = isUebung ? 'none' : '';
+            subcatUnterstuetzung2Input.disabled = isUebung;
+            if (isUebung) subcatUnterstuetzung2Input.checked = false;
+        }
+        enforceSubcatLimit(subcategoryGroup2, categorySelect2);
     });
 }
+setupSubcatLimitGroup('subcategoryGroup2', categorySelect2);
+enforceSubcatLimit(subcategoryGroup2, categorySelect2);
 
 // Drag & Drop + Preview
 var uploadArea = document.getElementById('uploadArea');
@@ -452,8 +496,9 @@ var linksList = document.getElementById('linksList');
 function makeLinkRow() {
     var div = document.createElement('div');
     div.className = 'link-row';
-    div.style.cssText = 'display:flex; gap:8px; margin-bottom:8px;';
-    div.innerHTML = '<input type="url" name="links[]" placeholder="z.B. https://www.instagram.com/p/... oder eine externe Website" style="flex:1;">' +
+    div.style.cssText = 'display:flex; gap:8px; margin-bottom:8px; flex-wrap:wrap;';
+    div.innerHTML = '<input type="url" name="links[]" placeholder="z.B. https://www.instagram.com/p/... oder eine externe Website" style="flex:2; min-width:220px;">' +
+        '<input type="text" name="link_labels[]" placeholder="Beschreibung (optional), z.B. &quot;TT-Bericht zu diesem Einsatz&quot;" style="flex:1; min-width:180px;">' +
         '<button type="button" class="btn btn-sm btn-secondary remove-link-row" title="Link entfernen"><i class="fas fa-times"></i></button>';
     return div;
 }

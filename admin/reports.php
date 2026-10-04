@@ -111,18 +111,12 @@ require_once __DIR__ . '/includes/admin-header.php';
                     <tr>
                         <td><strong><?php echo e($r['title']); ?></strong></td>
                         <td>
-                            <?php if (!empty($r['subcategory']) && isset($subcategoryLabels[$r['subcategory']])): ?>
-                                <span class="badge badge-<?php echo e($r['subcategory']); ?>"><?php echo e($subcategoryLabels[$r['subcategory']]); ?></span>
-                            <?php else: ?>
-                                <span class="badge badge-<?php echo e($r['category']); ?>"><?php echo e(ucfirst($r['category'])); ?></span>
-                            <?php endif; ?>
-                            <?php if (!empty($r['category2'])): ?>
-                                <?php if (!empty($r['subcategory2']) && isset($subcategoryLabels[$r['subcategory2']])): ?>
-                                    <span class="badge badge-<?php echo e($r['subcategory2']); ?>"><?php echo e($subcategoryLabels[$r['subcategory2']]); ?></span>
-                                <?php else: ?>
-                                    <span class="badge badge-<?php echo e($r['category2']); ?>"><?php echo e(ucfirst($r['category2'])); ?></span>
-                                <?php endif; ?>
-                            <?php endif; ?>
+                            <?php foreach (getReportBadges($r['category'], $r['subcategory']) as $listBadge): ?>
+                                <span class="badge <?php echo e($listBadge['class']); ?>"><?php echo e($listBadge['label']); ?></span>
+                            <?php endforeach; ?>
+                            <?php foreach (getReportBadges($r['category2'] ?? '', $r['subcategory2'] ?? '') as $listBadge): ?>
+                                <span class="badge <?php echo e($listBadge['class']); ?>"><?php echo e($listBadge['label']); ?></span>
+                            <?php endforeach; ?>
                         </td>
                         <td><?php echo e($r['date']); ?></td>
                         <td><i class="fas fa-images"></i> <?php echo $r['image_count']; ?></td>

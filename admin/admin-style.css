@@ -654,3 +654,22 @@ img { max-width: 100%; height: auto; }
     .admin-page-title { font-size: 1.1rem; }
     .admin-search input { max-width: 100%; }
 }
+
+/* Mehrfachauswahl Einsatz-/Übungsart (Berichte) */
+.subcat-checkboxes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 18px;
+}
+
+.subcat-checkboxes label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 400;
+    margin-bottom: 0;
+}
+
+.subcat-checkboxes input[type="checkbox"] {
+    width: auto;
+}

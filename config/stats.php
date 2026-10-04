@@ -20,19 +20,27 @@ function getEinsatzStats(PDO $db): array {
     // Zählt auch Berichte, bei denen "Einsatz" nur die zweite Kategorie ist
     // (z.B. eine Übung, bei der tatsächlich ein Einsatz stattfand) - ein
     // Bericht wird dabei nicht doppelt gezählt, selbst wenn beide Kategorien
-    // zufällig gleich wären.
+    // zufällig gleich wären. Da je Einsatz bis zu 2 Einsatzarten gleichzeitig
+    // gewählt werden können (z.B. Brand, der in ABC überging), steckt die
+    // subcategory-Spalte eine kommagetrennte Liste - FIND_IN_SET prüft, ob
+    // die gesuchte Einsatzart darin vorkommt, ein Bericht mit mehreren
+    // Einsatzarten zählt also bei jeder davon mit.
     $count = function (string $subcategory) use ($db, $start, $end): int {
-        $stmt = $db->prepare("SELECT COUNT(*) FROM reports WHERE published = 1 AND date BETWEEN ? AND ? AND ((category = 'einsatz' AND subcategory = ?) OR (category2 = 'einsatz' AND subcategory2 = ?))");
+        $stmt = $db->prepare("SELECT COUNT(*) FROM reports WHERE published = 1 AND date BETWEEN ? AND ? AND ((category = 'einsatz' AND FIND_IN_SET(?, subcategory)) OR (category2 = 'einsatz' AND FIND_IN_SET(?, subcategory2)))");
         $stmt->execute([$start, $end, $subcategory, $subcategory]);
         return (int)$stmt->fetchColumn();
     };
 
-    $stats = [
+    // "Einsätze gesamt" zählt Berichte, nicht Einsatzarten - sonst würde ein
+    // Einsatz mit zwei Einsatzarten (Brand + ABC) doppelt mitgezählt.
+    $totalStmt = $db->prepare("SELECT COUNT(*) FROM reports WHERE published = 1 AND date BETWEEN ? AND ? AND (category = 'einsatz' OR category2 = 'einsatz')");
+    $totalStmt->execute([$start, $end]);
+
+    return [
         'year' => $year,
         'brand' => $count('brand'),
         'technisch' => $count('technisch'),
         'abc' => $count('abc'),
+        'einsatz_gesamt' => (int) $totalStmt->fetchColumn(),
     ];
-    $stats['einsatz_gesamt'] = $stats['brand'] + $stats['technisch'] + $stats['abc'];
-    return $stats;
 }

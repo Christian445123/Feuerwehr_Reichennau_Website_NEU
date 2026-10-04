@@ -4061,3 +4061,22 @@ body.lightbox-open {
 .bericht-detail-container {
     max-width: 1400px;
 }
+
+/* Berichte-Liste: kleine Vorschau-Icons, wenn der Bericht Links hat */
+.bericht-card-links-preview {
+    display: flex;
+    gap: 8px;
+    margin-top: -2px;
+}
+
+.bericht-card-links-preview span {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--color-gray-100);
+    color: var(--color-gray-600);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+}

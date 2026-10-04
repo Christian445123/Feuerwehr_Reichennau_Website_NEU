@@ -47,6 +47,7 @@
     <?php
     require_once __DIR__ . '/../config/database.php';
     require_once __DIR__ . '/../config/stats.php';
+    require_once __DIR__ . '/../config/berichte.php';
     $db = getDB();
     $stats = getEinsatzStats($db);
     ?>
@@ -112,14 +113,18 @@
                     </div>
                     <div class="news-card-tags">
                         <span class="news-card-badge news-badge-<?php echo htmlspecialchars($r['category']); ?>"><?php echo htmlspecialchars($categoryLabels[$r['category']] ?? ucfirst($r['category'])); ?></span>
-                        <?php if (!empty($r['subcategory']) && isset($subcategoryLabelsHome[$r['subcategory']])): ?>
-                            <span class="news-card-badge news-badge-sub"><?php echo htmlspecialchars($subcategoryLabelsHome[$r['subcategory']]); ?></span>
-                        <?php endif; ?>
+                        <?php foreach (getReportSubcategoryList($r['subcategory'] ?? '') as $sub): ?>
+                            <?php if (isset($subcategoryLabelsHome[$sub])): ?>
+                                <span class="news-card-badge news-badge-sub"><?php echo htmlspecialchars($subcategoryLabelsHome[$sub]); ?></span>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
                         <?php if (!empty($r['category2'])): ?>
                             <span class="news-card-badge news-badge-<?php echo htmlspecialchars($r['category2']); ?>"><?php echo htmlspecialchars($categoryLabels[$r['category2']] ?? ucfirst($r['category2'])); ?></span>
-                            <?php if (!empty($r['subcategory2']) && isset($subcategoryLabelsHome[$r['subcategory2']])): ?>
-                                <span class="news-card-badge news-badge-sub"><?php echo htmlspecialchars($subcategoryLabelsHome[$r['subcategory2']]); ?></span>
-                            <?php endif; ?>
+                            <?php foreach (getReportSubcategoryList($r['subcategory2'] ?? '') as $sub2): ?>
+                                <?php if (isset($subcategoryLabelsHome[$sub2])): ?>
+                                    <span class="news-card-badge news-badge-sub"><?php echo htmlspecialchars($subcategoryLabelsHome[$sub2]); ?></span>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
                         <?php endif; ?>
                     </div>
                     <div class="news-card-overlay">
@@ -158,7 +163,7 @@
                     <div class="alarm-timeline-item">
                         <div class="alarm-timeline-dot"></div>
                         <div class="alarm-timeline-date"><?php echo htmlspecialchars($e['date']); ?></div>
-                        <div class="alarm-timeline-type"><?php echo htmlspecialchars($subcategoryLabels[$e['subcategory']] ?? 'Einsatz'); ?></div>
+                        <div class="alarm-timeline-type"><?php echo htmlspecialchars(getReportSubcategoryLabelText($e['subcategory'])); ?></div>
                         <div class="alarm-timeline-title"><?php echo htmlspecialchars($e['title']); ?></div>
                     </div>
                 <?php endforeach; ?>

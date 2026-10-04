@@ -3,6 +3,7 @@ require_once __DIR__ . '/../config/gate.php';
 requireSiteAccess();
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../config/stats.php';
+require_once __DIR__ . '/../config/berichte.php';
 $db = getDB();
 
 // Berücksichtigt auch Berichte, bei denen "Einsatz" nur die zweite Kategorie
@@ -64,7 +65,7 @@ $subcategoryLabels = [
                                 <div class="alarm-timeline-item">
                                     <div class="alarm-timeline-dot"></div>
                                     <div class="alarm-timeline-date"><?php echo htmlspecialchars($e['date']); ?></div>
-                                    <div class="alarm-timeline-type"><?php echo htmlspecialchars($subcategoryLabels[$e['subcategory']] ?? 'Einsatz'); ?></div>
+                                    <div class="alarm-timeline-type"><?php echo htmlspecialchars(getReportSubcategoryLabelText($e['subcategory'])); ?></div>
                                     <div class="alarm-timeline-title"><?php echo htmlspecialchars($e['title']); ?></div>
                                 </div>
                             <?php endforeach; ?>
