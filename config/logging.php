@@ -7,19 +7,25 @@ require_once __DIR__ . '/database.php';
 require_once __DIR__ . '/env.php';
 
 /**
- * Ermittelt die Client-IP. X-Forwarded-For wird nur als Fallback genutzt und
- * validiert, damit ein Client den Header nicht beliebig fälschen kann, um
- * sich als andere IP auszugeben (z.B. um eine Sperre zu umgehen).
+ * Ermittelt die Client-IP für Rate-Limiting/IP-Sperren.
+ *
+ * X-Forwarded-For wird absichtlich NICHT verwendet: der Header wird vom
+ * Client selbst mitgeschickt und lässt sich beliebig fälschen (ein
+ * "sieht aus wie eine gültige IP"-Format-Check verhindert das NICHT - jeder
+ * kann z.B. "X-Forwarded-For: 1.2.3.4" senden). Würde dieser Wert vertraut,
+ * könnte jede Sperre und jedes Rate-Limit (Login-Brute-Force,
+ * 2FA-Brute-Force, Kontaktformular-Spam) trivial umgangen werden, indem der
+ * Header bei jeder Anfrage auf einen neuen Wert gesetzt wird. REMOTE_ADDR
+ * kommt dagegen direkt von der TCP-Verbindung und kann vom Client nicht
+ * gefälscht werden.
+ *
+ * Läuft die Seite jemals hinter einem bekannten, selbst kontrollierten
+ * Reverse-Proxy (z.B. Cloudflare), müsste X-Forwarded-For NUR dann vertraut
+ * werden, wenn REMOTE_ADDR nachweislich die IP dieses Proxys ist - nicht
+ * pauschal wie zuvor.
  */
 function getClientIp(): string {
     $ip = $_SERVER['REMOTE_ADDR'] ?? '';
-    if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-        $parts = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
-        $candidate = trim($parts[0]);
-        if (filter_var($candidate, FILTER_VALIDATE_IP)) {
-            $ip = $candidate;
-        }
-    }
     return $ip !== '' ? $ip : '0.0.0.0';
 }
 

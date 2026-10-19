@@ -1,0 +1,31 @@
+# Hochgeladene Dateien sind reine Nutzerdaten (Fotos) - hier darf niemals
+# Code ausgeführt werden, egal was für eine Datei es irgendwann mal werden
+# könnte (z.B. ein als Bild getarntes Polyglot-File). Auch wenn der Upload-
+# Handler (siehe config/database.php, handleImageUpload()) bereits strikt
+# auf per Server-seitigem MIME-Check erkannte Bildtypen beschränkt und
+# Dateinamen zufällig vergibt, ist das hier eine zusätzliche Sicherheitsebene.
+
+# PHP-Ausführung in diesem Ordner komplett deaktivieren (falls mod_php aktiv ist)
+<IfModule mod_php.c>
+    php_flag engine off
+</IfModule>
+<IfModule mod_php7.c>
+    php_flag engine off
+</IfModule>
+<IfModule mod_php8.c>
+    php_flag engine off
+</IfModule>
+
+# Ausliefern von Skript-Dateien jeglicher Art aus diesem Ordner verweigern,
+# unabhängig vom Ausführungsmechanismus (mod_php, PHP-FPM/CGI, ...)
+<IfModule mod_authz_core.c>
+    <FilesMatch "\.(php|phtml|php3|php4|php5|php7|phps|pht|phar|cgi|pl|py|sh|asp|aspx)$">
+        Require all denied
+    </FilesMatch>
+</IfModule>
+<IfModule !mod_authz_core.c>
+    <FilesMatch "\.(php|phtml|php3|php4|php5|php7|phps|pht|phar|cgi|pl|py|sh|asp|aspx)$">
+        Order allow,deny
+        Deny from all
+    </FilesMatch>
+</IfModule>

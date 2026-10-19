@@ -13,9 +13,6 @@ $jugendbetreuerin = $jbStmt->fetch();
 
 // Eigenes kleines Kontaktformular für die Jugendfeuerwehr (wie im Vorbild),
 // nutzt denselben Mailversand wie das große Kontaktformular.
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
 if (empty($_SESSION['jugend_csrf'])) {
     $_SESSION['jugend_csrf'] = bin2hex(random_bytes(32));
 }

@@ -3,3 +3,4 @@ autocommit.bat
 config/secret_key.php
 cache/tiles/
 cache/geocode/
+INITIAL_CREDENTIALS.txt

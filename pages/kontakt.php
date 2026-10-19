@@ -5,10 +5,6 @@ require_once __DIR__ . '/../config/mail.php';
 require_once __DIR__ . '/../config/logging.php';
 require_once __DIR__ . '/../config/schutzbereich.php';
 
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
 if (empty($_SESSION['kontakt_csrf'])) {
     $_SESSION['kontakt_csrf'] = bin2hex(random_bytes(32));
 }

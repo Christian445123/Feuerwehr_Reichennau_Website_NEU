@@ -34,37 +34,66 @@ function getEncryptionKey(): string {
 }
 
 /**
- * Verschlüsselt einen Klartext-Wert für die Speicherung in der .env.
- * Das Ergebnis beginnt mit "enc:" und kann direkt als .env-Wert eingetragen werden.
+ * Verschlüsselt einen Klartext-Wert für die Speicherung in der .env bzw.
+ * der Datenbank (z.B. TOTP-Secrets). Das Ergebnis beginnt mit "enc2:" und
+ * kann direkt als Wert eingetragen werden.
+ *
+ * Nutzt AES-256-GCM (authentifizierte Verschlüsselung) statt des früheren
+ * AES-256-CBC ohne Authentifizierung - verhindert, dass ein manipulierter
+ * Geheimtext unbemerkt zu falschem statt gar keinem Klartext entschlüsselt
+ * wird (openssl_decrypt() scheitert bei GCM kontrolliert, wenn das Tag nicht
+ * passt).
  */
 function encryptSecret(string $plaintext): string {
     if ($plaintext === '') {
         return '';
     }
     $key = hex2bin(getEncryptionKey());
-    $iv = random_bytes(16);
-    $ciphertext = openssl_encrypt($plaintext, 'aes-256-cbc', $key, OPENSSL_RAW_DATA, $iv);
+    $iv = random_bytes(12);
+    $tag = '';
+    $ciphertext = openssl_encrypt($plaintext, 'aes-256-gcm', $key, OPENSSL_RAW_DATA, $iv, $tag, '', 16);
     if ($ciphertext === false) {
         return $plaintext;
     }
-    return 'enc:' . base64_encode($iv . $ciphertext);
+    return 'enc2:' . base64_encode($iv . $tag . $ciphertext);
 }
 
 /**
- * Entschlüsselt einen .env-Wert. Werte ohne "enc:"-Präfix werden unverändert
- * zurückgegeben (Abwärtskompatibilität für noch nicht verschlüsselte Werte).
+ * Entschlüsselt einen gespeicherten Wert. Werte ohne bekanntes Präfix werden
+ * unverändert zurückgegeben (Abwärtskompatibilität für noch nicht
+ * verschlüsselte Werte). "enc:" (altes AES-256-CBC-Format) wird weiterhin
+ * unterstützt, damit bereits gespeicherte .env-Werte und TOTP-Secrets nicht
+ * ungültig werden - neu verschlüsselt wird aber nur noch mit "enc2:" (GCM).
  */
 function decryptSecret(string $value): string {
-    if ($value === '' || !str_starts_with($value, 'enc:')) {
+    if ($value === '') {
         return $value;
     }
-    $key = hex2bin(getEncryptionKey());
-    $raw = base64_decode(substr($value, 4));
-    if ($raw === false || strlen($raw) < 17) {
-        return '';
+
+    if (str_starts_with($value, 'enc2:')) {
+        $key = hex2bin(getEncryptionKey());
+        $raw = base64_decode(substr($value, 5));
+        if ($raw === false || strlen($raw) < 29) {
+            return '';
+        }
+        $iv = substr($raw, 0, 12);
+        $tag = substr($raw, 12, 16);
+        $ciphertext = substr($raw, 28);
+        $plain = openssl_decrypt($ciphertext, 'aes-256-gcm', $key, OPENSSL_RAW_DATA, $iv, $tag);
+        return $plain !== false ? $plain : '';
     }
-    $iv = substr($raw, 0, 16);
-    $ciphertext = substr($raw, 16);
-    $plain = openssl_decrypt($ciphertext, 'aes-256-cbc', $key, OPENSSL_RAW_DATA, $iv);
-    return $plain !== false ? $plain : '';
+
+    if (str_starts_with($value, 'enc:')) {
+        $key = hex2bin(getEncryptionKey());
+        $raw = base64_decode(substr($value, 4));
+        if ($raw === false || strlen($raw) < 17) {
+            return '';
+        }
+        $iv = substr($raw, 0, 16);
+        $ciphertext = substr($raw, 16);
+        $plain = openssl_decrypt($ciphertext, 'aes-256-cbc', $key, OPENSSL_RAW_DATA, $iv);
+        return $plain !== false ? $plain : '';
+    }
+
+    return $value;
 }

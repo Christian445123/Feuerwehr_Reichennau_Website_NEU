@@ -137,13 +137,21 @@ function initDatabase(): void {
         value TEXT
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
-    // Standard-Admin erstellen falls nicht vorhanden
+    // Standard-Admin erstellen falls nicht vorhanden. Statt eines fest im
+    // Code stehenden (und damit öffentlich bekannten) Passworts wird bei der
+    // allerersten Einrichtung ein zufälliges Passwort generiert und einmalig
+    // in eine lokale, per .htaccess/.gitignore geschützte Datei geschrieben -
+    // ein vorhersehbares Standardpasswort wäre sonst der erste Angriffsversuch
+    // jedes Angreifers.
+    $initialCredentialsNote = '';
     $stmt = $db->prepare("SELECT COUNT(*) FROM users WHERE username = ?");
     $stmt->execute(['admin']);
     if ($stmt->fetchColumn() == 0) {
-        $hash = password_hash('admin2024', PASSWORD_DEFAULT);
+        $plainPassword = generateInitialRandomPassword();
+        $hash = password_hash($plainPassword, PASSWORD_DEFAULT);
         $stmt = $db->prepare("INSERT INTO users (username, password, name, permissions) VALUES (?, ?, ?, ?)");
         $stmt->execute(['admin', $hash, 'Administrator', '["*"]']);
+        $initialCredentialsNote .= "Admin-Benutzername: admin\nAdmin-Passwort:     $plainPassword\n";
     }
 
     // Standard-Ränge einfügen falls leer
@@ -153,10 +161,37 @@ function initDatabase(): void {
     $stmt = $db->prepare("SELECT COUNT(*) FROM site_settings WHERE setting_key = ?");
     $stmt->execute(['site_password']);
     if ($stmt->fetchColumn() == 0) {
-        $hash = password_hash('reichenau2026', PASSWORD_DEFAULT);
+        $plainSitePassword = generateInitialRandomPassword();
+        $hash = password_hash($plainSitePassword, PASSWORD_DEFAULT);
         $stmt = $db->prepare("INSERT INTO site_settings (setting_key, value) VALUES ('site_password', ?)");
         $stmt->execute([$hash]);
+        $initialCredentialsNote .= "Seiten-Zugangspasswort: $plainSitePassword\n";
     }
+
+    if ($initialCredentialsNote !== '') {
+        file_put_contents(
+            __DIR__ . '/../INITIAL_CREDENTIALS.txt',
+            "Einmalig bei der Ersteinrichtung generiert - bitte beide Passwörter\n"
+            . "sofort nach dem ersten Login ändern und diese Datei danach löschen.\n\n"
+            . $initialCredentialsNote,
+            LOCK_EX
+        );
+    }
+}
+
+/**
+ * Zufälliges, gut lesbares Passwort für die Ersteinrichtung (siehe oben) -
+ * bewusst eine eigene, einfache Funktion statt admin/auth.php zu laden,
+ * damit config/ nicht von admin/ abhängt.
+ */
+function generateInitialRandomPassword(): string {
+    $chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#%&*';
+    $max = strlen($chars) - 1;
+    $password = '';
+    for ($i = 0; $i < random_int(14, 16); $i++) {
+        $password .= $chars[random_int(0, $max)];
+    }
+    return $password;
 }
 
 /**

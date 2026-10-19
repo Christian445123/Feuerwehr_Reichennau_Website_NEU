@@ -12,7 +12,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username'] ?? '');
     $password = $_POST['password'] ?? '';
 
-    if (!checkRateLimit(getDB(), 'admin_login', 8, 600)) {
+    if (!verifyCsrf()) {
+        $error = 'Ungültiger Sicherheits-Token. Bitte Seite neu laden und erneut versuchen.';
+    } elseif (!checkRateLimit(getDB(), 'admin_login', 8, 600)) {
         $error = 'Zu viele Anmeldeversuche. Bitte versuche es später erneut.';
     } else {
         $result = login($username, $password);
@@ -55,6 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php endif; ?>
 
             <form method="POST" class="login-form">
+                <?php echo csrfField(); ?>
                 <div class="form-group">
                     <label for="username"><i class="fas fa-user"></i> Benutzername</label>
                     <input type="text" id="username" name="username" required autofocus

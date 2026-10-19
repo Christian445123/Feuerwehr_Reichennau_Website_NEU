@@ -3,11 +3,12 @@
  * Admin - Authentifizierung
  */
 
-session_start();
-
+require_once __DIR__ . '/../config/session.php';
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../config/logging.php';
 require_once __DIR__ . '/permissions.php';
+
+secureSessionStart();
 
 function isLoggedIn(): bool {
     return isset($_SESSION['admin_user_id']);

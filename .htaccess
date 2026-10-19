@@ -1,3 +1,19 @@
+# Sicherheits-Header für jede Antwort. CSP ist bewusst auf die tatsächlich
+# verwendeten externen Quellen beschränkt (Google Fonts, cdnjs für Font
+# Awesome/Leaflet, Google Tag Manager für GA4 nach Cookie-Einwilligung) -
+# 'unsafe-inline' ist bei script-src/style-src nötig, weil die Seite an
+# vielen Stellen bewusst einfache Inline-<script>/style="..."-Blöcke nutzt;
+# externe Script-Injection (der häufigste XSS-Ausnutzungsweg, z.B.
+# Kreditkarten-Skimmer) wird dadurch trotzdem zuverlässig blockiert.
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set Permissions-Policy "geolocation=(), camera=(), microphone=(), payment=()"
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com data:; img-src 'self' data: https:; connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com; frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'"
+</IfModule>
+
 # Sensible Verzeichnisse nie direkt ausliefern (Datenbank, Konfiguration, Templates)
 RewriteEngine On
 RewriteBase /
@@ -7,16 +23,18 @@ RewriteRule ^config/ - [F,L]
 RewriteRule ^pages/ - [F,L]
 
 # Alle "Punktdateien" (.env, .htaccess, .git/..., .DS_Store, ...) sowie
-# Datenbank-Dumps nie direkt ausliefern - unabhängig von der Apache-Version.
+# Datenbank-Dumps und die einmalige Ersteinrichtungs-Passwortdatei (siehe
+# config/database.php, initDatabase()) nie direkt ausliefern - unabhängig
+# von der Apache-Version.
 <IfModule mod_authz_core.c>
     # Apache 2.4+
-    <FilesMatch "(^\.|\.(db|sqlite|sql|env|log)$)">
+    <FilesMatch "(^\.|\.(db|sqlite|sql|env|log)$|^INITIAL_CREDENTIALS\.txt$)">
         Require all denied
     </FilesMatch>
 </IfModule>
 <IfModule !mod_authz_core.c>
     # Apache 2.2 Fallback
-    <FilesMatch "(^\.|\.(db|sqlite|sql|env|log)$)">
+    <FilesMatch "(^\.|\.(db|sqlite|sql|env|log)$|^INITIAL_CREDENTIALS\.txt$)">
         Order allow,deny
         Deny from all
     </FilesMatch>

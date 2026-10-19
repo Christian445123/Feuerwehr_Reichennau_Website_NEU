@@ -2,8 +2,15 @@
 /**
  * Datenbank mit Mitgliederdaten befüllen (Seed)
  * Einmalig ausführen: php config/seed.php
- * Oder im Browser: /config/seed.php
+ *
+ * Nur über die Kommandozeile nutzbar - verhindert, dass Dritte das Script
+ * über den Browser aufrufen, falls die .htaccess-Sperre für config/ aus
+ * irgendeinem Grund mal nicht greift.
  */
+if (php_sapi_name() !== 'cli') {
+    http_response_code(403);
+    exit('Dieses Werkzeug ist nur über die Kommandozeile nutzbar.');
+}
 
 require_once __DIR__ . '/database.php';
 

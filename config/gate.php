@@ -6,10 +6,9 @@
 
 require_once __DIR__ . '/database.php';
 require_once __DIR__ . '/logging.php';
+require_once __DIR__ . '/session.php';
 
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+secureSessionStart();
 
 function siteAccessGranted(): bool {
     return !empty($_SESSION['site_access_granted']);

@@ -9,9 +9,6 @@ $db = getDB();
 
 // Eigenes kleines Kontaktformular wie im Vorbild, nutzt denselben
 // abgesicherten Mailversand wie die anderen Kontaktformulare.
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
 if (empty($_SESSION['mitmachen_csrf'])) {
     $_SESSION['mitmachen_csrf'] = bin2hex(random_bytes(32));
 }
