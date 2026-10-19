@@ -1,6 +1,7 @@
 autocommit.bat
 .env
 config/secret_key.php
+config/env.local.php
 cache/tiles/
 cache/geocode/
 INITIAL_CREDENTIALS.txt

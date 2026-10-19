@@ -12,6 +12,32 @@ function loadEnv(): void {
     }
     $loaded = true;
 
+    // Bevorzugt: config/env.local.php, falls vorhanden. Eine .php-Datei wird
+    // vom Server immer ausgeführt statt als Text ausgeliefert - selbst wenn
+    // der .htaccess-Schutz für Punkt-Dateien (wie .env) auf einem Hoster aus
+    // irgendeinem Grund mal nicht greift (z.B. eingeschränktes
+    // AllowOverride), bleibt eine .php-Datei sicher (siehe
+    // config/secret_key.php, das nach demselben Prinzip funktioniert). Diese
+    // Datei existiert nur lokal auf dem Server, liegt nicht in Git und
+    // überschreibt bei Bedarf einzelne Werte aus der .env.
+    //
+    // Format: <?php return ['DB_PASSWORD' => 'enc:...', 'SMTP_PASSWORD' => '...'];
+    $localPhpPath = __DIR__ . '/env.local.php';
+    if (file_exists($localPhpPath)) {
+        $overrides = include $localPhpPath;
+        if (is_array($overrides)) {
+            foreach ($overrides as $key => $value) {
+                $key = (string) $key;
+                if (getenv($key) === false) {
+                    putenv("$key=$value");
+                }
+                if (!isset($_ENV[$key])) {
+                    $_ENV[$key] = (string) $value;
+                }
+            }
+        }
+    }
+
     $path = __DIR__ . '/../.env';
     if (!file_exists($path)) {
         return;
@@ -35,10 +61,14 @@ function loadEnv(): void {
         )) {
             $value = substr($value, 1, -1);
         }
+        // env.local.php (oben) hat Vorrang - Werte, die von dort schon
+        // gesetzt wurden, werden hier nicht überschrieben.
         if (getenv($key) === false) {
             putenv("$key=$value");
         }
-        $_ENV[$key] = $value;
+        if (!isset($_ENV[$key])) {
+            $_ENV[$key] = $value;
+        }
     }
 }
 
