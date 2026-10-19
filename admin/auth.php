@@ -6,8 +6,10 @@
 require_once __DIR__ . '/../config/session.php';
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../config/logging.php';
+require_once __DIR__ . '/../config/security-headers.php';
 require_once __DIR__ . '/permissions.php';
 
+sendSecurityHeaders();
 secureSessionStart();
 
 function isLoggedIn(): bool {
