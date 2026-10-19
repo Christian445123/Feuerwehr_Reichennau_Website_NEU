@@ -9,6 +9,16 @@ requireSiteAccess();
 // Einfaches Routing
 $page = isset($_GET['page']) ? $_GET['page'] : 'home';
 
+// Jemand versucht gezielt, eine sensible Datei abzurufen (.env, .git, ...).
+// Landet nur hier, wenn die Datei auf dem Server selbst nicht mehr
+// existiert (siehe .htaccess-Regel "Datei existiert -> direkt ausliefern,
+// sonst hier landen") - Anlass, sofort zu sperren statt nur stillschweigend
+// die Startseite zu zeigen (siehe config/security-block.php).
+if (is_string($page) && preg_match('/^\.|\.(env|git|htaccess|htpasswd|sql|log|bak|key)(\/|$)/i', $page)) {
+    require_once __DIR__ . '/config/security-block.php';
+    blockForSensitiveAccess($page);
+}
+
 // Erlaubte Seiten (Whitelist)
 $allowed_pages = [
     'home',

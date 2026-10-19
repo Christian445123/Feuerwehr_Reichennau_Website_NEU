@@ -75,6 +75,26 @@ function completeLogin(PDO $db, array $user, string $username): void {
     $_SESSION['admin_must_change_password'] = !empty($user['must_change_password']);
     unset($_SESSION['admin_2fa_pending_id']);
     logActivity($db, 'auth.login', 'Erfolgreich angemeldet', $user['id'], $user['name']);
+
+    notifyAdminOfSensitiveAccessBlocks($db);
+}
+
+/**
+ * Zeigt beim Login einmalig eine Warnung, wenn seit dem letzten Login
+ * jemand wegen eines Zugriffsversuchs auf eine sensible Datei (.env, .git,
+ * ...) automatisch gesperrt wurde (siehe config/security-block.php). Jede
+ * Sperre wird nur einmal angezeigt (admin_notified wird danach gesetzt).
+ */
+function notifyAdminOfSensitiveAccessBlocks(PDO $db): void {
+    $rows = $db->query("SELECT ip_address, reason, created_at FROM blocked_ips WHERE admin_notified = 0 ORDER BY created_at DESC")->fetchAll();
+    if (empty($rows)) {
+        return;
+    }
+    foreach ($rows as $row) {
+        $when = date('d.m.Y \u\m H:i', strtotime($row['created_at']));
+        flash('warning', "🚨 Sicherheitshinweis: Die IP {$row['ip_address']} hat am $when versucht, auf eine geschützte Datei zuzugreifen, und wurde automatisch gesperrt. Grund: {$row['reason']}");
+    }
+    $db->exec("UPDATE blocked_ips SET admin_notified = 1 WHERE admin_notified = 0");
 }
 
 /**

@@ -648,6 +648,21 @@ function getMigrations(): array {
             },
         ],
 
+        [
+            'id' => '2026_10_19_add_blocked_ips_admin_notified',
+            'run' => function (PDO $db) {
+                // Merkt sich, ob ein Admin eine automatische Sperre (z.B. wegen
+                // Zugriffsversuch auf .env/.git) schon beim Login angezeigt
+                // bekommen hat - siehe blockForSensitiveAccess() und
+                // admin/auth.php, completeLogin().
+                addColumnIfMissing($db, 'blocked_ips', 'admin_notified', 'TINYINT DEFAULT 1');
+                // Bestehende Sperren (vor dieser Funktion entstanden) nicht
+                // rückwirkend anzeigen - nur neue (admin_notified bleibt beim
+                // INSERT in blockForSensitiveAccess() auf 0).
+                $db->exec("UPDATE blocked_ips SET admin_notified = 1 WHERE admin_notified IS NULL");
+            },
+        ],
+
     ];
 }
 

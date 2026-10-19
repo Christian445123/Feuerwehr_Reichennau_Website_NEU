@@ -144,10 +144,10 @@ function isIpBlocked(PDO $db, string $ip): bool {
     return (bool) $stmt->fetchColumn();
 }
 
-function blockIp(PDO $db, string $ip, string $reason, string $blockedBy, bool $autoBlocked = false, ?string $expiresAt = null): void {
-    $stmt = $db->prepare("INSERT INTO blocked_ips (ip_address, reason, blocked_by, auto_blocked, expires_at) VALUES (?,?,?,?,?)
-        ON DUPLICATE KEY UPDATE reason = VALUES(reason), blocked_by = VALUES(blocked_by), auto_blocked = VALUES(auto_blocked), expires_at = VALUES(expires_at), created_at = CURRENT_TIMESTAMP");
-    $stmt->execute([$ip, $reason, $blockedBy, $autoBlocked ? 1 : 0, $expiresAt]);
+function blockIp(PDO $db, string $ip, string $reason, string $blockedBy, bool $autoBlocked = false, ?string $expiresAt = null, bool $notifyAdminOnLogin = false): void {
+    $stmt = $db->prepare("INSERT INTO blocked_ips (ip_address, reason, blocked_by, auto_blocked, expires_at, admin_notified) VALUES (?,?,?,?,?,?)
+        ON DUPLICATE KEY UPDATE reason = VALUES(reason), blocked_by = VALUES(blocked_by), auto_blocked = VALUES(auto_blocked), expires_at = VALUES(expires_at), admin_notified = VALUES(admin_notified), created_at = CURRENT_TIMESTAMP");
+    $stmt->execute([$ip, $reason, $blockedBy, $autoBlocked ? 1 : 0, $expiresAt, $notifyAdminOnLogin ? 0 : 1]);
 
     if ($autoBlocked) {
         sendDiscordWebhook(discordRateLimitWebhookUrl(), [

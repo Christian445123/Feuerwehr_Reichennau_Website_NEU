@@ -123,7 +123,8 @@ require_once __DIR__ . '/../permissions.php';
         <!-- Flash Messages -->
         <?php foreach (getFlashes() as $flash): ?>
             <div class="alert alert-<?php echo e($flash['type']); ?>">
-                <i class="fas fa-<?php echo $flash['type'] === 'success' ? 'check-circle' : 'exclamation-circle'; ?>"></i>
+                <?php $flashIcons = ['success' => 'check-circle', 'warning' => 'triangle-exclamation', 'info' => 'circle-info']; ?>
+                <i class="fas fa-<?php echo $flashIcons[$flash['type']] ?? 'exclamation-circle'; ?>"></i>
                 <?php echo e($flash['message']); ?>
                 <button class="alert-close" onclick="this.parentElement.remove()">&times;</button>
             </div>

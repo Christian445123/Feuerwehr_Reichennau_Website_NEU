@@ -77,6 +77,16 @@ function requireSiteAccess(): void {
     if (!$tracked) {
         $tracked = true;
         $db = getDB();
+
+        // Gesperrte IPs kommen gar nicht erst bis zur Website durch - auf
+        // jeder Seite, nicht nur bei der einen Datei, die zur Sperre geführt
+        // hat (siehe config/security-block.php).
+        if (isIpBlocked($db, getClientIp())) {
+            require_once __DIR__ . '/security-block.php';
+            renderHackerBlockedPage();
+            exit;
+        }
+
         $page = $_GET['page'] ?? 'home';
         logSiteVisit($db, is_string($page) ? $page : 'home');
 
