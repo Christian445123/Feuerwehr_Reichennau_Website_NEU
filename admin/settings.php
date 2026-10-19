@@ -5,6 +5,8 @@ require_once __DIR__ . '/../config/gate.php';
 require_once __DIR__ . '/../config/analytics.php';
 require_once __DIR__ . '/../config/berichte.php';
 require_once __DIR__ . '/../config/logging.php';
+require_once __DIR__ . '/../config/env-writer.php';
+require_once __DIR__ . '/../config/mail.php';
 requireLogin();
 
 $pageTitle = 'Einstellungen';
@@ -91,6 +93,133 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
+    if ($action === 'save_db_credentials') {
+        if (!userHasPermission('settings.manage')) {
+            flash('error', 'Dir fehlt die Berechtigung, Zugangsdaten zu ändern.');
+            header('Location: settings.php');
+            exit;
+        }
+        $host = trim($_POST['db_host'] ?? '');
+        $port = trim($_POST['db_port'] ?? '');
+        $name = trim($_POST['db_name'] ?? '');
+        $user = trim($_POST['db_user'] ?? '');
+        $newPassword = $_POST['db_password'] ?? '';
+
+        if ($host === '' || $port === '' || $name === '' || $user === '') {
+            flash('error', 'Bitte alle Datenbank-Felder ausfüllen.');
+        } else {
+            // Leeres Passwortfeld = aktuelles (entschlüsseltes) Passwort
+            // unverändert weiterverwenden - nur zum Testen der anderen
+            // geänderten Felder (Host/Port/Name/User).
+            $passwordToTest = $newPassword !== '' ? $newPassword : decryptSecret(env('DB_PASSWORD', ''));
+
+            $error = testDatabaseCredentials($host, $port, $name, $user, $passwordToTest);
+            if ($error !== null) {
+                flash('error', 'Verbindung mit diesen Zugangsdaten fehlgeschlagen - nichts wurde gespeichert, die Website läuft unverändert mit den bisherigen Zugangsdaten weiter. Fehlermeldung: ' . $error);
+            } else {
+                writeEnvLocalFile([
+                    'DB_HOST' => $host,
+                    'DB_PORT' => $port,
+                    'DB_NAME' => $name,
+                    'DB_USER' => $user,
+                    'DB_PASSWORD' => encryptSecret($passwordToTest),
+                ]);
+                logActivity($db, 'settings.db_credentials', 'Datenbank-Zugangsdaten aktualisiert (env.local.php)');
+                flash('success', 'Datenbank-Zugangsdaten wurden erfolgreich getestet und gespeichert.');
+            }
+        }
+        header('Location: settings.php');
+        exit;
+    }
+
+    if ($action === 'save_smtp_credentials') {
+        if (!userHasPermission('settings.manage')) {
+            flash('error', 'Dir fehlt die Berechtigung, Zugangsdaten zu ändern.');
+            header('Location: settings.php');
+            exit;
+        }
+        $smtpHost = trim($_POST['smtp_host'] ?? '');
+        $smtpPort = trim($_POST['smtp_port'] ?? '587');
+        $smtpEncryption = trim($_POST['smtp_encryption'] ?? 'tls');
+        $smtpUsername = trim($_POST['smtp_username'] ?? '');
+        $smtpNewPassword = $_POST['smtp_password'] ?? '';
+        $smtpFromEmail = trim($_POST['smtp_from_email'] ?? '');
+        $smtpFromName = trim($_POST['smtp_from_name'] ?? '');
+        $smtpToEmail = trim($_POST['smtp_to_email'] ?? '');
+
+        if ($smtpFromEmail !== '' && !filter_var($smtpFromEmail, FILTER_VALIDATE_EMAIL)) {
+            flash('error', 'Die Absender-E-Mail-Adresse ist ungültig.');
+        } elseif ($smtpToEmail !== '' && !filter_var($smtpToEmail, FILTER_VALIDATE_EMAIL)) {
+            flash('error', 'Die Empfänger-E-Mail-Adresse ist ungültig.');
+        } else {
+            $updates = [
+                'SMTP_HOST' => $smtpHost,
+                'SMTP_PORT' => $smtpPort,
+                'SMTP_ENCRYPTION' => $smtpEncryption,
+                'SMTP_USERNAME' => $smtpUsername,
+                'SMTP_FROM_EMAIL' => $smtpFromEmail,
+                'SMTP_FROM_NAME' => $smtpFromName,
+                'SMTP_TO_EMAIL' => $smtpToEmail,
+            ];
+            // Leeres Passwortfeld = bestehendes Passwort unverändert lassen.
+            if ($smtpNewPassword !== '') {
+                $updates['SMTP_PASSWORD'] = encryptSecret($smtpNewPassword);
+            }
+            writeEnvLocalFile($updates);
+            logActivity($db, 'settings.smtp_credentials', 'SMTP-Zugangsdaten aktualisiert (env.local.php)');
+            flash('success', 'SMTP-Zugangsdaten wurden gespeichert. Tipp: mit "Test-E-Mail senden" prüfen, ob der Versand funktioniert.');
+        }
+        header('Location: settings.php');
+        exit;
+    }
+
+    if ($action === 'test_smtp') {
+        if (!userHasPermission('settings.manage')) {
+            flash('error', 'Dir fehlt die Berechtigung dafür.');
+            header('Location: settings.php');
+            exit;
+        }
+        $testError = null;
+        $to = env('SMTP_TO_EMAIL', 'reichenau@feuerwehr.tirol');
+        $sent = sendMail($to, '', 'Test-E-Mail von der FF-Reichenau-Website', "Das ist eine Test-E-Mail, ausgelöst über Admin -> Einstellungen.\n\nWenn du diese E-Mail erhältst, funktioniert der Mailversand.", $testError);
+        if ($sent) {
+            logActivity($db, 'settings.smtp_test', "Test-E-Mail an $to gesendet");
+            flash('success', "Test-E-Mail wurde an $to gesendet - bitte Posteingang prüfen.");
+        } else {
+            flash('error', 'Test-E-Mail konnte nicht gesendet werden: ' . ($testError ?? 'Unbekannter Fehler'));
+        }
+        header('Location: settings.php');
+        exit;
+    }
+
+    if ($action === 'save_discord_webhooks') {
+        if (!userHasPermission('settings.manage')) {
+            flash('error', 'Dir fehlt die Berechtigung, Zugangsdaten zu ändern.');
+            header('Location: settings.php');
+            exit;
+        }
+        $webhooks = [
+            'DISCORD_WEBHOOK_ACTIVITY' => trim($_POST['discord_webhook_activity'] ?? ''),
+            'DISCORD_WEBHOOK_LOGIN' => trim($_POST['discord_webhook_login'] ?? ''),
+            'DISCORD_WEBHOOK_RATE_LIMIT' => trim($_POST['discord_webhook_rate_limit'] ?? ''),
+        ];
+        $invalid = [];
+        foreach ($webhooks as $label => $url) {
+            if ($url !== '' && !str_starts_with($url, 'https://discord.com/api/webhooks/') && !str_starts_with($url, 'https://discordapp.com/api/webhooks/')) {
+                $invalid[] = $label;
+            }
+        }
+        if (!empty($invalid)) {
+            flash('error', 'Ungültige Webhook-URL (muss mit https://discord.com/api/webhooks/ beginnen oder leer sein): ' . implode(', ', $invalid));
+        } else {
+            writeEnvLocalFile($webhooks);
+            logActivity($db, 'settings.discord_webhooks', 'Discord-Webhooks aktualisiert (env.local.php)');
+            flash('success', 'Discord-Webhooks wurden gespeichert.');
+        }
+        header('Location: settings.php');
+        exit;
+    }
+
     header('Location: settings.php');
     exit;
 }
@@ -159,6 +288,143 @@ require_once __DIR__ . '/includes/admin-header.php';
 
             <button type="submit" class="btn btn-primary">
                 <i class="fas fa-save"></i> Zugangspasswort ändern
+            </button>
+        </form>
+    </div>
+</div>
+
+<?php
+$dbPasswordSet = decryptSecret(env('DB_PASSWORD', '')) !== '';
+$smtpPasswordSet = decryptSecret(env('SMTP_PASSWORD', '')) !== '';
+?>
+<div class="admin-card" style="max-width: 600px; margin-top: 24px;">
+    <div class="admin-card-header"><h2><i class="fas fa-database"></i> Datenbank-Zugangsdaten</h2></div>
+    <div class="admin-card-body">
+        <p style="margin-bottom: 16px; color: #6c757d;">Das Passwort wird automatisch verschlüsselt gespeichert (<code>config/env.local.php</code>) - du musst es nicht selbst verschlüsseln. <strong>Wichtig:</strong> Die Verbindung wird vor dem Speichern getestet - stimmen die Zugangsdaten nicht, wird nichts übernommen und die Website läuft mit den bisherigen Daten weiter, statt dich auszusperren. Hast du das Passwort in der Datenbank selbst schon geändert? Dann hier dasselbe neue Passwort eintragen.</p>
+        <form method="POST" class="admin-form">
+            <?php echo csrfField(); ?>
+            <input type="hidden" name="action" value="save_db_credentials">
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="db_host">Host</label>
+                    <input type="text" id="db_host" name="db_host" required value="<?php echo e(env('DB_HOST', 'localhost')); ?>">
+                </div>
+                <div class="form-group">
+                    <label for="db_port">Port</label>
+                    <input type="text" id="db_port" name="db_port" required value="<?php echo e(env('DB_PORT', '3306')); ?>">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="db_name">Datenbankname</label>
+                    <input type="text" id="db_name" name="db_name" required value="<?php echo e(env('DB_NAME', '')); ?>">
+                </div>
+                <div class="form-group">
+                    <label for="db_user">Benutzername</label>
+                    <input type="text" id="db_user" name="db_user" required value="<?php echo e(env('DB_USER', '')); ?>">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="db_password">Neues Passwort <?php echo $dbPasswordSet ? '(aktuell gesetzt - leer lassen zum Beibehalten)' : '(noch nicht gesetzt)'; ?></label>
+                <input type="password" id="db_password" name="db_password" placeholder="Leer lassen = unverändert lassen" autocomplete="new-password">
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-plug-circle-check"></i> Verbindung testen &amp; speichern
+            </button>
+        </form>
+    </div>
+</div>
+
+<div class="admin-card" style="max-width: 600px; margin-top: 24px;">
+    <div class="admin-card-header"><h2><i class="fas fa-envelope"></i> SMTP-Zugangsdaten (Mailversand)</h2></div>
+    <div class="admin-card-body">
+        <p style="margin-bottom: 16px; color: #6c757d;">Für den Versand des Kontaktformulars. Das Passwort wird automatisch verschlüsselt gespeichert. Leer lassen (SMTP-Host leer), um stattdessen die einfache <code>mail()</code>-Funktion des Servers zu nutzen.</p>
+        <form method="POST" class="admin-form">
+            <?php echo csrfField(); ?>
+            <input type="hidden" name="action" value="save_smtp_credentials">
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="smtp_host">SMTP-Host</label>
+                    <input type="text" id="smtp_host" name="smtp_host" value="<?php echo e(env('SMTP_HOST', '')); ?>" placeholder="z.B. smtp.strato.de">
+                </div>
+                <div class="form-group">
+                    <label for="smtp_port">Port</label>
+                    <input type="text" id="smtp_port" name="smtp_port" value="<?php echo e(env('SMTP_PORT', '587')); ?>">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="smtp_encryption">Verschlüsselung</label>
+                    <select id="smtp_encryption" name="smtp_encryption">
+                        <option value="tls" <?php echo env('SMTP_ENCRYPTION', 'tls') === 'tls' ? 'selected' : ''; ?>>STARTTLS</option>
+                        <option value="ssl" <?php echo env('SMTP_ENCRYPTION', 'tls') === 'ssl' ? 'selected' : ''; ?>>SSL</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="smtp_username">Benutzername</label>
+                    <input type="text" id="smtp_username" name="smtp_username" value="<?php echo e(env('SMTP_USERNAME', '')); ?>" autocomplete="off">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="smtp_password">Neues Passwort <?php echo $smtpPasswordSet ? '(aktuell gesetzt - leer lassen zum Beibehalten)' : '(noch nicht gesetzt)'; ?></label>
+                <input type="password" id="smtp_password" name="smtp_password" placeholder="Leer lassen = unverändert lassen" autocomplete="new-password">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="smtp_from_email">Absender-E-Mail</label>
+                    <input type="email" id="smtp_from_email" name="smtp_from_email" value="<?php echo e(env('SMTP_FROM_EMAIL', '')); ?>">
+                </div>
+                <div class="form-group">
+                    <label for="smtp_from_name">Absender-Name</label>
+                    <input type="text" id="smtp_from_name" name="smtp_from_name" value="<?php echo e(env('SMTP_FROM_NAME', 'FF Reichenau Website')); ?>">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="smtp_to_email">Empfänger-E-Mail (Kontaktformular)</label>
+                <input type="email" id="smtp_to_email" name="smtp_to_email" value="<?php echo e(env('SMTP_TO_EMAIL', 'reichenau@feuerwehr.tirol')); ?>">
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i> Speichern
+            </button>
+        </form>
+
+        <form method="POST" style="margin-top: 12px;">
+            <?php echo csrfField(); ?>
+            <input type="hidden" name="action" value="test_smtp">
+            <button type="submit" class="btn btn-secondary btn-sm">
+                <i class="fas fa-paper-plane"></i> Test-E-Mail senden
+            </button>
+        </form>
+    </div>
+</div>
+
+<div class="admin-card" style="max-width: 600px; margin-top: 24px;">
+    <div class="admin-card-header"><h2><i class="fab fa-discord"></i> Discord-Webhooks</h2></div>
+    <div class="admin-card-body">
+        <p style="margin-bottom: 16px; color: #6c757d;">Aktivitäts-Log, Login-Log und Rate-Limit-Ereignisse werden bei Angabe zusätzlich live an diese Discord-Kanäle gemeldet. Leer lassen zum Deaktivieren.</p>
+        <form method="POST" class="admin-form">
+            <?php echo csrfField(); ?>
+            <input type="hidden" name="action" value="save_discord_webhooks">
+
+            <div class="form-group">
+                <label for="discord_webhook_activity">Aktivitäts-Log</label>
+                <input type="text" id="discord_webhook_activity" name="discord_webhook_activity" value="<?php echo e(env('DISCORD_WEBHOOK_ACTIVITY', '')); ?>" placeholder="https://discord.com/api/webhooks/...">
+            </div>
+            <div class="form-group">
+                <label for="discord_webhook_login">Login-Log</label>
+                <input type="text" id="discord_webhook_login" name="discord_webhook_login" value="<?php echo e(env('DISCORD_WEBHOOK_LOGIN', '')); ?>" placeholder="https://discord.com/api/webhooks/...">
+            </div>
+            <div class="form-group">
+                <label for="discord_webhook_rate_limit">Rate-Limit-Ereignisse</label>
+                <input type="text" id="discord_webhook_rate_limit" name="discord_webhook_rate_limit" value="<?php echo e(env('DISCORD_WEBHOOK_RATE_LIMIT', '')); ?>" placeholder="https://discord.com/api/webhooks/...">
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i> Speichern
             </button>
         </form>
     </div>
