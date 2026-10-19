@@ -50,6 +50,22 @@ function writeEnvLocalFile(array $updates): bool {
         . " * Automatisch erzeugt/aktualisiert über Admin -> Einstellungen.\n"
         . " * Hat Vorrang vor der .env (siehe config/env.php).\n"
         . " */\n\n"
+        . "// Direkter Aufruf von außen (z.B. https://.../config/env.local.php) wird\n"
+        . "// erkannt und sofort gesperrt. SCRIPT_FILENAME ist nur dann diese Datei\n"
+        . "// selbst, wenn der Webserver sie als Einstiegspunkt ausführt - beim\n"
+        . "// normalen Laden über loadEnv()/include() bleibt es index.php bzw. die\n"
+        . "// jeweilige admin/*.php. Das ENV_LOCAL_GUARD_TRIGGERED-Flag verhindert eine\n"
+        . "// Endlosschleife: blockForSensitiveAccess() braucht selbst eine\n"
+        . "// Datenbankverbindung (config/database.php), deren Aufbau diese Datei\n"
+        . "// hier ein zweites Mal (verschachtelt) lädt - beim zweiten Durchlauf ist\n"
+        . "// das Flag schon gesetzt, der Guard greift dann nicht erneut und die\n"
+        . "// Werte werden ganz normal zurückgegeben, damit die Verbindung fertig\n"
+        . "// aufgebaut werden kann.\n"
+        . "if (!defined('ENV_LOCAL_GUARD_TRIGGERED') && realpath(\$_SERVER['SCRIPT_FILENAME'] ?? '') === __FILE__) {\n"
+        . "    define('ENV_LOCAL_GUARD_TRIGGERED', true);\n"
+        . "    require_once __DIR__ . '/security-block.php';\n"
+        . "    blockForSensitiveAccess('config/env.local.php');\n"
+        . "}\n\n"
         . "return " . var_export($merged, true) . ";\n";
 
     return file_put_contents(getEnvLocalFilePath(), $php, LOCK_EX) !== false;

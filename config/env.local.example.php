@@ -19,6 +19,23 @@
  * Klartext-Wert funktioniert übergangsweise weiterhin.
  */
 
+// Direkter Aufruf von außen (z.B. https://.../config/env.local.php) wird
+// erkannt und sofort gesperrt. SCRIPT_FILENAME ist nur dann diese Datei
+// selbst, wenn der Webserver sie als Einstiegspunkt ausführt - beim
+// normalen Laden über loadEnv()/include() bleibt es index.php bzw. die
+// jeweilige admin/*.php. Das ENV_LOCAL_GUARD_TRIGGERED-Flag verhindert eine
+// Endlosschleife: blockForSensitiveAccess() braucht selbst eine
+// Datenbankverbindung (config/database.php), deren Aufbau diese Datei hier
+// ein zweites Mal (verschachtelt) lädt - beim zweiten Durchlauf ist das
+// Flag schon gesetzt, der Guard greift dann nicht erneut und die Werte
+// werden ganz normal zurückgegeben, damit die Verbindung fertig aufgebaut
+// werden kann.
+if (!defined('ENV_LOCAL_GUARD_TRIGGERED') && realpath($_SERVER['SCRIPT_FILENAME'] ?? '') === __FILE__) {
+    define('ENV_LOCAL_GUARD_TRIGGERED', true);
+    require_once __DIR__ . '/security-block.php';
+    blockForSensitiveAccess('config/env.local.php');
+}
+
 return [
     // ── Datenbank (MySQL/MariaDB) ──
     'DB_HOST' => 'localhost',
