@@ -677,6 +677,23 @@ function getMigrations(): array {
             },
         ],
 
+        [
+            'id' => '2026_10_20_readd_zugskommandant',
+            'run' => function (PDO $db) {
+                // Der Posten "Zugskommandant" war früher schon einmal im
+                // Organigramm (zwischen Kommando und Gruppen), wurde dann
+                // entfernt (Migration 2026_09_17_update_org_chart_structure)
+                // und jetzt als eigener Abschnitt zwischen Kommando und
+                // Gruppen wieder ergänzt (siehe pages/ausschuss.php).
+                $check = $db->prepare("SELECT COUNT(*) FROM org_chart_positions WHERE position_key = ?");
+                $check->execute(['zugskommandant']);
+                if ((int) $check->fetchColumn() === 0) {
+                    $db->prepare("INSERT INTO org_chart_positions (position_key, label, name, sort_order) VALUES (?,?,?,?)")
+                        ->execute(['zugskommandant', 'Zugskommandant', '', 5]);
+                }
+            },
+        ],
+
     ];
 }
 

@@ -90,6 +90,15 @@ $membersJson = buildMembersJson($db);
                             </div>
 
                             <div class="orgchart-section">
+                                <div class="orgchart-section-title"><span>Zugskommando</span></div>
+                                <div class="orgchart-section-body">
+                                    <div class="orgchart-row">
+                                        <?php orgBox2($org, $memberIdByName, 'zugskommandant', 'Zugskommandant'); ?>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="orgchart-section">
                                 <div class="orgchart-section-title"><span>Gruppen</span></div>
                                 <div class="orgchart-section-body">
                                     <div class="orgchart-row-5">
