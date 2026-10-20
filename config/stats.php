@@ -25,33 +25,38 @@ function getEinsatzStats(PDO $db): array {
     $start = "$year-01-01";
     $end = "$year-12-31";
 
-    // Gezählt wird ausschließlich, was als ERSTE Kategorie "Einsatz" trägt
-    // (category = 'einsatz') - eine Übung, die nebenbei auch als Einsatz
-    // (category2) markiert wurde, zählt hier bewusst NICHT mit. Da ein
-    // Einsatz bis zu 2 Einsatzarten gleichzeitig haben kann (z.B. Brand, der
-    // in ABC überging), steckt die subcategory-Spalte eine kommagetrennte
-    // Liste - FIND_IN_SET prüft, ob die gesuchte Einsatzart darin vorkommt,
-    // ein Bericht mit mehreren Einsatzarten zählt also bei jeder davon mit.
+    // Gezählt wird jeder Bericht, der irgendwo (als erste ODER als zweite
+    // Kategorie) mit "Einsatz" markiert ist - auch eine Übung, bei der
+    // zusätzlich ein Einsatz stattfand. Da ein Einsatz bis zu 2 Einsatzarten
+    // gleichzeitig haben kann (z.B. Brand, der in ABC überging), steckt die
+    // subcategory-Spalte eine kommagetrennte Liste - FIND_IN_SET prüft, ob
+    // die gesuchte Einsatzart darin vorkommt, ein Bericht mit mehreren
+    // Einsatzarten zählt also bei jeder davon mit.
     //
     // Ein unveröffentlichter Bericht zählt zusätzlich mit, wenn im Admin
     // "Trotzdem in der Statistik zählen" angehakt wurde (count_unpublished) -
     // er bleibt dabei auf der Website unsichtbar, nur der Zähler reagiert.
+    // Die Abfrage läuft bei jedem Seitenaufruf neu gegen die Datenbank, ein
+    // neuer Bericht wirkt sich also sofort aus, ganz ohne Cache.
     $count = function (string $subcategory) use ($db, $start, $end): int {
-        $stmt = $db->prepare("SELECT COUNT(*) FROM reports WHERE (published = 1 OR count_unpublished = 1) AND date BETWEEN ? AND ? AND category = 'einsatz' AND FIND_IN_SET(?, subcategory)");
-        $stmt->execute([$start, $end, $subcategory]);
+        $stmt = $db->prepare("SELECT COUNT(*) FROM reports WHERE (published = 1 OR count_unpublished = 1) AND date BETWEEN ? AND ? AND ((category = 'einsatz' AND FIND_IN_SET(?, subcategory)) OR (category2 = 'einsatz' AND FIND_IN_SET(?, subcategory2)))");
+        $stmt->execute([$start, $end, $subcategory, $subcategory]);
         return (int)$stmt->fetchColumn();
     };
 
-    // "Einsätze gesamt" zählt Berichte, nicht Einsatzarten - sonst würde ein
-    // Einsatz mit zwei Einsatzarten (Brand + ABC) doppelt mitgezählt.
-    $totalStmt = $db->prepare("SELECT COUNT(*) FROM reports WHERE (published = 1 OR count_unpublished = 1) AND date BETWEEN ? AND ? AND category = 'einsatz'");
-    $totalStmt->execute([$start, $end]);
+    $brand = $count('brand');
+    $technisch = $count('technisch');
+    $abc = $count('abc');
 
     return [
         'year' => $year,
-        'brand' => $count('brand'),
-        'technisch' => $count('technisch'),
-        'abc' => $count('abc'),
-        'einsatz_gesamt' => (int) $totalStmt->fetchColumn(),
+        'brand' => $brand,
+        'technisch' => $technisch,
+        'abc' => $abc,
+        // "Einsätze gesamt" wird bewusst aus den drei Kategorie-Zahlen
+        // errechnet (Summe), nicht separat gezählt - ein Bericht mit zwei
+        // Einsatzarten (z.B. Brand + ABC) zählt dadurch doppelt zur
+        // Gesamtzahl, weil er auch doppelt in den Kategorie-Zahlen steckt.
+        'einsatz_gesamt' => $brand + $technisch + $abc,
     ];
 }
