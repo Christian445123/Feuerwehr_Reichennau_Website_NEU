@@ -86,19 +86,13 @@ $subcategoryLabels = [
                 </div>
                 <div class="content-card-body">
                     <p>Live-Übersicht aller aktuellen Alarmierungen in Tirol, bereitgestellt vom Landes-Feuerwehrverband Tirol. Aktualisiert sich automatisch alle 5 Minuten. Aktuelle Einsätze der FF Reichenau findest du bei uns immer zeitnah unter <a href="index.php?page=berichte&category=einsatz">Aktuelles → Einsatz</a>.</p>
-                    <div class="tirol-alarm-embed">
-                        <iframe id="tirolAlarmFrame" src="https://feuerwehr.tirol/aktuelle-alarmierungen/" title="Aktuelle Alarmierungen Tirol" loading="lazy" scrolling="no"></iframe>
-                    </div>
                     <div class="tirol-alarm-mobile-cta">
                         <div class="tirol-alarm-mobile-icon"><i class="fas fa-satellite-dish"></i></div>
-                        <p>Die Live-Ansicht des Landes-Feuerwehrverbands lässt sich am Handy leider nicht sauber darstellen. Am schnellsten öffnest du sie direkt in einem neuen Tab:</p>
+                        <p>Die Live-Ansicht des Landes-Feuerwehrverbands lässt sich auf unserer Seite nicht zuverlässig einbetten (die fremde Seite ändert sich immer wieder, ohne dass wir das beeinflussen können). Am schnellsten öffnest du sie direkt in einem neuen Tab:</p>
                         <a href="https://feuerwehr.tirol/aktuelle-alarmierungen/" target="_blank" rel="noopener" class="btn btn-primary">
                             <i class="fas fa-external-link-alt"></i> Aktuelle Alarmierungen Tirol öffnen
                         </a>
                     </div>
-                    <p class="tirol-alarm-source">
-                        <a href="https://feuerwehr.tirol/aktuelle-alarmierungen/" target="_blank" rel="noopener"><i class="fas fa-external-link-alt"></i> Direkt auf feuerwehr.tirol öffnen</a>
-                    </p>
                 </div>
             </div>
 

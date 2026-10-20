@@ -1086,99 +1086,33 @@ body.nav-open {
    Ausschnitt und nach oben verschoben, sodass nur der gelb hinterlegte
    Bereich (Überschrift "Aktuelle Alarmierungen" + Liste mit Scrollbar)
    im sichtbaren Fenster landet. */
-.tirol-alarm-embed {
-    position: relative;
-    width: 100%;
-    height: 640px;
-    margin-top: 16px;
-    border-radius: var(--radius-md);
-    overflow: hidden;
-    border: 1px solid var(--color-gray-200);
-    background: var(--color-gray-100);
-}
-
-.tirol-alarm-embed iframe {
-    position: absolute;
-    top: -270px;
-    left: 0;
-    width: 100%;
-    height: calc(100% + 270px + 40px);
-    border: 0;
-    display: block;
-    overflow: hidden;
-}
-
-/* Da sich der Ausschnitt bei einer fremden Seite nie pixelgenau treffen
-   lässt, blendet ein weicher Verlauf an Ober- und Unterkante einen
-   eventuell angeschnittenen Rest (z.B. ein halbes Listen-Element) sanft
-   aus, statt ihn hart abzuschneiden. */
-.tirol-alarm-embed::before,
-.tirol-alarm-embed::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    right: 0;
-    height: 22px;
-    pointer-events: none;
-    z-index: 1;
-}
-
-.tirol-alarm-embed::before {
-    top: 0;
-    background: linear-gradient(to bottom, var(--color-white), transparent);
-}
-
-.tirol-alarm-embed::after {
-    bottom: 0;
-    background: linear-gradient(to top, var(--color-white), transparent);
-}
-
-.tirol-alarm-source {
-    margin-top: 12px;
-    font-size: 0.82rem;
-    color: var(--color-gray-600);
-}
-
-/* Der Crop-Ausschnitt ist auf die Desktop-Breite der fremden Seite
-   kalibriert. Bei einer schmalen Viewport-Breite lädt die fremde Seite
-   ihr eigenes, völlig anders aufgebautes Mobil-Layout im Iframe, wodurch
-   der Ausschnitt eine ganz andere Stelle der Seite zeigt und "verkryptet"
-   aussieht. Deshalb wird der Iframe am Handy durch eine schlichte
-   "extern öffnen"-Karte ersetzt statt ihn blind neu zu kalibrieren. */
+/* Ein eingebetteter Live-Ausschnitt der fremden Seite war hier bewusst nicht
+   mehr die Lösung: egal ob über ein normales Iframe oder einen pixelgenau
+   zugeschnittenen Ausschnitt - sobald sich die fremde Seite unangekündigt
+   ändert (Layout, Cookie-Hinweis, neue Inhalte), zeigt unsere Seite nur noch
+   ein kaputtes/leeres Feld, ohne dass wir das beeinflussen können. Deshalb
+   gibt es stattdessen, auf jeder Bildschirmgröße, nur eine schlichte
+   "extern öffnen"-Karte. */
 .tirol-alarm-mobile-cta {
-    display: none;
+    display: block;
+    text-align: center;
+    padding: 36px 24px;
+    margin-top: 16px;
+    background: var(--color-gray-100);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-gray-200);
 }
 
-@media (max-width: 768px) {
-    .tirol-alarm-embed {
-        display: none;
-    }
+.tirol-alarm-mobile-icon {
+    font-size: 2.2rem;
+    color: var(--color-primary);
+    margin-bottom: 16px;
+}
 
-    .tirol-alarm-mobile-cta {
-        display: block;
-        text-align: center;
-        padding: 36px 24px;
-        margin-top: 16px;
-        background: var(--color-gray-100);
-        border-radius: var(--radius-md);
-        border: 1px solid var(--color-gray-200);
-    }
-
-    .tirol-alarm-mobile-icon {
-        font-size: 2.2rem;
-        color: var(--color-primary);
-        margin-bottom: 16px;
-    }
-
-    .tirol-alarm-mobile-cta p {
-        color: var(--color-gray-600);
-        margin-bottom: 20px;
-        line-height: 1.6;
-    }
-
-    .tirol-alarm-source {
-        display: none;
-    }
+.tirol-alarm-mobile-cta p {
+    color: var(--color-gray-600);
+    margin-bottom: 20px;
+    line-height: 1.6;
 }
 
 .content-image {

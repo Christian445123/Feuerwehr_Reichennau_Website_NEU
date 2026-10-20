@@ -164,8 +164,8 @@ EOT,
 <h4>Instagram-Link</h4>
 <p>Unsere Website enthält außerdem einen Link zu unserer Instagram-Seite. Auch hierbei handelt es sich um einen einfachen Hyperlink, der keine Daten an Instagram überträgt. Erst wenn Sie den Link anklicken und die Instagram-Seite besuchen, gelten die Datenschutzbestimmungen von Instagram (Meta Platforms Ireland Ltd.).</p>
 
-<h4>Eingebettete Alarmierungsübersicht (Landes-Feuerwehrverband Tirol)</h4>
-<p>Auf der Seite Service&nbsp;&rarr;&nbsp;Alarmierungen binden wir die "Aktuelle Alarmierungen"-Seite des Landes-Feuerwehrverbands Tirol (feuerwehr.tirol) per Iframe ein. Beim Aufruf dieser Seite wird eine Verbindung zu den Servern des Landes-Feuerwehrverbands Tirol hergestellt, wodurch Ihre IP-Adresse sowie ggf. weitere technische Daten an diesen übertragen werden. Es gilt die Datenschutzerklärung von feuerwehr.tirol.</p>
+<h4>Link zur Alarmierungsübersicht (Landes-Feuerwehrverband Tirol)</h4>
+<p>Auf der Seite Service&nbsp;&rarr;&nbsp;Alarmierungen verlinken wir auf die "Aktuelle Alarmierungen"-Seite des Landes-Feuerwehrverbands Tirol (feuerwehr.tirol). Es handelt sich um einen einfachen Hyperlink, der ohne Ihr Zutun keine Daten an feuerwehr.tirol überträgt. Erst wenn Sie den Link anklicken und die Seite besuchen, gelten die Datenschutzbestimmungen von feuerwehr.tirol.</p>
 EOT,
         ],
         [
@@ -246,7 +246,7 @@ EOT,
 <p>Wir erstellen die Inhalte dieser Website mit größtmöglicher Sorgfalt. Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte – insbesondere von Terminen, Einsatzberichten und Statistiken – können wir dennoch keine Gewähr übernehmen. Änderungen ohne vorherige Ankündigung sind möglich.</p>
 
 <h4><i class="fas fa-link"></i> Eingebettete Inhalte Dritter</h4>
-<p>Auf einzelnen Seiten binden wir Inhalte externer Anbieter ein, z.&nbsp;B. die Alarmierungsübersicht des Landes-Feuerwehrverbands Tirol unter Service&nbsp;&rarr;&nbsp;Alarmierungen. Für diese Inhalte ist der jeweilige externe Anbieter verantwortlich. Details dazu finden Sie in unserer <a href="index.php?page=datenschutz">Datenschutzerklärung</a>.</p>
+<p>Auf einzelnen Seiten verlinken wir zu externen Anbietern, z.&nbsp;B. die Alarmierungsübersicht des Landes-Feuerwehrverbands Tirol unter Service&nbsp;&rarr;&nbsp;Alarmierungen. Für diese Inhalte ist der jeweilige externe Anbieter verantwortlich. Details dazu finden Sie in unserer <a href="index.php?page=datenschutz">Datenschutzerklärung</a>.</p>
 
 <h4><i class="fas fa-clock-rotate-left"></i> Status dieser Website</h4>
 <p>Diese Website befindet sich derzeit im Aufbau und ist noch nicht die offizielle, öffentlich zugängliche Internetpräsenz der Freiwilligen Feuerwehr Reichenau. Der Zugriff ist übergangsweise passwortgeschützt.</p>

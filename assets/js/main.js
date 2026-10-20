@@ -4,18 +4,6 @@
 
 document.addEventListener('DOMContentLoaded', function () {
 
-    // --- Aktuelle Alarmierungen Tirol: alle 5 Minuten neu laden ---
-    // (nur wenn der Iframe gerade sichtbar ist - am Handy wird stattdessen
-    // eine "extern öffnen"-Karte angezeigt, siehe .tirol-alarm-mobile-cta)
-    var tirolAlarmFrame = document.getElementById('tirolAlarmFrame');
-    if (tirolAlarmFrame) {
-        var tirolAlarmBaseSrc = tirolAlarmFrame.src;
-        setInterval(function () {
-            if (tirolAlarmFrame.offsetParent === null) return;
-            tirolAlarmFrame.src = tirolAlarmBaseSrc + (tirolAlarmBaseSrc.indexOf('?') === -1 ? '?' : '&') + '_=' + Date.now();
-        }, 5 * 60 * 1000);
-    }
-
     // --- Mobile Navigation Toggle ---
     const navToggle = document.getElementById('navToggle');
     const navMenu = document.getElementById('navMenu');
