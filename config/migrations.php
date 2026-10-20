@@ -694,31 +694,6 @@ function getMigrations(): array {
             },
         ],
 
-        [
-            'id' => '2026_10_20_create_einsatzlog',
-            'run' => function (PDO $db) {
-                // Reine Einsatzübersicht (Tabelle mit Alarmzeit, Einsatztext,
-                // Adresse, Kurzbericht) nach Vorbild von feuerwehr-zirl.at/
-                // einsatzuebersicht/ - bewusst getrennt von den bebilderten
-                // "Berichten" (reports), die ausführlich erzählt sind. Siehe
-                // Admin -> Einsatzübersicht (admin/einsatzlog.php) und
-                // pages/einsatzuebersicht.php.
-                $db->exec("CREATE TABLE IF NOT EXISTS einsatzlog (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
-                    alarmzeit DATETIME NOT NULL,
-                    typ VARCHAR(20) NOT NULL DEFAULT 'einsatz',
-                    einsatztext VARCHAR(255) NOT NULL,
-                    strasse VARCHAR(255) DEFAULT '',
-                    ort VARCHAR(255) DEFAULT '',
-                    kurzbericht VARCHAR(255) DEFAULT '',
-                    report_id INT DEFAULT NULL,
-                    dauer_minuten INT DEFAULT 0,
-                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
-            },
-        ],
-
     ];
 }
 
