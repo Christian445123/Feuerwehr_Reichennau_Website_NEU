@@ -750,6 +750,19 @@ TEXT;
             },
         ],
 
+        [
+            'id' => '2026_10_20_add_report_show_in_alarmierungen',
+            'run' => function (PDO $db) {
+                // Erlaubt, einen unveröffentlichten Bericht trotzdem bei den
+                // "letzten 5 Alarmierungen" (Startseite/Alarmierungen-Seite)
+                // auftauchen zu lassen - unabhängig von "Trotzdem in der
+                // Statistik zählen" (count_unpublished), ein eigenes
+                // Kästchen. Siehe Admin -> Berichte, nur sichtbar, wenn
+                // "Veröffentlicht" abgehakt ist.
+                addColumnIfMissing($db, 'reports', 'show_in_alarmierungen', 'TINYINT DEFAULT 0');
+            },
+        ],
+
     ];
 }
 

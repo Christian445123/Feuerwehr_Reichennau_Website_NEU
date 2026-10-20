@@ -132,6 +132,9 @@ require_once __DIR__ . '/includes/admin-header.php';
                                 <?php if (!empty($r['count_unpublished'])): ?>
                                     <span class="badge badge-sonstige" title="Zählt trotz Entwurf schon in der Einsatz-Statistik mit"><i class="fas fa-chart-column"></i> Zählt mit</span>
                                 <?php endif; ?>
+                                <?php if (!empty($r['show_in_alarmierungen'])): ?>
+                                    <span class="badge badge-sonstige" title="Erscheint trotz Entwurf schon bei den letzten 5 Alarmierungen"><i class="fas fa-bell"></i> In Alarmierungen</span>
+                                <?php endif; ?>
                             <?php endif; ?>
                             <?php if ($isArchiv): ?>
                                 <span class="badge badge-archiv" title="Weder aktuelles Jahr noch Vorjahr - erscheint automatisch im Archiv"><i class="fas fa-archive"></i> Archiviert</span>

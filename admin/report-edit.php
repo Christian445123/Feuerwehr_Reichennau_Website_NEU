@@ -15,7 +15,7 @@ $pageTitle = $isEdit ? 'Bericht bearbeiten' : 'Neuer Bericht';
 
 $report = [
     'title' => '', 'category' => 'einsatz', 'subcategory' => '', 'category2' => '', 'subcategory2' => '', 'content' => '',
-    'date' => date('Y-m-d'), 'author' => '', 'published' => 1, 'links_hidden' => 0, 'count_unpublished' => 0,
+    'date' => date('Y-m-d'), 'author' => '', 'published' => 1, 'links_hidden' => 0, 'count_unpublished' => 0, 'show_in_alarmierungen' => 0,
 ];
 $images = [];
 $links = [];
@@ -105,6 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // angehakt ist - ein veröffentlichter Bericht zählt ohnehin schon mit,
     // das Kästchen wäre dann wirkungslos/verwirrend.
     $report['count_unpublished'] = (!$report['published'] && isset($_POST['count_unpublished'])) ? 1 : 0;
+    $report['show_in_alarmierungen'] = (!$report['published'] && isset($_POST['show_in_alarmierungen'])) ? 1 : 0;
     $report['links_hidden'] = isset($_POST['links_hidden']) ? 1 : 0;
 
     // Beliebig viele Links, je mit optionaler eigener Beschreibung - leere
@@ -139,11 +140,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $linksJson = !empty($links) ? json_encode($links, JSON_UNESCAPED_UNICODE) : null;
         $wasCreate = !$isEdit;
         if ($isEdit) {
-            $stmt = $db->prepare("UPDATE reports SET title=?, category=?, subcategory=?, category2=?, subcategory2=?, content=?, date=?, author=?, published=?, links=?, links_hidden=?, count_unpublished=?, updated_at=CURRENT_TIMESTAMP WHERE id=?");
-            $stmt->execute([$report['title'], $report['category'], $report['subcategory'] ?: null, $report['category2'] ?: null, $report['subcategory2'] ?: null, $report['content'], $report['date'], $report['author'], $report['published'], $linksJson, $report['links_hidden'], $report['count_unpublished'], $id]);
+            $stmt = $db->prepare("UPDATE reports SET title=?, category=?, subcategory=?, category2=?, subcategory2=?, content=?, date=?, author=?, published=?, links=?, links_hidden=?, count_unpublished=?, show_in_alarmierungen=?, updated_at=CURRENT_TIMESTAMP WHERE id=?");
+            $stmt->execute([$report['title'], $report['category'], $report['subcategory'] ?: null, $report['category2'] ?: null, $report['subcategory2'] ?: null, $report['content'], $report['date'], $report['author'], $report['published'], $linksJson, $report['links_hidden'], $report['count_unpublished'], $report['show_in_alarmierungen'], $id]);
         } else {
-            $stmt = $db->prepare("INSERT INTO reports (title, category, subcategory, category2, subcategory2, content, date, author, published, links, links_hidden, count_unpublished) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
-            $stmt->execute([$report['title'], $report['category'], $report['subcategory'] ?: null, $report['category2'] ?: null, $report['subcategory2'] ?: null, $report['content'], $report['date'], $report['author'], $report['published'], $linksJson, $report['links_hidden'], $report['count_unpublished']]);
+            $stmt = $db->prepare("INSERT INTO reports (title, category, subcategory, category2, subcategory2, content, date, author, published, links, links_hidden, count_unpublished, show_in_alarmierungen) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)");
+            $stmt->execute([$report['title'], $report['category'], $report['subcategory'] ?: null, $report['category2'] ?: null, $report['subcategory2'] ?: null, $report['content'], $report['date'], $report['author'], $report['published'], $linksJson, $report['links_hidden'], $report['count_unpublished'], $report['show_in_alarmierungen']]);
             $id = $db->lastInsertId();
             $isEdit = true;
         }
@@ -365,6 +366,14 @@ require_once __DIR__ . '/includes/admin-header.php';
                         <p class="form-hint">Der Bericht bleibt unveröffentlicht (auf der Website nicht sichtbar), zählt aber schon im Einsatzcounter der Startseite und Alarmierungen-Seite bei seiner Einsatz-/Übungsart mit.</p>
                     </div>
 
+                    <div class="form-group" id="showInAlarmierungenGroup" style="<?php echo $report['published'] ? 'display:none;' : ''; ?>">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="show_in_alarmierungen" <?php echo $report['show_in_alarmierungen'] ? 'checked' : ''; ?>>
+                            <span>Trotzdem bei den letzten 5 Alarmierungen anzeigen</span>
+                        </label>
+                        <p class="form-hint">Der Bericht bleibt unveröffentlicht, taucht aber schon mit Titel und Datum in der Liste "Die letzten 5 Alarmierungen" auf der Startseite und Alarmierungen-Seite auf (ohne anklickbaren Link zum Bericht). Ist "Veröffentlicht" angehakt, erscheint er dort ohnehin ganz normal - dieses Kästchen ist dann wirkungslos.</p>
+                    </div>
+
                     <button type="submit" class="btn btn-primary btn-block">
                         <i class="fas fa-save"></i> <?php echo $isEdit ? 'Speichern' : 'Erstellen'; ?>
                     </button>
@@ -379,9 +388,11 @@ require_once __DIR__ . '/includes/admin-header.php';
 // unveröffentlicht ist - veröffentlichte Berichte zählen ohnehin schon.
 var publishedCheckbox = document.getElementById('publishedCheckbox');
 var countUnpublishedGroup = document.getElementById('countUnpublishedGroup');
-if (publishedCheckbox && countUnpublishedGroup) {
+var showInAlarmierungenGroup = document.getElementById('showInAlarmierungenGroup');
+if (publishedCheckbox) {
     publishedCheckbox.addEventListener('change', function () {
-        countUnpublishedGroup.style.display = this.checked ? 'none' : '';
+        if (countUnpublishedGroup) countUnpublishedGroup.style.display = this.checked ? 'none' : '';
+        if (showInAlarmierungenGroup) showInAlarmierungenGroup.style.display = this.checked ? 'none' : '';
     });
 }
 
