@@ -195,22 +195,57 @@ document.addEventListener('DOMContentLoaded', function () {
         rootMargin: '0px 0px -50px 0px'
     };
 
+    function revealCard(el) {
+        el.style.opacity = '1';
+        el.style.transform = 'translateY(0)';
+    }
+
     var observer = new IntersectionObserver(function (entries) {
         entries.forEach(function (entry) {
             if (entry.isIntersecting) {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0)';
+                revealCard(entry.target);
+                observer.unobserve(entry.target);
             }
         });
     }, observerOptions);
 
+    var revealEls = document.querySelectorAll('.card, .content-card, .bericht-card, .info-card, .quick-link-card');
+
     // Karten animieren
-    document.querySelectorAll('.card, .content-card, .bericht-card, .info-card, .quick-link-card').forEach(function (el) {
+    revealEls.forEach(function (el) {
         el.style.opacity = '0';
         el.style.transform = 'translateY(20px)';
         el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
         observer.observe(el);
     });
+
+    // Absicherung für mobile Browser (vor allem iOS Safari): der Observer
+    // feuert dort beim ersten Laden manchmal nicht zuverlässig für Elemente,
+    // die bereits im sichtbaren Bereich liegen - sie blieben dadurch
+    // unsichtbar, bis man die Seite kurz scrollt. Deshalb kurz nach dem
+    // Laden einmal von Hand nachprüfen, ...
+    function manualRevealCheck() {
+        revealEls.forEach(function (el) {
+            if (el.style.opacity === '1') return;
+            var rect = el.getBoundingClientRect();
+            if (rect.top < window.innerHeight && rect.bottom > 0) {
+                revealCard(el);
+                observer.unobserve(el);
+            }
+        });
+    }
+    window.addEventListener('load', manualRevealCheck);
+    window.addEventListener('pageshow', manualRevealCheck);
+    setTimeout(manualRevealCheck, 300);
+
+    // ... und als letzte Absicherung nach 1.5s wirklich jede noch
+    // unsichtbare Karte einblenden, falls der Observer es nirgends geschafft
+    // hat - lieber ohne Einblend-Effekt sichtbar als dauerhaft unsichtbar.
+    setTimeout(function () {
+        revealEls.forEach(function (el) {
+            if (el.style.opacity !== '1') revealCard(el);
+        });
+    }, 1500);
 
     // --- Zähler-Animation (Statistik-Kacheln zählen beim Sichtbarwerden hoch) ---
     var counterEls = document.querySelectorAll('.stat-number[data-count], .hero-bar-item strong[data-count]');
