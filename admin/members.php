@@ -35,11 +35,18 @@ if (isset($_GET['delete']) && is_numeric($_GET['delete'])) {
 // Filter
 $group = $_GET['group'] ?? 'all';
 $search = trim($_GET['q'] ?? '');
-$validGroups = ['all', 'Kommando', 'Ausschuss', 'Beauftragter', 'Sonstige', 'Mannschaft', 'Ehrenmitglieder', 'Jugend'];
+$validGroups = ['all', 'Kommando', 'Ausschuss', 'Beauftragter', 'Sonstige', 'Mannschaft', 'Ehrenmitglieder', 'Jugend', 'Inaktiv'];
 if (!in_array($group, $validGroups, true)) $group = 'all';
 
 // Build query based on filter
-if ($group === 'all') {
+// "Inaktiv" zeigt bewusst JEDES deaktivierte Mitglied, unabhängig von der
+// Gruppe - sonst gäbe es keine Möglichkeit, ein versehentlich (z.B. durch
+// ein nicht angehaktes "Aktiv"-Kästchen beim Speichern) deaktiviertes
+// Mitglied im Admin-Bereich überhaupt wiederzufinden, es wäre dann aus
+// jeder Liste verschwunden, ohne gelöscht zu sein.
+if ($group === 'Inaktiv') {
+    $members = $db->query("SELECT * FROM members WHERE active = 0 ORDER BY lastname")->fetchAll();
+} elseif ($group === 'all') {
     $members = $db->query("SELECT * FROM members WHERE active = 1 ORDER BY group_name, sort_order, lastname")->fetchAll();
 } elseif (in_array($group, ['Kommando', 'Ausschuss', 'Beauftragter', 'Sonstige'])) {
     // Filter by JSON functions section
@@ -85,6 +92,7 @@ require_once __DIR__ . '/includes/admin-header.php';
     <a href="members.php?group=Mannschaft" class="filter-pill <?php echo $group === 'Mannschaft' ? 'active' : ''; ?>">Mannschaft</a>
     <a href="members.php?group=Ehrenmitglieder" class="filter-pill <?php echo $group === 'Ehrenmitglieder' ? 'active' : ''; ?>">Ehrenmitglieder</a>
     <a href="members.php?group=Jugend" class="filter-pill <?php echo $group === 'Jugend' ? 'active' : ''; ?>">Jugend</a>
+    <a href="members.php?group=Inaktiv" class="filter-pill <?php echo $group === 'Inaktiv' ? 'active' : ''; ?>" title="Deaktivierte Mitglieder - z.B. versehentlich beim Speichern ausgehakt"><i class="fas fa-eye-slash"></i> Inaktiv (<?php echo $db->query("SELECT COUNT(*) FROM members WHERE active=0")->fetchColumn(); ?>)</a>
 </div>
 
 <?php if (empty($members)): ?>
