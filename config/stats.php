@@ -2,18 +2,26 @@
 /**
  * Einsatz-Statistik für das laufende Kalenderjahr.
  *
- * Gezählt wird immer vom 1.1. bis zum 31.12. des aktuellen Jahres - der
- * Zähler springt zum Jahreswechsel automatisch auf 0. Es gibt drei
- * Kategorien: Brandeinsätze, Technische Einsätze und ABC-Einsätze.
+ * Gezählt wird immer vom 1.1. bis zum 31.12. des "Aktuellen Kalenderjahres",
+ * wie es unter Admin -> Einstellungen -> Berichtsjahre eingetragen ist
+ * (siehe config/berichte.php, getBerichteAktuellesJahr()) - nicht einfach
+ * das tatsächliche Jahr der Serveruhr, damit Statistik und Berichte-Seite
+ * garantiert zum selben Jahr zählen und nicht auseinanderlaufen können.
+ * Der Zähler springt daher erst um, wenn dieses Einstellungsfeld zum
+ * Jahreswechsel manuell (oder automatisch, falls dort nichts einträgen
+ * ist) weitergestellt wird. Es gibt drei Kategorien: Brandeinsätze,
+ * Technische Einsätze und ABC-Einsätze.
  */
 
+require_once __DIR__ . '/berichte.php';
+
 /**
- * Zählt veröffentlichte Einsätze des laufenden Kalenderjahres, aufgeschlüsselt
+ * Zählt veröffentlichte Einsätze des "Aktuellen Kalenderjahres", aufgeschlüsselt
  * nach Einsatzart. Archivierte Berichte werden mitgezählt - die Archivierung
  * ist nur eine Alters-Kennzeichnung, kein Ausschlusskriterium.
  */
 function getEinsatzStats(PDO $db): array {
-    $year = (int)date('Y');
+    $year = getBerichteAktuellesJahr();
     $start = "$year-01-01";
     $end = "$year-12-31";
 
