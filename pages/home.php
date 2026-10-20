@@ -149,7 +149,9 @@
     $subcategoryLabels = ['brand' => 'Brand', 'technisch' => 'Technisch', 'abc' => 'ABC', 'unterstuetzung' => 'Unterstützung', 'sonstiges' => 'Sonstiges'];
     // Berücksichtigt auch Berichte, bei denen "Einsatz" nur die zweite
     // Kategorie ist (z.B. eine Übung mit tatsächlichem Einsatz).
-    $latestEinsaetze = $db->query("SELECT title, date, IF(category = 'einsatz', subcategory, subcategory2) as subcategory FROM reports WHERE (published = 1 OR show_in_alarmierungen = 1) AND (category = 'einsatz' OR category2 = 'einsatz') ORDER BY date DESC, created_at DESC LIMIT 5")->fetchAll();
+    // Nur Berichte, die als ERSTE Kategorie "Einsatz" tragen - eine Übung
+    // mit Einsatz nur als zweiter Kategorie erscheint hier bewusst nicht.
+    $latestEinsaetze = $db->query("SELECT title, date, subcategory FROM reports WHERE (published = 1 OR show_in_alarmierungen = 1) AND category = 'einsatz' ORDER BY date DESC, created_at DESC LIMIT 5")->fetchAll();
     ?>
     <?php if (!empty($latestEinsaetze)): ?>
     <section class="section section-dark">
