@@ -46,10 +46,11 @@
                     </ul>
                 </li>
                 <li class="nav-dropdown">
-                    <span class="nav-link nav-label <?php echo in_array($current_page, ['kontakt', 'alarmierungen', 'sicherheitstipps'], true) ? 'active' : ''; ?>" tabindex="0"><i class="fas fa-concierge-bell"></i> Service <i class="fas fa-chevron-down dropdown-arrow"></i></span>
+                    <span class="nav-link nav-label <?php echo in_array($current_page, ['kontakt', 'alarmierungen', 'einsatzuebersicht', 'sicherheitstipps'], true) ? 'active' : ''; ?>" tabindex="0"><i class="fas fa-concierge-bell"></i> Service <i class="fas fa-chevron-down dropdown-arrow"></i></span>
                     <ul class="dropdown-menu">
                         <li><a href="index.php?page=kontakt">Kontakt</a></li>
                         <li><a href="index.php?page=alarmierungen">Alarmierungen</a></li>
+                        <li><a href="index.php?page=einsatzuebersicht">Einsatzübersicht</a></li>
                         <li><a href="index.php?page=sicherheitstipps">Sicherheitstipps</a></li>
                     </ul>
                 </li>

@@ -32,6 +32,7 @@ function getAllPermissions(): array {
         'media.manage'      => 'Fahrzeug- und Wache-Fotos austauschen',
         'schutzbereich.manage' => 'Schutzgebiet-Karte verwalten (Grenze auf der Karte bearbeiten)',
         'legal.manage'      => 'Rechtstexte bearbeiten (Datenschutzerklärung, Impressum, Allgemeine Hinweise)',
+        'einsatzlog.manage' => 'Einsatzübersicht verwalten (Alarmierungen und Übungen eintragen)',
     ];
 }
 
