@@ -8,6 +8,7 @@
  */
 
 require_once __DIR__ . '/database.php';
+require_once __DIR__ . '/settings.php';
 
 function getBerichteAktuellesJahr(): int {
     $db = getDB();
@@ -307,4 +308,27 @@ function getEinsatzNummerLabel(array $report): ?string {
     if (empty($report['einsatz_nummer']) || empty($report['date'])) return null;
     $yy = date('y', strtotime($report['date']));
     return 'E' . str_pad((string) $report['einsatz_nummer'], 2, '0', STR_PAD_LEFT) . '/' . $yy;
+}
+
+/**
+ * Ob die Einsatznummer auch auf der öffentlichen Website angezeigt wird
+ * (Admin -> Einstellungen) - standardmäßig aus, die Nummer ist primär eine
+ * interne Kennzeichnung. Im Admin-Bereich ist sie davon unabhängig immer
+ * sichtbar (siehe getEinsatzNummerLabel()).
+ */
+function isEinsatzNummerPublic(): bool {
+    return getSiteSetting('einsatznummer_public', '0') === '1';
+}
+
+function setEinsatzNummerPublic(bool $public): void {
+    setSiteSetting('einsatznummer_public', $public ? '1' : '0');
+}
+
+/**
+ * Wie getEinsatzNummerLabel(), aber nur dann nicht null, wenn die
+ * Einsatznummer auch öffentlich freigegeben ist - für die Website-Seiten,
+ * im Unterschied zum Admin-Bereich, der sie immer zeigt.
+ */
+function getPublicEinsatzNummerLabel(array $report): ?string {
+    return isEinsatzNummerPublic() ? getEinsatzNummerLabel($report) : null;
 }

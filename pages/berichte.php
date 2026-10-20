@@ -31,7 +31,7 @@ $berichteVorjahr = getBerichteVorjahr();
     <section class="page-header bericht-detail-page">
         <div class="container bericht-detail-container">
             <h1 class="page-title">
-                <?php $einsatzNr = getEinsatzNummerLabel($report); ?>
+                <?php $einsatzNr = getPublicEinsatzNummerLabel($report); ?>
                 <?php if ($einsatzNr): ?><span class="bericht-einsatznummer"><?php echo htmlspecialchars($einsatzNr); ?></span><?php endif; ?>
                 <?php echo htmlspecialchars($report['title']); ?>
             </h1>
@@ -203,7 +203,7 @@ $berichteVorjahr = getBerichteVorjahr();
                                 </div>
                                 <h3>
                                     <i class="fas <?php echo $categoryIcons[$r['category']] ?? 'fa-newspaper'; ?>"></i>
-                                    <?php $cardEinsatzNr = getEinsatzNummerLabel($r); ?>
+                                    <?php $cardEinsatzNr = getPublicEinsatzNummerLabel($r); ?>
                                     <?php if ($cardEinsatzNr): ?><span class="bericht-einsatznummer"><?php echo htmlspecialchars($cardEinsatzNr); ?></span><?php endif; ?>
                                     <?php echo htmlspecialchars($r['title']); ?>
                                 </h3>

@@ -52,6 +52,18 @@ if (isset($_GET['toggle_archive']) && is_numeric($_GET['toggle_archive'])) {
     exit;
 }
 
+// Einsatznummer öffentlich ein-/ausblenden
+if (isset($_GET['toggle_einsatznummer'])) {
+    if (isset($_GET['token']) && hash_equals(csrfToken(), $_GET['token'])) {
+        $newState = !isEinsatzNummerPublic();
+        setEinsatzNummerPublic($newState);
+        logActivity($db, 'reports.einsatznummer_public_toggle', $newState ? 'Öffentlich sichtbar' : 'Nur intern');
+        flash('success', $newState ? 'Einsatznummer ist jetzt auch öffentlich auf der Website sichtbar.' : 'Einsatznummer ist jetzt nur noch intern im Admin-Bereich sichtbar.');
+    }
+    header('Location: reports.php');
+    exit;
+}
+
 // Filter
 $category = $_GET['category'] ?? 'all';
 $validCategories = ['all', 'einsatz', 'uebung', 'jugend', 'veranstaltungen', 'sonstige', 'archiv'];
@@ -92,6 +104,12 @@ require_once __DIR__ . '/includes/admin-header.php';
 
 <div class="page-actions">
     <a href="report-edit.php" class="btn btn-primary"><i class="fas fa-plus"></i> Neuer Bericht</a>
+    <a href="reports.php?toggle_einsatznummer=1&token=<?php echo e(csrfToken()); ?>"
+       class="btn <?php echo isEinsatzNummerPublic() ? 'btn-secondary' : 'btn-outline-dark'; ?>"
+       title="Die interne Einsatznummer (z.B. E07/26) ist im Admin-Bereich immer sichtbar - dieser Button steuert nur, ob sie auch auf der Website erscheint.">
+        <i class="fas <?php echo isEinsatzNummerPublic() ? 'fa-eye-slash' : 'fa-eye'; ?>"></i>
+        Einsatznummer <?php echo isEinsatzNummerPublic() ? 'öffentlich ausblenden' : 'öffentlich anzeigen'; ?>
+    </a>
 </div>
 
 <!-- Filter -->
