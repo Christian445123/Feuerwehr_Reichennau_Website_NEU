@@ -20,18 +20,21 @@ $settings = getHaussammlungSettings();
 
     <section class="section">
         <div class="container jugend-narrow">
-            <div class="content-card">
-                <div class="content-card-body haussammlung-info-body">
-                    <?php if ($settings['qr_image']): ?>
+            <div class="haussammlung-info-layout">
+                <?php if ($settings['qr_image']): ?>
+                    <div class="haussammlung-info-qr-card">
                         <img src="<?php echo htmlspecialchars($settings['qr_image']); ?>" alt="QR-Code zur Haussammlung" class="haussammlung-info-qr">
-                    <?php endif; ?>
-                    <?php if ($settings['infotext'] !== ''): ?>
-                        <div class="haussammlung-info-text">
-                            <?php echo nl2br(htmlspecialchars(formatHaussammlungText($settings['infotext'], $settings))); ?>
-                        </div>
-                    <?php else: ?>
-                        <p><?php echo nl2br(htmlspecialchars(formatHaussammlungText($settings['kurztext'], $settings))); ?></p>
-                    <?php endif; ?>
+                        <p>QR-Code scannen zum Spenden</p>
+                    </div>
+                <?php endif; ?>
+                <div class="content-card haussammlung-info-text">
+                    <div class="content-card-body">
+                        <?php if ($settings['infotext'] !== ''): ?>
+                            <?php echo renderHaussammlungInfotext(formatHaussammlungText($settings['infotext'], $settings)); ?>
+                        <?php else: ?>
+                            <p><?php echo nl2br(htmlspecialchars(formatHaussammlungText($settings['kurztext'], $settings))); ?></p>
+                        <?php endif; ?>
+                    </div>
                 </div>
             </div>
         </div>

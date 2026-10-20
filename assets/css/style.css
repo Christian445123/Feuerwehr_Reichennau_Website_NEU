@@ -4316,24 +4316,69 @@ body.lightbox-open {
 }
 
 /* --- Haussammlung Infoseite --- */
-.haussammlung-info-body {
+.haussammlung-info-layout {
     display: flex;
     gap: 28px;
-    flex-wrap: wrap;
     align-items: flex-start;
+    flex-wrap: wrap-reverse;
+}
+
+.haussammlung-info-qr-card {
+    flex: 0 0 240px;
+    text-align: center;
+    background: var(--color-white);
+    border: 1px solid var(--color-gray-200);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    padding: 24px;
+    position: sticky;
+    top: 100px;
 }
 
 .haussammlung-info-qr {
-    width: 220px;
-    height: 220px;
+    width: 100%;
+    max-width: 190px;
+    height: auto;
     object-fit: contain;
-    border: 1px solid var(--color-gray-200);
-    border-radius: var(--radius-md);
-    flex-shrink: 0;
+    margin: 0 auto;
+    display: block;
+}
+
+.haussammlung-info-qr-card p {
+    margin-top: 14px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-gray-600);
 }
 
 .haussammlung-info-text {
-    flex: 1 1 260px;
+    flex: 1 1 420px;
+    min-width: 280px;
+}
+
+.haussammlung-info-text .content-card-body {
     line-height: 1.8;
     color: var(--color-gray-700);
+}
+
+.haussammlung-info-text h3 {
+    font-family: var(--font-family-display);
+    font-size: 1.2rem;
+    color: var(--color-dark);
+    margin: 28px 0 10px;
+}
+
+.haussammlung-info-text h3:first-child {
+    margin-top: 0;
+}
+
+.haussammlung-info-text p {
+    margin-bottom: 4px;
+}
+
+@media (max-width: 640px) {
+    .haussammlung-info-qr-card {
+        position: static;
+        flex-basis: 100%;
+    }
 }

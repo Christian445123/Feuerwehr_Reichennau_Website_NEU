@@ -64,3 +64,29 @@ function formatHaussammlungText(string $text, array $settings): string {
     $bis = $settings['bis'] !== '' ? date('d.m.Y', strtotime($settings['bis'])) : '';
     return str_replace(['{von}', '{bis}'], [$von, $bis], $text);
 }
+
+/**
+ * Formatiert den ausführlichen Infotext als HTML mit echten Absätzen und
+ * Zwischenüberschriften, statt alles als einen einzigen nl2br-Textblock
+ * ("Wurst") auszugeben. Leerzeilen trennen Absätze; eine einzelne kurze
+ * Zeile ohne Satzzeichen am Ende (z.B. "Warum wir sammeln") wird dabei als
+ * Zwischenüberschrift erkannt - eine einfache Heuristik, keine echte
+ * Markdown-Auszeichnung, reicht aber für diesen Anwendungsfall.
+ */
+function renderHaussammlungInfotext(string $text): string {
+    $blocks = preg_split('/\n\s*\n/', trim($text));
+    $html = '';
+    foreach ($blocks as $block) {
+        $block = trim($block);
+        if ($block === '') continue;
+        $isHeading = strpos($block, "\n") === false
+            && mb_strlen($block) <= 70
+            && !preg_match('/[.,:]$/', $block);
+        if ($isHeading) {
+            $html .= '<h3>' . htmlspecialchars($block) . '</h3>';
+        } else {
+            $html .= '<p>' . nl2br(htmlspecialchars($block)) . '</p>';
+        }
+    }
+    return $html;
+}

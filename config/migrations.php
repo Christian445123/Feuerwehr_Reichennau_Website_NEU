@@ -694,6 +694,62 @@ function getMigrations(): array {
             },
         ],
 
+        [
+            'id' => '2026_10_20_haussammlung_default_infotext',
+            'run' => function (PDO $db) {
+                // Befüllt den ausführlichen Infotext der Haussammlungsseite
+                // mit dem von der Feuerwehr bereitgestellten Text - nur
+                // einmalig und nur, falls dort noch nichts gepflegt wurde
+                // (siehe Admin -> Haussammlung), damit eine bereits
+                // vorgenommene eigene Bearbeitung nicht überschrieben wird.
+                $check = $db->prepare("SELECT value FROM site_settings WHERE setting_key = 'haussammlung_infotext'");
+                $check->execute();
+                $current = $check->fetchColumn();
+                if ($current !== false && trim((string) $current) !== '') {
+                    return;
+                }
+
+                $text = <<<'TEXT'
+Warum wir sammeln
+
+Jedes Jahr im Herbst besuchen die Mitglieder der Freiwilligen Feuerwehr Reichenau die Haushalte in unserem Einsatzgebiet und bitten um eine Spende. Die Haussammlung ist eine wichtige Säule unserer Finanzierung, denn mit den Spendengeldern schaffen wir Geräte und Ausrüstungsgegenstände an, die für einen sicheren und wirksamen Einsatz unverzichtbar sind.
+
+Vielfältige Einsätze erfordern gute Ausrüstung
+
+Die Aufgaben einer Feuerwehr gehen heute weit über die Brandbekämpfung hinaus. Technische Einsätze bei Verkehrsunfällen, Unwetter- und Hochwassereinsätze, Personenrettungen oder Gefahrstoffeinsätze stellen unterschiedlichste Anforderungen an Mannschaft und Material. Um für jede Situation gerüstet zu sein, brauchen wir ein umfangreiches Sortiment an moderner Ausrüstung, von der persönlichen Schutzausrüstung unserer Mitglieder bis hin zu Spezialgeräten.
+
+Ehrenamtlich im Einsatz für Sie
+
+Unsere Mitglieder leisten ihren Dienst freiwillig und unentgeltlich, rund um die Uhr und an 365 Tagen im Jahr. Mit Ihrer Spende unterstützen Sie dieses Engagement und stärken die Schlagkraft unserer Feuerwehr. Sie helfen damit sich selbst, Ihren Mitmenschen und uns.
+
+Ihre Spende ist steuerlich absetzbar
+
+Spenden an die Freiwillige Feuerwehr können steuerlich geltend gemacht werden. Damit wir Ihre Spende automatisch an das Finanzamt übermitteln können, benötigen wir:
+Vor- und Nachname (wie im Melderegister eingetragen)
+Geburtsdatum
+
+Sie müssen sich anschließend um nichts weiter kümmern, die Spende wird in Ihrer Arbeitnehmerveranlagung bzw. Einkommensteuererklärung automatisch berücksichtigt.
+
+Nicht zu Hause angetroffen?
+
+Falls wir Sie bei unserer Sammlung nicht persönlich erreichen, können Sie uns gerne auch per Überweisung unterstützen:
+Empfänger: Freiwillige Feuerwehr Reichenau
+IBAN: AT33 5700 0002 3004 4140
+Verwendungszweck: Haussammlung 2026, [Vor- und Nachname, Geburtsdatum]
+
+Vielen Dank!
+
+Wir bedanken uns herzlich bei allen, die uns mit ihrer Spende unterstützen. Jeder Beitrag zählt und kommt direkt der Sicherheit in unserer Gemeinde zugute.
+TEXT;
+
+                if ($current !== false) {
+                    $db->prepare("UPDATE site_settings SET value = ? WHERE setting_key = 'haussammlung_infotext'")->execute([$text]);
+                } else {
+                    $db->prepare("INSERT INTO site_settings (setting_key, value) VALUES ('haussammlung_infotext', ?)")->execute([$text]);
+                }
+            },
+        ],
+
     ];
 }
 
