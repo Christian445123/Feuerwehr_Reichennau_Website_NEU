@@ -121,15 +121,17 @@ $berichteVorjahr = getBerichteVorjahr();
 
     // "Aktuelles Jahr" und "Vorjahr" sind über Admin -> Einstellungen
     // konfigurierbar (config/berichte.php). "Archiv" fasst automatisch alle
-    // übrigen Jahre zusammen, egal welche Jahre das gerade sind.
+    // übrigen Jahre zusammen, egal welche Jahre das gerade sind - dazu
+    // zusätzlich jeden Bericht, der im Admin manuell archiviert wurde
+    // (r.archived = 1), auch wenn er eigentlich ins aktuelle Jahr fiele.
     if ($year === 'current') {
-        $yearCondition = 'AND YEAR(r.date) = ?';
+        $yearCondition = 'AND YEAR(r.date) = ? AND r.archived = 0';
         $yearParams = [$berichteAktuellesJahr];
     } elseif ($year === 'previous') {
-        $yearCondition = 'AND YEAR(r.date) = ?';
+        $yearCondition = 'AND YEAR(r.date) = ? AND r.archived = 0';
         $yearParams = [$berichteVorjahr];
     } else {
-        $yearCondition = 'AND YEAR(r.date) NOT IN (?, ?)';
+        $yearCondition = 'AND (YEAR(r.date) NOT IN (?, ?) OR r.archived = 1)';
         $yearParams = [$berichteAktuellesJahr, $berichteVorjahr];
     }
 

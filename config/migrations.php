@@ -763,6 +763,18 @@ TEXT;
             },
         ],
 
+        [
+            'id' => '2026_10_20_add_report_archived',
+            'run' => function (PDO $db) {
+                // Manuelles Archivieren eines Berichts (Admin -> Berichte,
+                // Archiv-Button) - zusätzlich zur bisherigen automatischen
+                // Archivierung anhand des Jahres (Admin -> Einstellungen ->
+                // Berichtsjahre). Ein manuell archivierter Bericht gilt
+                // unabhängig von seinem Datum als archiviert.
+                addColumnIfMissing($db, 'reports', 'archived', 'TINYINT DEFAULT 0');
+            },
+        ],
+
     ];
 }
 

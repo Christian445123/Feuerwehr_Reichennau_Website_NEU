@@ -34,6 +34,24 @@ if (isset($_GET['delete']) && is_numeric($_GET['delete'])) {
     exit;
 }
 
+// Bericht manuell archivieren/dearchivieren
+if (isset($_GET['toggle_archive']) && is_numeric($_GET['toggle_archive'])) {
+    if (isset($_GET['token']) && hash_equals(csrfToken(), $_GET['token'])) {
+        $id = (int) $_GET['toggle_archive'];
+        $stmt = $db->prepare("SELECT title, archived FROM reports WHERE id = ?");
+        $stmt->execute([$id]);
+        $row = $stmt->fetch();
+        if ($row) {
+            $newState = $row['archived'] ? 0 : 1;
+            $db->prepare("UPDATE reports SET archived = ? WHERE id = ?")->execute([$newState, $id]);
+            logActivity($db, 'report.archive_toggle', ($newState ? 'Archiviert: ' : 'Aus Archiv geholt: ') . $row['title']);
+            flash('success', $newState ? 'Bericht wurde archiviert.' : 'Bericht wurde aus dem Archiv geholt.');
+        }
+    }
+    header('Location: reports.php');
+    exit;
+}
+
 // Filter
 $category = $_GET['category'] ?? 'all';
 $validCategories = ['all', 'einsatz', 'uebung', 'jugend', 'veranstaltungen', 'sonstige', 'archiv'];
@@ -50,7 +68,9 @@ if ($category === 'all') {
     $stmt = $db->query("SELECT r.*, COUNT(ri.id) as image_count FROM reports r LEFT JOIN report_images ri ON r.id = ri.report_id GROUP BY r.id ORDER BY r.date DESC, r.created_at DESC");
     $reports = $stmt->fetchAll();
 } elseif ($category === 'archiv') {
-    $stmt = $db->prepare("SELECT r.*, COUNT(ri.id) as image_count FROM reports r LEFT JOIN report_images ri ON r.id = ri.report_id WHERE YEAR(r.date) NOT IN (?, ?) GROUP BY r.id ORDER BY r.date DESC, r.created_at DESC");
+    // Zeigt automatisch archivierte (altes Jahr) UND manuell archivierte
+    // Berichte (Archiv-Button, unabhängig vom Jahr).
+    $stmt = $db->prepare("SELECT r.*, COUNT(ri.id) as image_count FROM reports r LEFT JOIN report_images ri ON r.id = ri.report_id WHERE YEAR(r.date) NOT IN (?, ?) OR r.archived = 1 GROUP BY r.id ORDER BY r.date DESC, r.created_at DESC");
     $stmt->execute([$berichteAktuellesJahr, $berichteVorjahr]);
     $reports = $stmt->fetchAll();
 } else {
@@ -107,7 +127,7 @@ require_once __DIR__ . '/includes/admin-header.php';
             </thead>
             <tbody>
                 <?php foreach ($reports as $r): ?>
-                    <?php $isArchiv = !in_array((int) substr($r['date'], 0, 4), [$berichteAktuellesJahr, $berichteVorjahr], true); ?>
+                    <?php $isArchiv = !empty($r['archived']) || !in_array((int) substr($r['date'], 0, 4), [$berichteAktuellesJahr, $berichteVorjahr], true); ?>
                     <tr>
                         <td><strong><?php echo e($r['title']); ?></strong></td>
                         <td>
@@ -136,12 +156,19 @@ require_once __DIR__ . '/includes/admin-header.php';
                                     <span class="badge badge-sonstige" title="Erscheint trotz Entwurf schon bei den letzten 5 Alarmierungen"><i class="fas fa-bell"></i> In Alarmierungen</span>
                                 <?php endif; ?>
                             <?php endif; ?>
-                            <?php if ($isArchiv): ?>
+                            <?php if (!empty($r['archived'])): ?>
+                                <span class="badge badge-archiv" title="Manuell archiviert"><i class="fas fa-archive"></i> Archiviert</span>
+                            <?php elseif ($isArchiv): ?>
                                 <span class="badge badge-archiv" title="Weder aktuelles Jahr noch Vorjahr - erscheint automatisch im Archiv"><i class="fas fa-archive"></i> Archiviert</span>
                             <?php endif; ?>
                         </td>
                         <td class="actions-cell">
                             <a href="report-edit.php?id=<?php echo $r['id']; ?>" class="btn btn-sm btn-icon" title="Bearbeiten"><i class="fas fa-edit"></i></a>
+                            <a href="reports.php?toggle_archive=<?php echo $r['id']; ?>&token=<?php echo e(csrfToken()); ?>"
+                               class="btn btn-sm btn-icon"
+                               title="<?php echo !empty($r['archived']) ? 'Aus dem Archiv holen' : 'Manuell archivieren'; ?>">
+                                <i class="fas <?php echo !empty($r['archived']) ? 'fa-box-open' : 'fa-archive'; ?>"></i>
+                            </a>
                             <a href="reports.php?delete=<?php echo $r['id']; ?>&token=<?php echo e(csrfToken()); ?>"
                                class="btn btn-sm btn-icon btn-danger"
                                title="Löschen"
