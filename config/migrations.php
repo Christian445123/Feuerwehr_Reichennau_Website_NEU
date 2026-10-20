@@ -663,6 +663,20 @@ function getMigrations(): array {
             },
         ],
 
+        [
+            'id' => '2026_10_20_add_report_count_unpublished',
+            'run' => function (PDO $db) {
+                // Erlaubt, einen unveröffentlichten Bericht trotzdem in der
+                // Einsatz-Statistik (Startseite/Alarmierungen) mitzuzählen -
+                // z.B. für einen Einsatz, zu dem noch kein öffentlicher
+                // Bericht fertig ist, der aber schon in der Statistik
+                // auftauchen soll. Siehe Admin -> Berichte, Checkbox
+                // "Trotzdem in der Statistik zählen" (nur sichtbar, wenn
+                // "Veröffentlicht" abgehakt ist).
+                addColumnIfMissing($db, 'reports', 'count_unpublished', 'TINYINT DEFAULT 0');
+            },
+        ],
+
     ];
 }
 

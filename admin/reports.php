@@ -129,6 +129,9 @@ require_once __DIR__ . '/includes/admin-header.php';
                                 <span class="badge badge-success">Veröffentlicht</span>
                             <?php else: ?>
                                 <span class="badge badge-draft">Entwurf</span>
+                                <?php if (!empty($r['count_unpublished'])): ?>
+                                    <span class="badge badge-sonstige" title="Zählt trotz Entwurf schon in der Einsatz-Statistik mit"><i class="fas fa-chart-column"></i> Zählt mit</span>
+                                <?php endif; ?>
                             <?php endif; ?>
                             <?php if ($isArchiv): ?>
                                 <span class="badge badge-archiv" title="Weder aktuelles Jahr noch Vorjahr - erscheint automatisch im Archiv"><i class="fas fa-archive"></i> Archiviert</span>

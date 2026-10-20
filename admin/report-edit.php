@@ -15,7 +15,7 @@ $pageTitle = $isEdit ? 'Bericht bearbeiten' : 'Neuer Bericht';
 
 $report = [
     'title' => '', 'category' => 'einsatz', 'subcategory' => '', 'category2' => '', 'subcategory2' => '', 'content' => '',
-    'date' => date('Y-m-d'), 'author' => '', 'published' => 1, 'links_hidden' => 0,
+    'date' => date('Y-m-d'), 'author' => '', 'published' => 1, 'links_hidden' => 0, 'count_unpublished' => 0,
 ];
 $images = [];
 $links = [];
@@ -101,6 +101,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $report['date'] = $_POST['date'] ?? date('Y-m-d');
     $report['author'] = trim($_POST['author'] ?? '');
     $report['published'] = isset($_POST['published']) ? 1 : 0;
+    // Das Kästchen gibt es im Formular nur, solange "Veröffentlicht" nicht
+    // angehakt ist - ein veröffentlichter Bericht zählt ohnehin schon mit,
+    // das Kästchen wäre dann wirkungslos/verwirrend.
+    $report['count_unpublished'] = (!$report['published'] && isset($_POST['count_unpublished'])) ? 1 : 0;
     $report['links_hidden'] = isset($_POST['links_hidden']) ? 1 : 0;
 
     // Beliebig viele Links, je mit optionaler eigener Beschreibung - leere
@@ -135,11 +139,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $linksJson = !empty($links) ? json_encode($links, JSON_UNESCAPED_UNICODE) : null;
         $wasCreate = !$isEdit;
         if ($isEdit) {
-            $stmt = $db->prepare("UPDATE reports SET title=?, category=?, subcategory=?, category2=?, subcategory2=?, content=?, date=?, author=?, published=?, links=?, links_hidden=?, updated_at=CURRENT_TIMESTAMP WHERE id=?");
-            $stmt->execute([$report['title'], $report['category'], $report['subcategory'] ?: null, $report['category2'] ?: null, $report['subcategory2'] ?: null, $report['content'], $report['date'], $report['author'], $report['published'], $linksJson, $report['links_hidden'], $id]);
+            $stmt = $db->prepare("UPDATE reports SET title=?, category=?, subcategory=?, category2=?, subcategory2=?, content=?, date=?, author=?, published=?, links=?, links_hidden=?, count_unpublished=?, updated_at=CURRENT_TIMESTAMP WHERE id=?");
+            $stmt->execute([$report['title'], $report['category'], $report['subcategory'] ?: null, $report['category2'] ?: null, $report['subcategory2'] ?: null, $report['content'], $report['date'], $report['author'], $report['published'], $linksJson, $report['links_hidden'], $report['count_unpublished'], $id]);
         } else {
-            $stmt = $db->prepare("INSERT INTO reports (title, category, subcategory, category2, subcategory2, content, date, author, published, links, links_hidden) VALUES (?,?,?,?,?,?,?,?,?,?,?)");
-            $stmt->execute([$report['title'], $report['category'], $report['subcategory'] ?: null, $report['category2'] ?: null, $report['subcategory2'] ?: null, $report['content'], $report['date'], $report['author'], $report['published'], $linksJson, $report['links_hidden']]);
+            $stmt = $db->prepare("INSERT INTO reports (title, category, subcategory, category2, subcategory2, content, date, author, published, links, links_hidden, count_unpublished) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
+            $stmt->execute([$report['title'], $report['category'], $report['subcategory'] ?: null, $report['category2'] ?: null, $report['subcategory2'] ?: null, $report['content'], $report['date'], $report['author'], $report['published'], $linksJson, $report['links_hidden'], $report['count_unpublished']]);
             $id = $db->lastInsertId();
             $isEdit = true;
         }
@@ -348,9 +352,17 @@ require_once __DIR__ . '/includes/admin-header.php';
                 <div class="admin-card-body">
                     <div class="form-group">
                         <label class="checkbox-label">
-                            <input type="checkbox" name="published" <?php echo $report['published'] ? 'checked' : ''; ?>>
+                            <input type="checkbox" name="published" id="publishedCheckbox" <?php echo $report['published'] ? 'checked' : ''; ?>>
                             <span>Veröffentlicht</span>
                         </label>
+                    </div>
+
+                    <div class="form-group" id="countUnpublishedGroup" style="<?php echo $report['published'] ? 'display:none;' : ''; ?>">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="count_unpublished" <?php echo $report['count_unpublished'] ? 'checked' : ''; ?>>
+                            <span>Trotzdem in der Statistik zählen</span>
+                        </label>
+                        <p class="form-hint">Der Bericht bleibt unveröffentlicht (auf der Website nicht sichtbar), zählt aber schon im Einsatzcounter der Startseite und Alarmierungen-Seite bei seiner Einsatz-/Übungsart mit.</p>
                     </div>
 
                     <button type="submit" class="btn btn-primary btn-block">
@@ -363,6 +375,16 @@ require_once __DIR__ . '/includes/admin-header.php';
 </form>
 
 <script>
+// "Trotzdem in der Statistik zählen" nur anzeigen, solange der Bericht
+// unveröffentlicht ist - veröffentlichte Berichte zählen ohnehin schon.
+var publishedCheckbox = document.getElementById('publishedCheckbox');
+var countUnpublishedGroup = document.getElementById('countUnpublishedGroup');
+if (publishedCheckbox && countUnpublishedGroup) {
+    publishedCheckbox.addEventListener('change', function () {
+        countUnpublishedGroup.style.display = this.checked ? 'none' : '';
+    });
+}
+
 // Mehrfachauswahl Einsatz-/Übungsart: max. 2 bei Einsatz (z.B. Brand, der in
 // ABC überging), max. 3 bei Übung (z.B. Bezirksübungstag mit Brand-,
 // Technisch- und ABC-Teil). Ist das Limit erreicht, werden die restlichen,
