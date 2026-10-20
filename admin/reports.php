@@ -129,7 +129,11 @@ require_once __DIR__ . '/includes/admin-header.php';
                 <?php foreach ($reports as $r): ?>
                     <?php $isArchiv = !empty($r['archived']) || !in_array((int) substr($r['date'], 0, 4), [$berichteAktuellesJahr, $berichteVorjahr], true); ?>
                     <tr>
-                        <td><strong><?php echo e($r['title']); ?></strong></td>
+                        <td>
+                            <?php $einsatzNr = getEinsatzNummerLabel($r); ?>
+                            <?php if ($einsatzNr): ?><span class="badge badge-sonstige" title="Interne Einsatznummer"><?php echo e($einsatzNr); ?></span> <?php endif; ?>
+                            <strong><?php echo e($r['title']); ?></strong>
+                        </td>
                         <td>
                             <?php foreach (getReportBadgeGroups($r) as $listGroup): ?>
                                 <?php if ($listGroup['badges']): ?>

@@ -775,6 +775,35 @@ TEXT;
             },
         ],
 
+        [
+            'id' => '2026_10_20_add_report_einsatz_nummer',
+            'run' => function (PDO $db) {
+                // Interne Einsatznummer (z.B. "E07/26" = 7. Einsatz des
+                // Jahres 2026) - jeder Bericht mit dem Tag "Einsatz" (erste
+                // oder zweite Kategorie) bekommt eine, fortlaufend je Jahr.
+                // Bestehende Berichte werden hier einmalig rückwirkend
+                // nummeriert, chronologisch nach Einsatzdatum (bei
+                // gleichem Datum nach Erstellungsreihenfolge) - danach
+                // übernimmt assignEinsatzNummerIfNeeded() (siehe
+                // config/berichte.php) jeden neuen Bericht automatisch.
+                addColumnIfMissing($db, 'reports', 'einsatz_nummer', 'INT DEFAULT NULL');
+
+                $rows = $db->query("
+                    SELECT id, YEAR(date) as jahr FROM reports
+                    WHERE (category = 'einsatz' OR category2 = 'einsatz') AND einsatz_nummer IS NULL
+                    ORDER BY date ASC, created_at ASC, id ASC
+                ")->fetchAll();
+
+                $counters = [];
+                $update = $db->prepare("UPDATE reports SET einsatz_nummer = ? WHERE id = ?");
+                foreach ($rows as $row) {
+                    $jahr = (int) $row['jahr'];
+                    $counters[$jahr] = ($counters[$jahr] ?? 0) + 1;
+                    $update->execute([$counters[$jahr], $row['id']]);
+                }
+            },
+        ],
+
     ];
 }
 

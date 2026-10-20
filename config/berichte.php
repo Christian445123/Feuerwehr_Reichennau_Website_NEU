@@ -262,3 +262,49 @@ function getReportBadgeGroups(array $report): array {
     }
     return $groups;
 }
+
+/**
+ * Interne Einsatznummer (z.B. "E07/26" = 7. Einsatz des Jahres 2026).
+ *
+ * Jeder Bericht mit dem Tag "Einsatz" (als erste oder zweite Kategorie)
+ * bekommt beim Speichern automatisch die nächste freie Nummer seines
+ * Jahres zugewiesen (siehe assignEinsatzNummerIfNeeded()) - einmal
+ * vergeben, bleibt sie dauerhaft an diesem Bericht hängen, auch wenn sich
+ * die Kategorie später wieder ändert. Das Jahr richtet sich nach dem
+ * Einsatzdatum (reports.date), nicht nach dem Admin-Feld "Aktuelles
+ * Kalenderjahr".
+ */
+function reportHasEinsatzTag(array $report): bool {
+    return ($report['category'] ?? '') === 'einsatz' || ($report['category2'] ?? '') === 'einsatz';
+}
+
+/**
+ * Vergibt, falls nötig, die nächste freie Einsatznummer des Jahres (anhand
+ * von reports.date) an einen Bericht - nur wenn er den Tag "Einsatz" trägt
+ * und noch keine Nummer hat.
+ */
+function assignEinsatzNummerIfNeeded(PDO $db, int $reportId): void {
+    $stmt = $db->prepare("SELECT category, category2, date, einsatz_nummer FROM reports WHERE id = ?");
+    $stmt->execute([$reportId]);
+    $report = $stmt->fetch();
+    if (!$report || !reportHasEinsatzTag($report) || $report['einsatz_nummer'] !== null) {
+        return;
+    }
+
+    $year = (int) date('Y', strtotime($report['date']));
+    $maxStmt = $db->prepare("SELECT COALESCE(MAX(einsatz_nummer), 0) FROM reports WHERE YEAR(date) = ?");
+    $maxStmt->execute([$year]);
+    $next = ((int) $maxStmt->fetchColumn()) + 1;
+
+    $db->prepare("UPDATE reports SET einsatz_nummer = ? WHERE id = ?")->execute([$next, $reportId]);
+}
+
+/**
+ * Lesbare Darstellung der Einsatznummer (z.B. "E07/26") oder null, wenn der
+ * Bericht keine hat (z.B. weil er nie den Tag "Einsatz" trug).
+ */
+function getEinsatzNummerLabel(array $report): ?string {
+    if (empty($report['einsatz_nummer']) || empty($report['date'])) return null;
+    $yy = date('y', strtotime($report['date']));
+    return 'E' . str_pad((string) $report['einsatz_nummer'], 2, '0', STR_PAD_LEFT) . '/' . $yy;
+}

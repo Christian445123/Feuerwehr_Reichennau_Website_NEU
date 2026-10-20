@@ -30,7 +30,11 @@ $berichteVorjahr = getBerichteVorjahr();
     <!-- Einzelbericht-Ansicht -->
     <section class="page-header bericht-detail-page">
         <div class="container bericht-detail-container">
-            <h1 class="page-title"><?php echo htmlspecialchars($report['title']); ?></h1>
+            <h1 class="page-title">
+                <?php $einsatzNr = getEinsatzNummerLabel($report); ?>
+                <?php if ($einsatzNr): ?><span class="bericht-einsatznummer"><?php echo htmlspecialchars($einsatzNr); ?></span><?php endif; ?>
+                <?php echo htmlspecialchars($report['title']); ?>
+            </h1>
             <p class="page-subtitle">
                 <?php foreach (getReportBadgeGroups($report) as $group): ?>
                     <span class="bericht-badge-group">
@@ -197,7 +201,12 @@ $berichteVorjahr = getBerichteVorjahr();
                                         </div>
                                     <?php endforeach; ?>
                                 </div>
-                                <h3><i class="fas <?php echo $categoryIcons[$r['category']] ?? 'fa-newspaper'; ?>"></i> <?php echo htmlspecialchars($r['title']); ?></h3>
+                                <h3>
+                                    <i class="fas <?php echo $categoryIcons[$r['category']] ?? 'fa-newspaper'; ?>"></i>
+                                    <?php $cardEinsatzNr = getEinsatzNummerLabel($r); ?>
+                                    <?php if ($cardEinsatzNr): ?><span class="bericht-einsatznummer"><?php echo htmlspecialchars($cardEinsatzNr); ?></span><?php endif; ?>
+                                    <?php echo htmlspecialchars($r['title']); ?>
+                                </h3>
                                 <p class="bericht-date"><i class="fas fa-calendar"></i> <?php echo htmlspecialchars($r['date']); ?></p>
                                 <?php if ($r['content']): ?>
                                     <p><?php echo htmlspecialchars(mb_substr($r['content'], 0, 120)) . (mb_strlen($r['content']) > 120 ? '...' : ''); ?></p>

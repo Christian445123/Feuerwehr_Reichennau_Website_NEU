@@ -4382,3 +4382,22 @@ body.lightbox-open {
         flex-basis: 100%;
     }
 }
+
+/* Interne Einsatznummer (z.B. "E07/26") vor dem Berichtstitel */
+.bericht-einsatznummer {
+    display: inline-block;
+    font-family: var(--font-family-display, monospace);
+    font-weight: 700;
+    font-size: 0.78em;
+    color: var(--color-gray-500, var(--color-gray-600));
+    background: var(--color-gray-100);
+    border-radius: 4px;
+    padding: 2px 7px;
+    margin-right: 8px;
+    vertical-align: middle;
+}
+
+.page-title .bericht-einsatznummer {
+    color: rgba(255, 255, 255, 0.55);
+    background: rgba(255, 255, 255, 0.1);
+}

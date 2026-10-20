@@ -149,6 +149,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $isEdit = true;
         }
 
+        // Interne Einsatznummer (z.B. "E07/26") automatisch vergeben, falls
+        // der Bericht den Tag "Einsatz" trägt und noch keine hat.
+        assignEinsatzNummerIfNeeded($db, (int) $id);
+
         // Bilder hochladen (beliebig viele - jede Datei wird automatisch
         // verkleinert/komprimiert, siehe handleImageUpload()/resizeAndCompressImage())
         $uploadErrors = [];
@@ -207,6 +211,11 @@ require_once __DIR__ . '/includes/admin-header.php';
             <div class="admin-card">
                 <div class="admin-card-header"><h2><i class="fas fa-edit"></i> Bericht-Daten</h2></div>
                 <div class="admin-card-body">
+                    <?php $einsatzNrLabel = $isEdit ? getEinsatzNummerLabel($report) : null; ?>
+                    <?php if ($einsatzNrLabel): ?>
+                        <p class="form-hint" style="margin-bottom:12px;"><i class="fas fa-hashtag"></i> Interne Einsatznummer: <strong><?php echo e($einsatzNrLabel); ?></strong> (automatisch vergeben, bleibt dauerhaft an diesem Bericht)</p>
+                    <?php endif; ?>
+
                     <div class="form-group">
                         <label for="title">Titel *</label>
                         <input type="text" id="title" name="title" value="<?php echo e($report['title']); ?>" required>
