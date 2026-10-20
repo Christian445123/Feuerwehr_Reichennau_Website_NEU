@@ -96,13 +96,12 @@ require_once __DIR__ . '/includes/admin-header.php';
             <div class="form-group">
                 <label for="kurztext">Kurztext im Popup</label>
                 <textarea id="kurztext" name="kurztext" rows="3"><?php echo e($settings['kurztext']); ?></textarea>
-                <p class="form-hint">Die Platzhalter <code>{von}</code> und <code>{bis}</code> werden automatisch durch den oben eingestellten Zeitraum ersetzt.</p>
             </div>
 
             <div class="form-group">
                 <label for="infotext">Ausführlicher Text auf der Infoseite</label>
                 <textarea id="infotext" name="infotext" rows="8"><?php echo e($settings['infotext']); ?></textarea>
-                <p class="form-hint">Auch hier funktionieren <code>{von}</code> und <code>{bis}</code>. Zeilenumbrüche werden übernommen.</p>
+                <p class="form-hint">Zeilenumbrüche werden übernommen.</p>
             </div>
 
             <div class="form-group">

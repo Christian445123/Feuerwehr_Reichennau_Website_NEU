@@ -10,20 +10,11 @@ $db = getDB();
 // die URL trotzdem für jeden aufrufbar, das ist bei einer öffentlichen
 // Spendenaktion gewollt.
 $settings = getHaussammlungSettings();
-$zeitraum = '';
-if ($settings['von'] !== '' || $settings['bis'] !== '') {
-    $von = $settings['von'] !== '' ? date('d.m.Y', strtotime($settings['von'])) : '';
-    $bis = $settings['bis'] !== '' ? date('d.m.Y', strtotime($settings['bis'])) : '';
-    $zeitraum = $von && $bis ? "$von – $bis" : ($von ? "ab $von" : "bis $bis");
-}
 ?>
     <!-- Page Header -->
     <section class="page-header">
         <div class="container">
             <h1 class="page-title"><?php echo htmlspecialchars($settings['titel']); ?></h1>
-            <?php if ($zeitraum): ?>
-                <p class="page-subtitle"><i class="fas fa-calendar-alt"></i> <?php echo htmlspecialchars($zeitraum); ?></p>
-            <?php endif; ?>
         </div>
     </section>
 

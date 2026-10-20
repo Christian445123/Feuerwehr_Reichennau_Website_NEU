@@ -19,7 +19,7 @@ function getHaussammlungSettings(): array {
         'von' => getSiteSetting('haussammlung_von', ''),
         'bis' => getSiteSetting('haussammlung_bis', ''),
         'titel' => getSiteSetting('haussammlung_titel', 'Haussammlung 2026'),
-        'kurztext' => getSiteSetting('haussammlung_kurztext', 'Von {von} bis {bis} ist unsere Haussammlung. Scanne den QR-Code oder spende direkt - vielen Dank für deine Unterstützung!'),
+        'kurztext' => getSiteSetting('haussammlung_kurztext', 'Scanne den QR-Code oder spende direkt - vielen Dank für deine Unterstützung!'),
         'infotext' => getSiteSetting('haussammlung_infotext', ''),
         'qr_image' => getSiteSetting('haussammlung_qr_image', ''),
     ];
