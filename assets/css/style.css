@@ -4233,3 +4233,107 @@ body.lightbox-open {
         width: 100%;
     }
 }
+
+/* --- Haussammlungs-Popup (unten links, siehe includes/footer.php) --- */
+.haussammlung-popup {
+    position: fixed;
+    left: 20px;
+    bottom: 20px;
+    z-index: 1000;
+    max-width: 340px;
+    background: var(--color-white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xl);
+    border: 1px solid var(--color-gray-200);
+    padding: 18px;
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.haussammlung-popup[hidden] {
+    display: none !important;
+}
+
+.haussammlung-popup.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.haussammlung-popup-close {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 1.3rem;
+    line-height: 1;
+    color: var(--color-gray-500, var(--color-gray-600));
+    cursor: pointer;
+    padding: 4px;
+}
+
+.haussammlung-popup-close:hover {
+    color: var(--color-dark);
+}
+
+.haussammlung-popup-body {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+}
+
+.haussammlung-popup-qr {
+    width: 76px;
+    height: 76px;
+    object-fit: contain;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-gray-200);
+    flex-shrink: 0;
+}
+
+.haussammlung-popup-text strong {
+    display: block;
+    color: var(--color-dark);
+    font-size: 0.95rem;
+    margin-bottom: 4px;
+}
+
+.haussammlung-popup-text p {
+    font-size: 0.82rem;
+    color: var(--color-gray-600);
+    line-height: 1.5;
+    margin-bottom: 10px;
+}
+
+@media (max-width: 480px) {
+    .haussammlung-popup {
+        left: 12px;
+        right: 12px;
+        bottom: 12px;
+        max-width: none;
+    }
+}
+
+/* --- Haussammlung Infoseite --- */
+.haussammlung-info-body {
+    display: flex;
+    gap: 28px;
+    flex-wrap: wrap;
+    align-items: flex-start;
+}
+
+.haussammlung-info-qr {
+    width: 220px;
+    height: 220px;
+    object-fit: contain;
+    border: 1px solid var(--color-gray-200);
+    border-radius: var(--radius-md);
+    flex-shrink: 0;
+}
+
+.haussammlung-info-text {
+    flex: 1 1 260px;
+    line-height: 1.8;
+    color: var(--color-gray-700);
+}

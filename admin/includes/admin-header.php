@@ -58,6 +58,11 @@ require_once __DIR__ . '/../permissions.php';
                     <i class="fas fa-images"></i> Fahrzeug- & Wache-Fotos
                 </a>
             <?php endif; ?>
+            <?php if (userHasPermission('haussammlung.manage')): ?>
+                <a href="haussammlung.php" class="sidebar-link <?php echo ($activePage ?? '') === 'haussammlung' ? 'active' : ''; ?>">
+                    <i class="fas fa-qrcode"></i> Haussammlung
+                </a>
+            <?php endif; ?>
 
             <div class="sidebar-divider"></div>
 

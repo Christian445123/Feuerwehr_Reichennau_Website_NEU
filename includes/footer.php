@@ -53,6 +53,48 @@
     </button>
 
     <?php
+    require_once __DIR__ . '/../config/haussammlung.php';
+    $haussammlungSettings = getHaussammlungSettings();
+    ?>
+    <?php if (($current_page ?? '') !== 'haussammlung' && isHaussammlungActive($haussammlungSettings)): ?>
+    <!-- Haussammlungs-Popup (unten links, einmal pro Besuch, siehe Admin -> Haussammlung) -->
+    <div class="haussammlung-popup" id="haussammlungPopup" hidden>
+        <button type="button" class="haussammlung-popup-close" id="haussammlungPopupClose" aria-label="Schließen">&times;</button>
+        <div class="haussammlung-popup-body">
+            <?php if ($haussammlungSettings['qr_image']): ?>
+                <img src="<?php echo htmlspecialchars($haussammlungSettings['qr_image']); ?>" alt="QR-Code zur Haussammlung" class="haussammlung-popup-qr">
+            <?php endif; ?>
+            <div class="haussammlung-popup-text">
+                <strong><?php echo htmlspecialchars($haussammlungSettings['titel']); ?></strong>
+                <p><?php echo nl2br(htmlspecialchars(formatHaussammlungText($haussammlungSettings['kurztext'], $haussammlungSettings))); ?></p>
+                <a href="index.php?page=haussammlung" class="btn btn-primary btn-sm"><i class="fas fa-circle-info"></i> Mehr Informationen</a>
+            </div>
+        </div>
+    </div>
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var popup = document.getElementById('haussammlungPopup');
+        if (!popup) return;
+        var SEEN_KEY = 'haussammlung_popup_seen';
+        var alreadySeen = false;
+        try { alreadySeen = sessionStorage.getItem(SEEN_KEY) === '1'; } catch (e) {}
+        if (alreadySeen) return;
+
+        setTimeout(function () {
+            popup.hidden = false;
+            requestAnimationFrame(function () { popup.classList.add('visible'); });
+            try { sessionStorage.setItem(SEEN_KEY, '1'); } catch (e) {}
+        }, 1200);
+
+        document.getElementById('haussammlungPopupClose').addEventListener('click', function () {
+            popup.classList.remove('visible');
+            setTimeout(function () { popup.hidden = true; }, 300);
+        });
+    });
+    </script>
+    <?php endif; ?>
+
+    <?php
     require_once __DIR__ . '/../config/analytics.php';
     $gaMeasurementId = getGaMeasurementId();
     ?>

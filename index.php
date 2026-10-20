@@ -39,6 +39,7 @@ $allowed_pages = [
     'technik',
     'gefahrgut',
     'mitmachen',
+    'haussammlung',
 ];
 
 // Alte Sammelseite "Ausrüstung" wurde in Fuhrpark und Gerätehaus aufgeteilt
@@ -87,6 +88,7 @@ $page_titles = [
     'technik'          => 'Einsatzgebiet Technik',
     'gefahrgut'        => 'Einsatzgebiet Gefahrgut',
     'mitmachen'        => 'Mitmachen',
+    'haussammlung'     => 'Haussammlung',
 ];
 
 $current_title = $page_titles[$page] ?? 'Startseite';
