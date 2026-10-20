@@ -147,7 +147,7 @@ require_once __DIR__ . '/includes/admin-header.php';
     <a href="members.php" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Zurück</a>
 </div>
 
-<form method="POST" enctype="multipart/form-data" class="admin-form">
+<form method="POST" enctype="multipart/form-data" class="admin-form" id="memberForm">
     <?php echo csrfField(); ?>
 
     <div class="form-grid">
@@ -350,12 +350,13 @@ require_once __DIR__ . '/includes/admin-header.php';
                 <div class="admin-card-body">
                     <div class="form-group">
                         <label class="checkbox-label">
-                            <input type="checkbox" name="active" <?php echo $member['active'] ? 'checked' : ''; ?>>
+                            <input type="checkbox" name="active" id="activeCheckbox" data-was-checked="<?php echo $member['active'] ? '1' : '0'; ?>" <?php echo $member['active'] ? 'checked' : ''; ?>>
                             <span>Aktives Mitglied</span>
                         </label>
+                        <p class="form-hint">Ein deaktiviertes Mitglied wird auf der gesamten Website unsichtbar, bleibt aber gespeichert - zu finden unter Admin -&gt; Mitglieder -&gt; Reiter "Inaktiv".</p>
                     </div>
 
-                    <button type="submit" class="btn btn-primary btn-block">
+                    <button type="submit" class="btn btn-primary btn-block" id="memberSaveBtn">
                         <i class="fas fa-save"></i> <?php echo $isEdit ? 'Speichern' : 'Hinzufügen'; ?>
                     </button>
                 </div>
@@ -448,6 +449,23 @@ if (addFunctionBtn) {
             '<input type="text" name="func_role[]" placeholder="Rolle (z.B. Kommandant, Gerätewart, ...)" class="func-role-input" list="orgPositionsList">' +
             '<button type="button" class="btn btn-sm btn-danger func-remove" onclick="this.closest(\'.function-row\').remove()"><i class="fas fa-times"></i></button>';
         container.appendChild(row);
+    });
+}
+
+// Schutz gegen versehentliches Deaktivieren: ein Update soll ein Mitglied
+// nicht unbemerkt von der ganzen Website verschwinden lassen - wer das
+// "Aktives Mitglied"-Kästchen ausgehakt hat (egal ob absichtlich oder aus
+// Versehen), bekommt vor dem Speichern eine Rückfrage.
+var memberForm = document.getElementById('memberForm');
+var activeCheckbox = document.getElementById('activeCheckbox');
+if (memberForm && activeCheckbox) {
+    memberForm.addEventListener('submit', function (e) {
+        var wasChecked = activeCheckbox.getAttribute('data-was-checked') === '1';
+        if (wasChecked && !activeCheckbox.checked) {
+            if (!confirm('"Aktives Mitglied" ist nicht mehr angehakt - dieses Mitglied wird dadurch auf der gesamten Website unsichtbar (aber nicht gelöscht, zu finden unter "Inaktiv"). Wirklich fortfahren?')) {
+                e.preventDefault();
+            }
+        }
     });
 }
 </script>

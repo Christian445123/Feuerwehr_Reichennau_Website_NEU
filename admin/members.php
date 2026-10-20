@@ -3,6 +3,7 @@ require_once __DIR__ . '/auth.php';
 require_once __DIR__ . '/permissions.php';
 require_once __DIR__ . '/../config/ranks.php';
 require_once __DIR__ . '/../config/logging.php';
+require_once __DIR__ . '/../config/members.php';
 requireLogin();
 requirePermission('members.manage');
 
@@ -11,31 +12,65 @@ $activePage = 'members';
 
 $db = getDB();
 
-// Mitglied löschen
+// Abgelaufene Papierkorb-Einträge (>24h) endgültig löschen - läuft bei
+// jedem Aufruf dieser Seite nebenbei mit, kein separater Cronjob nötig.
+purgeExpiredDeletedMembers($db);
+
+// Mitglied in den Papierkorb verschieben (Soft-Delete)
 if (isset($_GET['delete']) && is_numeric($_GET['delete'])) {
     if (isset($_GET['token']) && hash_equals(csrfToken(), $_GET['token'])) {
         $id = (int)$_GET['delete'];
-        $stmt = $db->prepare("SELECT firstname, lastname, photo FROM members WHERE id = ?");
+        $stmt = $db->prepare("SELECT firstname, lastname FROM members WHERE id = ?");
         $stmt->execute([$id]);
         $member = $stmt->fetch();
-        if ($member && $member['photo']) {
-            $path = UPLOAD_PATH . $member['photo'];
-            if (file_exists($path)) unlink($path);
-        }
-        $db->prepare("DELETE FROM members WHERE id = ?")->execute([$id]);
         if ($member) {
-            logActivity($db, 'member.delete', $member['firstname'] . ' ' . $member['lastname']);
+            softDeleteMember($db, $id);
+            logActivity($db, 'member.trash', $member['firstname'] . ' ' . $member['lastname']);
+            flash('success', 'Mitglied wurde in den Papierkorb verschoben. Dort kannst du es wiederherstellen - nach 24 Stunden wird es endgültig gelöscht.');
         }
-        flash('success', 'Mitglied wurde gelöscht.');
     }
     header('Location: members.php');
+    exit;
+}
+
+// Mitglied aus dem Papierkorb wiederherstellen
+if (isset($_GET['restore']) && is_numeric($_GET['restore'])) {
+    if (isset($_GET['token']) && hash_equals(csrfToken(), $_GET['token'])) {
+        $id = (int)$_GET['restore'];
+        $stmt = $db->prepare("SELECT firstname, lastname FROM members WHERE id = ?");
+        $stmt->execute([$id]);
+        $member = $stmt->fetch();
+        if ($member) {
+            restoreMember($db, $id);
+            logActivity($db, 'member.restore', $member['firstname'] . ' ' . $member['lastname']);
+            flash('success', 'Mitglied wurde wiederhergestellt.');
+        }
+    }
+    header('Location: members.php?group=Papierkorb');
+    exit;
+}
+
+// Mitglied aus dem Papierkorb sofort endgültig löschen
+if (isset($_GET['purge']) && is_numeric($_GET['purge'])) {
+    if (isset($_GET['token']) && hash_equals(csrfToken(), $_GET['token'])) {
+        $id = (int)$_GET['purge'];
+        $stmt = $db->prepare("SELECT firstname, lastname FROM members WHERE id = ? AND deleted_at IS NOT NULL");
+        $stmt->execute([$id]);
+        $member = $stmt->fetch();
+        if ($member) {
+            hardDeleteMember($db, $id);
+            logActivity($db, 'member.delete', $member['firstname'] . ' ' . $member['lastname']);
+            flash('success', 'Mitglied wurde endgültig gelöscht.');
+        }
+    }
+    header('Location: members.php?group=Papierkorb');
     exit;
 }
 
 // Filter
 $group = $_GET['group'] ?? 'all';
 $search = trim($_GET['q'] ?? '');
-$validGroups = ['all', 'Kommando', 'Ausschuss', 'Beauftragter', 'Sonstige', 'Mannschaft', 'Ehrenmitglieder', 'Jugend', 'Inaktiv'];
+$validGroups = ['all', 'Kommando', 'Ausschuss', 'Beauftragter', 'Sonstige', 'Mannschaft', 'Ehrenmitglieder', 'Jugend', 'Inaktiv', 'Papierkorb'];
 if (!in_array($group, $validGroups, true)) $group = 'all';
 
 // Build query based on filter
@@ -44,8 +79,12 @@ if (!in_array($group, $validGroups, true)) $group = 'all';
 // ein nicht angehaktes "Aktiv"-Kästchen beim Speichern) deaktiviertes
 // Mitglied im Admin-Bereich überhaupt wiederzufinden, es wäre dann aus
 // jeder Liste verschwunden, ohne gelöscht zu sein.
-if ($group === 'Inaktiv') {
-    $members = $db->query("SELECT * FROM members WHERE active = 0 ORDER BY lastname")->fetchAll();
+if ($group === 'Papierkorb') {
+    $members = $db->query("SELECT * FROM members WHERE deleted_at IS NOT NULL ORDER BY deleted_at DESC")->fetchAll();
+} elseif ($group === 'Inaktiv') {
+    // Mitglieder im Papierkorb (deleted_at gesetzt) tauchen nur im
+    // Papierkorb-Reiter auf, nicht zusätzlich hier.
+    $members = $db->query("SELECT * FROM members WHERE active = 0 AND deleted_at IS NULL ORDER BY lastname")->fetchAll();
 } elseif ($group === 'all') {
     $members = $db->query("SELECT * FROM members WHERE active = 1 ORDER BY group_name, sort_order, lastname")->fetchAll();
 } elseif (in_array($group, ['Kommando', 'Ausschuss', 'Beauftragter', 'Sonstige'])) {
@@ -92,7 +131,8 @@ require_once __DIR__ . '/includes/admin-header.php';
     <a href="members.php?group=Mannschaft" class="filter-pill <?php echo $group === 'Mannschaft' ? 'active' : ''; ?>">Mannschaft</a>
     <a href="members.php?group=Ehrenmitglieder" class="filter-pill <?php echo $group === 'Ehrenmitglieder' ? 'active' : ''; ?>">Ehrenmitglieder</a>
     <a href="members.php?group=Jugend" class="filter-pill <?php echo $group === 'Jugend' ? 'active' : ''; ?>">Jugend</a>
-    <a href="members.php?group=Inaktiv" class="filter-pill <?php echo $group === 'Inaktiv' ? 'active' : ''; ?>" title="Deaktivierte Mitglieder - z.B. versehentlich beim Speichern ausgehakt"><i class="fas fa-eye-slash"></i> Inaktiv (<?php echo $db->query("SELECT COUNT(*) FROM members WHERE active=0")->fetchColumn(); ?>)</a>
+    <a href="members.php?group=Inaktiv" class="filter-pill <?php echo $group === 'Inaktiv' ? 'active' : ''; ?>" title="Deaktivierte Mitglieder - z.B. versehentlich beim Speichern ausgehakt"><i class="fas fa-eye-slash"></i> Inaktiv (<?php echo $db->query("SELECT COUNT(*) FROM members WHERE active=0 AND deleted_at IS NULL")->fetchColumn(); ?>)</a>
+    <a href="members.php?group=Papierkorb" class="filter-pill <?php echo $group === 'Papierkorb' ? 'active' : ''; ?>" title="Gelöschte Mitglieder - werden nach 24 Stunden endgültig entfernt"><i class="fas fa-trash"></i> Papierkorb (<?php echo $db->query("SELECT COUNT(*) FROM members WHERE deleted_at IS NOT NULL")->fetchColumn(); ?>)</a>
 </div>
 
 <?php if (empty($members)): ?>
@@ -130,15 +170,35 @@ require_once __DIR__ . '/includes/admin-header.php';
                         </span>
                     <?php endforeach; ?>
                     <span class="member-group badge"><?php echo e($m['group_name']); ?></span>
+                    <?php if (!empty($m['deleted_at'])): ?>
+                        <?php $remaining = 24 * 3600 - (time() - strtotime($m['deleted_at'])); ?>
+                        <span class="member-trash-hint"><i class="fas fa-clock"></i> Noch <?php echo max(0, (int) ceil($remaining / 3600)); ?> Std. bis zur endgültigen Löschung</span>
+                    <?php endif; ?>
                 </div>
                 <div class="member-actions">
-                    <a href="member-edit.php?id=<?php echo $m['id']; ?>" class="btn btn-sm btn-icon" title="Bearbeiten"><i class="fas fa-edit"></i></a>
-                    <a href="members.php?delete=<?php echo $m['id']; ?>&token=<?php echo e(csrfToken()); ?>"
-                       class="btn btn-sm btn-icon btn-danger"
-                       title="Löschen"
-                       onclick="return confirm('Mitglied wirklich löschen?')">
-                        <i class="fas fa-trash"></i>
-                    </a>
+                    <?php if (!empty($m['deleted_at'])): ?>
+                        <a href="members.php?restore=<?php echo $m['id']; ?>&token=<?php echo e(csrfToken()); ?>" class="btn btn-sm btn-icon btn-success" title="Wiederherstellen">
+                            <i class="fas fa-rotate-left"></i>
+                        </a>
+                        <a href="members.php?purge=<?php echo $m['id']; ?>&token=<?php echo e(csrfToken()); ?>"
+                           class="btn btn-sm btn-icon btn-danger"
+                           data-confirm-title="Endgültig löschen?"
+                           data-confirm-text="<?php echo e($m['firstname'] . ' ' . $m['lastname']); ?> wird sofort und unwiderruflich gelöscht, inklusive Foto. Das kann nicht rückgängig gemacht werden."
+                           data-confirm-ok="Endgültig löschen"
+                           title="Sofort endgültig löschen">
+                            <i class="fas fa-trash-can"></i>
+                        </a>
+                    <?php else: ?>
+                        <a href="member-edit.php?id=<?php echo $m['id']; ?>" class="btn btn-sm btn-icon" title="Bearbeiten"><i class="fas fa-edit"></i></a>
+                        <a href="members.php?delete=<?php echo $m['id']; ?>&token=<?php echo e(csrfToken()); ?>"
+                           class="btn btn-sm btn-icon btn-danger"
+                           data-confirm-title="Mitglied löschen?"
+                           data-confirm-text="<?php echo e($m['firstname'] . ' ' . $m['lastname']); ?> wird in den Papierkorb verschoben und ist danach nirgends mehr sichtbar. Du kannst es dort noch 24 Stunden lang wiederherstellen, danach wird es endgültig gelöscht."
+                           data-confirm-ok="In den Papierkorb verschieben"
+                           title="Löschen">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    <?php endif; ?>
                 </div>
             </div>
         <?php endforeach; ?>

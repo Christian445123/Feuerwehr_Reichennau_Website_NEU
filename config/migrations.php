@@ -804,6 +804,18 @@ TEXT;
             },
         ],
 
+        [
+            'id' => '2026_10_21_add_member_soft_delete',
+            'run' => function (PDO $db) {
+                // Mitglieder werden beim Löschen jetzt nur noch in den
+                // Papierkorb verschoben (deleted_at gesetzt), nicht sofort
+                // entfernt - siehe Admin -> Mitglieder -> Papierkorb
+                // (config/members.php, purgeExpiredDeletedMembers()). Nach
+                // 24 Stunden im Papierkorb werden sie endgültig gelöscht.
+                addColumnIfMissing($db, 'members', 'deleted_at', 'DATETIME DEFAULT NULL');
+            },
+        ],
+
     ];
 }
 

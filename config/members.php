@@ -10,6 +10,48 @@
 require_once __DIR__ . '/badges.php';
 require_once __DIR__ . '/ranks.php';
 
+/**
+ * Papierkorb für Mitglieder: "Löschen" verschiebt ein Mitglied nur in den
+ * Papierkorb (deleted_at wird gesetzt, active auf 0), statt es sofort aus
+ * der Datenbank zu entfernen. Von dort kann es wiederhergestellt werden;
+ * nach 24 Stunden im Papierkorb wird es automatisch endgültig gelöscht
+ * (siehe purgeExpiredDeletedMembers(), aufgerufen bei jedem Aufruf von
+ * Admin -> Mitglieder).
+ */
+function softDeleteMember(PDO $db, int $id): void {
+    $db->prepare("UPDATE members SET active = 0, deleted_at = NOW() WHERE id = ?")->execute([$id]);
+}
+
+function restoreMember(PDO $db, int $id): void {
+    $db->prepare("UPDATE members SET active = 1, deleted_at = NULL WHERE id = ?")->execute([$id]);
+}
+
+/**
+ * Löscht ein Mitglied (inkl. Foto) endgültig aus der Datenbank.
+ */
+function hardDeleteMember(PDO $db, int $id): void {
+    $stmt = $db->prepare("SELECT photo FROM members WHERE id = ?");
+    $stmt->execute([$id]);
+    $photo = $stmt->fetchColumn();
+    if ($photo) {
+        $path = UPLOAD_PATH . $photo;
+        if (file_exists($path)) unlink($path);
+    }
+    $db->prepare("DELETE FROM members WHERE id = ?")->execute([$id]);
+}
+
+/**
+ * Löscht jedes Mitglied endgültig, das seit mehr als 24 Stunden im
+ * Papierkorb liegt - wird bei jedem Aufruf von Admin -> Mitglieder
+ * nebenbei ausgeführt, kein separater Cronjob nötig.
+ */
+function purgeExpiredDeletedMembers(PDO $db): void {
+    $ids = $db->query("SELECT id FROM members WHERE deleted_at IS NOT NULL AND deleted_at < DATE_SUB(NOW(), INTERVAL 24 HOUR)")->fetchAll(PDO::FETCH_COLUMN);
+    foreach ($ids as $id) {
+        hardDeleteMember($db, (int) $id);
+    }
+}
+
 function buildMembersJson(PDO $db): array {
     $allMembersStmt = $db->query("SELECT id, firstname, lastname, rank, functions, badge1, badge2, group_name, photo, entry_date, phone, email, bio FROM members WHERE active = 1");
     $allMembers = $allMembersStmt->fetchAll();
