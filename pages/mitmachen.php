@@ -29,6 +29,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['mitmachen_submit'])) 
     $csrfOk = hash_equals($_SESSION['mitmachen_csrf'], $_POST['csrf_token'] ?? '');
     $honeypotOk = ($_POST['website'] ?? '') === '';
 
+    if (!$honeypotOk) {
+        logActivity($db, 'public.honeypot_catch', 'Mitmachen-Formular', null, 'Öffentliche Website');
+    }
     if (!$csrfOk || !$honeypotOk) {
         $formErrors[] = 'Ungültige Anfrage. Bitte lade die Seite neu und versuche es erneut.';
     }
@@ -63,6 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['mitmachen_submit'])) 
 
         if ($sent) {
             unset($_SESSION['mitmachen_csrf']);
+            logActivity($db, 'public.mitmachen_sent', $formData['vorname'] . ' ' . $formData['nachname'] . ' <' . $formData['email'] . '>', null, 'Öffentliche Website');
             header('Location: index.php?page=mitmachen&sent=1#kontakt');
             exit;
         }

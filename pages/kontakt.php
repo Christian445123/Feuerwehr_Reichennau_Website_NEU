@@ -18,13 +18,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['kontakt_submit'])) {
         $formData[$key] = trim($_POST[$key] ?? '');
     }
 
-    if (!checkRateLimit(getDB(), 'contact_form', 5, 3600)) {
+    $db = getDB();
+    if (!checkRateLimit($db, 'contact_form', 5, 3600)) {
         $formErrors[] = 'Zu viele Anfragen. Bitte versuche es später erneut.';
     }
 
     $csrfOk = hash_equals($_SESSION['kontakt_csrf'], $_POST['csrf_token'] ?? '');
     $honeypotOk = ($_POST['website'] ?? '') === ''; // Anti-Spam-Feld, für Menschen unsichtbar
 
+    if (!$honeypotOk) {
+        // Das Honeypot-Feld füllt nur automatisierter Spam aus - ein echter
+        // Besucher sieht es nie. Fürs Protokoll festhalten, damit man im
+        // Gesamtprotokoll sieht, wie oft Bots abgefangen werden.
+        logActivity($db, 'public.honeypot_catch', 'Kontaktformular', null, 'Öffentliche Website');
+    }
     if (!$csrfOk || !$honeypotOk) {
         $formErrors[] = 'Ungültige Anfrage. Bitte lade die Seite neu und versuche es erneut.';
     }
@@ -66,6 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['kontakt_submit'])) {
 
         if ($sent) {
             unset($_SESSION['kontakt_csrf']);
+            logActivity($db, 'public.kontakt_sent', $formData['vorname'] . ' ' . $formData['nachname'] . ' <' . $formData['email'] . '>', null, 'Öffentliche Website');
             header('Location: index.php?page=kontakt&sent=1#kontaktformular');
             exit;
         }

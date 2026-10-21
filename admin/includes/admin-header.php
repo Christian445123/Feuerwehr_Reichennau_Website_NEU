@@ -73,6 +73,9 @@ require_once __DIR__ . '/../permissions.php';
             <?php endif; ?>
 
             <?php if (userHasPermission('logs.manage')): ?>
+                <a href="gesamtprotokoll.php" class="sidebar-link <?php echo ($activePage ?? '') === 'gesamtprotokoll' ? 'active' : ''; ?>">
+                    <i class="fas fa-list-check"></i> Gesamtprotokoll
+                </a>
                 <a href="logs.php" class="sidebar-link <?php echo ($activePage ?? '') === 'logs' ? 'active' : ''; ?>">
                     <i class="fas fa-clipboard-list"></i> Aktivitäts-Log
                 </a>
