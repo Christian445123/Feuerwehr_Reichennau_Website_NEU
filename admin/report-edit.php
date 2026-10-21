@@ -319,7 +319,7 @@ require_once __DIR__ . '/includes/admin-header.php';
                     <div class="upload-area" id="uploadArea">
                         <i class="fas fa-cloud-upload-alt"></i>
                         <p>Bilder hierher ziehen oder klicken zum Auswählen</p>
-                        <p class="text-small">JPG, PNG, GIF, WebP - max. 25MB pro Bild (befristet abgesenkt, siehe .user.ini) - auch mehrere Bilder auf einmal möglich. Bilder werden automatisch für die Website verkleinert und komprimiert.</p>
+                        <p class="text-small">JPG, PNG, GIF, WebP - max. 70MB pro Bild - auch 10 oder mehr Bilder auf einmal möglich. Bilder werden automatisch für die Website verkleinert und komprimiert.</p>
                         <input type="file" name="images[]" id="imageInput" multiple accept="image/*" class="file-input">
                     </div>
 

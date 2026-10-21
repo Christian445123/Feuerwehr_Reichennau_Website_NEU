@@ -269,10 +269,7 @@ function handleImageUpload(array $file, string $subdir, ?string &$error = null):
     ensureUploadDirs();
 
     $allowed = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-    // Befristet auf 25MB abgesenkt (vorher 70MB) als Reaktion auf die
-    // kritischen PHP-Lücken CVE-2026-109618/109619 - siehe Kommentar in
-    // .user.ini. Serverseitig greift ohnehin schon upload_max_filesize=28M.
-    $maxSize = 25 * 1024 * 1024;
+    $maxSize = 70 * 1024 * 1024; // 70MB - Bilder werden danach automatisch verkleinert/komprimiert
 
     if ($file['error'] !== UPLOAD_ERR_OK || $file['size'] === 0) {
         $error = in_array($file['error'], [UPLOAD_ERR_INI_SIZE, UPLOAD_ERR_FORM_SIZE], true)
@@ -290,7 +287,7 @@ function handleImageUpload(array $file, string $subdir, ?string &$error = null):
     }
 
     if ($file['size'] > $maxSize) {
-        $error = 'Datei ist größer als 25MB (befristet abgesenktes Limit, siehe .user.ini).';
+        $error = 'Datei ist größer als 70MB.';
         return null;
     }
 
