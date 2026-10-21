@@ -8,6 +8,10 @@ if (isLoggedIn()) {
 }
 
 $error = '';
+$info = '';
+if (isset($_GET['timeout'])) {
+    $info = 'Du wurdest wegen Inaktivität automatisch abgemeldet (eigene Einstellung unter "Mein Konto"). Bitte erneut anmelden.';
+}
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username'] ?? '');
     $password = $_POST['password'] ?? '';
@@ -53,6 +57,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php if ($error): ?>
                 <div class="alert alert-error">
                     <i class="fas fa-exclamation-circle"></i> <?php echo e($error); ?>
+                </div>
+            <?php elseif ($info): ?>
+                <div class="alert alert-warning">
+                    <i class="fas fa-circle-info"></i> <?php echo e($info); ?>
                 </div>
             <?php endif; ?>
 

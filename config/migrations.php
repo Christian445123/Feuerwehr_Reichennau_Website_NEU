@@ -816,6 +816,20 @@ TEXT;
             },
         ],
 
+        [
+            'id' => '2026_10_21_add_optional_login_security_settings',
+            'run' => function (PDO $db) {
+                // Zwei rein optionale, pro Benutzer selbst einschaltbare
+                // Sicherheitsfunktionen (Admin -> Mein Konto): eine
+                // E-Mail-Benachrichtigung bei jedem Login (notify_on_login)
+                // und eine selbst gewählte, kürzere Sitzungsdauer in Minuten
+                // (session_timeout_minutes, 0 = Standardverhalten/keine
+                // Begrenzung durch diese Funktion).
+                addColumnIfMissing($db, 'users', 'notify_on_login', 'TINYINT DEFAULT 0');
+                addColumnIfMissing($db, 'users', 'session_timeout_minutes', 'INT DEFAULT 0');
+            },
+        ],
+
     ];
 }
 

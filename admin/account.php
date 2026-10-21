@@ -74,6 +74,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
+    if ($action === 'update_login_security') {
+        $notifyOnLogin = isset($_POST['notify_on_login']) ? 1 : 0;
+        $timeoutMinutes = max(0, min(480, (int) ($_POST['session_timeout_minutes'] ?? 0)));
+
+        if ($notifyOnLogin && trim($me['email'] ?? '') === '') {
+            flash('error', 'Für die Login-Benachrichtigung muss zuerst eine E-Mail-Adresse bei "Meine Daten" hinterlegt werden.');
+        } else {
+            $stmt = $db->prepare("UPDATE users SET notify_on_login = ?, session_timeout_minutes = ? WHERE id = ?");
+            $stmt->execute([$notifyOnLogin, $timeoutMinutes, $userId]);
+            $_SESSION['admin_session_timeout_minutes'] = $timeoutMinutes;
+            $_SESSION['admin_last_activity'] = time();
+            logActivity($db, 'account.login_security_update', $notifyOnLogin ? 'Benachrichtigung an' : 'Benachrichtigung aus');
+            flash('success', 'Einstellungen wurden gespeichert.');
+        }
+        header('Location: account.php#login-security');
+        exit;
+    }
+
     if ($action === 'enable_2fa_start') {
         $_SESSION['pending_2fa_secret'] = generateTotpSecret();
         header('Location: account.php#twofa');
@@ -191,6 +209,33 @@ $pendingSecret = $_SESSION['pending_2fa_secret'] ?? null;
             <button type="submit" class="btn btn-primary">
                 <i class="fas fa-save"></i> Passwort ändern
             </button>
+        </form>
+    </div>
+</div>
+
+<div class="admin-card" style="max-width: 600px; margin-top: 24px;" id="login-security">
+    <div class="admin-card-header"><h2><i class="fas fa-user-shield"></i> Login-Sicherheit</h2></div>
+    <div class="admin-card-body">
+        <p style="margin-bottom: 16px; color: #6c757d;">Zwei weitere, rein optionale Funktionen - beide sind standardmäßig aus und wirken sich nur aus, wenn du sie hier selbst aktivierst.</p>
+        <form method="POST" class="admin-form">
+            <?php echo csrfField(); ?>
+            <input type="hidden" name="action" value="update_login_security">
+
+            <div class="form-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" name="notify_on_login" <?php echo !empty($me['notify_on_login']) ? 'checked' : ''; ?>>
+                    <span>Bei jedem Login per E-Mail benachrichtigen</span>
+                </label>
+                <p class="form-hint">Du bekommst nach jeder erfolgreichen Anmeldung eine E-Mail mit Zeitpunkt und IP-Adresse an die oben hinterlegte Adresse - so fällt eine fremde Anmeldung sofort auf.</p>
+            </div>
+
+            <div class="form-group">
+                <label for="session_timeout_minutes">Automatischer Logout nach Inaktivität (Minuten)</label>
+                <input type="number" id="session_timeout_minutes" name="session_timeout_minutes" min="0" max="480" value="<?php echo (int) ($me['session_timeout_minutes'] ?? 0); ?>">
+                <p class="form-hint">0 = aus (Standardverhalten, Sitzung endet erst mit dem Browser). Bei einem Wert &gt; 0 wirst du nach so vielen Minuten ohne Aktivität automatisch abgemeldet.</p>
+            </div>
+
+            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Speichern</button>
         </form>
     </div>
 </div>

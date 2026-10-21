@@ -30,10 +30,30 @@ function requireLogin(): void {
         header('Location: login.php');
         exit;
     }
+    if (isSessionTimedOut()) {
+        logout();
+        header('Location: login.php?timeout=1');
+        exit;
+    }
+    $_SESSION['admin_last_activity'] = time();
     if (!empty($_SESSION['admin_must_change_password']) && !isPasswordChangeExempt()) {
         header('Location: change-password.php');
         exit;
     }
+}
+
+/**
+ * Rein optionale, selbst gewählte Sitzungsdauer (Admin -> Mein Konto) -
+ * ohne eigene Einstellung (0) hat das keine Wirkung, es gilt weiter das
+ * normale Verhalten (Sitzung endet mit dem Browser).
+ */
+function isSessionTimedOut(): bool {
+    $timeoutMinutes = (int) ($_SESSION['admin_session_timeout_minutes'] ?? 0);
+    if ($timeoutMinutes <= 0) {
+        return false;
+    }
+    $lastActivity = (int) ($_SESSION['admin_last_activity'] ?? time());
+    return (time() - $lastActivity) > ($timeoutMinutes * 60);
 }
 
 /**
@@ -44,7 +64,7 @@ function requireLogin(): void {
  */
 function login(string $username, string $password) {
     $db = getDB();
-    $stmt = $db->prepare("SELECT id, password, name, permissions, must_change_password, totp_enabled FROM users WHERE username = ?");
+    $stmt = $db->prepare("SELECT id, password, name, permissions, must_change_password, totp_enabled, email, notify_on_login, session_timeout_minutes FROM users WHERE username = ?");
     $stmt->execute([$username]);
     $user = $stmt->fetch();
 
@@ -73,10 +93,35 @@ function completeLogin(PDO $db, array $user, string $username): void {
         ? ['*']
         : (json_decode($user['permissions'] ?? '[]', true) ?: []);
     $_SESSION['admin_must_change_password'] = !empty($user['must_change_password']);
+    // Rein optional, pro Benutzer unter "Mein Konto" einschaltbar (siehe
+    // admin/account.php) - 0 bedeutet "aus"/Standardverhalten.
+    $_SESSION['admin_session_timeout_minutes'] = (int) ($user['session_timeout_minutes'] ?? 0);
+    $_SESSION['admin_last_activity'] = time();
     unset($_SESSION['admin_2fa_pending_id']);
     logActivity($db, 'auth.login', 'Erfolgreich angemeldet', $user['id'], $user['name']);
 
     notifyAdminOfSensitiveAccessBlocks($db);
+    sendLoginNotificationIfEnabled($user);
+}
+
+/**
+ * Optionale E-Mail-Benachrichtigung bei jedem Login (Admin -> Mein Konto,
+ * Kästchen "Bei jedem Login per E-Mail benachrichtigen") - rein informativ,
+ * damit ein fremder Login auffällt. Ein Fehlschlagen des Mailversands darf
+ * den Login selbst nicht verhindern, deshalb wird der Fehler nur geloggt.
+ */
+function sendLoginNotificationIfEnabled(array $user): void {
+    if (empty($user['notify_on_login']) || empty($user['email'])) {
+        return;
+    }
+    require_once __DIR__ . '/../config/mail.php';
+    $ip = getClientIp();
+    $when = date('d.m.Y \u\m H:i \U\h\r');
+    $body = "Hallo {$user['name']},\n\nes gab soeben eine erfolgreiche Anmeldung an deinem Admin-Konto der FF-Reichenau-Website:\n\nZeitpunkt: $when\nIP-Adresse: $ip\n\nWarst du das nicht selbst, ändere umgehend dein Passwort und informiere einen Administrator mit Benutzerverwaltungsrechten.\n\n(Diese Benachrichtigung kannst du unter Admin -> Mein Konto wieder abschalten.)";
+    $mailError = null;
+    if (!sendMail($user['email'], $user['name'], 'Login-Benachrichtigung: Anmeldung an deinem Admin-Konto', $body, $mailError)) {
+        error_log('Login-Benachrichtigung konnte nicht versendet werden (User-ID ' . $user['id'] . '): ' . $mailError);
+    }
 }
 
 /**

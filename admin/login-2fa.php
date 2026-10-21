@@ -22,7 +22,7 @@ if (isset($_GET['cancel'])) {
 
 $db = getDB();
 $pendingId = (int) $_SESSION['admin_2fa_pending_id'];
-$stmt = $db->prepare("SELECT id, username, name, permissions, must_change_password, totp_secret, totp_enabled FROM users WHERE id = ?");
+$stmt = $db->prepare("SELECT id, username, name, permissions, must_change_password, totp_secret, totp_enabled, email, notify_on_login, session_timeout_minutes FROM users WHERE id = ?");
 $stmt->execute([$pendingId]);
 $user = $stmt->fetch();
 
