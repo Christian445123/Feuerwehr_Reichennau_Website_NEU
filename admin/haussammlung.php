@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($filename) {
             $data['qr_image'] = UPLOAD_URL . $filename;
         } else {
-            flash('error', 'QR-Code-Bild konnte nicht hochgeladen werden (nur JPG/PNG/GIF/WebP bis 70MB). Die übrigen Angaben wurden trotzdem gespeichert.');
+            flash('error', 'QR-Code-Bild konnte nicht hochgeladen werden (nur JPG/PNG/GIF/WebP bis 25MB (befristet abgesenkt, siehe .user.ini)). Die übrigen Angaben wurden trotzdem gespeichert.');
         }
     }
 
@@ -112,7 +112,7 @@ require_once __DIR__ . '/includes/admin-header.php';
                     </div>
                 <?php endif; ?>
                 <input type="file" id="qr_image" name="qr_image" accept="image/*">
-                <p class="form-hint">JPG/PNG/GIF/WebP, bis 70MB. Neues Bild ersetzt das alte beim Speichern.</p>
+                <p class="form-hint">JPG/PNG/GIF/WebP, bis 25MB (befristet abgesenkt, siehe .user.ini). Neues Bild ersetzt das alte beim Speichern.</p>
             </div>
 
             <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Speichern</button>
