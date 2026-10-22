@@ -9,6 +9,31 @@
 
 require_once __DIR__ . '/badges.php';
 require_once __DIR__ . '/ranks.php';
+require_once __DIR__ . '/i18n.php';
+
+/**
+ * Liefert die passende Sprachfassung der Funktionen (JSON-Array mit
+ * section/role) eines Mitglieds - Englisch nur, wenn umgeschaltet UND eine
+ * automatische Übersetzung vorhanden ist (siehe config/translate.php),
+ * sonst immer die deutsche Fassung.
+ */
+function getLocalizedFunctions(array $member): array {
+    if (isEnglish() && !empty($member['functions_en'])) {
+        $decoded = json_decode($member['functions_en'], true);
+        if (is_array($decoded)) return $decoded;
+    }
+    return json_decode($member['functions'] ?? '[]', true) ?: [];
+}
+
+/**
+ * Wie getLocalizedFunctions(), aber für die Bio/Beschreibung.
+ */
+function getLocalizedBio(array $member): string {
+    if (isEnglish() && !empty($member['bio_en'])) {
+        return $member['bio_en'];
+    }
+    return $member['bio'] ?? '';
+}
 
 /**
  * Papierkorb für Mitglieder: "Löschen" verschiebt ein Mitglied nur in den
@@ -53,12 +78,12 @@ function purgeExpiredDeletedMembers(PDO $db): void {
 }
 
 function buildMembersJson(PDO $db): array {
-    $allMembersStmt = $db->query("SELECT id, firstname, lastname, rank, functions, badge1, badge2, group_name, photo, entry_date, phone, email, bio FROM members WHERE active = 1");
+    $allMembersStmt = $db->query("SELECT id, firstname, lastname, rank, functions, functions_en, badge1, badge2, group_name, photo, entry_date, phone, email, bio, bio_en FROM members WHERE active = 1");
     $allMembers = $allMembersStmt->fetchAll();
     $membersJson = [];
     foreach ($allMembers as $am) {
-        $funcs = json_decode($am['functions'] ?? '[]', true) ?: [];
-        $funcLabels = array_map(fn($f) => $f['role'] . ' (' . $f['section'] . ')', $funcs);
+        $funcs = getLocalizedFunctions($am);
+        $funcLabels = array_map(fn($f) => $f['role'] . ' (' . t('members.section.' . $f['section']) . ')', $funcs);
         $badgeList = [];
         foreach ([$am['badge1'] ?? null, $am['badge2'] ?? null] as $bc) {
             if ($bc) $badgeList[] = ['code' => $bc, 'name' => getBadgeName($bc), 'color' => getBadgeColor($bc), 'image' => getBadgeImage($bc)];
@@ -72,11 +97,11 @@ function buildMembersJson(PDO $db): array {
             'rankBadge' => ($showRank && $am['rank']) ? getRankBadgePath($am['rank']) : '',
             'badges' => $badgeList,
             'functions' => $funcLabels,
-            'group' => $am['group_name'],
+            'group' => t('members.group.' . $am['group_name']),
             'entry_date' => $am['entry_date'] ?? '',
             'phone' => $am['phone'] ?? '',
             'email' => $am['email'] ?? '',
-            'bio' => $am['bio'] ?? '',
+            'bio' => getLocalizedBio($am),
         ];
     }
     return $membersJson;
@@ -104,7 +129,7 @@ function renderUeberUnsGroupCard(PDO $db, string $group, array $groupIcons, arra
     <div class="content-card" id="<?php echo strtolower(str_replace(' ', '', $group)); ?>">
         <div class="content-card-header">
             <div class="content-card-icon"><i class="fas <?php echo $groupIcons[$group] ?? 'fa-users'; ?>"></i></div>
-            <h2><?php echo htmlspecialchars($group); ?> <span class="member-count"><?php echo count($groupMembers); ?></span></h2>
+            <h2><?php echo e(t('members.group.' . $group)); ?> <span class="member-count"><?php echo count($groupMembers); ?></span></h2>
         </div>
         <div class="content-card-body">
             <p><?php echo htmlspecialchars($groupDescriptions[$group] ?? ''); ?></p>
@@ -119,7 +144,7 @@ function renderUeberUnsGroupCard(PDO $db, string $group, array $groupIcons, arra
                     <?php foreach ($groupMembers as $m): ?>
                         <?php
                         // Get the role for this specific section
-                        $funcs = json_decode($m['functions'] ?? '[]', true) ?: [];
+                        $funcs = getLocalizedFunctions($m);
                         $roleInSection = '';
                         foreach ($funcs as $f) {
                             if (($f['section'] ?? '') === $group) {
@@ -131,7 +156,7 @@ function renderUeberUnsGroupCard(PDO $db, string $group, array $groupIcons, arra
                         // "Sonstige") für die Kachel-Rückseite - nicht nur die zur aktuellen
                         // Kartengruppe passende, damit z.B. Beauftragte-Rollen bei der
                         // Mannschaft nicht unter den Tisch fallen.
-                        $allFuncLabels = array_map(fn($f) => trim(($f['role'] ?? '') . ' (' . ($f['section'] ?? '') . ')'), $funcs);
+                        $allFuncLabels = array_map(fn($f) => trim(($f['role'] ?? '') . ' (' . t('members.section.' . ($f['section'] ?? '')) . ')'), $funcs);
                         ?>
                         <div class="member-public-card" data-member-id="<?php echo (int)$m['id']; ?>"<?php if (!in_array($group, ['Mannschaft', 'Ehrenmitglieder'], true)): ?> onclick="showMemberDetail(<?php echo (int)$m['id']; ?>)"<?php endif; ?>>
                             <div class="member-card-flip">
@@ -164,7 +189,8 @@ function renderUeberUnsGroupCard(PDO $db, string $group, array $groupIcons, arra
                                 foreach ([$m['badge1'] ?? null, $m['badge2'] ?? null] as $bc) {
                                     if ($bc) $backBadgeNames[] = getBadgeName($bc);
                                 }
-                                $hasBackDetails = !empty($allFuncLabels) || $backShowRank || !empty($backBadgeNames) || !empty($m['entry_date']) || !empty($m['phone']) || !empty($m['email']) || !empty($m['bio']);
+                                $localizedBio = getLocalizedBio($m);
+                                $hasBackDetails = !empty($allFuncLabels) || $backShowRank || !empty($backBadgeNames) || !empty($m['entry_date']) || !empty($m['phone']) || !empty($m['email']) || !empty($localizedBio);
                                 ?>
                                 <div class="member-card-face member-card-back">
                                     <?php if ($hasBackDetails): ?>
@@ -179,7 +205,7 @@ function renderUeberUnsGroupCard(PDO $db, string $group, array $groupIcons, arra
                                             <span class="member-card-back-line"><i class="fas fa-award"></i> <?php echo htmlspecialchars(implode(', ', $backBadgeNames)); ?></span>
                                         <?php endif; ?>
                                         <?php if (!empty($m['entry_date'])): ?>
-                                            <span class="member-card-back-line"><i class="fas fa-calendar-alt"></i> Seit <?php echo htmlspecialchars($m['entry_date']); ?></span>
+                                            <span class="member-card-back-line"><i class="fas fa-calendar-alt"></i> <?php echo e(t('members.since')); ?> <?php echo htmlspecialchars($m['entry_date']); ?></span>
                                         <?php endif; ?>
                                         <?php if (!empty($m['phone'])): ?>
                                             <span class="member-card-back-line"><i class="fas fa-phone"></i> <?php echo htmlspecialchars($m['phone']); ?></span>
@@ -187,17 +213,17 @@ function renderUeberUnsGroupCard(PDO $db, string $group, array $groupIcons, arra
                                         <?php if (!empty($m['email'])): ?>
                                             <span class="member-card-back-line"><i class="fas fa-envelope"></i> <?php echo htmlspecialchars($m['email']); ?></span>
                                         <?php endif; ?>
-                                        <?php if (!empty($m['bio'])): ?>
-                                            <p class="member-card-back-bio"><?php echo htmlspecialchars(mb_substr($m['bio'], 0, 90)) . (mb_strlen($m['bio']) > 90 ? '…' : ''); ?></p>
+                                        <?php if (!empty($localizedBio)): ?>
+                                            <p class="member-card-back-bio"><?php echo htmlspecialchars(mb_substr($localizedBio, 0, 90)) . (mb_strlen($localizedBio) > 90 ? '…' : ''); ?></p>
                                         <?php endif; ?>
-                                        <span class="member-card-back-more"><i class="fas fa-circle-info"></i> Für mehr Details klicken</span>
+                                        <span class="member-card-back-more"><i class="fas fa-circle-info"></i> <?php echo e(t('members.click_for_more')); ?></span>
                                     <?php else: ?>
                                         <div class="member-card-back-emptystate">
                                             <i class="fas fa-fire-extinguisher"></i>
                                             <strong><?php echo htmlspecialchars($m['firstname'] . ' ' . $m['lastname']); ?></strong>
-                                            <span>Aktives Mitglied der<br><?php echo htmlspecialchars($group); ?></span>
+                                            <span><?php echo e(t('members.active_member_of')); ?><br><?php echo e(t('members.group.' . $group)); ?></span>
                                         </div>
-                                        <span class="member-card-back-more"><i class="fas fa-circle-info"></i> Für mehr Details klicken</span>
+                                        <span class="member-card-back-more"><i class="fas fa-circle-info"></i> <?php echo e(t('members.click_for_more')); ?></span>
                                     <?php endif; ?>
                                 </div>
                             </div>
@@ -205,7 +231,7 @@ function renderUeberUnsGroupCard(PDO $db, string $group, array $groupIcons, arra
                     <?php endforeach; ?>
                 </div>
             <?php else: ?>
-                <p class="text-muted-public"><em>Mitglieder werden in Kürze ergänzt.</em></p>
+                <p class="text-muted-public"><em><?php echo e(t('members.coming_soon')); ?></em></p>
             <?php endif; ?>
         </div>
     </div>

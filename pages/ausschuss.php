@@ -13,7 +13,7 @@ $org = [];
 foreach ($orgRows as $r) { $org[$r['position_key']] = $r['name']; }
 function orgName(array $org, string $key): string {
     $name = trim($org[$key] ?? '');
-    return $name !== '' ? $name : 'derzeit nicht besetzt';
+    return $name !== '' ? $name : t('orgchart.vacant');
 }
 
 // Namen im Organigramm werden gegen die Mitgliederliste gematcht, um beim
@@ -28,7 +28,7 @@ foreach ($rankLookupStmt->fetchAll() as $mr) {
 
 $groupIcons = ['Ausschuss' => 'fa-user-tie'];
 $groupDescriptions = [
-    'Ausschuss' => 'Der Ausschuss unterstützt das Kommando in verwaltungstechnischen und organisatorischen Belangen.',
+    'Ausschuss' => t('mannschaft.desc.ausschuss'),
 ];
 
 $membersJson = buildMembersJson($db);
@@ -37,8 +37,8 @@ $membersJson = buildMembersJson($db);
     <!-- Page Header -->
     <section class="page-header">
         <div class="container">
-            <h1 class="page-title">Ausschuss &amp; Organigramm</h1>
-            <p class="page-subtitle">Verwaltung und Struktur der Freiwilligen Feuerwehr Reichenau</p>
+            <h1 class="page-title"><?php echo e(t('ausschuss.title')); ?></h1>
+            <p class="page-subtitle"><?php echo e(t('ausschuss.subtitle')); ?></p>
         </div>
     </section>
 
@@ -70,80 +70,80 @@ $membersJson = buildMembersJson($db);
                 <div class="content-card" id="organigramm">
                     <div class="content-card-header">
                         <div class="content-card-icon"><i class="fas fa-sitemap"></i></div>
-                        <h2>Organigramm</h2>
+                        <h2><?php echo e(t('ausschuss.organigramm')); ?></h2>
                     </div>
                     <div class="content-card-body">
                         <div class="orgchart">
 
                             <div class="orgchart-section">
-                                <div class="orgchart-section-title"><span>Kommando</span></div>
+                                <div class="orgchart-section-title"><span><?php echo e(t('orgchart.section.kommando')); ?></span></div>
                                 <div class="orgchart-section-body">
                                     <div class="orgchart-row">
-                                        <?php orgBox2($org, $memberIdByName, 'kommandant', 'Kommandant'); ?>
+                                        <?php orgBox2($org, $memberIdByName, 'kommandant', t('orgchart.position.kommandant')); ?>
                                     </div>
                                     <div class="orgchart-row">
-                                        <?php orgBox2($org, $memberIdByName, 'schriftfuehrer', 'Schriftführerin'); ?>
-                                        <?php orgBox2($org, $memberIdByName, 'kommandant_stv', 'Kommandant-Stv.'); ?>
-                                        <?php orgBox2($org, $memberIdByName, 'kassier', 'Kassier'); ?>
+                                        <?php orgBox2($org, $memberIdByName, 'schriftfuehrer', t('orgchart.position.schriftfuehrer')); ?>
+                                        <?php orgBox2($org, $memberIdByName, 'kommandant_stv', t('orgchart.position.kommandant_stv')); ?>
+                                        <?php orgBox2($org, $memberIdByName, 'kassier', t('orgchart.position.kassier')); ?>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="orgchart-section">
-                                <div class="orgchart-section-title"><span>Gruppen</span></div>
+                                <div class="orgchart-section-title"><span><?php echo e(t('orgchart.section.gruppen')); ?></span></div>
                                 <div class="orgchart-section-body">
                                     <div class="orgchart-row">
-                                        <?php orgBox2($org, $memberIdByName, 'zugskommandant', 'Zugskommandant'); ?>
+                                        <?php orgBox2($org, $memberIdByName, 'zugskommandant', t('orgchart.position.zugskommandant')); ?>
                                     </div>
                                     <div class="orgchart-row-5">
                                         <?php for ($i = 1; $i <= 5; $i++): ?>
-                                            <?php orgBox2($org, $memberIdByName, "gruppenkdt_$i", 'Gruppenkommandant'); ?>
+                                            <?php orgBox2($org, $memberIdByName, "gruppenkdt_$i", t('orgchart.position.gruppenkommandant')); ?>
                                         <?php endfor; ?>
                                     </div>
                                     <div class="orgchart-row-5">
                                         <?php for ($i = 1; $i <= 5; $i++): ?>
-                                            <?php orgBox2($org, $memberIdByName, "gruppenkdt_stv_$i", 'Gruppenkdt.-Stv'); ?>
+                                            <?php orgBox2($org, $memberIdByName, "gruppenkdt_stv_$i", t('orgchart.position.gruppenkdt_stv')); ?>
                                         <?php endfor; ?>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="orgchart-section">
-                                <div class="orgchart-section-title"><span>Beauftragte</span></div>
+                                <div class="orgchart-section-title"><span><?php echo e(t('orgchart.section.beauftragte')); ?></span></div>
                                 <div class="orgchart-section-body">
                                     <div class="orgchart-row-5">
-                                        <?php orgBox2($org, $memberIdByName, 'geraetewart', 'Gerätewart'); ?>
-                                        <?php orgBox2($org, $memberIdByName, 'obermaschinist', 'Obermaschinist'); ?>
-                                        <?php orgBox2($org, $memberIdByName, 'jugendbetreuer', 'Jugendbetreuerin'); ?>
-                                        <?php orgBox2($org, $memberIdByName, 'ausbildung', 'Ausbildung'); ?>
-                                        <?php orgBox2($org, $memberIdByName, 'atemschutzbeauftragter', 'Atemschutz'); ?>
+                                        <?php orgBox2($org, $memberIdByName, 'geraetewart', t('orgchart.position.geraetewart')); ?>
+                                        <?php orgBox2($org, $memberIdByName, 'obermaschinist', t('orgchart.position.obermaschinist')); ?>
+                                        <?php orgBox2($org, $memberIdByName, 'jugendbetreuer', t('orgchart.position.jugendbetreuer')); ?>
+                                        <?php orgBox2($org, $memberIdByName, 'ausbildung', t('orgchart.position.ausbildung')); ?>
+                                        <?php orgBox2($org, $memberIdByName, 'atemschutzbeauftragter', t('orgchart.position.atemschutz')); ?>
                                     </div>
                                     <div class="orgchart-row-5">
-                                        <?php orgBox2($org, $memberIdByName, 'geraetewart_gehilfe', 'Gerätewart-Gehilfe'); ?>
-                                        <?php orgBox2($org, $memberIdByName, 'obermaschinist_gehilfe', 'Obermaschinist-Gehilfe'); ?>
-                                        <?php orgBox2($org, $memberIdByName, 'jugendbetreuer_gehilfe', 'JB-Gehilfe'); ?>
-                                        <?php orgBox2($org, $memberIdByName, 'ausbildung_hoehensicherung', 'Ausb. Höhensicherung'); ?>
-                                        <?php orgBox2($org, $memberIdByName, 'atemschutz_gehilfe', 'Atemschutz-Gehilfe'); ?>
+                                        <?php orgBox2($org, $memberIdByName, 'geraetewart_gehilfe', t('orgchart.position.geraetewart_gehilfe')); ?>
+                                        <?php orgBox2($org, $memberIdByName, 'obermaschinist_gehilfe', t('orgchart.position.obermaschinist_gehilfe')); ?>
+                                        <?php orgBox2($org, $memberIdByName, 'jugendbetreuer_gehilfe', t('orgchart.position.jb_gehilfe')); ?>
+                                        <?php orgBox2($org, $memberIdByName, 'ausbildung_hoehensicherung', t('orgchart.position.ausb_hoehensicherung')); ?>
+                                        <?php orgBox2($org, $memberIdByName, 'atemschutz_gehilfe', t('orgchart.position.atemschutz_gehilfe')); ?>
                                     </div>
                                     <div class="orgchart-row-5">
-                                        <?php orgBox2($org, $memberIdByName, 'funkbeauftragter', 'Funk'); ?>
-                                        <?php orgBox2($org, $memberIdByName, 'oeffentlichkeitsarbeit', 'Öffentlichkeitsarbeit und EDV'); ?>
-                                        <?php orgBox2($org, $memberIdByName, 'nachschub_kantine_1', 'Nachschub / Kantine'); ?>
-                                        <?php orgBox2($org, $memberIdByName, 'fahne_1', 'Fahne'); ?>
-                                        <?php orgBox2($org, $memberIdByName, 'bekleidung', 'Bekleidung'); ?>
-                                    </div>
-                                    <div class="orgchart-row-5">
-                                        <div class="orgchart-empty"></div>
-                                        <div class="orgchart-empty"></div>
-                                        <?php orgBox2($org, $memberIdByName, 'nachschub_kantine_2', 'Nachschub / Kantine'); ?>
-                                        <?php orgBox2($org, $memberIdByName, 'fahne_2', 'Fahne'); ?>
-                                        <div class="orgchart-empty"></div>
+                                        <?php orgBox2($org, $memberIdByName, 'funkbeauftragter', t('orgchart.position.funk')); ?>
+                                        <?php orgBox2($org, $memberIdByName, 'oeffentlichkeitsarbeit', t('orgchart.position.oeffentlichkeitsarbeit')); ?>
+                                        <?php orgBox2($org, $memberIdByName, 'nachschub_kantine_1', t('orgchart.position.nachschub_kantine')); ?>
+                                        <?php orgBox2($org, $memberIdByName, 'fahne_1', t('orgchart.position.fahne')); ?>
+                                        <?php orgBox2($org, $memberIdByName, 'bekleidung', t('orgchart.position.bekleidung')); ?>
                                     </div>
                                     <div class="orgchart-row-5">
                                         <div class="orgchart-empty"></div>
                                         <div class="orgchart-empty"></div>
+                                        <?php orgBox2($org, $memberIdByName, 'nachschub_kantine_2', t('orgchart.position.nachschub_kantine')); ?>
+                                        <?php orgBox2($org, $memberIdByName, 'fahne_2', t('orgchart.position.fahne')); ?>
                                         <div class="orgchart-empty"></div>
-                                        <?php orgBox2($org, $memberIdByName, 'fahne_3', 'Fahne'); ?>
+                                    </div>
+                                    <div class="orgchart-row-5">
+                                        <div class="orgchart-empty"></div>
+                                        <div class="orgchart-empty"></div>
+                                        <div class="orgchart-empty"></div>
+                                        <?php orgBox2($org, $memberIdByName, 'fahne_3', t('orgchart.position.fahne')); ?>
                                         <div class="orgchart-empty"></div>
                                     </div>
                                 </div>

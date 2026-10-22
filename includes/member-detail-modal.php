@@ -9,7 +9,7 @@
 ?>
 <div class="member-modal-overlay" id="memberModal">
     <div class="member-modal">
-        <button class="member-modal-close" onclick="closeMemberModal()" title="Schließen">&times;</button>
+        <button class="member-modal-close" onclick="closeMemberModal()" title="<?php echo e(t('common.close')); ?>">&times;</button>
         <div class="member-modal-header">
             <div id="modalPhotoWrap"></div>
             <div class="member-modal-name" id="modalName"></div>
@@ -26,6 +26,11 @@
 
 <script>
 var memberData = <?php echo json_encode($membersJson, JSON_HEX_TAG | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE); ?>;
+var memberModalI18n = <?php echo json_encode([
+    'functions' => t('members.modal.functions'),
+    'entry' => t('members.modal.entry'),
+    'noDetails' => t('members.modal.no_details'),
+], JSON_HEX_TAG | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE); ?>;
 
 function showMemberDetail(id) {
     var m = memberData[id];
@@ -79,10 +84,10 @@ function showMemberDetail(id) {
             html += '<li><i class="fas fa-users"></i> ' + escHtml(m.group) + '</li>';
         }
         if (m.functions && m.functions.length > 0) {
-            html += '<li class="member-modal-funcs"><i class="fas fa-briefcase"></i><div><strong>Funktionen</strong><ul>' + m.functions.map(function (f) { return '<li>' + escHtml(f) + '</li>'; }).join('') + '</ul></div></li>';
+            html += '<li class="member-modal-funcs"><i class="fas fa-briefcase"></i><div><strong>' + escHtml(memberModalI18n.functions) + '</strong><ul>' + m.functions.map(function (f) { return '<li>' + escHtml(f) + '</li>'; }).join('') + '</ul></div></li>';
         }
         if (m.entry_date) {
-            html += '<li><i class="fas fa-calendar-alt"></i> Eintritt: ' + escHtml(m.entry_date) + '</li>';
+            html += '<li><i class="fas fa-calendar-alt"></i> ' + escHtml(memberModalI18n.entry) + ' ' + escHtml(m.entry_date) + '</li>';
         }
         if (m.phone) {
             html += '<li><i class="fas fa-phone"></i> <a href="tel:' + escHtml(m.phone) + '">' + escHtml(m.phone) + '</a></li>';
@@ -95,7 +100,7 @@ function showMemberDetail(id) {
             html += '<div class="member-modal-bio">' + escHtml(m.bio) + '</div>';
         }
     } else {
-        html = '<div class="member-modal-empty"><i class="fas fa-info-circle"></i> Keine weiteren Details hinterlegt.</div>';
+        html = '<div class="member-modal-empty"><i class="fas fa-info-circle"></i> ' + escHtml(memberModalI18n.noDetails) + '</div>';
     }
 
     body.innerHTML = html;
