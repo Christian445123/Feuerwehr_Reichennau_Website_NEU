@@ -33,10 +33,10 @@ $berichteVorjahr = getBerichteVorjahr();
             <h1 class="page-title">
                 <?php $einsatzNr = getPublicEinsatzNummerLabel($report); ?>
                 <?php if ($einsatzNr): ?><span class="bericht-einsatznummer"><?php echo htmlspecialchars($einsatzNr); ?></span><?php endif; ?>
-                <?php echo htmlspecialchars($report['title']); ?>
+                <?php echo htmlspecialchars(getLocalizedReportTitle($report)); ?>
             </h1>
             <p class="page-subtitle">
-                <?php foreach (getReportBadgeGroups($report) as $group): ?>
+                <?php foreach (getLocalizedReportBadgeGroups($report) as $group): ?>
                     <span class="bericht-badge-group">
                         <?php if ($group['badges']): ?>
                             <span class="bericht-badge-group-label"><?php echo htmlspecialchars($group['label']); ?>:</span>
@@ -59,13 +59,14 @@ $berichteVorjahr = getBerichteVorjahr();
     <section class="section">
         <div class="container bericht-detail-container">
             <a href="index.php?page=berichte" class="btn btn-outline-dark" style="margin-bottom: 24px;">
-                <i class="fas fa-arrow-left"></i> Zurück zu allen Berichten
+                <i class="fas fa-arrow-left"></i> <?php echo e(t('berichte.back_to_all')); ?>
             </a>
 
-            <?php if ($report['content']): ?>
+            <?php $localizedContent = getLocalizedReportContent($report); ?>
+            <?php if ($localizedContent): ?>
                 <div class="content-card">
                     <div class="content-card-body">
-                        <div class="bericht-content"><?php echo nl2br(htmlspecialchars($report['content'])); ?></div>
+                        <div class="bericht-content"><?php echo nl2br(htmlspecialchars($localizedContent)); ?></div>
                     </div>
                 </div>
             <?php endif; ?>
@@ -74,21 +75,22 @@ $berichteVorjahr = getBerichteVorjahr();
                 <div class="bericht-gallery">
                     <?php foreach ($reportImages as $img): ?>
                         <div class="gallery-item">
+                            <?php $localizedCaption = getLocalizedImageCaption($img); ?>
                             <a href="uploads/<?php echo htmlspecialchars($img['filename']); ?>"
                                data-lightbox-group="bericht-<?php echo (int) $report['id']; ?>"
                                data-lightbox-src="uploads/<?php echo htmlspecialchars($img['filename']); ?>">
                                 <img src="uploads/<?php echo htmlspecialchars($img['filename']); ?>"
-                                     alt="<?php echo htmlspecialchars($img['caption'] ?: $report['title']); ?>">
+                                     alt="<?php echo htmlspecialchars($localizedCaption ?: getLocalizedReportTitle($report)); ?>">
                             </a>
-                            <?php if ($img['caption']): ?>
-                                <p class="gallery-caption"><?php echo htmlspecialchars($img['caption']); ?></p>
+                            <?php if ($localizedCaption): ?>
+                                <p class="gallery-caption"><?php echo htmlspecialchars($localizedCaption); ?></p>
                             <?php endif; ?>
                         </div>
                     <?php endforeach; ?>
                 </div>
             <?php endif; ?>
 
-            <?php $reportLinks = getReportLinks($report); ?>
+            <?php $reportLinks = getLocalizedReportLinks($report); ?>
             <?php if (!empty($reportLinks) && areReportLinksVisible($report)): ?>
                 <div class="bericht-social-link">
                     <?php foreach ($reportLinks as $link): ?>
@@ -106,8 +108,8 @@ $berichteVorjahr = getBerichteVorjahr();
     <!-- Berichte-Liste -->
     <section class="page-header">
         <div class="container">
-            <h1 class="page-title">Berichte</h1>
-            <p class="page-subtitle">Einsätze, Übungen und Aktivitäten</p>
+            <h1 class="page-title"><?php echo e(t('berichte.title')); ?></h1>
+            <p class="page-subtitle"><?php echo e(t('berichte.subtitle')); ?></p>
         </div>
     </section>
 
@@ -158,37 +160,38 @@ $berichteVorjahr = getBerichteVorjahr();
             <div class="filter-tabs filter-tabs-years">
                 <a href="index.php?page=berichte&year=current&category=<?php echo urlencode($category); ?>" class="filter-tab <?php echo $year === 'current' ? 'active' : ''; ?>"><?php echo $berichteAktuellesJahr; ?></a>
                 <a href="index.php?page=berichte&year=previous&category=<?php echo urlencode($category); ?>" class="filter-tab <?php echo $year === 'previous' ? 'active' : ''; ?>"><?php echo $berichteVorjahr; ?></a>
-                <a href="index.php?page=berichte&year=archiv&category=<?php echo urlencode($category); ?>" class="filter-tab <?php echo $year === 'archiv' ? 'active' : ''; ?>"><i class="fas fa-archive"></i> Archiv</a>
+                <a href="index.php?page=berichte&year=archiv&category=<?php echo urlencode($category); ?>" class="filter-tab <?php echo $year === 'archiv' ? 'active' : ''; ?>"><i class="fas fa-archive"></i> <?php echo e(t('berichte.archive')); ?></a>
             </div>
 
             <!-- Kategorie-Tabs -->
             <div class="filter-tabs">
-                <a href="index.php?page=berichte&year=<?php echo urlencode($year); ?>&category=all" class="filter-tab <?php echo $category === 'all' ? 'active' : ''; ?>">Alle</a>
-                <a href="index.php?page=berichte&year=<?php echo urlencode($year); ?>&category=einsatz" class="filter-tab <?php echo $category === 'einsatz' ? 'active' : ''; ?>">Einsatz</a>
-                <a href="index.php?page=berichte&year=<?php echo urlencode($year); ?>&category=uebung" class="filter-tab <?php echo $category === 'uebung' ? 'active' : ''; ?>">Übung</a>
-                <a href="index.php?page=berichte&year=<?php echo urlencode($year); ?>&category=jugend" class="filter-tab <?php echo $category === 'jugend' ? 'active' : ''; ?>">Jugend</a>
-                <a href="index.php?page=berichte&year=<?php echo urlencode($year); ?>&category=veranstaltungen" class="filter-tab <?php echo $category === 'veranstaltungen' ? 'active' : ''; ?>">Veranstaltungen</a>
-                <a href="index.php?page=berichte&year=<?php echo urlencode($year); ?>&category=sonstige" class="filter-tab <?php echo $category === 'sonstige' ? 'active' : ''; ?>">Sonstige</a>
+                <a href="index.php?page=berichte&year=<?php echo urlencode($year); ?>&category=all" class="filter-tab <?php echo $category === 'all' ? 'active' : ''; ?>"><?php echo e(t('berichte.category.all')); ?></a>
+                <a href="index.php?page=berichte&year=<?php echo urlencode($year); ?>&category=einsatz" class="filter-tab <?php echo $category === 'einsatz' ? 'active' : ''; ?>"><?php echo e(getLocalizedReportCategoryLabel('einsatz')); ?></a>
+                <a href="index.php?page=berichte&year=<?php echo urlencode($year); ?>&category=uebung" class="filter-tab <?php echo $category === 'uebung' ? 'active' : ''; ?>"><?php echo e(getLocalizedReportCategoryLabel('uebung')); ?></a>
+                <a href="index.php?page=berichte&year=<?php echo urlencode($year); ?>&category=jugend" class="filter-tab <?php echo $category === 'jugend' ? 'active' : ''; ?>"><?php echo e(getLocalizedReportCategoryLabel('jugend')); ?></a>
+                <a href="index.php?page=berichte&year=<?php echo urlencode($year); ?>&category=veranstaltungen" class="filter-tab <?php echo $category === 'veranstaltungen' ? 'active' : ''; ?>"><?php echo e(getLocalizedReportCategoryLabel('veranstaltungen')); ?></a>
+                <a href="index.php?page=berichte&year=<?php echo urlencode($year); ?>&category=sonstige" class="filter-tab <?php echo $category === 'sonstige' ? 'active' : ''; ?>"><?php echo e(getLocalizedReportCategoryLabel('sonstige')); ?></a>
             </div>
-            <p class="filter-result-count"><?php echo count($reports); ?> <?php echo count($reports) === 1 ? 'Bericht' : 'Berichte'; ?></p>
+            <p class="filter-result-count"><?php echo count($reports); ?> <?php echo e(count($reports) === 1 ? t('berichte.count_singular') : t('berichte.count_plural')); ?></p>
 
             <?php if (empty($reports)): ?>
                 <div class="archiv-section">
-                    <h2><i class="fas fa-folder-open"></i> Keine Berichte</h2>
-                    <p>Für diesen Filter sind aktuell keine Berichte vorhanden.</p>
+                    <h2><i class="fas fa-folder-open"></i> <?php echo e(t('berichte.none_title')); ?></h2>
+                    <p><?php echo e(t('berichte.none_text')); ?></p>
                 </div>
             <?php else: ?>
                 <div class="berichte-grid <?php echo $category === 'all' ? 'timeline-view' : ''; ?>">
                     <?php foreach ($reports as $r): ?>
                         <a href="index.php?page=berichte&id=<?php echo $r['id']; ?>" class="bericht-card bericht-card-link">
+                            <?php $cardTitle = getLocalizedReportTitle($r); ?>
                             <?php if ($r['thumb']): ?>
                                 <div class="bericht-thumb">
-                                    <img src="uploads/<?php echo htmlspecialchars($r['thumb']); ?>" alt="<?php echo htmlspecialchars($r['title']); ?>">
+                                    <img src="uploads/<?php echo htmlspecialchars($r['thumb']); ?>" alt="<?php echo htmlspecialchars($cardTitle); ?>">
                                 </div>
                             <?php endif; ?>
                             <div class="bericht-card-body">
                                 <div class="bericht-badge-row">
-                                    <?php foreach (getReportBadgeGroups($r) as $cardGroup): ?>
+                                    <?php foreach (getLocalizedReportBadgeGroups($r) as $cardGroup): ?>
                                         <div class="bericht-badge-group">
                                             <?php if ($cardGroup['badges']): ?>
                                                 <span class="bericht-badge-group-label"><?php echo htmlspecialchars($cardGroup['label']); ?>:</span>
@@ -205,13 +208,14 @@ $berichteVorjahr = getBerichteVorjahr();
                                     <i class="fas <?php echo $categoryIcons[$r['category']] ?? 'fa-newspaper'; ?>"></i>
                                     <?php $cardEinsatzNr = getPublicEinsatzNummerLabel($r); ?>
                                     <?php if ($cardEinsatzNr): ?><span class="bericht-einsatznummer"><?php echo htmlspecialchars($cardEinsatzNr); ?></span><?php endif; ?>
-                                    <?php echo htmlspecialchars($r['title']); ?>
+                                    <?php echo htmlspecialchars($cardTitle); ?>
                                 </h3>
                                 <p class="bericht-date"><i class="fas fa-calendar"></i> <?php echo htmlspecialchars($r['date']); ?></p>
-                                <?php if ($r['content']): ?>
-                                    <p><?php echo htmlspecialchars(mb_substr($r['content'], 0, 120)) . (mb_strlen($r['content']) > 120 ? '...' : ''); ?></p>
+                                <?php $cardContent = getLocalizedReportContent($r); ?>
+                                <?php if ($cardContent): ?>
+                                    <p><?php echo htmlspecialchars(mb_substr($cardContent, 0, 120)) . (mb_strlen($cardContent) > 120 ? '...' : ''); ?></p>
                                 <?php endif; ?>
-                                <?php $previewLinks = getReportLinks($r); ?>
+                                <?php $previewLinks = getLocalizedReportLinks($r); ?>
                                 <?php if (!empty($previewLinks) && areReportLinksVisible($r)): ?>
                                     <div class="bericht-card-links-preview">
                                         <?php foreach ($previewLinks as $pl): ?>

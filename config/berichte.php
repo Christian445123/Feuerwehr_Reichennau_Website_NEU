@@ -9,6 +9,7 @@
 
 require_once __DIR__ . '/database.php';
 require_once __DIR__ . '/settings.php';
+require_once __DIR__ . '/i18n.php';
 
 function getBerichteAktuellesJahr(): int {
     $db = getDB();
@@ -99,15 +100,15 @@ function getReportLinkLabel(array $link): string {
  */
 function detectReportLinkIcon(string $url): array {
     if (stripos($url, 'instagram.com') !== false) {
-        return ['icon' => 'fab fa-instagram', 'label' => 'Auf Instagram ansehen'];
+        return ['icon' => 'fab fa-instagram', 'label' => t('berichte.link.instagram')];
     }
     if (stripos($url, 'facebook.com') !== false) {
-        return ['icon' => 'fab fa-facebook', 'label' => 'Auf Facebook ansehen'];
+        return ['icon' => 'fab fa-facebook', 'label' => t('berichte.link.facebook')];
     }
     if (stripos($url, 'youtube.com') !== false || stripos($url, 'youtu.be') !== false) {
-        return ['icon' => 'fab fa-youtube', 'label' => 'Auf YouTube ansehen'];
+        return ['icon' => 'fab fa-youtube', 'label' => t('berichte.link.youtube')];
     }
-    return ['icon' => 'fas fa-external-link-alt', 'label' => 'Weitere Informationen'];
+    return ['icon' => 'fas fa-external-link-alt', 'label' => t('berichte.link.more_info')];
 }
 
 /**
@@ -331,4 +332,106 @@ function setEinsatzNummerPublic(bool $public): void {
  */
 function getPublicEinsatzNummerLabel(array $report): ?string {
     return isEinsatzNummerPublic() ? getEinsatzNummerLabel($report) : null;
+}
+
+/**
+ * Lokalisierte Anzeige eines Berichts (Titel/Inhalt/Links) - Englisch nur,
+ * wenn umgeschaltet UND eine automatische Übersetzung vorhanden ist (siehe
+ * config/translate.php, Spalten title_en/content_en/links_en), sonst immer
+ * Deutsch. NUR für die öffentliche Anzeige gedacht (pages/berichte.php,
+ * pages/alarmierungen.php, pages/home.php) - der Admin-Bereich zeigt immer
+ * die deutsche Fassung, unabhängig vom Sprach-Cookie des Besuchers.
+ */
+function getLocalizedReportTitle(array $report): string {
+    if (isEnglish() && !empty($report['title_en'])) {
+        return $report['title_en'];
+    }
+    return $report['title'] ?? '';
+}
+
+function getLocalizedReportContent(array $report): string {
+    if (isEnglish() && !empty($report['content_en'])) {
+        return $report['content_en'];
+    }
+    return $report['content'] ?? '';
+}
+
+/**
+ * Wie getReportLinks(), aber mit übersetzten Beschreibungen (label), wenn
+ * auf Englisch umgeschaltet UND eine Übersetzung vorhanden ist - pro Link
+ * einzeln, damit ein nachträglich hinzugefügter Link ohne Übersetzung nicht
+ * den ganzen Satz auf Deutsch zurückfallen lässt.
+ */
+function getLocalizedReportLinks(array $report): array {
+    $deLinks = getReportLinks($report);
+    if (!isEnglish() || empty($report['links_en'])) {
+        return $deLinks;
+    }
+    $enRaw = json_decode($report['links_en'], true);
+    if (!is_array($enRaw)) {
+        return $deLinks;
+    }
+    $enByUrl = [];
+    foreach ($enRaw as $item) {
+        if (is_array($item) && !empty($item['url'])) {
+            $enByUrl[$item['url']] = trim($item['label'] ?? '');
+        }
+    }
+    foreach ($deLinks as &$link) {
+        if (!empty($enByUrl[$link['url']])) {
+            $link['label'] = $enByUrl[$link['url']];
+        }
+    }
+    return $deLinks;
+}
+
+function getLocalizedImageCaption(array $image): string {
+    if (isEnglish() && !empty($image['caption_en'])) {
+        return $image['caption_en'];
+    }
+    return $image['caption'] ?? '';
+}
+
+function getLocalizedReportCategoryLabel(string $category): string {
+    return isEnglish() ? t('berichte.category.' . $category) : (getReportCategories()[$category] ?? ucfirst($category));
+}
+
+function getLocalizedReportSubcategoryLabel(string $subcategory): string {
+    return isEnglish() ? t('berichte.subcategory.' . $subcategory) : (getReportSubcategoryLabels()[$subcategory] ?? $subcategory);
+}
+
+/**
+ * Wie getReportBadges()/getReportBadgeGroups(), aber mit lokalisierten
+ * Labels - siehe getLocalizedReportTitle() für die Begründung, warum das
+ * NICHT direkt in den bestehenden (auch vom Admin-Bereich genutzten)
+ * Funktionen passiert.
+ */
+function getLocalizedReportBadges(string $category, $subcategory): array {
+    if ($category === '') return [];
+    $subs = getReportSubcategoryList($subcategory ?? '');
+    $subBadges = getReportSubcategoryBadges();
+    $badges = [];
+    foreach ($subs as $s) {
+        if (isset(getReportSubcategoryLabels()[$s])) {
+            $badges[] = ['class' => $subBadges[$s] ?? 'badge-sonstige', 'label' => getLocalizedReportSubcategoryLabel($s)];
+        }
+    }
+    if (!empty($badges)) return $badges;
+
+    $catBadges = getReportCategoryBadges();
+    return [['class' => $catBadges[$category] ?? 'badge-sonstige', 'label' => getLocalizedReportCategoryLabel($category)]];
+}
+
+function getLocalizedReportBadgeGroups(array $report): array {
+    $groups = [];
+    foreach ([['category', 'subcategory'], ['category2', 'subcategory2']] as [$catKey, $subKey]) {
+        $category = $report[$catKey] ?? '';
+        if ($category === '') continue;
+        $subs = getReportSubcategoryList($report[$subKey] ?? '');
+        $groups[] = [
+            'label' => getLocalizedReportCategoryLabel($category),
+            'badges' => $subs ? getLocalizedReportBadges($category, $report[$subKey] ?? '') : [],
+        ];
+    }
+    return $groups;
 }
