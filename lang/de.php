@@ -256,4 +256,25 @@ return [
     'jugend.error.message_required' => 'Bitte gib eine Nachricht ein.',
     'jugend.error.send_failed' => 'Die Nachricht konnte leider nicht versendet werden. Bitte versuche es später erneut oder schreibe direkt an reichenau@feuerwehr.tirol.',
 
+    // Seite: Termine
+    'termine.title' => 'Termine',
+    'termine.subtitle' => 'Veranstaltungen und Übungstermine',
+    'termine.regular_heading' => 'Regelmäßige Termine',
+    'termine.monday' => 'Montag',
+    'termine.friday' => 'Freitag',
+    'termine.time_unit' => 'Uhr',
+    'termine.jugendfeuerwehr_label' => 'Jugendfeuerwehr',
+    'termine.jugend_desc' => 'Übungen, Schulungen und Aktivitäten (ausgenommen Ferien und Feiertage)',
+    'termine.mannschaft_label' => 'Aktive Einsatzmannschaft',
+    'termine.mannschaft_desc' => 'Übungen und Schulungen (ausgenommen Feiertage)',
+    'termine.note' => 'Alle Termine finden in der Feuerwehrwache, Rossaugasse 4, 6020 Innsbruck statt. Aktuelle Termine und Änderungen werden auch auf unserer {{link}} bekanntgegeben.',
+    'termine.facebook_link_text' => 'Facebook-Seite',
+
+    // Seite: Datenschutz
+    'datenschutz.title' => 'Datenschutzerklärung',
+    'datenschutz.subtitle' => 'Informationen zum Schutz Ihrer persönlichen Daten',
+    'datenschutz.legal_language_notice' => 'Aus rechtlichen Gründen ist diese Seite nur auf Deutsch verfügbar.',
+    'datenschutz.last_updated' => 'Stand:',
+    'datenschutz.consent_reset_alert' => 'Deine Cookie-Einwilligung wurde zurückgesetzt. Die Seite wird neu geladen, damit du erneut wählen kannst.',
+
 ];

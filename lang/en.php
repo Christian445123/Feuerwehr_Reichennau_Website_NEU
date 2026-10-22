@@ -256,4 +256,25 @@ return [
     'jugend.error.message_required' => 'Please enter a message.',
     'jugend.error.send_failed' => 'Unfortunately, the message could not be sent. Please try again later or write directly to reichenau@feuerwehr.tirol.',
 
+    // Page: Events
+    'termine.title' => 'Events',
+    'termine.subtitle' => 'Events and training sessions',
+    'termine.regular_heading' => 'Regular Sessions',
+    'termine.monday' => 'Monday',
+    'termine.friday' => 'Friday',
+    'termine.time_unit' => '',
+    'termine.jugendfeuerwehr_label' => 'Youth Fire Department',
+    'termine.jugend_desc' => 'Drills, training and activities (except during school holidays and public holidays)',
+    'termine.mannschaft_label' => 'Active Response Crew',
+    'termine.mannschaft_desc' => 'Drills and training (except public holidays)',
+    'termine.note' => 'All sessions take place at the fire station, Rossaugasse 4, 6020 Innsbruck. Current dates and changes are also announced on our {{link}}.',
+    'termine.facebook_link_text' => 'Facebook page',
+
+    // Page: Privacy Policy
+    'datenschutz.title' => 'Privacy Policy',
+    'datenschutz.subtitle' => 'Information on the protection of your personal data',
+    'datenschutz.legal_language_notice' => 'For legal reasons, this page is only available in German.',
+    'datenschutz.last_updated' => 'Last updated:',
+    'datenschutz.consent_reset_alert' => 'Your cookie consent has been reset. The page will reload so you can choose again.',
+
 ];
