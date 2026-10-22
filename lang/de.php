@@ -117,4 +117,42 @@ return [
     'berichte.link.youtube' => 'Auf YouTube ansehen',
     'berichte.link.more_info' => 'Weitere Informationen',
 
+    // Footer
+    'footer.org_name' => 'Freiwillige Feuerwehr Reichenau',
+    'footer.org_location' => 'Innsbruck Stadt',
+    'footer.weather_warnings' => 'Wetterwarnungen',
+    'footer.copyright_by' => 'Copyrights by',
+    'footer.imprint' => 'Impressum',
+    'footer.privacy' => 'Datenschutz',
+    'footer.follow_us' => 'Folgt uns:',
+    'footer.admin_login' => 'Admin-Anmeldung',
+    'footer.scroll_to_top' => 'Nach oben scrollen',
+    'footer.more_info' => 'Mehr Informationen',
+    'footer.cookie_banner_text' => 'Diese Website möchte <strong>Google Analytics</strong> zur anonymisierten Reichweitenmessung nutzen. Dabei werden Daten an Google übertragen. Du kannst zustimmen oder ablehnen – die Website funktioniert in beiden Fällen normal. Details in unserer {{link}}.',
+    'footer.privacy_policy_link' => 'Datenschutzerklärung',
+    'footer.cookie_reject' => 'Ablehnen',
+    'footer.cookie_accept' => 'Akzeptieren',
+
+    // Seite: Geschichte
+    'geschichte.subtitle' => 'Vom Katastrophenschutz-Trupp zur eigenen Freiwilligen Feuerwehr',
+    'geschichte.p1' => 'In den 70er Jahren wurden so genannte Hilfestationsgruppen (HISTA) für den Katastrophenschutz in den Stadtteilen aufgebaut. Auch in der Reichenau wurde eine HISTA Gruppe mit einer Handvoll Männer installiert. Es handelte sich dabei um die Station „HISTA 5".',
+    'geschichte.p2' => 'Im Laufe der Zeit kam die Idee daraus eine Freiwillige Feuerwehr zu gründen und so wurde im März 1982 die Löschgruppe Reichenau unter der Führung der FF Mühlau, Kdt. Anton Unteregger gegründet. Am 21.09.1984 war es dann so weit und die Löschgruppe Reichenau wurde in die eigene Freiwillige Feuerwehr Reichenau umgewandelt. Die 10. Freiwillige Feuerwehr in Innsbruck und somit die jüngste Einheit war geboren.',
+    'geschichte.p3' => 'Das Schutzgebiet erstreckt sich auf die Reichenau, Pradl, Teile des Pradler Saggen und des Gewerbegebietes Rossau. Der erste Kommandant war Harald Fröhlich und bei der Wache handelte es sich dabei um ein Flugdach im städtischen Zentralbauhof in der Rossau. Der erste Fuhrpark bestand, aus einem Tanklöschfahrzeug auf Mercedes-Klöckner aus dem Jahre 1936, einem alten VW-Bus und einem Land Rover.',
+    'geschichte.p4' => 'Im Jahre 1986 wurde die erste Etappe für den Bau einer Feuerwache in Angriff genommen. Der Umkleide- und Kameradschaftsraum befand sich zu dieser Zeit im Keller des Hauptgebäudes im Zentralbauhof und somit ca. 100 Meter von der Fahrzeughalle entfernt.',
+    'geschichte.p5' => 'Im Jahre 1988 übernahm Armin Praxmarer das Kommando der Einheit, welches er bis auf eine Unterbrechung von 4 Jahren (Kommandant Werner Federspiel) inne hatte. Im selben Jahr wurde von der FF Inzing ein Kleinlöschfahrzeug durch die Stadt Innsbruck und zur Gänze aus Eigenmitteln ein gebrauchter Ford Transit angekauft und in Eigenregie, in vielen Arbeitsstunden zu einem Feuerwehrfahrzeug (LLF) umgebaut. 1990 wurde das alte TLF durch ein gebrauchtes TLF von der FF Wilten ausgetauscht. Die Wache musste daraufhin aufwendig adaptiert werden, wobei die gesamten Arbeiten von den Kameraden der Einheit durchgeführt wurden.',
+    'geschichte.p6' => 'Im Jahre 1993 wurde unter dem damaligen Branddirektor Ing. Thomas Angermair die Spezialisierung zur Gefahrguteinheit in Angriff genommen. Dazu erhielten wir, ein von der BF ausgeschiedenes Feuerwehrfahrzeug Mercedes 508D, welches Gefahrstoffpumpen und eine Dekontaminationsstraße enthielt.',
+    'geschichte.p7' => 'Im Jahre 2003 erhielten wir ein nagelneues Tanklöschfahrzeug auf Scania und einen neuen Schulungsraum in einem Nebengebäude des Zentralbauhofes, wo wiederum einiges durch Eigenleistung finanziert und gearbeitet wurde.',
+    'geschichte.p8' => 'Die größten Einsätze in der noch jungen Geschichte der Einheit waren mit Sicherheit die Hochwasser in den 80er Jahren entlang der Sill, die Großbrände Planküchen, Wagnerische Universitätsbuchdruckerei 1989 und Tiroler Loden AG im Jahre 2001, aber auch die Hochwasserunterstützung im Jahr 2002 in Niederösterreich und der Einsatz beim Hochwasser 2005 in Innsbruck und in Wörgl.',
+    'geschichte.p9' => '2008 übergab Armin Praxmarer aus Altersgründen das Kommando an den neu gewählten Kommandanten Helmut Plank. Armin wurde noch im selben Jahr die Ehrenmitgliedschaft verliehen.',
+
+    // Seite: Schutzbereich
+    'schutzbereich.subtitle' => 'Das Einsatzgebiet der Freiwilligen Feuerwehr Reichenau',
+    'schutzbereich.population_heading' => 'Einwohnerzahl im Schutzgebiet der FF Reichenau:',
+    'schutzbereich.population_text' => 'Derzeit sind im Schutzgebiet der FF Reichenau <strong>27.575 Einwohner</strong> mit Hauptwohnsitz und <strong>2.760 Einwohner</strong> mit Nebenwohnsitz gemeldet. Das Schutzgebiet der FF Reichenau umfasst somit ca. <strong>14.000 Haushalte</strong> (Umrechnungsschlüssel: es wird mit 2,2 Personen pro Haushalt gerechnet).',
+    'schutzbereich.map_heading' => 'Karte des Schutzgebiets:',
+    'schutzbereich.map_aria_label' => 'Interaktive Karte des Schutzbereichs der FF Reichenau',
+    'schutzbereich.map_note' => 'Der eingezeichnete Bereich ist eine Annäherung an das offizielle Schutzgebiet.',
+    'schutzbereich.osm_attribution' => '{{link}}-Mitwirkende',
+    'schutzbereich.station_name' => 'Feuerwache Reichenau',
+
 ];

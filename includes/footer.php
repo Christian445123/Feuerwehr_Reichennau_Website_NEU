@@ -6,7 +6,7 @@
                     <div class="footer-logo">
                         <img src="assets/images/logo_feuerwehr_tirol.png" alt="Freiwillige Feuerwehr Reichenau">
                     </div>
-                    <p>Freiwillige Feuerwehr Reichenau<br>Innsbruck Stadt</p>
+                    <p><?php echo e(t('footer.org_name')); ?><br><?php echo e(t('footer.org_location')); ?></p>
                     <div class="footer-social">
                         <a href="http://facebook.ffr.at/" target="_blank" rel="noopener" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
                         <a href="https://www.instagram.com/ffreichenau_innsbruck/" target="_blank" rel="noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
@@ -14,7 +14,7 @@
                 </div>
 
                 <div class="footer-col">
-                    <h4>Kontakt</h4>
+                    <h4><?php echo e(t('nav.kontakt')); ?></h4>
                     <ul class="footer-contact">
                         <li><i class="fas fa-map-marker-alt"></i> Rossaugasse 4, A-6020 Innsbruck</li>
                         <li><i class="fas fa-phone"></i> <a href="tel:+43512345160">+43 (0)512 / 345160</a></li>
@@ -24,7 +24,7 @@
                 </div>
 
                 <div class="footer-col">
-                    <h4>Wetterwarnungen</h4>
+                    <h4><?php echo e(t('footer.weather_warnings')); ?></h4>
                     <a href="https://warnungen.zamg.at/html/de/heute/alle/at/" target="_blank" rel="noopener" class="footer-warnwidget">
                         <img src="https://warnungen.zamg.at/warnwidget/de/heute/alle/at/" alt="GeoSphere-Wetterwarnungen Österreich" title="GeoSphere-Wetterwarnungen" loading="lazy">
                     </a>
@@ -33,22 +33,22 @@
             </div>
 
             <div class="footer-bottom footer-bottom-split">
-                <p class="footer-bottom-copy">&copy; Copyrights by <?php echo date('Y'); ?> FF Reichenau</p>
+                <p class="footer-bottom-copy">&copy; <?php echo e(t('footer.copyright_by')); ?> <?php echo date('Y'); ?> FF Reichenau</p>
                 <p class="footer-bottom-legal">
-                    <a href="index.php?page=kontakt">Impressum</a> &middot; <a href="index.php?page=datenschutz">Datenschutz</a>
+                    <a href="index.php?page=kontakt"><?php echo e(t('footer.imprint')); ?></a> &middot; <a href="index.php?page=datenschutz"><?php echo e(t('footer.privacy')); ?></a>
                 </p>
                 <div class="footer-bottom-social">
-                    <span>Folgt uns:</span>
+                    <span><?php echo e(t('footer.follow_us')); ?></span>
                     <a href="http://facebook.ffr.at/" target="_blank" rel="noopener" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
                     <a href="https://www.instagram.com/ffreichenau_innsbruck/" target="_blank" rel="noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
                 </div>
             </div>
         </div>
-        <a href="admin/login.php" class="footer-admin-access" aria-label="Admin-Anmeldung" title="Admin-Anmeldung"><i class="fas fa-lock"></i></a>
+        <a href="admin/login.php" class="footer-admin-access" aria-label="<?php echo e(t('footer.admin_login')); ?>" title="<?php echo e(t('footer.admin_login')); ?>"><i class="fas fa-lock"></i></a>
     </footer>
 
     <!-- Back to Top -->
-    <button class="back-to-top" id="backToTop" aria-label="Nach oben scrollen">
+    <button class="back-to-top" id="backToTop" aria-label="<?php echo e(t('footer.scroll_to_top')); ?>">
         <i class="fas fa-chevron-up"></i>
     </button>
 
@@ -59,7 +59,7 @@
     <?php if (($current_page ?? '') !== 'haussammlung' && isHaussammlungActive($haussammlungSettings)): ?>
     <!-- Haussammlungs-Popup (unten links, einmal pro Besuch, siehe Admin -> Haussammlung) -->
     <div class="haussammlung-popup" id="haussammlungPopup" hidden>
-        <button type="button" class="haussammlung-popup-close" id="haussammlungPopupClose" aria-label="Schließen">&times;</button>
+        <button type="button" class="haussammlung-popup-close" id="haussammlungPopupClose" aria-label="<?php echo e(t('common.close')); ?>">&times;</button>
         <div class="haussammlung-popup-body">
             <?php if ($haussammlungSettings['qr_image']): ?>
                 <img src="<?php echo htmlspecialchars($haussammlungSettings['qr_image']); ?>" alt="QR-Code zur Haussammlung" class="haussammlung-popup-qr">
@@ -67,7 +67,7 @@
             <div class="haussammlung-popup-text">
                 <strong><?php echo htmlspecialchars($haussammlungSettings['titel']); ?></strong>
                 <p><?php echo nl2br(htmlspecialchars(formatHaussammlungText($haussammlungSettings['kurztext'], $haussammlungSettings))); ?></p>
-                <a href="index.php?page=haussammlung" class="btn btn-primary btn-sm"><i class="fas fa-circle-info"></i> Mehr Informationen</a>
+                <a href="index.php?page=haussammlung" class="btn btn-primary btn-sm"><i class="fas fa-circle-info"></i> <?php echo e(t('footer.more_info')); ?></a>
             </div>
         </div>
     </div>
@@ -101,10 +101,10 @@
     <?php if ($gaMeasurementId !== ''): ?>
     <!-- Cookie-Consent-Banner (Google Analytics lädt erst nach Zustimmung) -->
     <div class="cookie-banner" id="cookieBanner" hidden>
-        <p>Diese Website möchte <strong>Google Analytics</strong> zur anonymisierten Reichweitenmessung nutzen. Dabei werden Daten an Google übertragen. Du kannst zustimmen oder ablehnen – die Website funktioniert in beiden Fällen normal. Details in unserer <a href="index.php?page=datenschutz">Datenschutzerklärung</a>.</p>
+        <p><?php echo t('footer.cookie_banner_text', ['link' => '<a href="index.php?page=datenschutz">' . e(t('footer.privacy_policy_link')) . '</a>']); ?></p>
         <div class="cookie-banner-actions">
-            <button type="button" class="btn btn-sm btn-secondary" id="cookieReject">Ablehnen</button>
-            <button type="button" class="btn btn-sm btn-primary" id="cookieAccept">Akzeptieren</button>
+            <button type="button" class="btn btn-sm btn-secondary" id="cookieReject"><?php echo e(t('footer.cookie_reject')); ?></button>
+            <button type="button" class="btn btn-sm btn-primary" id="cookieAccept"><?php echo e(t('footer.cookie_accept')); ?></button>
         </div>
     </div>
     <script>

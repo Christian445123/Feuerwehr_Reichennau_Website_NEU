@@ -117,4 +117,42 @@ return [
     'berichte.link.youtube' => 'View on YouTube',
     'berichte.link.more_info' => 'More information',
 
+    // Footer
+    'footer.org_name' => 'Reichenau Volunteer Fire Department',
+    'footer.org_location' => 'Innsbruck City',
+    'footer.weather_warnings' => 'Weather Warnings',
+    'footer.copyright_by' => 'Copyrights by',
+    'footer.imprint' => 'Legal Notice',
+    'footer.privacy' => 'Privacy',
+    'footer.follow_us' => 'Follow us:',
+    'footer.admin_login' => 'Admin Login',
+    'footer.scroll_to_top' => 'Scroll to top',
+    'footer.more_info' => 'More Information',
+    'footer.cookie_banner_text' => 'This website would like to use <strong>Google Analytics</strong> for anonymized traffic analysis. This transmits data to Google. You can accept or decline – the website works normally either way. Details in our {{link}}.',
+    'footer.privacy_policy_link' => 'Privacy Policy',
+    'footer.cookie_reject' => 'Decline',
+    'footer.cookie_accept' => 'Accept',
+
+    // Page: History
+    'geschichte.subtitle' => 'From disaster-relief squad to our own volunteer fire department',
+    'geschichte.p1' => 'In the 1970s, so-called relief station groups (HISTA) were set up for disaster protection in the city districts. A HISTA group with a handful of men was also set up in Reichenau. This was station "HISTA 5".',
+    'geschichte.p2' => 'Over time, the idea arose to found a volunteer fire department, and so in March 1982 the Reichenau fire-fighting group was founded under the leadership of FF Mühlau, commander Anton Unteregger. On 21 September 1984, the time had come: the Reichenau fire-fighting group was converted into its own Reichenau Volunteer Fire Department. The 10th volunteer fire department in Innsbruck - and thus the youngest unit - was born.',
+    'geschichte.p3' => 'The protection area covers Reichenau, Pradl, parts of Pradler Saggen and the Rossau commercial area. The first commander was Harald Fröhlich, and the station was a simple canopy roof at the city\'s central depot in Rossau. The first vehicle fleet consisted of a 1936 Mercedes-Klöckner water tanker, an old VW van and a Land Rover.',
+    'geschichte.p4' => 'In 1986, the first phase of building a fire station was begun. At that time, the changing and common room was located in the basement of the main building at the central depot, about 100 meters from the vehicle hall.',
+    'geschichte.p5' => 'In 1988, Armin Praxmarer took over command of the unit, a role he held continuously except for a four-year interruption (commander Werner Federspiel). In the same year, a small fire-fighting vehicle was purchased from FF Inzing by the City of Innsbruck, and a used Ford Transit was bought entirely from the brigade\'s own funds and converted, through many hours of volunteer work, into a light fire-fighting vehicle (LLF). In 1990, the old water tanker was replaced with a used one from FF Wilten. The station then had to be extensively adapted, with all the work carried out by the unit\'s own members.',
+    'geschichte.p6' => 'In 1993, under the then fire director Ing. Thomas Angermair, specialization as a hazardous materials unit was begun. For this, we received a Mercedes 508D fire vehicle retired from the professional fire department, equipped with hazmat pumps and a decontamination line.',
+    'geschichte.p7' => 'In 2003, we received a brand-new Scania-based water tanker and a new training room in an outbuilding of the central depot, where once again much of the work was financed and carried out through volunteer effort.',
+    'geschichte.p8' => 'The largest operations in the unit\'s still-young history were certainly the floods along the Sill river in the 1980s, the major fires at Planküchen and the Wagnerische Universitätsbuchdruckerei (university printing house) in 1989 and Tiroler Loden AG in 2001, as well as flood relief support in 2002 in Lower Austria and deployment during the 2005 floods in Innsbruck and Wörgl.',
+    'geschichte.p9' => 'In 2008, Armin Praxmarer handed over command, for reasons of age, to the newly elected commander Helmut Plank. Armin was awarded honorary membership that same year.',
+
+    // Page: Protection Area
+    'schutzbereich.subtitle' => 'The operational area of the Reichenau Volunteer Fire Department',
+    'schutzbereich.population_heading' => 'Population in the FF Reichenau protection area:',
+    'schutzbereich.population_text' => 'Currently, <strong>27,575 residents</strong> with primary residence and <strong>2,760 residents</strong> with secondary residence are registered in the FF Reichenau protection area. The FF Reichenau protection area thus covers approx. <strong>14,000 households</strong> (conversion factor: calculated at 2.2 people per household).',
+    'schutzbereich.map_heading' => 'Map of the protection area:',
+    'schutzbereich.map_aria_label' => 'Interactive map of the FF Reichenau protection area',
+    'schutzbereich.map_note' => 'The marked area is an approximation of the official protection area.',
+    'schutzbereich.osm_attribution' => '{{link}} contributors',
+    'schutzbereich.station_name' => 'Reichenau Fire Station',
+
 ];

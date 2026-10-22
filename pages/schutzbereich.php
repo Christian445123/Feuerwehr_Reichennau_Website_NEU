@@ -8,8 +8,8 @@ require_once __DIR__ . '/../config/schutzbereich.php';
     <!-- Page Header -->
     <section class="page-header">
         <div class="container">
-            <h1 class="page-title">Schutzbereich</h1>
-            <p class="page-subtitle">Das Einsatzgebiet der Freiwilligen Feuerwehr Reichenau</p>
+            <h1 class="page-title"><?php echo e(t('nav.schutzbereich')); ?></h1>
+            <p class="page-subtitle"><?php echo e(t('schutzbereich.subtitle')); ?></p>
         </div>
     </section>
 
@@ -20,15 +20,15 @@ require_once __DIR__ . '/../config/schutzbereich.php';
                 <div class="content-card">
                     <div class="content-card-header">
                         <div class="content-card-icon"><i class="fas fa-shield-alt"></i></div>
-                        <h2>Schutzbereich</h2>
+                        <h2><?php echo e(t('nav.schutzbereich')); ?></h2>
                     </div>
                     <div class="content-card-body">
-                        <h4>Einwohnerzahl im Schutzgebiet der FF Reichenau:</h4>
-                        <p>Derzeit sind im Schutzgebiet der FF Reichenau <strong>27.575 Einwohner</strong> mit Hauptwohnsitz und <strong>2.760 Einwohner</strong> mit Nebenwohnsitz gemeldet. Das Schutzgebiet der FF Reichenau umfasst somit ca. <strong>14.000 Haushalte</strong> (Umrechnungsschlüssel: es wird mit 2,2 Personen pro Haushalt gerechnet).</p>
+                        <h4><?php echo e(t('schutzbereich.population_heading')); ?></h4>
+                        <p><?php echo t('schutzbereich.population_text'); ?></p>
 
-                        <h4>Karte des Schutzgebiets:</h4>
-                        <div id="schutzbereich-map" class="schutzbereich-map" role="img" aria-label="Interaktive Karte des Schutzbereichs der FF Reichenau"></div>
-                        <p class="schutzbereich-map-note"><i class="fas fa-circle-info"></i> Der eingezeichnete Bereich ist eine Annäherung an das offizielle Schutzgebiet.</p>
+                        <h4><?php echo e(t('schutzbereich.map_heading')); ?></h4>
+                        <div id="schutzbereich-map" class="schutzbereich-map" role="img" aria-label="<?php echo e(t('schutzbereich.map_aria_label')); ?>"></div>
+                        <p class="schutzbereich-map-note"><i class="fas fa-circle-info"></i> <?php echo e(t('schutzbereich.map_note')); ?></p>
                     </div>
                 </div>
 
@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     L.tileLayer('tile-proxy.php?z={z}&x={x}&y={y}', {
         maxZoom: 19,
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>-Mitwirkende'
+        attribution: <?php echo json_encode(t('schutzbereich.osm_attribution', ['link' => '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>'])); ?>
     }).addTo(map);
 
     var schutzbereichPolygon = L.polygon(schutzbereichCoords, {
@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }).addTo(map);
 
     L.marker([47.27245, 11.43098]).addTo(map)
-        .bindPopup('<strong>Feuerwache Reichenau</strong><br>Rossaugasse 4');
+        .bindPopup('<strong><?php echo e(t('schutzbereich.station_name')); ?></strong><br>Rossaugasse 4');
 
     map.fitBounds(schutzbereichPolygon.getBounds(), { padding: [20, 20] });
 
