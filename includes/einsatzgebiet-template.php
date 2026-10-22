@@ -6,6 +6,8 @@
  * ihren eigenen Inhalten aufruft.
  */
 
+require_once __DIR__ . '/../config/berichte.php';
+
 function renderEinsatzgebietPage(PDO $db, array $cfg): void {
     $heroImage = $cfg['heroImage'];
     $title = $cfg['title'];
@@ -18,12 +20,10 @@ function renderEinsatzgebietPage(PDO $db, array $cfg): void {
     $stmt = $db->prepare("SELECT r.*, (SELECT ri.filename FROM report_images ri WHERE ri.report_id = r.id ORDER BY ri.sort_order LIMIT 1) as thumb FROM reports r WHERE r.published = 1 AND r.subcategory = ? ORDER BY r.date DESC, r.created_at DESC LIMIT 6");
     $stmt->execute([$subcategory]);
     $reports = $stmt->fetchAll();
-
-    $categoryLabels = ['einsatz' => 'Einsatz', 'uebung' => 'Übung', 'jugend' => 'Jugend', 'veranstaltungen' => 'Veranstaltung', 'sonstige' => 'Sonstiges'];
     ?>
     <section class="einsatzgebiet-hero" style="background-image: linear-gradient(rgba(15,15,15,0.62), rgba(15,15,15,0.62)), url('<?php echo htmlspecialchars($heroImage); ?>');">
         <div class="container">
-            <p class="einsatzgebiet-eyebrow">Einsatzgebiet</p>
+            <p class="einsatzgebiet-eyebrow"><?php echo e(t('einsatzgebiet.eyebrow')); ?></p>
             <h1><?php echo htmlspecialchars($title); ?></h1>
         </div>
     </section>
@@ -39,7 +39,7 @@ function renderEinsatzgebietPage(PDO $db, array $cfg): void {
     <section class="section section-dark" style="padding-top: 0;">
         <div class="container">
             <div class="section-header">
-                <h2 class="section-title">Bildergalerie zum Einsatzgebiet <?php echo htmlspecialchars($title); ?></h2>
+                <h2 class="section-title"><?php echo t('einsatzgebiet.gallery_heading', ['title' => htmlspecialchars($title)]); ?></h2>
             </div>
             <div class="einsatzgebiet-gallery">
                 <?php foreach ($galleryImages as $img): ?>
@@ -55,31 +55,32 @@ function renderEinsatzgebietPage(PDO $db, array $cfg): void {
     <section class="section">
         <div class="container">
             <div class="section-header">
-                <h2 class="section-title">Berichte zum Einsatzgebiet <?php echo htmlspecialchars($title); ?></h2>
-                <p class="section-subtitle">Aktuelle Einsätze und Übungen im Bereich <?php echo htmlspecialchars($subcategoryLabel); ?></p>
+                <h2 class="section-title"><?php echo t('einsatzgebiet.reports_heading', ['title' => htmlspecialchars($title)]); ?></h2>
+                <p class="section-subtitle"><?php echo t('einsatzgebiet.reports_subtitle', ['label' => htmlspecialchars($subcategoryLabel)]); ?></p>
             </div>
             <div class="news-grid">
                 <?php foreach ($reports as $r): ?>
+                    <?php $egTitle = getLocalizedReportTitle($r); ?>
                     <a href="index.php?page=berichte&id=<?php echo (int) $r['id']; ?>" class="news-card">
                         <div class="news-card-media<?php echo !$r['thumb'] ? ' news-card-media-fallback' : ''; ?>">
                             <?php if ($r['thumb']): ?>
-                                <img src="uploads/<?php echo htmlspecialchars($r['thumb']); ?>" alt="<?php echo htmlspecialchars($r['title']); ?>" loading="lazy">
+                                <img src="uploads/<?php echo htmlspecialchars($r['thumb']); ?>" alt="<?php echo htmlspecialchars($egTitle); ?>" loading="lazy">
                             <?php else: ?>
                                 <i class="fas fa-newspaper"></i>
                             <?php endif; ?>
                         </div>
                         <div class="news-card-tags">
-                            <span class="news-card-badge news-badge-<?php echo htmlspecialchars($r['category']); ?>"><?php echo htmlspecialchars($categoryLabels[$r['category']] ?? ucfirst($r['category'])); ?></span>
+                            <span class="news-card-badge news-badge-<?php echo htmlspecialchars($r['category']); ?>"><?php echo e(getLocalizedReportCategoryLabel($r['category'])); ?></span>
                         </div>
                         <div class="news-card-overlay">
-                            <h3 class="news-card-title"><?php echo htmlspecialchars($r['title']); ?></h3>
+                            <h3 class="news-card-title"><?php echo htmlspecialchars($egTitle); ?></h3>
                             <div class="news-card-date"><i class="fas fa-calendar-alt"></i> <?php echo date('d.m.Y', strtotime($r['date'])); ?></div>
                         </div>
                     </a>
                 <?php endforeach; ?>
             </div>
             <div class="section-cta">
-                <a href="index.php?page=berichte" class="btn btn-primary"><i class="fas fa-newspaper"></i> Alle Berichte ansehen</a>
+                <a href="index.php?page=berichte" class="btn btn-primary"><i class="fas fa-newspaper"></i> <?php echo e(t('einsatzgebiet.all_reports')); ?></a>
             </div>
         </div>
     </section>

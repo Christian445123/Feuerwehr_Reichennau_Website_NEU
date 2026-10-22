@@ -200,4 +200,20 @@ return [
     'geraetehaus.intro' => 'Die Wache Reichenau besteht aus einer Fahrzeughalle für die 5 Feuerwehrfahrzeuge, einen Umkleidebereich, eine Funkkabine, einem Bekleidungsraum und einem Atemschutzarbeitsplatz. Im Anschluss an den Umkleidebereich gibt es noch einen kleinen Garagenanbau wo die 2 Anhänger (Großpumpe und leichter Anhänger bis 750 kg) abgestellt sind und ein Gerätelager, wo diverse Gerätschaften gelagert werden. Seit 2013 ist diese kleine Garage mit einem Tor versehen, so dass die Geräte und Anhänger besser geschützt werden können.',
     'geraetehaus.address_label' => 'FF Reichenau – Wache',
 
+    // Einsatzgebiet-Vorlage (Feuer/Technik/Gefahrgut)
+    'einsatzgebiet.eyebrow' => 'Einsatzgebiet',
+    'einsatzgebiet.gallery_heading' => 'Bildergalerie zum Einsatzgebiet {{title}}',
+    'einsatzgebiet.reports_heading' => 'Berichte zum Einsatzgebiet {{title}}',
+    'einsatzgebiet.reports_subtitle' => 'Aktuelle Einsätze und Übungen im Bereich {{label}}',
+    'einsatzgebiet.all_reports' => 'Alle Berichte ansehen',
+    'einsatzgebiet.feuer.p1' => 'Es ist das namensgebende und wohl bekannteste Einsatzgebiet. Die Gefahr von Bränden effektiv und schnell unter Einsatz von spezieller Ausrüstung und Brandbekämpfungsmethoden zu löschen, zählt zu unseren Grundkompetenzen.',
+    'einsatzgebiet.feuer.p2' => 'Diese Kompetenz wird durch stätige Weiter- und Ausbildung immer weiter ausgebaut, da sich auch Brände durch neue Gegebenheiten verändern.',
+    'einsatzgebiet.technik.p1' => 'Technische Einsätze umfassen unter anderem Ölspuren, Überschwemmungen, Windwürfe, Autounfälle, Menschen- und Tierbergungen aus gefährlichen Situationen. Sie ergeben mittlerweile den Großteil des Einsatzaufkommens. Abgesehen von Großschadenslagen, werden diese Einsätze (meistens) still alarmiert. Das bedeutet, dass kein Alarm über die Sirenen im Schutzgebiet erfolgt.',
+    'einsatzgebiet.technik.p2' => 'Um dieses vielfältige Einsatzgebiet erfolgreich bewältigen zu können, besitzen wir spezielle Ausrüstung wie etwa Kettensägen, Leitern, Sicherungsgerät und Wasserpumpen.',
+    'einsatzgebiet.technik.p3' => 'Bei großen Überschwemmungen oder Wassermengen kommt unsere Großpumpe zum Einsatz, welche als Anhänger zum Einsatzort gebracht wird. Sie kann unabhängig von anderen taktischen Fahrzeugen eingesetzt werden und über Stunden bis Tage durchgehend mit entsprechendem Treibstoff-Nachschub operieren.',
+    'einsatzgebiet.gefahrgut.p1' => 'Die FF Reichenau ist eine sogenannte Stützpunktfeuerwehr mit der Spezialisierung auf Gefahrgut. Dies ist ein Überbegriff für alle Einsätze mit chemischen, biologischen oder atomaren Gefahrstoffen. Die Kernkompetenz dieses Spezialgebiets besteht darin, die Gefahrstoffe einzudämmen, damit diese keine Gefahr mehr für Leib und Leben bzw. Besitz der Bevölkerung darstellen.',
+    'einsatzgebiet.gefahrgut.p2' => 'Gefahrgut begegnet uns nicht nur auf der Straße, in der Industrie oder in Laboren — es ist ein fixer Bestandteil des täglichen Lebens: In jedem Haushalt finden sich Gegenstände und Stoffe, die in einem Einsatzszenario zu einem Gefahrstoff werden können. Putzmittel, Gasflaschen für den Gasgrill oder Akkugeräte können potenzielle Gefahrquellen sein.',
+    'einsatzgebiet.gefahrgut.p3' => 'Um solche Gefahrenquellen sicher unschädlich machen zu können, besitzen wir ein sogenanntes GGF (Gefahrgutfahrzeug). Dieses Fahrzeug ist speziell für den Gefahrgut-Einsatz konzipiert und besitzt eine entsprechende Ausstattung, um solche Einsätze abzuarbeiten.',
+    'einsatzgebiet.gefahrgut.subcategory_label' => 'ABC/Gefahrgut',
+
 ];

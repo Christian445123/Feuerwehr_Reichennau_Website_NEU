@@ -200,4 +200,20 @@ return [
     'geraetehaus.intro' => 'Reichenau station consists of a vehicle hall for the 5 fire vehicles, a changing area, a radio room, a uniform room and a breathing-apparatus workstation. Adjoining the changing area is a small garage extension where the 2 trailers (large pump trailer and light trailer up to 750 kg) are parked, along with an equipment store for various gear. Since 2013, this small garage has had a door fitted so the equipment and trailers can be better protected.',
     'geraetehaus.address_label' => 'FF Reichenau – Station',
 
+    // Service area template (Fire/Technical/Hazmat)
+    'einsatzgebiet.eyebrow' => 'Service Area',
+    'einsatzgebiet.gallery_heading' => 'Photo Gallery: {{title}}',
+    'einsatzgebiet.reports_heading' => 'Reports: {{title}}',
+    'einsatzgebiet.reports_subtitle' => 'Recent operations and training in the {{label}} area',
+    'einsatzgebiet.all_reports' => 'View all reports',
+    'einsatzgebiet.feuer.p1' => 'This is the namesake and probably best-known service area. Extinguishing the danger of fires effectively and quickly using specialized equipment and firefighting methods is one of our core competencies.',
+    'einsatzgebiet.feuer.p2' => 'This competency is continuously expanded through ongoing training and education, as fires themselves change due to new circumstances.',
+    'einsatzgebiet.technik.p1' => 'Technical operations include, among other things, oil spills, flooding, fallen trees, car accidents, and rescuing people and animals from dangerous situations. They now make up the majority of our call volume. Apart from major incidents, these operations are (mostly) dispatched silently - meaning no alarm is sounded via the sirens in the protection area.',
+    'einsatzgebiet.technik.p2' => 'To successfully handle this diverse service area, we have specialized equipment such as chainsaws, ladders, securing gear and water pumps.',
+    'einsatzgebiet.technik.p3' => 'For major flooding or large volumes of water, our large pump is deployed, which is brought to the scene as a trailer. It can operate independently of other tactical vehicles, continuously for hours or days, with appropriate fuel resupply.',
+    'einsatzgebiet.gefahrgut.p1' => 'FF Reichenau is a so-called support base fire department specializing in hazardous materials. This is an umbrella term for all operations involving chemical, biological or nuclear hazardous substances. The core competency of this specialty is containing hazardous substances so they no longer pose a danger to life, limb or property of the population.',
+    'einsatzgebiet.gefahrgut.p2' => 'Hazardous materials are not only encountered on the road, in industry or in laboratories - they are a fixed part of everyday life: every household contains items and substances that could become hazardous materials in an emergency scenario. Cleaning products, gas canisters for the barbecue, or battery-powered devices can be potential sources of danger.',
+    'einsatzgebiet.gefahrgut.p3' => 'To safely neutralize such sources of danger, we have a so-called GGF (hazardous materials vehicle). This vehicle is specially designed for hazmat operations and carries the appropriate equipment to handle such incidents.',
+    'einsatzgebiet.gefahrgut.subcategory_label' => 'Hazmat',
+
 ];
