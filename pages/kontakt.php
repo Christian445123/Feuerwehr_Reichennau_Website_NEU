@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['kontakt_submit'])) {
 
     $db = getDB();
     if (!checkRateLimit($db, 'contact_form', 5, 3600)) {
-        $formErrors[] = 'Zu viele Anfragen. Bitte versuche es später erneut.';
+        $formErrors[] = t('kontakt.error.rate_limit');
     }
 
     $csrfOk = hash_equals($_SESSION['kontakt_csrf'], $_POST['csrf_token'] ?? '');
@@ -33,16 +33,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['kontakt_submit'])) {
         logActivity($db, 'public.honeypot_catch', 'Kontaktformular', null, 'Öffentliche Website');
     }
     if (!$csrfOk || !$honeypotOk) {
-        $formErrors[] = 'Ungültige Anfrage. Bitte lade die Seite neu und versuche es erneut.';
+        $formErrors[] = t('kontakt.error.invalid_request');
     }
     if ($formData['vorname'] === '' || $formData['nachname'] === '') {
-        $formErrors[] = 'Bitte gib Vor- und Nachname an.';
+        $formErrors[] = t('kontakt.error.name_required');
     }
     if ($formData['email'] === '' || !filter_var($formData['email'], FILTER_VALIDATE_EMAIL)) {
-        $formErrors[] = 'Bitte gib eine gültige E-Mail-Adresse an.';
+        $formErrors[] = t('kontakt.error.email_invalid');
     }
     if ($formData['nachricht'] === '') {
-        $formErrors[] = 'Bitte gib eine Nachricht ein.';
+        $formErrors[] = t('kontakt.error.message_required');
     }
 
     if (empty($formErrors)) {
@@ -77,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['kontakt_submit'])) {
             header('Location: index.php?page=kontakt&sent=1#kontaktformular');
             exit;
         }
-        $formErrors[] = 'Die Nachricht konnte leider nicht versendet werden. Bitte versuche es später erneut oder schreibe direkt an reichenau@feuerwehr.tirol.';
+        $formErrors[] = t('kontakt.error.send_failed');
     }
 }
 
@@ -86,8 +86,8 @@ $formSent = isset($_GET['sent']);
     <!-- Page Header -->
     <section class="page-header">
         <div class="container">
-            <h1 class="page-title">Kontakt &amp; Impressum</h1>
-            <p class="page-subtitle">Wir freuen uns auf Ihre Nachricht</p>
+            <h1 class="page-title"><?php echo e(t('kontakt.title')); ?></h1>
+            <p class="page-subtitle"><?php echo e(t('kontakt.subtitle')); ?></p>
         </div>
     </section>
 
@@ -101,15 +101,15 @@ $formSent = isset($_GET['sent']);
                     <div class="content-card">
                         <div class="content-card-header">
                             <div class="content-card-icon"><i class="fas fa-address-card"></i></div>
-                            <h2>Kontaktdaten</h2>
+                            <h2><?php echo e(t('kontakt.data_heading')); ?></h2>
                         </div>
                         <div class="content-card-body">
                             <div class="kontakt-list">
                                 <div class="kontakt-item">
                                     <i class="fas fa-building"></i>
                                     <div>
-                                        <strong>Freiwillige Feuerwehr Reichenau</strong><br>
-                                        Innsbruck Stadt
+                                        <strong><?php echo e(t('footer.org_name')); ?></strong><br>
+                                        <?php echo e(t('footer.org_location')); ?>
                                     </div>
                                 </div>
                                 <div class="kontakt-item">
@@ -139,19 +139,19 @@ $formSent = isset($_GET['sent']);
                     <div class="content-card">
                         <div class="content-card-header">
                             <div class="content-card-icon"><i class="fas fa-hands-helping"></i></div>
-                            <h2>Mitmachen</h2>
+                            <h2><?php echo e(t('nav.mitmachen')); ?></h2>
                         </div>
                         <div class="content-card-body">
-                            <h4><i class="fas fa-child"></i> Jugendfeuerwehr</h4>
-                            <p>Unsere Jugendfeuerwehrgruppe trifft sich jeden Dienstag von 19 bis 21 Uhr in der Wache. Wenn auch du Lust hast unserer Jugendfeuerwehrgruppe beizutreten, komm einfach an einem Dienstag vorbei und schau es dir an.</p>
-                            <p>Die Jugendfeuerwehr lernt nicht nur spielerisch das Feuerwehrwesen kennen, sondern macht auch Übungen und theoretische Ausbildungen. Einmal im Jahr kann man dann das Erlernte beim Wissenstest unter Beweis stellen und erhält dafür eine Auszeichnung.</p>
-                            <p><strong>Alter:</strong> 11 bis 15 Jahre</p>
+                            <h4><i class="fas fa-child"></i> <?php echo e(t('mannschaft.jugendfeuerwehr')); ?></h4>
+                            <p><?php echo e(t('kontakt.jugend_p1')); ?></p>
+                            <p><?php echo e(t('kontakt.jugend_p2')); ?></p>
+                            <p><strong><?php echo e(t('kontakt.age_label')); ?></strong> <?php echo e(t('kontakt.jugend_age')); ?></p>
 
                             <hr>
 
-                            <h4><i class="fas fa-hard-hat"></i> Aktive Einsatzmannschaft</h4>
-                            <p>Ab dem 15. Lebensjahr kann man der aktiven Einsatzmannschaft beitreten. Die aktive Mannschaft trifft sich jeden Freitag (ausgenommen Feiertage) um 19:15 Uhr zu Übungen und Schulungen im Feuerwehrhaus.</p>
-                            <p>Wenn du etwas Sinnvolles für deine Mitmenschen machen möchtest, dann schau einfach vorbei und lerne uns kennen.</p>
+                            <h4><i class="fas fa-hard-hat"></i> <?php echo e(t('termine.mannschaft_label')); ?></h4>
+                            <p><?php echo e(t('kontakt.mannschaft_p1')); ?></p>
+                            <p><?php echo e(t('kontakt.mannschaft_p2')); ?></p>
                         </div>
                     </div>
                 </div>
@@ -161,22 +161,22 @@ $formSent = isset($_GET['sent']);
                     <div class="content-card">
                         <div class="content-card-header">
                             <div class="content-card-icon"><i class="fas fa-location-dot"></i></div>
-                            <h2>Standort</h2>
+                            <h2><?php echo e(t('kontakt.location_heading')); ?></h2>
                         </div>
                         <div class="content-card-body">
-                            <div id="kontakt-standort-map" class="kontakt-standort-map" role="img" aria-label="Karte mit dem Standort der Feuerwache Reichenau"></div>
+                            <div id="kontakt-standort-map" class="kontakt-standort-map" role="img" aria-label="<?php echo e(t('kontakt.location_map_aria')); ?>"></div>
                         </div>
                     </div>
 
                     <div class="content-card">
                         <div class="content-card-header">
                             <div class="content-card-icon"><i class="fas fa-map"></i></div>
-                            <h2>Unser Schutzgebiet</h2>
+                            <h2><?php echo e(t('kontakt.protection_area_heading')); ?></h2>
                         </div>
                         <div class="content-card-body">
-                            <div id="kontakt-schutzgebiet-map" class="kontakt-schutzgebiet-map" role="img" aria-label="Karte des Schutzbereichs der FF Reichenau"></div>
+                            <div id="kontakt-schutzgebiet-map" class="kontakt-schutzgebiet-map" role="img" aria-label="<?php echo e(t('schutzbereich.map_aria_label')); ?>"></div>
                             <p class="schutzgebiet-map-hint">
-                                <a href="https://www.google.com/maps/search/?api=1&query=Freiwillige+Feuerwehr+Reichenau+Ro%C3%9Faugasse+4+Innsbruck" target="_blank" rel="noopener">Standort auf Google Maps öffnen <i class="fas fa-external-link-alt"></i></a>
+                                <a href="https://www.google.com/maps/search/?api=1&query=Freiwillige+Feuerwehr+Reichenau+Ro%C3%9Faugasse+4+Innsbruck" target="_blank" rel="noopener"><?php echo e(t('kontakt.open_google_maps')); ?> <i class="fas fa-external-link-alt"></i></a>
                             </p>
                         </div>
                     </div>
@@ -185,7 +185,7 @@ $formSent = isset($_GET['sent']);
                     <div class="content-card">
                         <div class="content-card-header">
                             <div class="content-card-icon"><i class="fas fa-university"></i></div>
-                            <h2>Bankverbindung</h2>
+                            <h2><?php echo e(t('kontakt.bank_heading')); ?></h2>
                         </div>
                         <div class="content-card-body">
                             <p><strong>HYPO TIROL Bank</strong><br>
@@ -197,6 +197,9 @@ $formSent = isset($_GET['sent']);
             </div>
 
             <!-- Impressum -->
+            <?php if (isEnglish()): ?>
+                <p class="form-alert" style="background: rgba(243,156,18,0.1); border: 1px solid rgba(243,156,18,0.3); border-radius: var(--radius); padding: 14px 18px; margin-top: 24px;"><i class="fas fa-circle-info"></i> <?php echo e(t('kontakt.impressum_legal_language_notice')); ?></p>
+            <?php endif; ?>
             <?php
             require_once __DIR__ . '/../config/legal.php';
             $legalDb = getDB();
@@ -212,12 +215,12 @@ $formSent = isset($_GET['sent']);
             <div class="content-card kontakt-form-card">
                 <div class="content-card-header">
                     <div class="content-card-icon"><i class="fas fa-paper-plane"></i></div>
-                    <h2>Kontaktanfrage</h2>
+                    <h2><?php echo e(t('kontakt.form_heading')); ?></h2>
                 </div>
                 <div class="content-card-body">
                     <?php if ($formSent): ?>
                         <div class="form-alert form-alert-success">
-                            <i class="fas fa-check-circle"></i> Vielen Dank für deine Nachricht! Wir melden uns so schnell wie möglich bei dir.
+                            <i class="fas fa-check-circle"></i> <?php echo e(t('kontakt.form_success')); ?>
                         </div>
                     <?php endif; ?>
                     <?php if (!empty($formErrors)): ?>
@@ -237,55 +240,55 @@ $formSent = isset($_GET['sent']);
                         <input type="text" name="website" value="" class="form-honeypot" tabindex="-1" autocomplete="off" aria-hidden="true">
 
                         <div class="form-group">
-                            <label for="anrede">Anrede</label>
+                            <label for="anrede"><?php echo e(t('kontakt.label_anrede')); ?></label>
                             <select id="anrede" name="anrede">
-                                <option value="" <?php echo $formData['anrede'] === '' ? 'selected' : ''; ?>>Bitte auswählen</option>
-                                <option value="Frau" <?php echo $formData['anrede'] === 'Frau' ? 'selected' : ''; ?>>Frau</option>
-                                <option value="Herr" <?php echo $formData['anrede'] === 'Herr' ? 'selected' : ''; ?>>Herr</option>
-                                <option value="Divers" <?php echo $formData['anrede'] === 'Divers' ? 'selected' : ''; ?>>Divers</option>
+                                <option value="" <?php echo $formData['anrede'] === '' ? 'selected' : ''; ?>><?php echo e(t('kontakt.please_select')); ?></option>
+                                <option value="Frau" <?php echo $formData['anrede'] === 'Frau' ? 'selected' : ''; ?>><?php echo e(t('kontakt.anrede_frau')); ?></option>
+                                <option value="Herr" <?php echo $formData['anrede'] === 'Herr' ? 'selected' : ''; ?>><?php echo e(t('kontakt.anrede_herr')); ?></option>
+                                <option value="Divers" <?php echo $formData['anrede'] === 'Divers' ? 'selected' : ''; ?>><?php echo e(t('kontakt.anrede_divers')); ?></option>
                             </select>
                         </div>
 
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="vorname">Vorname <span class="req">(*)</span></label>
+                                <label for="vorname"><?php echo e(t('jugend.label_vorname')); ?> <span class="req">(*)</span></label>
                                 <input type="text" id="vorname" name="vorname" value="<?php echo htmlspecialchars($formData['vorname']); ?>" required>
                             </div>
                             <div class="form-group">
-                                <label for="nachname">Nachname <span class="req">(*)</span></label>
+                                <label for="nachname"><?php echo e(t('jugend.label_nachname')); ?> <span class="req">(*)</span></label>
                                 <input type="text" id="nachname" name="nachname" value="<?php echo htmlspecialchars($formData['nachname']); ?>" required>
                             </div>
                         </div>
 
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="strasse">Strasse / Nr.</label>
+                                <label for="strasse"><?php echo e(t('kontakt.label_strasse')); ?></label>
                                 <input type="text" id="strasse" name="strasse" value="<?php echo htmlspecialchars($formData['strasse']); ?>">
                             </div>
                             <div class="form-group">
-                                <label for="ort">Ort</label>
+                                <label for="ort"><?php echo e(t('kontakt.label_ort')); ?></label>
                                 <input type="text" id="ort" name="ort" value="<?php echo htmlspecialchars($formData['ort']); ?>">
                             </div>
                         </div>
 
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="email">E-Mail <span class="req">(*)</span></label>
+                                <label for="email"><?php echo e(t('kontakt.label_email')); ?> <span class="req">(*)</span></label>
                                 <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($formData['email']); ?>" required>
                             </div>
                             <div class="form-group">
-                                <label for="telefon">Telefon allgemein</label>
+                                <label for="telefon"><?php echo e(t('kontakt.label_telefon')); ?></label>
                                 <input type="text" id="telefon" name="telefon" value="<?php echo htmlspecialchars($formData['telefon']); ?>">
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label for="nachricht">Nachricht <span class="req">(*)</span></label>
+                            <label for="nachricht"><?php echo e(t('jugend.label_nachricht')); ?> <span class="req">(*)</span></label>
                             <textarea id="nachricht" name="nachricht" rows="6" required><?php echo htmlspecialchars($formData['nachricht']); ?></textarea>
                         </div>
 
                         <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-paper-plane"></i> Anfrage senden
+                            <i class="fas fa-paper-plane"></i> <?php echo e(t('kontakt.submit')); ?>
                         </button>
                     </form>
                 </div>
@@ -309,11 +312,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     L.tileLayer('tile-proxy.php?z={z}&x={x}&y={y}', {
         maxZoom: 19,
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>-Mitwirkende'
+        attribution: <?php echo json_encode(t('schutzbereich.osm_attribution', ['link' => '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>'])); ?>
     }).addTo(map);
 
     L.marker(wacheCoords).addTo(map)
-        .bindPopup('<strong>Feuerwache Reichenau</strong><br>Rossaugasse 4, 6020 Innsbruck')
+        .bindPopup('<strong><?php echo e(t('schutzbereich.station_name')); ?></strong><br>Rossaugasse 4, 6020 Innsbruck')
         .openPopup();
 
     mapEl.addEventListener('click', function () {
@@ -334,7 +337,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     L.tileLayer('tile-proxy.php?z={z}&x={x}&y={y}', {
         maxZoom: 19,
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>-Mitwirkende'
+        attribution: <?php echo json_encode(t('schutzbereich.osm_attribution', ['link' => '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>'])); ?>
     }).addTo(map);
 
     var schutzbereichPolygon = L.polygon(schutzbereichCoords, {
