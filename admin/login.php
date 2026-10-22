@@ -9,8 +9,11 @@ if (isLoggedIn()) {
 
 $error = '';
 $info = '';
+$success = '';
 if (isset($_GET['timeout'])) {
     $info = 'Du wurdest wegen Inaktivität automatisch abgemeldet (eigene Einstellung unter "Mein Konto"). Bitte erneut anmelden.';
+} elseif (isset($_GET['reset'])) {
+    $success = 'Dein Passwort wurde geändert. Du kannst dich jetzt damit anmelden.';
 }
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username'] ?? '');
@@ -58,6 +61,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="alert alert-error">
                     <i class="fas fa-exclamation-circle"></i> <?php echo e($error); ?>
                 </div>
+            <?php elseif ($success): ?>
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle"></i> <?php echo e($success); ?>
+                </div>
             <?php elseif ($info): ?>
                 <div class="alert alert-warning">
                     <i class="fas fa-circle-info"></i> <?php echo e($info); ?>
@@ -81,6 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </form>
 
             <div class="login-footer">
+                <a href="forgot-password.php" style="display:block; margin-bottom:8px;"><i class="fas fa-key"></i> Passwort vergessen?</a>
                 <a href="../index.php"><i class="fas fa-arrow-left"></i> Zurück zur Website</a>
             </div>
         </div>

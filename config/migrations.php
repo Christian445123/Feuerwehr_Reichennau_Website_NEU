@@ -846,6 +846,28 @@ TEXT;
             },
         ],
 
+        [
+            'id' => '2026_10_22_add_password_resets_table',
+            'run' => function (PDO $db) {
+                // "Passwort vergessen"-Funktion beim Admin-Login (siehe
+                // config/password-reset.php, admin/forgot-password.php,
+                // admin/reset-password.php). Es wird nur der Hash des Tokens
+                // gespeichert, nie das Token selbst - wie bei Passwörtern,
+                // damit ein Datenbankzugriff allein keine gültigen
+                // Reset-Links liefert.
+                $db->exec("CREATE TABLE IF NOT EXISTS password_resets (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    user_id INT NOT NULL,
+                    token_hash VARCHAR(64) NOT NULL,
+                    expires_at DATETIME NOT NULL,
+                    used TINYINT(1) NOT NULL DEFAULT 0,
+                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    INDEX idx_token_hash (token_hash),
+                    INDEX idx_user_id (user_id)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+            },
+        ],
+
     ];
 }
 
