@@ -188,10 +188,9 @@ function getReportSubcategoryList($value): array {
  * z.B. "Brand + ABC" - für Stellen, an denen kein Badge, sondern reiner
  * Text gebraucht wird (z.B. die Alarmierungen-Zeitleiste).
  */
-function getReportSubcategoryLabelText($value, string $fallback = 'Einsatz'): string {
-    $labels = getReportSubcategoryLabels();
-    $parts = array_map(fn($s) => $labels[$s] ?? $s, getReportSubcategoryList($value));
-    return $parts ? implode(' + ', $parts) : $fallback;
+function getReportSubcategoryLabelText($value, ?string $fallback = null): string {
+    $parts = array_map(fn($s) => getLocalizedReportSubcategoryLabel($s), getReportSubcategoryList($value));
+    return $parts ? implode(' + ', $parts) : ($fallback ?? getLocalizedReportCategoryLabel('einsatz'));
 }
 
 /**

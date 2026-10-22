@@ -303,4 +303,19 @@ return [
     'sicherheitstipps.cta_heading' => 'Fragen zur Sicherheit?',
     'sicherheitstipps.cta_text' => 'Detaillierte Selbstschutzinformationen, Sirenensignale und Notfall-Checklisten findest du beim Zivilschutzverband deines Bundeslandes. Bei Fragen kannst du dich auch jederzeit an uns wenden.',
 
+    // Seite: Alarmierungen
+    'alarmierungen.subtitle' => 'Unsere letzten Einsätze im Überblick',
+    'alarmierungen.stat_brand' => 'Brandeinsätze',
+    'alarmierungen.stat_technisch' => 'Technische Einsätze',
+    'alarmierungen.stat_abc' => 'ABC-Einsätze',
+    'alarmierungen.stat_total' => 'Einsätze gesamt',
+    'alarmierungen.latest_heading' => 'Die letzten 5 Alarmierungen',
+    'alarmierungen.none_published' => 'Aktuell keine Einsätze veröffentlicht.',
+    'alarmierungen.all_reports' => 'Alle Einsatzberichte ansehen',
+    'alarmierungen.tirol_heading' => 'Aktuelle Alarmierungen Tirol',
+    'alarmierungen.tirol_text' => 'Live-Übersicht aller aktuellen Alarmierungen in Tirol, bereitgestellt vom Landes-Feuerwehrverband Tirol. Aktualisiert sich automatisch alle 5 Minuten. Aktuelle Einsätze der FF Reichenau findest du bei uns immer zeitnah unter {{link}}.',
+    'alarmierungen.tirol_link_text' => 'Aktuelles → Einsatz',
+    'alarmierungen.embed_note' => 'Die Live-Ansicht des Landes-Feuerwehrverbands lässt sich auf unserer Seite nicht zuverlässig einbetten (die fremde Seite ändert sich immer wieder, ohne dass wir das beeinflussen können). Am schnellsten öffnest du sie direkt in einem neuen Tab:',
+    'alarmierungen.open_tirol' => 'Aktuelle Alarmierungen Tirol öffnen',
+
 ];

@@ -303,4 +303,19 @@ return [
     'sicherheitstipps.cta_heading' => 'Questions about safety?',
     'sicherheitstipps.cta_text' => 'Detailed self-protection information, siren signals and emergency checklists are available from the Civil Protection Association of your federal state. If you have questions, feel free to contact us anytime.',
 
+    // Page: Call-outs
+    'alarmierungen.subtitle' => 'An overview of our recent operations',
+    'alarmierungen.stat_brand' => 'Fire Operations',
+    'alarmierungen.stat_technisch' => 'Technical Operations',
+    'alarmierungen.stat_abc' => 'Hazmat Operations',
+    'alarmierungen.stat_total' => 'Total Operations',
+    'alarmierungen.latest_heading' => 'The Last 5 Call-outs',
+    'alarmierungen.none_published' => 'No operations currently published.',
+    'alarmierungen.all_reports' => 'View all operation reports',
+    'alarmierungen.tirol_heading' => 'Current Call-outs Tyrol',
+    'alarmierungen.tirol_text' => 'Live overview of all current call-outs in Tyrol, provided by the Tyrol State Fire Brigade Association. Updates automatically every 5 minutes. You can always find current FF Reichenau operations promptly under {{link}}.',
+    'alarmierungen.tirol_link_text' => 'News → Operations',
+    'alarmierungen.embed_note' => 'The live view from the State Fire Brigade Association cannot be reliably embedded on our site (the external site changes repeatedly, beyond our control). The fastest way is to open it directly in a new tab:',
+    'alarmierungen.open_tirol' => 'Open Current Call-outs Tyrol',
+
 ];
