@@ -38,8 +38,8 @@ function renderVehicleImages(array $photos, string $vehicleName): void {
     <!-- Page Header -->
     <section class="page-header">
         <div class="container">
-            <h1 class="page-title">Fuhrpark</h1>
-            <p class="page-subtitle">Die Fahrzeuge der FF Reichenau</p>
+            <h1 class="page-title"><?php echo e(t('nav.fuhrpark')); ?></h1>
+            <p class="page-subtitle"><?php echo e(t('fuhrpark.subtitle')); ?></p>
         </div>
     </section>
 
@@ -52,140 +52,140 @@ function renderVehicleImages(array $photos, string $vehicleName): void {
                 <div class="content-card" id="fuhrpark">
                     <div class="content-card-header">
                         <div class="content-card-icon"><i class="fas fa-truck"></i></div>
-                        <h2>Fuhrpark</h2>
+                        <h2><?php echo e(t('nav.fuhrpark')); ?></h2>
                     </div>
                     <div class="content-card-body">
-                        <p>Unser Fuhrpark umfasst 5 Einsatzfahrzeuge sowie 2 Anhänger, die regelmäßig gewartet und modernisiert werden.</p>
+                        <p><?php echo e(t('fuhrpark.intro')); ?></p>
 
                         <div class="vehicle-grid">
 
                             <!-- Transportfahrzeug TF -->
                             <div class="vehicle-card" id="tf">
-                                <?php renderVehicleImages($vehiclePhotos['tf'] ?? [], 'Transportfahrzeug TF'); ?>
+                                <?php renderVehicleImages($vehiclePhotos['tf'] ?? [], t('fuhrpark.tf.name')); ?>
                                 <div class="vehicle-info">
-                                    <h3><i class="fas fa-shuttle-van"></i> Transportfahrzeug – TF</h3>
+                                    <h3><i class="fas fa-shuttle-van"></i> <?php echo e(t('fuhrpark.tf.heading')); ?></h3>
                                     <table class="vehicle-specs">
-                                        <tr><th>Marke</th><td>Mercedes, Vito</td></tr>
-                                        <tr><th>Kennzeichen</th><td>I-422IBK (A)</td></tr>
-                                        <tr><th>Leistung</th><td>80 kW / 110 PS</td></tr>
-                                        <tr><th>Baujahr</th><td>2010</td></tr>
-                                        <tr><th>Aufbau</th><td>Eigenaufbau – BF Innsbruck</td></tr>
-                                        <tr><th>Funkrufname</th><td>TF Reichenau</td></tr>
+                                        <tr><th><?php echo e(t('fuhrpark.spec.marke')); ?></th><td>Mercedes, Vito</td></tr>
+                                        <tr><th><?php echo e(t('fuhrpark.spec.kennzeichen')); ?></th><td>I-422IBK (A)</td></tr>
+                                        <tr><th><?php echo e(t('fuhrpark.spec.leistung')); ?></th><td>80 kW / 110 PS</td></tr>
+                                        <tr><th><?php echo e(t('fuhrpark.spec.baujahr')); ?></th><td>2010</td></tr>
+                                        <tr><th><?php echo e(t('fuhrpark.spec.aufbau')); ?></th><td><?php echo e(t('fuhrpark.aufbau.eigen_bf')); ?></td></tr>
+                                        <tr><th><?php echo e(t('fuhrpark.spec.funkrufname')); ?></th><td>TF Reichenau</td></tr>
                                     </table>
                                     <div class="vehicle-equipment">
-                                        <h4><i class="fas fa-toolbox"></i> Gerätschaften</h4>
-                                        <p>Der TF ist so ausgelegt, dass es für die Heckbeladung ein Containersystem gibt. Wir haben derzeit 3 Container zum Wechseln: 1 Container mit Material für Unwettereinsätze, 1 Container mit Beleuchtungsmitteln und 1 Container ist derzeit mit A-Druckschläuchen für die Großpumpe bestückt.</p>
+                                        <h4><i class="fas fa-toolbox"></i> <?php echo e(t('fuhrpark.equipment_heading')); ?></h4>
+                                        <p><?php echo e(t('fuhrpark.tf.equipment')); ?></p>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Tanklöschfahrzeug TLFH -->
                             <div class="vehicle-card" id="tlfh">
-                                <?php renderVehicleImages($vehiclePhotos['tlfh'] ?? [], 'Tanklöschfahrzeug TLFH'); ?>
+                                <?php renderVehicleImages($vehiclePhotos['tlfh'] ?? [], t('fuhrpark.tlfh.name')); ?>
                                 <div class="vehicle-info">
-                                    <h3><i class="fas fa-fire-extinguisher"></i> Tanklöschfahrzeug mit Hochdruck – TLFH</h3>
+                                    <h3><i class="fas fa-fire-extinguisher"></i> <?php echo e(t('fuhrpark.tlfh.heading')); ?></h3>
                                     <table class="vehicle-specs">
-                                        <tr><th>Marke</th><td>Scania</td></tr>
-                                        <tr><th>Kennzeichen</th><td>I-501IBK (A)</td></tr>
-                                        <tr><th>Leistung</th><td>250 kW / 340 PS</td></tr>
-                                        <tr><th>Baujahr</th><td>2003</td></tr>
-                                        <tr><th>Aufbau</th><td>EMPL</td></tr>
-                                        <tr><th>Funkrufname</th><td>Tank Reichenau</td></tr>
+                                        <tr><th><?php echo e(t('fuhrpark.spec.marke')); ?></th><td>Scania</td></tr>
+                                        <tr><th><?php echo e(t('fuhrpark.spec.kennzeichen')); ?></th><td>I-501IBK (A)</td></tr>
+                                        <tr><th><?php echo e(t('fuhrpark.spec.leistung')); ?></th><td>250 kW / 340 PS</td></tr>
+                                        <tr><th><?php echo e(t('fuhrpark.spec.baujahr')); ?></th><td>2003</td></tr>
+                                        <tr><th><?php echo e(t('fuhrpark.spec.aufbau')); ?></th><td>EMPL</td></tr>
+                                        <tr><th><?php echo e(t('fuhrpark.spec.funkrufname')); ?></th><td>Tank Reichenau</td></tr>
                                     </table>
                                     <div class="vehicle-equipment">
-                                        <h4><i class="fas fa-toolbox"></i> Gerätschaften</h4>
-                                        <p>2000 Liter Wassertank, 3 TWIN-PACK Atemschutzgeräte, Wärmebildkamera, Hochleistungslüfter, Schanzwerkzeug, Stromerzeuger 11 kV, sämtliche wasserführenden Armaturen für den Brandeinsatz und vieles mehr.</p>
+                                        <h4><i class="fas fa-toolbox"></i> <?php echo e(t('fuhrpark.equipment_heading')); ?></h4>
+                                        <p><?php echo e(t('fuhrpark.tlfh.equipment')); ?></p>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Kleinlöschfahrzeug Allrad KLF-A -->
                             <div class="vehicle-card" id="klf-a">
-                                <?php renderVehicleImages($vehiclePhotos['klf_a'] ?? [], 'Kleinlöschfahrzeug Allrad KLF-A'); ?>
+                                <?php renderVehicleImages($vehiclePhotos['klf_a'] ?? [], t('fuhrpark.klf_a.name')); ?>
                                 <div class="vehicle-info">
-                                    <h3><i class="fas fa-truck-pickup"></i> Kleinlöschfahrzeug Allrad – KLF-A</h3>
+                                    <h3><i class="fas fa-truck-pickup"></i> <?php echo e(t('fuhrpark.klf_a.heading')); ?></h3>
                                     <table class="vehicle-specs">
-                                        <tr><th>Marke</th><td>Mercedes, Sprinter</td></tr>
-                                        <tr><th>Kennzeichen</th><td>I-543IBK (A)</td></tr>
-                                        <tr><th>Leistung</th><td>115 kW / 156 PS</td></tr>
-                                        <tr><th>Baujahr</th><td>2005</td></tr>
-                                        <tr><th>Aufbau</th><td>EMPL</td></tr>
-                                        <tr><th>Funkrufname</th><td>KLF Reichenau</td></tr>
+                                        <tr><th><?php echo e(t('fuhrpark.spec.marke')); ?></th><td>Mercedes, Sprinter</td></tr>
+                                        <tr><th><?php echo e(t('fuhrpark.spec.kennzeichen')); ?></th><td>I-543IBK (A)</td></tr>
+                                        <tr><th><?php echo e(t('fuhrpark.spec.leistung')); ?></th><td>115 kW / 156 PS</td></tr>
+                                        <tr><th><?php echo e(t('fuhrpark.spec.baujahr')); ?></th><td>2005</td></tr>
+                                        <tr><th><?php echo e(t('fuhrpark.spec.aufbau')); ?></th><td>EMPL</td></tr>
+                                        <tr><th><?php echo e(t('fuhrpark.spec.funkrufname')); ?></th><td>KLF Reichenau</td></tr>
                                     </table>
                                     <div class="vehicle-equipment">
-                                        <h4><i class="fas fa-toolbox"></i> Gerätschaften</h4>
-                                        <p>3 Atemschutzgeräte, Schanzwerkzeug, Stromerzeuger 11 kV, sämtliche wasserführenden Armaturen für den Brandeinsatz und vieles mehr.</p>
+                                        <h4><i class="fas fa-toolbox"></i> <?php echo e(t('fuhrpark.equipment_heading')); ?></h4>
+                                        <p><?php echo e(t('fuhrpark.klf_a.equipment')); ?></p>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Transportfahrzeug LAST1 -->
                             <div class="vehicle-card" id="last1">
-                                <?php renderVehicleImages($vehiclePhotos['last1'] ?? [], 'Transportfahrzeug LAST1'); ?>
+                                <?php renderVehicleImages($vehiclePhotos['last1'] ?? [], t('fuhrpark.last1.name')); ?>
                                 <div class="vehicle-info">
-                                    <h3><i class="fas fa-truck-moving"></i> Transportfahrzeug – LAST1</h3>
+                                    <h3><i class="fas fa-truck-moving"></i> <?php echo e(t('fuhrpark.last1.heading')); ?></h3>
                                     <table class="vehicle-specs">
-                                        <tr><th>Marke</th><td>Ford, Ranger</td></tr>
-                                        <tr><th>Kennzeichen</th><td>I-537IBK (A)</td></tr>
-                                        <tr><th>Leistung</th><td>115 kW / 156 PS</td></tr>
-                                        <tr><th>Baujahr</th><td>2009</td></tr>
-                                        <tr><th>Aufbau</th><td>Eigenaufbau</td></tr>
-                                        <tr><th>Funkrufname</th><td>LAST1 Reichenau</td></tr>
+                                        <tr><th><?php echo e(t('fuhrpark.spec.marke')); ?></th><td>Ford, Ranger</td></tr>
+                                        <tr><th><?php echo e(t('fuhrpark.spec.kennzeichen')); ?></th><td>I-537IBK (A)</td></tr>
+                                        <tr><th><?php echo e(t('fuhrpark.spec.leistung')); ?></th><td>115 kW / 156 PS</td></tr>
+                                        <tr><th><?php echo e(t('fuhrpark.spec.baujahr')); ?></th><td>2009</td></tr>
+                                        <tr><th><?php echo e(t('fuhrpark.spec.aufbau')); ?></th><td><?php echo e(t('fuhrpark.aufbau.eigen')); ?></td></tr>
+                                        <tr><th><?php echo e(t('fuhrpark.spec.funkrufname')); ?></th><td>LAST1 Reichenau</td></tr>
                                     </table>
                                 </div>
                             </div>
 
                             <!-- Gefahrgutfahrzeug GGF -->
                             <div class="vehicle-card" id="ggf">
-                                <?php renderVehicleImages($vehiclePhotos['ggf'] ?? [], 'Gefahrgutfahrzeug GGF'); ?>
+                                <?php renderVehicleImages($vehiclePhotos['ggf'] ?? [], t('fuhrpark.ggf.name')); ?>
                                 <div class="vehicle-info">
-                                    <h3><i class="fas fa-biohazard"></i> Gefahrgutfahrzeug – GGF</h3>
+                                    <h3><i class="fas fa-biohazard"></i> <?php echo e(t('fuhrpark.ggf.heading')); ?></h3>
                                     <table class="vehicle-specs">
-                                        <tr><th>Marke</th><td>Mercedes, Atego Blue Tac</td></tr>
-                                        <tr><th>Kennzeichen</th><td>I-463IBK (A)</td></tr>
-                                        <tr><th>Leistung</th><td>160 kW / 220 PS</td></tr>
-                                        <tr><th>Baujahr</th><td>2011</td></tr>
-                                        <tr><th>Aufbau</th><td>EMPL</td></tr>
-                                        <tr><th>Funkrufname</th><td>GGF Reichenau</td></tr>
+                                        <tr><th><?php echo e(t('fuhrpark.spec.marke')); ?></th><td>Mercedes, Atego Blue Tac</td></tr>
+                                        <tr><th><?php echo e(t('fuhrpark.spec.kennzeichen')); ?></th><td>I-463IBK (A)</td></tr>
+                                        <tr><th><?php echo e(t('fuhrpark.spec.leistung')); ?></th><td>160 kW / 220 PS</td></tr>
+                                        <tr><th><?php echo e(t('fuhrpark.spec.baujahr')); ?></th><td>2011</td></tr>
+                                        <tr><th><?php echo e(t('fuhrpark.spec.aufbau')); ?></th><td>EMPL</td></tr>
+                                        <tr><th><?php echo e(t('fuhrpark.spec.funkrufname')); ?></th><td>GGF Reichenau</td></tr>
                                     </table>
                                     <div class="vehicle-equipment">
-                                        <h4><i class="fas fa-toolbox"></i> Gerätschaften</h4>
-                                        <p>Gehenddekostraße, Liegenddekostraße, 3 Schutzstufe III Anzüge, 6 Schutzstufe II Anzüge, 6 Einweganzüge, 1 ELRO-Schlauchquetschpumpe, 1 FLUX-Fasspumpe, Stromerzeuger 14 kV, Belüftungsgerät 230 V, Hochdruckanlage Kärcher, Stromschnellangriff, Luftschnellangriff, Öl- und Chemikalienbindemittel, 2 Faltbehälter und vieles mehr.</p>
+                                        <h4><i class="fas fa-toolbox"></i> <?php echo e(t('fuhrpark.equipment_heading')); ?></h4>
+                                        <p><?php echo e(t('fuhrpark.ggf.equipment')); ?></p>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Großpumpenhänger -->
                             <div class="vehicle-card" id="grosspumpe">
-                                <?php renderVehicleImages($vehiclePhotos['grosspumpe'] ?? [], 'Großpumpenhänger'); ?>
+                                <?php renderVehicleImages($vehiclePhotos['grosspumpe'] ?? [], t('fuhrpark.grosspumpe.name')); ?>
                                 <div class="vehicle-info">
-                                    <h3><i class="fas fa-water"></i> Großpumpenhänger</h3>
+                                    <h3><i class="fas fa-water"></i> <?php echo e(t('fuhrpark.grosspumpe.heading')); ?></h3>
                                     <table class="vehicle-specs">
-                                        <tr><th>Marke</th><td>Anhänger</td></tr>
-                                        <tr><th>Kennzeichen</th><td>I-574IBK (A)</td></tr>
-                                        <tr><th>Fördermenge</th><td>6000 Liter pro Minute</td></tr>
-                                        <tr><th>Baujahr</th><td>2007</td></tr>
-                                        <tr><th>Aufbau</th><td>Eigenaufbau – BF Innsbruck</td></tr>
-                                        <tr><th>Funkrufname</th><td>Großpumpe Reichenau</td></tr>
+                                        <tr><th><?php echo e(t('fuhrpark.spec.marke')); ?></th><td><?php echo e(t('fuhrpark.spec.anhaenger_value')); ?></td></tr>
+                                        <tr><th><?php echo e(t('fuhrpark.spec.kennzeichen')); ?></th><td>I-574IBK (A)</td></tr>
+                                        <tr><th><?php echo e(t('fuhrpark.spec.foerdermenge')); ?></th><td><?php echo e(t('fuhrpark.grosspumpe.foerdermenge_value')); ?></td></tr>
+                                        <tr><th><?php echo e(t('fuhrpark.spec.baujahr')); ?></th><td>2007</td></tr>
+                                        <tr><th><?php echo e(t('fuhrpark.spec.aufbau')); ?></th><td><?php echo e(t('fuhrpark.aufbau.eigen_bf')); ?></td></tr>
+                                        <tr><th><?php echo e(t('fuhrpark.spec.funkrufname')); ?></th><td>Großpumpe Reichenau</td></tr>
                                     </table>
                                     <div class="vehicle-equipment">
-                                        <h4><i class="fas fa-toolbox"></i> Gerätschaften</h4>
-                                        <p>A-Saugschläuche, A-Druckschläuche</p>
+                                        <h4><i class="fas fa-toolbox"></i> <?php echo e(t('fuhrpark.equipment_heading')); ?></h4>
+                                        <p><?php echo e(t('fuhrpark.grosspumpe.equipment')); ?></p>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Anhänger leicht -->
                             <div class="vehicle-card" id="anhaenger">
-                                <?php renderVehicleImages($vehiclePhotos['anhaenger'] ?? [], 'Anhänger leicht'); ?>
+                                <?php renderVehicleImages($vehiclePhotos['anhaenger'] ?? [], t('fuhrpark.anhaenger.name')); ?>
                                 <div class="vehicle-info">
-                                    <h3><i class="fas fa-trailer"></i> Anhänger leicht – bis 750 kg</h3>
-                                    <p>Der leichte Anhänger ist hauptsächlich für Materialtransport zum Einsatz oder nach einem Einsatz gedacht.</p>
+                                    <h3><i class="fas fa-trailer"></i> <?php echo e(t('fuhrpark.anhaenger.heading')); ?></h3>
+                                    <p><?php echo e(t('fuhrpark.anhaenger.description')); ?></p>
                                     <table class="vehicle-specs">
-                                        <tr><th>Baujahr</th><td>2005</td></tr>
-                                        <tr><th>Eigengewicht</th><td>380 kg</td></tr>
-                                        <tr><th>Nutzlast</th><td>370 kg</td></tr>
-                                        <tr><th>Gesamtgewicht</th><td>750 kg</td></tr>
+                                        <tr><th><?php echo e(t('fuhrpark.spec.baujahr')); ?></th><td>2005</td></tr>
+                                        <tr><th><?php echo e(t('fuhrpark.spec.eigengewicht')); ?></th><td>380 kg</td></tr>
+                                        <tr><th><?php echo e(t('fuhrpark.spec.nutzlast')); ?></th><td>370 kg</td></tr>
+                                        <tr><th><?php echo e(t('fuhrpark.spec.gesamtgewicht')); ?></th><td>750 kg</td></tr>
                                     </table>
                                 </div>
                             </div>
