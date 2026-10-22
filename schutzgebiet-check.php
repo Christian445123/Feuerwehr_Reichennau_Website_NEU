@@ -19,19 +19,20 @@
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/config/logging.php';
 require_once __DIR__ . '/config/schutzbereich.php';
+require_once __DIR__ . '/config/i18n.php';
 
 header('Content-Type: application/json; charset=utf-8');
 
 if (!isSchutzgebietCheckEnabled()) {
     http_response_code(404);
-    echo json_encode(['error' => 'Diese Funktion ist derzeit nicht aktiv.']);
+    echo json_encode(['error' => t('schutzgebiet_check.disabled')], JSON_UNESCAPED_UNICODE);
     exit;
 }
 
 $db = getDB();
 if (!checkRateLimit($db, 'schutzgebiet_check', 20, 300)) {
     http_response_code(429);
-    echo json_encode(['error' => 'Zu viele Anfragen. Bitte später erneut versuchen.']);
+    echo json_encode(['error' => t('schutzgebiet_check.rate_limit')], JSON_UNESCAPED_UNICODE);
     exit;
 }
 
@@ -40,7 +41,7 @@ $hausnummer = trim($_GET['hausnummer'] ?? '');
 
 if ($strasse === '' || mb_strlen($strasse) > 100 || mb_strlen($hausnummer) > 20) {
     http_response_code(400);
-    echo json_encode(['error' => 'Bitte eine gültige Straße angeben.']);
+    echo json_encode(['error' => t('schutzgebiet_check.invalid_street')], JSON_UNESCAPED_UNICODE);
     exit;
 }
 
@@ -77,7 +78,7 @@ curl_close($ch);
 
 if ($body === false || $status !== 200) {
     http_response_code(502);
-    echo json_encode(['error' => 'Die Adresssuche ist gerade nicht erreichbar. Bitte später erneut versuchen.']);
+    echo json_encode(['error' => t('schutzgebiet_check.lookup_unavailable')], JSON_UNESCAPED_UNICODE);
     exit;
 }
 

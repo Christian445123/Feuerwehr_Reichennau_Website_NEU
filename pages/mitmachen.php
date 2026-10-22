@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['mitmachen_submit'])) 
     }
 
     if (!checkRateLimit($db, 'mitmachen_contact_form', 5, 3600)) {
-        $formErrors[] = 'Zu viele Anfragen. Bitte versuche es später erneut.';
+        $formErrors[] = t('jugend.error.rate_limit');
     }
 
     $csrfOk = hash_equals($_SESSION['mitmachen_csrf'], $_POST['csrf_token'] ?? '');
@@ -33,16 +33,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['mitmachen_submit'])) 
         logActivity($db, 'public.honeypot_catch', 'Mitmachen-Formular', null, 'Öffentliche Website');
     }
     if (!$csrfOk || !$honeypotOk) {
-        $formErrors[] = 'Ungültige Anfrage. Bitte lade die Seite neu und versuche es erneut.';
+        $formErrors[] = t('jugend.error.invalid_request');
     }
     if ($formData['vorname'] === '' || $formData['nachname'] === '') {
-        $formErrors[] = 'Bitte gib Vor- und Nachname an.';
+        $formErrors[] = t('jugend.error.name_required');
     }
     if ($formData['email'] === '' || !filter_var($formData['email'], FILTER_VALIDATE_EMAIL)) {
-        $formErrors[] = 'Bitte gib eine gültige E-Mail-Adresse an.';
+        $formErrors[] = t('jugend.error.email_invalid');
     }
     if ($formData['nachricht'] === '') {
-        $formErrors[] = 'Bitte gib eine Nachricht ein.';
+        $formErrors[] = t('jugend.error.message_required');
     }
 
     if (empty($formErrors)) {
@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['mitmachen_submit'])) 
             header('Location: index.php?page=mitmachen&sent=1#kontakt');
             exit;
         }
-        $formErrors[] = 'Die Nachricht konnte leider nicht versendet werden. Bitte versuche es später erneut oder schreibe direkt an reichenau@feuerwehr.tirol.';
+        $formErrors[] = t('jugend.error.send_failed');
     }
 }
 
@@ -81,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['mitmachen_submit'])) 
 $contactPersons = [];
 $orgStmt = $db->prepare("SELECT name FROM org_chart_positions WHERE position_key = ?");
 $memberStmt = $db->prepare("SELECT * FROM members WHERE CONCAT(firstname, ' ', lastname) = ? LIMIT 1");
-foreach ([['kommandant', 'Kommandant'], ['kommandant_stv', 'Kommandant-Stv.']] as [$posKey, $role]) {
+foreach ([['kommandant', t('orgchart.position.kommandant')], ['kommandant_stv', t('orgchart.position.kommandant_stv')]] as [$posKey, $role]) {
     $orgStmt->execute([$posKey]);
     $fullName = trim((string) $orgStmt->fetchColumn());
     if ($fullName === '') continue;
@@ -94,44 +94,44 @@ foreach ([['kommandant', 'Kommandant'], ['kommandant_stv', 'Kommandant-Stv.']] a
 ?>
     <section class="mitmachen-hero">
         <div class="container">
-            <h1>Werde Teil<br>unserer Mannschaft!</h1>
+            <h1><?php echo t('mitmachen.hero_title'); ?></h1>
             <div class="mitmachen-questions">
-                <p>Du bist zwischen<br>16 und 65 Jahre alt?</p>
-                <p>Du möchtest dich ehrenamtlich engagieren und Menschen in Not helfen?</p>
-                <p>Du suchst Zusammenhalt und Kameradschaft?</p>
+                <p><?php echo t('mitmachen.question_1'); ?></p>
+                <p><?php echo e(t('mitmachen.question_2')); ?></p>
+                <p><?php echo e(t('mitmachen.question_3')); ?></p>
             </div>
-            <h2>Dann bist du bei der Freiwilligen Feuerwehr Reichenau genau richtig!</h2>
+            <h2><?php echo e(t('mitmachen.hero_cta')); ?></h2>
         </div>
     </section>
 
     <section class="section">
         <div class="container jugend-narrow">
-            <h2 class="jugend-h2">Dein Einsatz zählt</h2>
-            <p>Unsere Mannschaft besteht aus motivierten Frauen und Männern verschiedenster Berufe, Lebenswege und Altersgruppen.</p>
-            <p>Was uns verbindet? Der Wille, zu helfen, wenn andere Hilfe brauchen – sei es bei Bränden, Naturkatastrophen, technischen Einsätzen oder Gefahrguteinsätzen.</p>
+            <h2 class="jugend-h2"><?php echo e(t('mitmachen.counts_heading')); ?></h2>
+            <p><?php echo e(t('mitmachen.counts_p1')); ?></p>
+            <p><?php echo e(t('mitmachen.counts_p2')); ?></p>
         </div>
 
         <div class="container">
             <div class="feature-grid">
                 <div class="feature-card">
                     <div class="feature-icon"><i class="fas fa-hand-holding-heart"></i></div>
-                    <h3>Sinnvolles Engagement</h3>
-                    <p>Du hilfst Menschen in deiner Umgebung und leistest einen wichtigen Beitrag zur Sicherheit unserer Stadt.</p>
+                    <h3><?php echo e(t('mitmachen.feature1_title')); ?></h3>
+                    <p><?php echo e(t('mitmachen.feature1_text')); ?></p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon"><i class="fas fa-people-group"></i></div>
-                    <h3>Teamspirit &amp; Kameradschaft</h3>
-                    <p>Du wirst Teil einer starken Gemeinschaft.</p>
+                    <h3><?php echo e(t('mitmachen.feature2_title')); ?></h3>
+                    <p><?php echo e(t('mitmachen.feature2_text')); ?></p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon"><i class="fas fa-book-open"></i></div>
-                    <h3>Wissen fürs Leben</h3>
-                    <p>Technisches Know-how, Erste Hilfe, Funk &amp; Einsatzführung.</p>
+                    <h3><?php echo e(t('mitmachen.feature3_title')); ?></h3>
+                    <p><?php echo e(t('mitmachen.feature3_text')); ?></p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon"><i class="fas fa-dumbbell"></i></div>
-                    <h3>Körperliche &amp; geistige Herausforderung</h3>
-                    <p>Für alle, die sich weiterentwickeln wollen.</p>
+                    <h3><?php echo e(t('mitmachen.feature4_title')); ?></h3>
+                    <p><?php echo e(t('mitmachen.feature4_text')); ?></p>
                 </div>
             </div>
         </div>
@@ -142,20 +142,20 @@ foreach ([['kommandant', 'Kommandant'], ['kommandant_stv', 'Kommandant-Stv.']] a
         <div class="container jugend-narrow">
             <div class="schutzgebiet-check-card">
                 <div class="schutzgebiet-check-badge"><i class="fas fa-location-crosshairs"></i></div>
-                <h2>Bin ich im Schutzgebiet der FF Reichenau?</h2>
-                <p>Gib deine Straße und Hausnummer ein - wir sagen dir, ob du im Schutzgebiet der Freiwilligen Feuerwehr Reichenau wohnst oder dich an eine andere Freiwillige Feuerwehr wenden musst.</p>
+                <h2><?php echo e(t('mitmachen.check_heading')); ?></h2>
+                <p><?php echo e(t('mitmachen.check_text')); ?></p>
 
                 <form id="schutzgebietCheckForm" class="schutzgebiet-check-form" onsubmit="return false;">
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="sgStrasse">Straße</label>
-                            <input type="text" id="sgStrasse" name="strasse" placeholder="z.&nbsp;B. Rossaugasse" required>
+                            <label for="sgStrasse"><?php echo e(t('mitmachen.check_street')); ?></label>
+                            <input type="text" id="sgStrasse" name="strasse" placeholder="<?php echo e(t('mitmachen.check_street_placeholder')); ?>" required>
                         </div>
                         <div class="form-group schutzgebiet-check-hausnr">
-                            <label for="sgHausnummer">Hausnr.</label>
+                            <label for="sgHausnummer"><?php echo e(t('mitmachen.check_housenumber')); ?></label>
                             <input type="text" id="sgHausnummer" name="hausnummer" placeholder="4">
                         </div>
-                        <button type="submit" class="btn btn-primary" id="sgCheckBtn"><i class="fas fa-magnifying-glass-location"></i> Prüfen</button>
+                        <button type="submit" class="btn btn-primary" id="sgCheckBtn"><i class="fas fa-magnifying-glass-location"></i> <?php echo e(t('mitmachen.check_button')); ?></button>
                     </div>
                 </form>
 
@@ -167,7 +167,7 @@ foreach ([['kommandant', 'Kommandant'], ['kommandant_stv', 'Kommandant-Stv.']] a
                     </div>
                 </div>
 
-                <p class="form-hint schutzgebiet-check-hint"><i class="fas fa-circle-info"></i> Die Prüfung basiert auf der <a href="index.php?page=schutzbereich">eingezeichneten Fläche</a> und ist eine Annäherung, keine amtliche Auskunft.</p>
+                <p class="form-hint schutzgebiet-check-hint"><i class="fas fa-circle-info"></i> <?php echo t('mitmachen.check_hint', ['link' => '<a href="index.php?page=schutzbereich">' . e(t('mitmachen.check_hint_link')) . '</a>']); ?></p>
             </div>
         </div>
     </section>
@@ -177,13 +177,13 @@ foreach ([['kommandant', 'Kommandant'], ['kommandant_stv', 'Kommandant-Stv.']] a
         <div class="container">
             <div class="einsatzgebiet-gallery">
                 <div class="einsatzgebiet-gallery-item">
-                    <img src="assets/images/mitmachen/mitmachen_01.jpg" alt="Mannschaft im Einsatz" data-lightbox-group="mitmachen" loading="lazy">
+                    <img src="assets/images/mitmachen/mitmachen_01.jpg" alt="<?php echo e(t('mitmachen.gallery_alt')); ?>" data-lightbox-group="mitmachen" loading="lazy">
                 </div>
                 <div class="einsatzgebiet-gallery-item">
-                    <img src="assets/images/mitmachen/mitmachen_02.jpg" alt="Mannschaft im Einsatz" data-lightbox-group="mitmachen" loading="lazy">
+                    <img src="assets/images/mitmachen/mitmachen_02.jpg" alt="<?php echo e(t('mitmachen.gallery_alt')); ?>" data-lightbox-group="mitmachen" loading="lazy">
                 </div>
                 <div class="einsatzgebiet-gallery-item">
-                    <img src="assets/images/mitmachen/mitmachen_03.jpg" alt="Stationsbetrieb Regelangriff" data-lightbox-group="mitmachen" loading="lazy">
+                    <img src="assets/images/mitmachen/mitmachen_03.jpg" alt="<?php echo e(t('mitmachen.gallery_alt_3')); ?>" data-lightbox-group="mitmachen" loading="lazy">
                 </div>
             </div>
         </div>
@@ -192,20 +192,20 @@ foreach ([['kommandant', 'Kommandant'], ['kommandant_stv', 'Kommandant-Stv.']] a
     <section class="section section-dark">
         <div class="container jugend-narrow">
             <div class="section-header">
-                <h2 class="section-title">Warum du dabei sein solltest:</h2>
+                <h2 class="section-title"><?php echo e(t('mitmachen.why_heading')); ?></h2>
             </div>
-            <h3 class="jugend-h2" style="color: var(--color-white);">Kein Vorwissen?<br>Kein Problem!</h3>
-            <p>Du brauchst keine Vorkenntnisse oder spezielle Ausbildung. Alles, was du mitbringen musst, ist Bereitschaft, Teamgeist und Verlässlichkeit. Deine Ausbildung erhältst du bei uns – Schritt für Schritt, in Theorie und Praxis.</p>
-            <p>Wir freuen uns über jede neue Verstärkung – egal ob du 16, 30 oder 50 bist und eine neue Herausforderung suchst.</p>
+            <h3 class="jugend-h2" style="color: var(--color-white);"><?php echo t('mitmachen.no_experience'); ?></h3>
+            <p><?php echo e(t('mitmachen.no_experience_p1')); ?></p>
+            <p><?php echo e(t('mitmachen.no_experience_p2')); ?></p>
 
             <div class="content-card" style="text-align: left; margin-top: 30px;">
                 <div class="content-card-header">
                     <div class="content-card-icon"><i class="fas fa-shoe-prints"></i></div>
-                    <h2>So kannst du mitmachen</h2>
+                    <h2><?php echo e(t('mitmachen.how_heading')); ?></h2>
                 </div>
                 <div class="content-card-body">
-                    <p>Nimm Kontakt mit uns auf und komm zu einem unserer Übungs- oder Schulungsabende vorbei. Wir zeigen dir gerne, wie die Feuerwehr Reichenau arbeitet und beantworten alle deine Fragen.</p>
-                    <p><strong>Wichtiger Hinweis:</strong> Um aktives Mitglied der FF Reichenau zu werden, musst du deinen ständigen Wohnsitz im Schutzgebiet unserer Feuerwehr haben. Alle Infos dazu findest du <a href="index.php?page=schutzbereich">hier</a>.</p>
+                    <p><?php echo e(t('mitmachen.how_p1')); ?></p>
+                    <p><strong><?php echo e(t('mitmachen.how_notice_bold')); ?></strong> <?php echo t('mitmachen.how_notice_rest', ['link' => '<a href="index.php?page=schutzbereich">' . e(t('mitmachen.how_notice_link')) . '</a>']); ?></p>
                 </div>
             </div>
         </div>
@@ -217,12 +217,12 @@ foreach ([['kommandant', 'Kommandant'], ['kommandant_stv', 'Kommandant-Stv.']] a
                 <div class="content-card">
                     <div class="content-card-header">
                         <div class="content-card-icon"><i class="fas fa-envelope-open-text"></i></div>
-                        <h2>Du hast Fragen oder willst gleich loslegen?</h2>
+                        <h2><?php echo e(t('jugend.contact_intro_question')); ?></h2>
                     </div>
                     <div class="content-card-body">
                         <?php if ($formSent): ?>
                             <div class="form-alert form-alert-success">
-                                <p>Vielen Dank für deine Nachricht! Wir melden uns bei dir.</p>
+                                <p><?php echo e(t('jugend.form_success')); ?></p>
                             </div>
                         <?php else: ?>
                             <?php if (!empty($formErrors)): ?>
@@ -239,26 +239,26 @@ foreach ([['kommandant', 'Kommandant'], ['kommandant_stv', 'Kommandant-Stv.']] a
 
                                 <div class="form-row">
                                     <div class="form-group">
-                                        <label for="mm_vorname">Vorname <span class="req">(*)</span></label>
+                                        <label for="mm_vorname"><?php echo e(t('jugend.label_vorname')); ?> <span class="req">(*)</span></label>
                                         <input type="text" id="mm_vorname" name="vorname" required value="<?php echo htmlspecialchars($formData['vorname']); ?>">
                                     </div>
                                     <div class="form-group">
-                                        <label for="mm_nachname">Nachname <span class="req">(*)</span></label>
+                                        <label for="mm_nachname"><?php echo e(t('jugend.label_nachname')); ?> <span class="req">(*)</span></label>
                                         <input type="text" id="mm_nachname" name="nachname" required value="<?php echo htmlspecialchars($formData['nachname']); ?>">
                                     </div>
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="mm_email">E-Mail-Adresse <span class="req">(*)</span></label>
+                                    <label for="mm_email"><?php echo e(t('jugend.label_email')); ?> <span class="req">(*)</span></label>
                                     <input type="email" id="mm_email" name="email" required value="<?php echo htmlspecialchars($formData['email']); ?>">
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="mm_nachricht">Deine Nachricht <span class="req">(*)</span></label>
+                                    <label for="mm_nachricht"><?php echo e(t('jugend.label_nachricht')); ?> <span class="req">(*)</span></label>
                                     <textarea id="mm_nachricht" name="nachricht" rows="4" required><?php echo htmlspecialchars($formData['nachricht']); ?></textarea>
                                 </div>
 
-                                <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Abschicken</button>
+                                <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> <?php echo e(t('jugend.submit')); ?></button>
                             </form>
                         <?php endif; ?>
                     </div>
@@ -282,6 +282,18 @@ foreach ([['kommandant', 'Kommandant'], ['kommandant_stv', 'Kommandant-Stv.']] a
 
 <?php if (isSchutzgebietCheckEnabled()): ?>
 <script>
+var sgCheckI18n = <?php echo json_encode([
+    'checking' => t('mitmachen.check_checking'),
+    'checkButton' => t('mitmachen.check_button'),
+    'errorTitle' => t('mitmachen.check_error_title'),
+    'notFoundTitle' => t('mitmachen.check_not_found_title'),
+    'notFoundDesc' => t('mitmachen.check_not_found_desc'),
+    'yesTitle' => t('mitmachen.check_yes_title'),
+    'yesDesc' => t('mitmachen.check_yes_desc'),
+    'noTitle' => t('mitmachen.check_no_title'),
+    'noDesc' => t('mitmachen.check_no_desc'),
+    'networkError' => t('mitmachen.check_network_error'),
+], JSON_UNESCAPED_UNICODE); ?>;
 document.addEventListener('DOMContentLoaded', function () {
     var form = document.getElementById('schutzgebietCheckForm');
     if (!form) return;
@@ -309,25 +321,25 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!strasse) return;
 
         btn.disabled = true;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Wird geprüft...';
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ' + sgCheckI18n.checking;
         resultBox.style.display = 'none';
 
         var url = 'schutzgebiet-check.php?strasse=' + encodeURIComponent(strasse) + '&hausnummer=' + encodeURIComponent(hausnummer);
         fetch(url).then(function (r) { return r.json(); }).then(function (data) {
             if (data.error) {
-                showResult('error', 'fa-triangle-exclamation', 'Das hat nicht geklappt', data.error);
+                showResult('error', 'fa-triangle-exclamation', sgCheckI18n.errorTitle, data.error);
             } else if (!data.found) {
-                showResult('unknown', 'fa-circle-question', 'Adresse nicht gefunden', 'Bitte die Schreibweise von Straße und Hausnummer prüfen.');
+                showResult('unknown', 'fa-circle-question', sgCheckI18n.notFoundTitle, sgCheckI18n.notFoundDesc);
             } else if (data.in_schutzgebiet) {
-                showResult('yes', 'fa-circle-check', 'Du bist im Schutzgebiet!', 'Schön, dass du bei der <strong>Freiwilligen Feuerwehr Reichenau</strong> dabei sein möchtest.');
+                showResult('yes', 'fa-circle-check', sgCheckI18n.yesTitle, sgCheckI18n.yesDesc);
             } else {
-                showResult('no', 'fa-circle-info', 'Außerhalb unseres Schutzgebiets', 'Bitte wende dich an die für deinen Wohnort zuständige Freiwillige Feuerwehr.');
+                showResult('no', 'fa-circle-info', sgCheckI18n.noTitle, sgCheckI18n.noDesc);
             }
         }).catch(function () {
-            showResult('error', 'fa-triangle-exclamation', 'Das hat nicht geklappt', 'Die Prüfung ist gerade nicht möglich. Bitte später erneut versuchen.');
+            showResult('error', 'fa-triangle-exclamation', sgCheckI18n.errorTitle, sgCheckI18n.networkError);
         }).finally(function () {
             btn.disabled = false;
-            btn.innerHTML = '<i class="fas fa-magnifying-glass-location"></i> Prüfen';
+            btn.innerHTML = '<i class="fas fa-magnifying-glass-location"></i> ' + sgCheckI18n.checkButton;
         });
     });
 });
