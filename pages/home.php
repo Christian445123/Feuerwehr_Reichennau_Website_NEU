@@ -20,28 +20,29 @@
         <div class="hero-overlay"></div>
         <div class="hero-content">
             <img src="assets/images/logo_feuerwehr_tirol.png" alt="Freiwillige Feuerwehr Reichenau" class="hero-logo">
-            <p class="hero-location"><i class="fas fa-map-marker-alt"></i> Innsbruck Stadt</p>
-            <p class="hero-tagline">Mit Herz und Zusammenhalt im Einsatz - ehrenamtlich, rund um die Uhr, für Innsbruck und darüber hinaus.</p>
+            <p class="hero-location"><i class="fas fa-map-marker-alt"></i> <?php echo e(t('home.location')); ?></p>
+            <p class="hero-tagline"><?php echo e(t('home.tagline')); ?></p>
             <div class="hero-buttons">
-                <a href="index.php?page=kontakt" class="btn btn-primary"><i class="fas fa-hands-helping"></i> Mitmachen</a>
-                <a href="index.php?page=mannschaft" class="btn btn-outline"><i class="fas fa-info-circle"></i> Mehr erfahren</a>
+                <a href="index.php?page=kontakt" class="btn btn-primary"><i class="fas fa-hands-helping"></i> <?php echo e(t('nav.mitmachen')); ?></a>
+                <a href="index.php?page=mannschaft" class="btn btn-outline"><i class="fas fa-info-circle"></i> <?php echo e(t('home.learn_more')); ?></a>
             </div>
 
-            <div class="hero-readiness" role="img" aria-label="Status: <?php echo $einsatzbereit ? 'Einsatzbereit' : 'Nicht einsatzbereit'; ?>">
+            <?php $readinessLabel = $einsatzbereit ? t('home.ready') : t('home.not_ready'); ?>
+            <div class="hero-readiness" role="img" aria-label="<?php echo e(t('home.status_label', ['status' => $readinessLabel])); ?>">
                 <span class="hero-readiness-track <?php echo $einsatzbereit ? 'is-ready' : 'is-not-ready'; ?>">
                     <span class="hero-readiness-thumb"><i class="fas <?php echo $einsatzbereit ? 'fa-check' : 'fa-xmark'; ?>"></i></span>
                 </span>
-                <span class="hero-readiness-label <?php echo $einsatzbereit ? 'is-ready' : 'is-not-ready'; ?>"><?php echo $einsatzbereit ? 'Einsatzbereit' : 'Nicht einsatzbereit'; ?></span>
+                <span class="hero-readiness-label <?php echo $einsatzbereit ? 'is-ready' : 'is-not-ready'; ?>"><?php echo e($readinessLabel); ?></span>
             </div>
         </div>
     </section>
 
     <!-- Info-Balken am Übergang Hero -> Statistik -->
     <div class="hero-bar">
-        <div class="hero-bar-item"><strong data-count="24">24</strong><span>Stunden am Tag</span></div>
-        <div class="hero-bar-item"><strong data-count="7">7</strong><span>Tage die Woche</span></div>
-        <div class="hero-bar-item"><strong data-count="365">365</strong><span>Tage im Jahr</span></div>
-        <a href="tel:122" class="hero-bar-call"><i class="fas fa-phone"></i> 122 Feuerwehr Notruf</a>
+        <div class="hero-bar-item"><strong data-count="24">24</strong><span><?php echo e(t('home.hours_per_day')); ?></span></div>
+        <div class="hero-bar-item"><strong data-count="7">7</strong><span><?php echo e(t('home.days_per_week')); ?></span></div>
+        <div class="hero-bar-item"><strong data-count="365">365</strong><span><?php echo e(t('home.days_per_year')); ?></span></div>
+        <a href="tel:122" class="hero-bar-call"><i class="fas fa-phone"></i> <?php echo e(t('home.emergency_call')); ?></a>
     </div>
 
     <?php
@@ -59,27 +60,27 @@
                 <div class="stat-card">
                     <div class="stat-icon"><i class="fas fa-fire"></i></div>
                     <div class="stat-number" data-count="<?php echo $stats['brand']; ?>"><?php echo $stats['brand']; ?></div>
-                    <div class="stat-label">Brandeinsätze</div>
+                    <div class="stat-label"><?php echo e(t('alarmierungen.stat_brand')); ?></div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon"><i class="fas fa-tools"></i></div>
                     <div class="stat-number" data-count="<?php echo $stats['technisch']; ?>"><?php echo $stats['technisch']; ?></div>
-                    <div class="stat-label">Technische Einsätze</div>
+                    <div class="stat-label"><?php echo e(t('alarmierungen.stat_technisch')); ?></div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon"><i class="fas fa-biohazard"></i></div>
                     <div class="stat-number" data-count="<?php echo $stats['abc']; ?>"><?php echo $stats['abc']; ?></div>
-                    <div class="stat-label">ABC-Einsätze</div>
+                    <div class="stat-label"><?php echo e(t('alarmierungen.stat_abc')); ?></div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon"><i class="fas fa-bell"></i></div>
                     <div class="stat-number" data-count="<?php echo $stats['einsatz_gesamt']; ?>"><?php echo $stats['einsatz_gesamt']; ?></div>
-                    <div class="stat-label">Einsätze gesamt</div>
+                    <div class="stat-label"><?php echo e(t('alarmierungen.stat_total')); ?></div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon"><i class="fas fa-users"></i></div>
                     <div class="stat-number">24/7</div>
-                    <div class="stat-label">Einsatzbereit</div>
+                    <div class="stat-label"><?php echo e(t('home.ready')); ?></div>
                 </div>
             </div>
         </div>
@@ -89,77 +90,71 @@
     <section class="section">
         <div class="container">
             <div class="section-header">
-                <h2 class="section-title">Aktuelle Einsätze &amp; Berichte</h2>
-                <p class="section-subtitle">Die neuesten Aktivitäten unserer Feuerwehr</p>
+                <h2 class="section-title"><?php echo e(t('home.recent_heading')); ?></h2>
+                <p class="section-subtitle"><?php echo e(t('home.recent_subtitle')); ?></p>
             </div>
 
             <?php
             $recentReports = $db->query("SELECT r.*, (SELECT ri.filename FROM report_images ri WHERE ri.report_id = r.id ORDER BY ri.sort_order LIMIT 1) as thumb FROM reports r WHERE r.published = 1 ORDER BY r.date DESC, r.created_at DESC LIMIT 6")->fetchAll();
             $categoryIcons = ['einsatz' => 'fa-fire', 'uebung' => 'fa-dumbbell', 'jugend' => 'fa-child', 'veranstaltungen' => 'fa-calendar-alt', 'sonstige' => 'fa-newspaper'];
-            $categoryLabels = ['einsatz' => 'Einsatz', 'uebung' => 'Übung', 'jugend' => 'Jugend', 'veranstaltungen' => 'Veranstaltung', 'sonstige' => 'Sonstiges'];
-            $subcategoryLabelsHome = ['brand' => 'Brand', 'technisch' => 'Technisch', 'abc' => 'ABC', 'unterstuetzung' => 'Unterstützung', 'sonstiges' => 'Sonstiges'];
             ?>
 
             <?php if (!empty($recentReports)): ?>
             <div class="news-grid">
                 <?php foreach ($recentReports as $r): ?>
                 <a href="index.php?page=berichte&id=<?php echo $r['id']; ?>" class="news-card">
+                    <?php $homeTitle = getLocalizedReportTitle($r); ?>
                     <div class="news-card-media<?php echo !$r['thumb'] ? ' news-card-media-fallback' : ''; ?>">
                         <?php if ($r['thumb']): ?>
-                            <img src="uploads/<?php echo htmlspecialchars($r['thumb']); ?>" alt="<?php echo htmlspecialchars($r['title']); ?>" loading="lazy">
+                            <img src="uploads/<?php echo htmlspecialchars($r['thumb']); ?>" alt="<?php echo htmlspecialchars($homeTitle); ?>" loading="lazy">
                         <?php else: ?>
                             <i class="fas <?php echo $categoryIcons[$r['category']] ?? 'fa-newspaper'; ?>"></i>
                         <?php endif; ?>
                     </div>
                     <div class="news-card-tags">
-                        <span class="news-card-badge news-badge-<?php echo htmlspecialchars($r['category']); ?>"><?php echo htmlspecialchars($categoryLabels[$r['category']] ?? ucfirst($r['category'])); ?></span>
+                        <span class="news-card-badge news-badge-<?php echo htmlspecialchars($r['category']); ?>"><?php echo e(getLocalizedReportCategoryLabel($r['category'])); ?></span>
                         <?php foreach (getReportSubcategoryList($r['subcategory'] ?? '') as $sub): ?>
-                            <?php if (isset($subcategoryLabelsHome[$sub])): ?>
-                                <span class="news-card-badge news-badge-sub"><?php echo htmlspecialchars($subcategoryLabelsHome[$sub]); ?></span>
-                            <?php endif; ?>
+                            <span class="news-card-badge news-badge-sub"><?php echo e(getLocalizedReportSubcategoryLabel($sub)); ?></span>
                         <?php endforeach; ?>
                         <?php if (!empty($r['category2'])): ?>
-                            <span class="news-card-badge news-badge-<?php echo htmlspecialchars($r['category2']); ?>"><?php echo htmlspecialchars($categoryLabels[$r['category2']] ?? ucfirst($r['category2'])); ?></span>
+                            <span class="news-card-badge news-badge-<?php echo htmlspecialchars($r['category2']); ?>"><?php echo e(getLocalizedReportCategoryLabel($r['category2'])); ?></span>
                             <?php foreach (getReportSubcategoryList($r['subcategory2'] ?? '') as $sub2): ?>
-                                <?php if (isset($subcategoryLabelsHome[$sub2])): ?>
-                                    <span class="news-card-badge news-badge-sub"><?php echo htmlspecialchars($subcategoryLabelsHome[$sub2]); ?></span>
-                                <?php endif; ?>
+                                <span class="news-card-badge news-badge-sub"><?php echo e(getLocalizedReportSubcategoryLabel($sub2)); ?></span>
                             <?php endforeach; ?>
                         <?php endif; ?>
                     </div>
                     <div class="news-card-overlay">
-                        <h3 class="news-card-title"><?php echo htmlspecialchars($r['title']); ?></h3>
+                        <h3 class="news-card-title"><?php echo htmlspecialchars($homeTitle); ?></h3>
                         <div class="news-card-date"><i class="fas fa-calendar-alt"></i> <?php echo date('d.m.Y', strtotime($r['date'])); ?></div>
                     </div>
                 </a>
                 <?php endforeach; ?>
             </div>
             <?php else: ?>
-            <p style="text-align:center; color: #6c757d;">Noch keine Berichte vorhanden.</p>
+            <p style="text-align:center; color: #6c757d;"><?php echo e(t('home.no_reports_yet')); ?></p>
             <?php endif; ?>
 
             <div class="section-cta">
-                <a href="index.php?page=berichte" class="btn btn-primary"><i class="fas fa-newspaper"></i> Alle Berichte ansehen</a>
+                <a href="index.php?page=berichte" class="btn btn-primary"><i class="fas fa-newspaper"></i> <?php echo e(t('einsatzgebiet.all_reports')); ?></a>
             </div>
         </div>
     </section>
 
     <!-- Letzte Alarmierungen -->
     <?php
-    $subcategoryLabels = ['brand' => 'Brand', 'technisch' => 'Technisch', 'abc' => 'ABC', 'unterstuetzung' => 'Unterstützung', 'sonstiges' => 'Sonstiges'];
     // Berücksichtigt auch Berichte, bei denen "Einsatz" nur die zweite
     // Kategorie ist (z.B. eine Übung mit tatsächlichem Einsatz).
     // Jeder Bericht, der irgendwo (erste oder zweite Kategorie) mit
     // "Einsatz" markiert ist - auch eine Übung, bei der zusätzlich ein
     // Einsatz stattfand.
-    $latestEinsaetze = $db->query("SELECT title, date, IF(category = 'einsatz', subcategory, subcategory2) as subcategory FROM reports WHERE (published = 1 OR show_in_alarmierungen = 1) AND (category = 'einsatz' OR category2 = 'einsatz') ORDER BY date DESC, created_at DESC LIMIT 5")->fetchAll();
+    $latestEinsaetze = $db->query("SELECT title, title_en, date, IF(category = 'einsatz', subcategory, subcategory2) as subcategory FROM reports WHERE (published = 1 OR show_in_alarmierungen = 1) AND (category = 'einsatz' OR category2 = 'einsatz') ORDER BY date DESC, created_at DESC LIMIT 5")->fetchAll();
     ?>
     <?php if (!empty($latestEinsaetze)): ?>
     <section class="section section-dark">
         <div class="container">
             <div class="section-header">
-                <h2 class="section-title">Die letzten 5 Alarmierungen</h2>
-                <p class="section-subtitle">Immer aktuell informiert</p>
+                <h2 class="section-title"><?php echo e(t('alarmierungen.latest_heading')); ?></h2>
+                <p class="section-subtitle"><?php echo e(t('home.always_informed')); ?></p>
             </div>
             <div class="alarm-timeline alarm-timeline-dark">
                 <?php foreach ($latestEinsaetze as $e): ?>
@@ -167,12 +162,12 @@
                         <div class="alarm-timeline-dot"></div>
                         <div class="alarm-timeline-date"><?php echo htmlspecialchars($e['date']); ?></div>
                         <div class="alarm-timeline-type"><?php echo htmlspecialchars(getReportSubcategoryLabelText($e['subcategory'])); ?></div>
-                        <div class="alarm-timeline-title"><?php echo htmlspecialchars($e['title']); ?></div>
+                        <div class="alarm-timeline-title"><?php echo htmlspecialchars(getLocalizedReportTitle($e)); ?></div>
                     </div>
                 <?php endforeach; ?>
             </div>
             <div class="section-cta">
-                <a href="index.php?page=alarmierungen" class="btn btn-primary"><i class="fas fa-bell"></i> Alle Alarmierungen ansehen</a>
+                <a href="index.php?page=alarmierungen" class="btn btn-primary"><i class="fas fa-bell"></i> <?php echo e(t('home.all_alerts')); ?></a>
             </div>
         </div>
     </section>

@@ -318,4 +318,21 @@ return [
     'alarmierungen.embed_note' => 'Die Live-Ansicht des Landes-Feuerwehrverbands lässt sich auf unserer Seite nicht zuverlässig einbetten (die fremde Seite ändert sich immer wieder, ohne dass wir das beeinflussen können). Am schnellsten öffnest du sie direkt in einem neuen Tab:',
     'alarmierungen.open_tirol' => 'Aktuelle Alarmierungen Tirol öffnen',
 
+    // Seite: Startseite
+    'home.location' => 'Innsbruck Stadt',
+    'home.tagline' => 'Mit Herz und Zusammenhalt im Einsatz - ehrenamtlich, rund um die Uhr, für Innsbruck und darüber hinaus.',
+    'home.learn_more' => 'Mehr erfahren',
+    'home.ready' => 'Einsatzbereit',
+    'home.not_ready' => 'Nicht einsatzbereit',
+    'home.status_label' => 'Status: {{status}}',
+    'home.hours_per_day' => 'Stunden am Tag',
+    'home.days_per_week' => 'Tage die Woche',
+    'home.days_per_year' => 'Tage im Jahr',
+    'home.emergency_call' => '122 Feuerwehr Notruf',
+    'home.recent_heading' => 'Aktuelle Einsätze & Berichte',
+    'home.recent_subtitle' => 'Die neuesten Aktivitäten unserer Feuerwehr',
+    'home.no_reports_yet' => 'Noch keine Berichte vorhanden.',
+    'home.always_informed' => 'Immer aktuell informiert',
+    'home.all_alerts' => 'Alle Alarmierungen ansehen',
+
 ];

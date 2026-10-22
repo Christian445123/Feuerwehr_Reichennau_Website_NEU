@@ -318,4 +318,21 @@ return [
     'alarmierungen.embed_note' => 'The live view from the State Fire Brigade Association cannot be reliably embedded on our site (the external site changes repeatedly, beyond our control). The fastest way is to open it directly in a new tab:',
     'alarmierungen.open_tirol' => 'Open Current Call-outs Tyrol',
 
+    // Page: Home
+    'home.location' => 'Innsbruck City',
+    'home.tagline' => 'With heart and solidarity in action - volunteering around the clock, for Innsbruck and beyond.',
+    'home.learn_more' => 'Learn More',
+    'home.ready' => 'Ready for Action',
+    'home.not_ready' => 'Not Ready for Action',
+    'home.status_label' => 'Status: {{status}}',
+    'home.hours_per_day' => 'Hours a Day',
+    'home.days_per_week' => 'Days a Week',
+    'home.days_per_year' => 'Days a Year',
+    'home.emergency_call' => '122 Fire Department Emergency Line',
+    'home.recent_heading' => 'Recent Operations & Reports',
+    'home.recent_subtitle' => 'The latest activities of our fire department',
+    'home.no_reports_yet' => 'No reports yet.',
+    'home.always_informed' => 'Always up to date',
+    'home.all_alerts' => 'View all call-outs',
+
 ];
