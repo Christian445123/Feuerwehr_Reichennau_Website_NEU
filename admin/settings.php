@@ -7,6 +7,7 @@ require_once __DIR__ . '/../config/berichte.php';
 require_once __DIR__ . '/../config/logging.php';
 require_once __DIR__ . '/../config/env-writer.php';
 require_once __DIR__ . '/../config/mail.php';
+require_once __DIR__ . '/../config/translate.php';
 requireLogin();
 
 $pageTitle = 'Einstellungen';
@@ -220,6 +221,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
+    if ($action === 'save_deepl_key') {
+        if (!userHasPermission('settings.manage')) {
+            flash('error', 'Dir fehlt die Berechtigung, Zugangsdaten zu ändern.');
+            header('Location: settings.php');
+            exit;
+        }
+        $newKey = trim($_POST['deepl_api_key'] ?? '');
+        // Leeres Feld = bestehenden Key unverändert lassen (wie beim
+        // SMTP-Passwort) - nur ein ausgefülltes Feld überschreibt ihn.
+        if ($newKey !== '') {
+            writeEnvLocalFile(['DEEPL_API_KEY' => encryptSecret($newKey)]);
+            logActivity($db, 'settings.deepl_key', 'DeepL-API-Key aktualisiert (env.local.php)');
+            flash('success', 'DeepL-API-Key wurde gespeichert.');
+        }
+        header('Location: settings.php');
+        exit;
+    }
+
+    if ($action === 'remove_deepl_key') {
+        if (!userHasPermission('settings.manage')) {
+            flash('error', 'Dir fehlt die Berechtigung, Zugangsdaten zu ändern.');
+            header('Location: settings.php');
+            exit;
+        }
+        writeEnvLocalFile(['DEEPL_API_KEY' => '']);
+        logActivity($db, 'settings.deepl_key', 'DeepL-API-Key entfernt (env.local.php)');
+        flash('success', 'DeepL-API-Key wurde entfernt - automatische Übersetzungen sind jetzt deaktiviert.');
+        header('Location: settings.php');
+        exit;
+    }
+
     header('Location: settings.php');
     exit;
 }
@@ -427,6 +459,51 @@ $smtpPasswordSet = decryptSecret(env('SMTP_PASSWORD', '')) !== '';
                 <i class="fas fa-save"></i> Speichern
             </button>
         </form>
+    </div>
+</div>
+
+<?php
+$deeplConfigured = isDeepLConfigured();
+$deeplUsage = $deeplConfigured ? getDeepLUsage() : null;
+?>
+<div class="admin-card" style="max-width: 600px; margin-top: 24px;">
+    <div class="admin-card-header"><h2><i class="fas fa-language"></i> Automatische Übersetzung (DeepL)</h2></div>
+    <div class="admin-card-body">
+        <p style="margin-bottom: 16px; color: #6c757d;">Berichte und Mitgliederprofile (Beschreibung/Bio, Funktionen) werden beim Speichern automatisch ins Englische übersetzt - Deutsch bleibt immer die normale Anzeige, Englisch erscheint nur, wenn ein Besucher über den DE/EN-Umschalter wechselt. Kostenlosen API-Key auf <a href="https://www.deepl.com/pro-api" target="_blank" rel="noopener">deepl.com/pro-api</a> anlegen (endet auf ":fx"). Leer lassen zum Deaktivieren.</p>
+
+        <div style="margin-bottom: 16px; padding: 14px 16px; background: <?php echo $deeplConfigured ? 'rgba(39,174,96,0.08)' : 'rgba(213,0,28,0.06)'; ?>; border-radius: var(--radius);">
+            <strong><?php echo $deeplConfigured ? 'DeepL ist aktiv' : 'DeepL ist nicht konfiguriert'; ?></strong>
+            <?php if ($deeplConfigured && $deeplUsage !== null): ?>
+                <p style="margin: 4px 0 0; font-size: 0.85rem; color: #6c757d;">
+                    Kontingent diesen Monat: <?php echo number_format($deeplUsage['character_count'], 0, ',', '.'); ?> von <?php echo number_format($deeplUsage['character_limit'], 0, ',', '.'); ?> Zeichen (<?php echo round($deeplUsage['character_count'] / max(1, $deeplUsage['character_limit']) * 100, 1); ?> %).
+                </p>
+            <?php elseif ($deeplConfigured): ?>
+                <p style="margin: 4px 0 0; font-size: 0.85rem; color: #6c757d;">Kontingent konnte nicht abgerufen werden (DeepL nicht erreichbar oder Key ungültig).</p>
+            <?php endif; ?>
+        </div>
+
+        <form method="POST" class="admin-form">
+            <?php echo csrfField(); ?>
+            <input type="hidden" name="action" value="save_deepl_key">
+
+            <div class="form-group">
+                <label for="deepl_api_key">API-Key <?php echo $deeplConfigured ? '(bereits hinterlegt - nur zum Ändern ausfüllen)' : ''; ?></label>
+                <input type="text" id="deepl_api_key" name="deepl_api_key" placeholder="<?php echo $deeplConfigured ? '•••••••••••••••••••••• (unverändert lassen)' : 'z.B. 53a9....0120bda974e0:fx'; ?>">
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i> Speichern
+            </button>
+        </form>
+        <?php if ($deeplConfigured): ?>
+        <form method="POST" style="margin-top: 12px;" onsubmit="return confirm('DeepL-API-Key wirklich entfernen? Automatische Übersetzungen werden dadurch deaktiviert.');">
+            <?php echo csrfField(); ?>
+            <input type="hidden" name="action" value="remove_deepl_key">
+            <button type="submit" class="btn btn-secondary btn-sm">
+                <i class="fas fa-trash"></i> Key entfernen
+            </button>
+        </form>
+        <?php endif; ?>
     </div>
 </div>
 <?php endif; ?>

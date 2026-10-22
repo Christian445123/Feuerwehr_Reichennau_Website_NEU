@@ -4,6 +4,7 @@ require_once __DIR__ . '/permissions.php';
 require_once __DIR__ . '/../config/ranks.php';
 require_once __DIR__ . '/../config/badges.php';
 require_once __DIR__ . '/../config/logging.php';
+require_once __DIR__ . '/../config/translate.php';
 requireLogin();
 requirePermission('members.manage');
 
@@ -124,12 +125,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $photoFilename = '';
         }
 
-        if ($isEdit) {
-            $stmt = $db->prepare("UPDATE members SET firstname=?, lastname=?, rank=?, functions=?, badge1=?, badge2=?, group_name=?, photo=?, sort_order=?, active=?, entry_date=?, phone=?, email=?, bio=?, updated_at=CURRENT_TIMESTAMP WHERE id=?");
-            $stmt->execute([$member['firstname'], $member['lastname'], $member['rank'], $member['functions'], $member['badge1'], $member['badge2'], $member['group_name'], $photoFilename, $member['sort_order'], $member['active'], $member['entry_date'], $member['phone'], $member['email'], $member['bio'], $id]);
+        // Automatische Deutsch -> Englisch-Übersetzung für die öffentliche
+        // EN-Ansicht (siehe config/translate.php, Spalten bio_en/functions_en,
+        // Migration 2026_10_22_add_english_translation_columns). Nur die
+        // "role"-Texte werden übersetzt, "section" ist eine feste Auswahl
+        // (Kommando/Ausschuss/Beauftragter/Sonstige) und bleibt unverändert.
+        // Schlägt die Übersetzung fehl, bleibt eine bereits vorhandene
+        // englische Fassung unverändert erhalten statt überschrieben zu werden.
+        $toTranslate = ['bio' => $member['bio']];
+        foreach ($functions as $i => $func) {
+            $toTranslate['role_' . $i] = $func['role'];
+        }
+        $translated = translateBatchToEnglish($toTranslate);
+        if ($translated !== null) {
+            checkDeepLUsageAndWarn($db);
+            $bioEn = $translated['bio'] ?? '';
+            $functionsEnArr = [];
+            foreach ($functions as $i => $func) {
+                $functionsEnArr[] = ['section' => $func['section'], 'role' => $translated['role_' . $i] ?? ''];
+            }
+            $functionsEnJson = json_encode($functionsEnArr, JSON_UNESCAPED_UNICODE);
         } else {
-            $stmt = $db->prepare("INSERT INTO members (firstname, lastname, rank, functions, badge1, badge2, group_name, photo, sort_order, active, entry_date, phone, email, bio) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
-            $stmt->execute([$member['firstname'], $member['lastname'], $member['rank'], $member['functions'], $member['badge1'], $member['badge2'], $member['group_name'], $photoFilename, $member['sort_order'], $member['active'], $member['entry_date'], $member['phone'], $member['email'], $member['bio']]);
+            $bioEn = $isEdit ? ($member['bio_en'] ?? null) : null;
+            $functionsEnJson = $isEdit ? ($member['functions_en'] ?? null) : null;
+        }
+
+        if ($isEdit) {
+            $stmt = $db->prepare("UPDATE members SET firstname=?, lastname=?, rank=?, functions=?, badge1=?, badge2=?, group_name=?, photo=?, sort_order=?, active=?, entry_date=?, phone=?, email=?, bio=?, bio_en=?, functions_en=?, updated_at=CURRENT_TIMESTAMP WHERE id=?");
+            $stmt->execute([$member['firstname'], $member['lastname'], $member['rank'], $member['functions'], $member['badge1'], $member['badge2'], $member['group_name'], $photoFilename, $member['sort_order'], $member['active'], $member['entry_date'], $member['phone'], $member['email'], $member['bio'], $bioEn, $functionsEnJson, $id]);
+        } else {
+            $stmt = $db->prepare("INSERT INTO members (firstname, lastname, rank, functions, badge1, badge2, group_name, photo, sort_order, active, entry_date, phone, email, bio, bio_en, functions_en) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+            $stmt->execute([$member['firstname'], $member['lastname'], $member['rank'], $member['functions'], $member['badge1'], $member['badge2'], $member['group_name'], $photoFilename, $member['sort_order'], $member['active'], $member['entry_date'], $member['phone'], $member['email'], $member['bio'], $bioEn, $functionsEnJson]);
             $id = $db->lastInsertId();
         }
 

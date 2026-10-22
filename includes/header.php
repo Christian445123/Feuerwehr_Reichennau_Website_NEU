@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="<?php echo htmlspecialchars(getLanguage()); ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($current_title); ?> - FF Reichenau</title>
-    <meta name="description" content="Freiwillige Feuerwehr Reichenau / Innsbruck Stadt - Einsätze, Berichte, Termine und Informationen.">
+    <meta name="description" content="<?php echo htmlspecialchars(t('meta.description')); ?>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet">

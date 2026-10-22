@@ -830,6 +830,22 @@ TEXT;
             },
         ],
 
+        [
+            'id' => '2026_10_22_add_english_translation_columns',
+            'run' => function (PDO $db) {
+                // Automatisch erzeugte englische Fassung (siehe config/translate.php,
+                // beim Speichern in admin/report-edit.php bzw. admin/member-edit.php
+                // befüllt) - bei leerem Wert fällt die Anzeige auf die deutsche
+                // Fassung zurück (siehe pages/berichte.php, config/members.php).
+                addColumnIfMissing($db, 'reports', 'title_en', 'VARCHAR(255) DEFAULT NULL');
+                addColumnIfMissing($db, 'reports', 'content_en', 'TEXT DEFAULT NULL');
+                addColumnIfMissing($db, 'reports', 'links_en', 'TEXT DEFAULT NULL');
+                addColumnIfMissing($db, 'report_images', 'caption_en', 'VARCHAR(255) DEFAULT NULL');
+                addColumnIfMissing($db, 'members', 'bio_en', 'TEXT DEFAULT NULL');
+                addColumnIfMissing($db, 'members', 'functions_en', 'TEXT DEFAULT NULL');
+            },
+        ],
+
     ];
 }
 

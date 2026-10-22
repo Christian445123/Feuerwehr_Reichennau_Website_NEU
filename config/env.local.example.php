@@ -58,4 +58,10 @@ return [
     'DISCORD_WEBHOOK_ACTIVITY' => '',
     'DISCORD_WEBHOOK_LOGIN' => '',
     'DISCORD_WEBHOOK_RATE_LIMIT' => '',
+
+    // ── DeepL-API-Key (für automatische Deutsch->Englisch-Übersetzung von
+    // Berichten und Mitgliederprofilen, siehe config/translate.php) - leer
+    // lassen zum Deaktivieren. Verschlüsselt eintragen (Präfix "enc:"):
+    //   php config/encrypt-tool.php "mein-api-key"
+    'DEEPL_API_KEY' => 'enc:',
 ];

@@ -3,6 +3,7 @@ require_once __DIR__ . '/auth.php';
 require_once __DIR__ . '/permissions.php';
 require_once __DIR__ . '/../config/logging.php';
 require_once __DIR__ . '/../config/berichte.php';
+require_once __DIR__ . '/../config/translate.php';
 requireLogin();
 requirePermission('reports.manage');
 
@@ -139,12 +140,60 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         $linksJson = !empty($links) ? json_encode($links, JSON_UNESCAPED_UNICODE) : null;
         $wasCreate = !$isEdit;
-        if ($isEdit) {
-            $stmt = $db->prepare("UPDATE reports SET title=?, category=?, subcategory=?, category2=?, subcategory2=?, content=?, date=?, author=?, published=?, links=?, links_hidden=?, count_unpublished=?, show_in_alarmierungen=?, updated_at=CURRENT_TIMESTAMP WHERE id=?");
-            $stmt->execute([$report['title'], $report['category'], $report['subcategory'] ?: null, $report['category2'] ?: null, $report['subcategory2'] ?: null, $report['content'], $report['date'], $report['author'], $report['published'], $linksJson, $report['links_hidden'], $report['count_unpublished'], $report['show_in_alarmierungen'], $id]);
+
+        // Welche neu hochgeladenen Bilder (falls vorhanden) eine Bildunterschrift
+        // bekommen - vorab gesammelt, damit sie zusammen mit Titel/Inhalt/Links
+        // in einem einzigen DeepL-Aufruf übersetzt werden können (siehe unten).
+        $newImageCaptions = [];
+        if (!empty($_FILES['images']['name'][0])) {
+            foreach ($_FILES['images']['name'] as $i => $name) {
+                if (($_FILES['images']['error'][$i] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) continue;
+                $newImageCaptions[$i] = trim($_POST['image_captions'][$i] ?? '');
+            }
+        }
+
+        // Automatische Deutsch -> Englisch-Übersetzung für die öffentliche
+        // EN-Ansicht (siehe config/translate.php und die Spalten title_en/
+        // content_en/links_en, Migration 2026_10_22_add_english_translation_columns).
+        // Alle Felder zusammen in einem einzigen API-Aufruf. Schlägt die
+        // Übersetzung fehl (kein API-Key, DeepL nicht erreichbar), bleibt eine
+        // bereits vorhandene englische Fassung unverändert erhalten, statt mit
+        // einer leeren/falschen Übersetzung überschrieben zu werden.
+        $toTranslate = ['title' => $report['title'], 'content' => $report['content']];
+        foreach ($links as $i => $link) {
+            $toTranslate['link_' . $i] = $link['label'];
+        }
+        foreach ($newImageCaptions as $i => $caption) {
+            $toTranslate['caption_' . $i] = $caption;
+        }
+        $translated = translateBatchToEnglish($toTranslate);
+        if ($translated !== null) {
+            checkDeepLUsageAndWarn($db);
+        }
+
+        if ($translated !== null) {
+            $titleEn = $translated['title'] ?? '';
+            $contentEn = $translated['content'] ?? '';
+            $linksEnArr = [];
+            foreach ($links as $i => $link) {
+                $linksEnArr[] = ['url' => $link['url'], 'label' => $translated['link_' . $i] ?? ''];
+            }
+            $linksEnJson = !empty($linksEnArr) ? json_encode($linksEnArr, JSON_UNESCAPED_UNICODE) : null;
         } else {
-            $stmt = $db->prepare("INSERT INTO reports (title, category, subcategory, category2, subcategory2, content, date, author, published, links, links_hidden, count_unpublished, show_in_alarmierungen) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)");
-            $stmt->execute([$report['title'], $report['category'], $report['subcategory'] ?: null, $report['category2'] ?: null, $report['subcategory2'] ?: null, $report['content'], $report['date'], $report['author'], $report['published'], $linksJson, $report['links_hidden'], $report['count_unpublished'], $report['show_in_alarmierungen']]);
+            // Übersetzung fehlgeschlagen: bei einem bestehenden Bericht die
+            // bisherige englische Fassung beibehalten, bei einem neuen Bericht
+            // bleibt sie leer (die Anzeige fällt dann auf Deutsch zurück).
+            $titleEn = $isEdit ? ($report['title_en'] ?? null) : null;
+            $contentEn = $isEdit ? ($report['content_en'] ?? null) : null;
+            $linksEnJson = $isEdit ? ($report['links_en'] ?? null) : null;
+        }
+
+        if ($isEdit) {
+            $stmt = $db->prepare("UPDATE reports SET title=?, category=?, subcategory=?, category2=?, subcategory2=?, content=?, date=?, author=?, published=?, links=?, links_hidden=?, count_unpublished=?, show_in_alarmierungen=?, title_en=?, content_en=?, links_en=?, updated_at=CURRENT_TIMESTAMP WHERE id=?");
+            $stmt->execute([$report['title'], $report['category'], $report['subcategory'] ?: null, $report['category2'] ?: null, $report['subcategory2'] ?: null, $report['content'], $report['date'], $report['author'], $report['published'], $linksJson, $report['links_hidden'], $report['count_unpublished'], $report['show_in_alarmierungen'], $titleEn, $contentEn, $linksEnJson, $id]);
+        } else {
+            $stmt = $db->prepare("INSERT INTO reports (title, category, subcategory, category2, subcategory2, content, date, author, published, links, links_hidden, count_unpublished, show_in_alarmierungen, title_en, content_en, links_en) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+            $stmt->execute([$report['title'], $report['category'], $report['subcategory'] ?: null, $report['category2'] ?: null, $report['subcategory2'] ?: null, $report['content'], $report['date'], $report['author'], $report['published'], $linksJson, $report['links_hidden'], $report['count_unpublished'], $report['show_in_alarmierungen'], $titleEn, $contentEn, $linksEnJson]);
             $id = $db->lastInsertId();
             $isEdit = true;
         }
@@ -177,8 +226,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if ($filename) {
                     $sortOrder++;
                     $caption = trim($_POST['image_captions'][$i] ?? '');
-                    $stmt = $db->prepare("INSERT INTO report_images (report_id, filename, caption, sort_order) VALUES (?,?,?,?)");
-                    $stmt->execute([$id, $filename, $caption, $sortOrder]);
+                    $captionEn = ($translated !== null) ? ($translated['caption_' . $i] ?? '') : null;
+                    $stmt = $db->prepare("INSERT INTO report_images (report_id, filename, caption, sort_order, caption_en) VALUES (?,?,?,?,?)");
+                    $stmt->execute([$id, $filename, $caption, $sortOrder, $captionEn]);
                 } else {
                     $uploadErrors[] = ($name ?: 'Bild ' . ($i + 1)) . ': ' . ($uploadError ?? 'Unbekannter Fehler');
                 }

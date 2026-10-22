@@ -8,9 +8,13 @@ require_once __DIR__ . '/database.php';
 require_once __DIR__ . '/logging.php';
 require_once __DIR__ . '/session.php';
 require_once __DIR__ . '/security-headers.php';
+require_once __DIR__ . '/i18n.php';
 
 sendSecurityHeaders();
 secureSessionStart();
+// Muss vor jeder Ausgabe passieren, damit das Sprach-Cookie bei "?lang=xx"
+// noch gesetzt werden kann (siehe config/i18n.php).
+initLanguage();
 
 function siteAccessGranted(): bool {
     return !empty($_SESSION['site_access_granted']);
