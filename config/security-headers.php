@@ -34,6 +34,10 @@ function sendSecurityHeaders(): void {
         . "font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com data:; "
         . "img-src 'self' data: https:; "
         . "connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com; "
+        // Erlaubt das Einbetten der offiziellen GeoSphere-Austria-Unwetterkarte
+        // im Footer (siehe includes/footer.php) - ohne diese Freigabe würde
+        // unsere eigene CSP das Iframe blockieren, nicht die fremde Seite.
+        . "frame-src https://warnungen.zamg.at; "
         . "frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'"
     );
 }

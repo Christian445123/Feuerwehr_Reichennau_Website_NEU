@@ -23,7 +23,13 @@
                     </ul>
                 </div>
 
-                <div class="footer-col">
+            </div>
+
+            <div class="footer-weather">
+                <div class="footer-weather-map">
+                    <iframe src="https://warnungen.zamg.at/wsapp/de/alle/heute/" title="GeoSphere Austria - Unwetterwarnungen Österreich" loading="lazy"></iframe>
+                </div>
+                <div class="footer-weather-list">
                     <h4><?php echo e(t('footer.weather_warnings')); ?></h4>
                     <div class="footer-warnlist" id="footerWarnlist">
                         <div class="footer-warnlist-row footer-warnlist-loading">
@@ -34,7 +40,6 @@
                         <?php echo e(t('footer.weather_warnings_link')); ?> <i class="fas fa-arrow-up-right-from-square"></i>
                     </a>
                 </div>
-
             </div>
 
             <div class="footer-bottom footer-bottom-split">
@@ -56,6 +61,21 @@
     <button class="back-to-top" id="backToTop" aria-label="<?php echo e(t('footer.scroll_to_top')); ?>">
         <i class="fas fa-chevron-up"></i>
     </button>
+
+    <!-- Wetterwarn-Popup: erscheint beim Seitenaufruf nur, wenn für Innsbruck-Stadt
+         oder Innsbruck-Land aktuell eine GeoSphere-Austria-Warnung aktiv ist
+         (Daten/Logik siehe warnungen-tirol.php + assets/js/main.js) -->
+    <div class="weather-warn-popup" id="weatherWarnPopup" hidden>
+        <button type="button" class="weather-warn-popup-close" aria-label="<?php echo e(t('common.close')); ?>">&times;</button>
+        <div class="weather-warn-popup-head">
+            <i class="fas fa-triangle-exclamation"></i>
+            <strong><?php echo e(t('footer.weather_warning_popup_title')); ?></strong>
+        </div>
+        <div class="weather-warn-popup-body"></div>
+        <a href="#footerWarnlist" class="weather-warn-popup-link" onclick="document.getElementById('footerWarnlist').scrollIntoView({behavior:'smooth'});">
+            <?php echo e(t('footer.weather_warnings_link')); ?> <i class="fas fa-arrow-up-right-from-square"></i>
+        </a>
+    </div>
 
     <?php
     require_once __DIR__ . '/../config/haussammlung.php';

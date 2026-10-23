@@ -1,9 +1,9 @@
 <?php
 /**
  * Liefert die aktuell aktiven GeoSphere-Austria-Wetterwarnungen für
- * Innsbruck und Tirol gesamt (gefiltert aus der öffentlichen Warn-API) als
- * schlankes JSON - für die kleine Statusliste im Footer (siehe
- * includes/footer.php).
+ * Innsbruck-Stadt und den Bezirk Innsbruck-Land (gefiltert aus der
+ * öffentlichen Warn-API) als schlankes JSON - für die kleine Statusliste im
+ * Footer sowie das Warn-Popup beim Seitenaufruf (siehe includes/footer.php).
  *
  * Läuft nach demselben Muster wie tile-proxy.php/schutzgebiet-check.php:
  * serverseitiger Aufruf mit ordentlicher User-Agent-Kennung statt direktem
@@ -12,9 +12,12 @@
  *
  * Quelle: GeoSphere Austria Warn API (CC BY 4.0),
  * https://warnungen.zamg.at/wsapp/api/getWarnstatus - liefert alle
- * österreichweit aktiven Warnungen je Gemeinde; hier wird auf Tirol
- * (Gemeindekennzahl beginnt mit "7") bzw. Innsbruck (Gemeindekennzahl
- * 70101) eingeschränkt und zu je einer Zusammenfassung verdichtet.
+ * österreichweit aktiven Warnungen je Gemeinde. Die Gemeindekennzahl (GKZ)
+ * ist "7" (Bundesland Tirol) + 2-stelliger Bezirk + 2-stellige Gemeinde;
+ * Innsbruck-Stadt ist Bezirk "01" (Gemeinde Innsbruck selbst = 70101),
+ * Innsbruck-Land ist Bezirk "03" (GKZ-Präfix "703", z.B. Hall in Tirol
+ * 70354, Zirl 70369 - per Live-Abfrage gegen getWarningsForCoords
+ * verifiziert). Nur diese beiden Gebiete werden ausgewertet.
  *
  * wtype (Warnart): 1=Sturm, 2=Regen, 3=Schnee, 4=Glatteis, 5=Gewitter,
  * 6=Hitze, 7=Kälte. wlevel (Warnstufe): 1=gelb/Vorwarnung, 2=orange/Warnung,
@@ -96,19 +99,24 @@ $summarize = function (array $features) use ($wtypeLabels): array {
 $data = json_decode($body, true);
 $allFeatures = (is_array($data) && isset($data['features'])) ? $data['features'] : [];
 
-$tirolFeatures = array_values(array_filter($allFeatures, function ($f) {
-    return str_starts_with((string) ($f['properties']['location']['gemeindenr'] ?? ''), '7');
-}));
-$innsbruckFeatures = array_values(array_filter($tirolFeatures, function ($f) {
+$innsbruckStadtFeatures = array_values(array_filter($allFeatures, function ($f) {
     return (string) ($f['properties']['location']['gemeindenr'] ?? '') === '70101';
 }));
+$innsbruckLandFeatures = array_values(array_filter($allFeatures, function ($f) {
+    return str_starts_with((string) ($f['properties']['location']['gemeindenr'] ?? ''), '703');
+}));
+
+$regions = [
+    ['name' => 'Innsbruck Stadt', 'summary' => $summarize($innsbruckStadtFeatures)],
+    ['name' => 'Innsbruck Land', 'summary' => $summarize($innsbruckLandFeatures)],
+];
 
 $response = json_encode([
     'fetched_at' => date('c'),
-    'regions' => [
-        ['name' => 'Innsbruck', 'summary' => $summarize($innsbruckFeatures)],
-        ['name' => 'Tirol', 'summary' => $summarize($tirolFeatures)],
-    ],
+    'has_warning' => array_reduce($regions, function ($carry, $r) {
+        return $carry || $r['summary']['level'] > 0;
+    }, false),
+    'regions' => $regions,
 ], JSON_UNESCAPED_UNICODE);
 
 if (!is_dir($cacheDir)) {

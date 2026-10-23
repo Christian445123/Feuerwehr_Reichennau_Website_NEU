@@ -288,24 +288,60 @@ document.addEventListener('DOMContentLoaded', function () {
     }, interval);
 })();
 
-// Wetterwarnungen Innsbruck/Tirol im Footer (siehe warnungen-tirol.php)
+// Wetterwarnungen Innsbruck-Stadt/Innsbruck-Land: Footer-Liste + Warn-Popup
+// beim Seitenaufruf (siehe warnungen-tirol.php)
 (function () {
     var box = document.getElementById('footerWarnlist');
-    if (!box) return;
+    var popup = document.getElementById('weatherWarnPopup');
+    if (!box && !popup) return;
 
     fetch('warnungen-tirol.php').then(function (r) { return r.json(); }).then(function (data) {
         if (!data || !Array.isArray(data.regions)) throw new Error('invalid response');
 
-        box.innerHTML = data.regions.map(function (region) {
-            var level = region.summary && region.summary.level > 0 ? region.summary.level : 0;
-            var type = (region.summary && region.summary.type) || '';
-            var statusText = level > 0 ? type : 'Keine Warnungen';
-            return '<div class="footer-warnlist-row">' +
-                '<span class="footer-warnlist-region"><span class="footer-warnlist-dot level-' + level + '"></span>' + region.name + '</span>' +
-                '<span class="footer-warnlist-type">' + statusText + '</span>' +
-                '</div>';
-        }).join('');
+        if (box) {
+            box.innerHTML = data.regions.map(function (region) {
+                var level = region.summary && region.summary.level > 0 ? region.summary.level : 0;
+                var type = (region.summary && region.summary.type) || '';
+                var statusText = level > 0 ? type : 'Keine Warnungen';
+                return '<div class="footer-warnlist-row">' +
+                    '<span class="footer-warnlist-region"><span class="footer-warnlist-dot level-' + level + '"></span>' + region.name + '</span>' +
+                    '<span class="footer-warnlist-type">' + statusText + '</span>' +
+                    '</div>';
+            }).join('');
+        }
+
+        if (popup && data.has_warning) {
+            // einmal pro Browser-Sitzung anzeigen, nicht bei jedem Seitenwechsel erneut
+            var SEEN_KEY = 'weather_warn_popup_seen';
+            var alreadySeen = false;
+            try { alreadySeen = sessionStorage.getItem(SEEN_KEY) === '1'; } catch (e) {}
+            if (alreadySeen) return;
+
+            var warned = data.regions.filter(function (r) { return r.summary && r.summary.level > 0; });
+            var body = popup.querySelector('.weather-warn-popup-body');
+            body.innerHTML = warned.map(function (region) {
+                var level = region.summary.level;
+                return '<div class="weather-warn-popup-row">' +
+                    '<span class="footer-warnlist-dot level-' + level + '"></span>' +
+                    '<strong>' + region.name + ':</strong> ' + region.summary.type +
+                    '</div>';
+            }).join('');
+
+            popup.hidden = false;
+            requestAnimationFrame(function () { popup.classList.add('visible'); });
+            try { sessionStorage.setItem(SEEN_KEY, '1'); } catch (e) {}
+
+            var close = popup.querySelector('.weather-warn-popup-close');
+            if (close) {
+                close.addEventListener('click', function () {
+                    popup.classList.remove('visible');
+                    setTimeout(function () { popup.hidden = true; }, 300);
+                });
+            }
+        }
     }).catch(function () {
-        box.innerHTML = '<div class="footer-warnlist-row footer-warnlist-error"><span><i class="fas fa-triangle-exclamation"></i> Warnungen gerade nicht abrufbar</span></div>';
+        if (box) {
+            box.innerHTML = '<div class="footer-warnlist-row footer-warnlist-error"><span><i class="fas fa-triangle-exclamation"></i> Warnungen gerade nicht abrufbar</span></div>';
+        }
     });
 })();
