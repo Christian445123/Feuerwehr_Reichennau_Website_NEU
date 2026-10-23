@@ -649,7 +649,7 @@ $deeplUsage = $deeplConfigured ? getDeepLUsage() : null;
 <div class="admin-card" style="max-width: 600px; margin-top: 24px;" id="site-alert">
     <div class="admin-card-header"><h2><i class="fas fa-triangle-exclamation"></i> Seiten-Warnhinweis: Testmodus</h2></div>
     <div class="admin-card-body">
-        <p style="margin-bottom: 16px; color: #6c757d;">Zeigt den Warnhinweis als Banner über die gesamte Seitenbreite ganz oben auf jeder Seite an, mit einem einfachen Beispielinhalt - praktisch, um schnell zu prüfen, wie er auf der Website aussieht, ohne extra Texte einzugeben. Die Wetterübersicht im Footer (Innsbruck-Stadt/Land, Live-Daten von GeoSphere) läuft unabhängig davon weiter.</p>
+        <p style="margin-bottom: 16px; color: #6c757d;">Zeigt den Warnhinweis vollflächig über die gesamte Website und den gesamten Bildschirm an (Besucher müssen ihn mit "Verstanden" bestätigen, bevor sie die Seite sehen), mit einem einfachen Beispielinhalt - praktisch, um schnell zu prüfen, wie er aussieht, ohne extra Texte einzugeben. Die Wetterübersicht im Footer (Innsbruck-Stadt/Land, Live-Daten von GeoSphere) läuft unabhängig davon weiter.</p>
 
         <div style="margin-bottom: 16px; padding: 14px 16px; background: <?php echo $siteAlertTestModeEnabled ? 'rgba(213,0,28,0.06)' : 'rgba(39,174,96,0.08)'; ?>; border-radius: var(--radius); display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;">
             <div>
@@ -657,7 +657,7 @@ $deeplUsage = $deeplConfigured ? getDeepLUsage() : null;
                 <p style="margin: 4px 0 0; font-size: 0.85rem; color: #6c757d;">
                     <?php echo $siteAlertTestModeEnabled
                         ? 'Besucher sehen bei jedem Seitenaufruf den Warnhinweis mit Beispielinhalt.'
-                        : 'Der Banner erscheint nur bei der manuellen Warnung unten.'; ?>
+                        : 'Der Vollbild-Hinweis erscheint nur bei der manuellen Warnung unten.'; ?>
                 </p>
             </div>
             <form method="POST">
@@ -675,14 +675,14 @@ $deeplUsage = $deeplConfigured ? getDeepLUsage() : null;
 <div class="admin-card" style="max-width: 600px; margin-top: 24px;" id="site-alert-manual">
     <div class="admin-card-header"><h2><i class="fas fa-pen"></i> Seiten-Warnhinweis: manuell erzeugen</h2></div>
     <div class="admin-card-body">
-        <p style="margin-bottom: 16px; color: #6c757d;">Zeigt einen eigenen Warnhinweis als Banner über die gesamte Seitenbreite ganz oben auf jeder Seite - mit frei wählbarem Typ, eigenem Text, eigenem Bereich und eigener Farbe. Nicht an Wetter gebunden - z.B. für einen Hinweis wie "Bereich X meiden".</p>
+        <p style="margin-bottom: 16px; color: #6c757d;">Zeigt einen eigenen Warnhinweis vollflächig über die gesamte Website und den gesamten Bildschirm - mit frei wählbarem Typ, eigenem Text, eigenem Bereich und eigener Farbe. Nicht an Wetter gebunden - z.B. für einen Hinweis wie "Bereich X meiden".</p>
 
         <div style="margin-bottom: 20px; padding: 14px 16px; background: <?php echo $siteAlertEnabled ? 'rgba(213,0,28,0.06)' : 'rgba(39,174,96,0.08)'; ?>; border-radius: var(--radius);">
             <strong><?php echo $siteAlertEnabled ? 'Manueller Warnhinweis ist AKTIV' : 'Manueller Warnhinweis ist AUS'; ?></strong>
             <p style="margin: 4px 0 0; font-size: 0.85rem; color: #6c757d;">
                 <?php echo $siteAlertEnabled
                     ? 'Besucher sehen bei jedem Seitenaufruf den Warnhinweis mit den unten eingetragenen Angaben.'
-                    : 'Der Banner erscheint nur, wenn aktiviert (oder der Testmodus oben an ist).'; ?>
+                    : 'Der Vollbild-Hinweis erscheint nur, wenn aktiviert (oder der Testmodus oben an ist).'; ?>
             </p>
         </div>
 
@@ -707,7 +707,7 @@ $deeplUsage = $deeplConfigured ? getDeepLUsage() : null;
             </div>
 
             <div class="form-group">
-                <label for="site_alert_color">Farbe (Rahmen/Markierung im Banner)</label>
+                <label for="site_alert_color">Farbe (Rahmen/Markierung im Vollbild-Hinweis)</label>
                 <input type="color" id="site_alert_color" name="site_alert_color" value="<?php echo e($siteAlertColor); ?>" style="width: 70px; height: 38px; padding: 2px; cursor: pointer;">
             </div>
 

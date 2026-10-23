@@ -4557,64 +4557,68 @@ body.lightbox-open {
     }
 }
 
-/* --- Seiten-Warnhinweis (volle Breite, ganz oben auf jeder Seite, siehe includes/header.php) --- */
-.site-alert-banner {
-    position: relative;
+/* --- Seiten-Warnhinweis (Vollbild-Overlay über die gesamte Website/den
+   gesamten Bildschirm, bis zum Bestätigen - siehe includes/header.php) --- */
+.site-alert-overlay {
+    position: fixed;
+    inset: 0;
     width: 100%;
-    background: var(--color-white);
-    border-bottom: 3px solid #e74c3c;
-    z-index: 1100;
+    height: 100%;
+    background: rgba(10, 10, 10, 0.75);
+    z-index: 5000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
 }
 
-.site-alert-banner-inner {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 12px 20px;
+.site-alert-overlay[hidden] {
+    display: none !important;
+}
+
+body.site-alert-open {
+    overflow: hidden;
+}
+
+.site-alert-overlay-box {
+    background: var(--color-white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xl);
+    border-top: 6px solid #e74c3c;
+    max-width: 520px;
+    width: 100%;
+    padding: 36px 32px;
+    text-align: center;
     display: flex;
+    flex-direction: column;
     align-items: center;
     gap: 14px;
 }
 
-.site-alert-banner-icon {
+.site-alert-overlay-icon {
+    font-size: 3rem;
+}
+
+.site-alert-overlay-title {
     font-size: 1.3rem;
-    flex-shrink: 0;
-}
-
-.site-alert-banner-text {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    font-size: 0.92rem;
     color: var(--color-dark);
 }
 
-.site-alert-banner-text strong {
-    font-size: 0.95rem;
+.site-alert-overlay-text {
+    font-size: 1rem;
+    color: var(--color-gray-700, var(--color-gray-600));
+    line-height: 1.5;
 }
 
-.site-alert-banner-close {
-    background: none;
-    border: none;
-    font-size: 1.4rem;
-    line-height: 1;
-    color: var(--color-gray-500, var(--color-gray-600));
-    cursor: pointer;
-    padding: 4px 8px;
-    flex-shrink: 0;
-}
-
-.site-alert-banner-close:hover {
-    color: var(--color-dark);
+.site-alert-overlay-close {
+    margin-top: 10px;
 }
 
 @media (max-width: 600px) {
-    .site-alert-banner-inner {
-        flex-wrap: wrap;
-        padding: 10px 16px;
+    .site-alert-overlay-box {
+        padding: 28px 22px;
     }
-    .site-alert-banner-text {
-        order: 2;
-        flex-basis: 100%;
+    .site-alert-overlay-icon {
+        font-size: 2.4rem;
     }
 }

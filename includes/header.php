@@ -24,34 +24,33 @@ $siteAlert = getActiveSiteAlert();
     $siteAlertIcon = $siteAlertTypes[$siteAlert['type']]['icon'] ?? 'fa-triangle-exclamation';
     $siteAlertLabel = $siteAlertTypes[$siteAlert['type']]['label'] ?? 'Hinweis';
 ?>
-<div class="site-alert-banner" id="siteAlertBanner" style="border-color: <?php echo htmlspecialchars($siteAlert['color']); ?>;">
-    <div class="site-alert-banner-inner">
-        <i class="fas <?php echo htmlspecialchars($siteAlertIcon); ?> site-alert-banner-icon" style="color: <?php echo htmlspecialchars($siteAlert['color']); ?>;"></i>
-        <div class="site-alert-banner-text">
-            <strong><?php echo htmlspecialchars($siteAlertLabel); ?><?php echo $siteAlert['area'] !== '' ? ': ' . htmlspecialchars($siteAlert['area']) : ''; ?></strong>
-            <?php if ($siteAlert['text'] !== ''): ?>
-                <span><?php echo htmlspecialchars($siteAlert['text']); ?></span>
-            <?php endif; ?>
-        </div>
-        <button type="button" class="site-alert-banner-close" id="siteAlertBannerClose" aria-label="Hinweis schließen">&times;</button>
+<div class="site-alert-overlay" id="siteAlertBanner" hidden>
+    <div class="site-alert-overlay-box" style="border-color: <?php echo htmlspecialchars($siteAlert['color']); ?>;">
+        <i class="fas <?php echo htmlspecialchars($siteAlertIcon); ?> site-alert-overlay-icon" style="color: <?php echo htmlspecialchars($siteAlert['color']); ?>;"></i>
+        <strong class="site-alert-overlay-title"><?php echo htmlspecialchars($siteAlertLabel); ?><?php echo $siteAlert['area'] !== '' ? ': ' . htmlspecialchars($siteAlert['area']) : ''; ?></strong>
+        <?php if ($siteAlert['text'] !== ''): ?>
+            <p class="site-alert-overlay-text"><?php echo htmlspecialchars($siteAlert['text']); ?></p>
+        <?php endif; ?>
+        <button type="button" class="btn btn-primary site-alert-overlay-close" id="siteAlertBannerClose">
+            <i class="fas fa-check"></i> Verstanden
+        </button>
     </div>
 </div>
 <script>
 (function () {
-    var banner = document.getElementById('siteAlertBanner');
+    var overlay = document.getElementById('siteAlertBanner');
     var closeBtn = document.getElementById('siteAlertBannerClose');
-    if (!banner || !closeBtn) return;
+    if (!overlay || !closeBtn) return;
     var DISMISS_KEY = 'site_alert_dismissed_' + <?php echo json_encode(md5($siteAlert['type'] . '|' . $siteAlert['color'] . '|' . $siteAlert['area'] . '|' . $siteAlert['text'])); ?>;
     var dismissed = false;
     try { dismissed = sessionStorage.getItem(DISMISS_KEY) === '1'; } catch (e) {}
-    if (dismissed) {
-        banner.style.display = 'none';
-    } else {
-        document.body.classList.add('has-site-alert-banner');
+    if (!dismissed) {
+        overlay.hidden = false;
+        document.body.classList.add('site-alert-open');
     }
     closeBtn.addEventListener('click', function () {
-        banner.style.display = 'none';
-        document.body.classList.remove('has-site-alert-banner');
+        overlay.hidden = true;
+        document.body.classList.remove('site-alert-open');
         try { sessionStorage.setItem(DISMISS_KEY, '1'); } catch (e) {}
     });
 })();
