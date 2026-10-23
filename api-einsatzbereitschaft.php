@@ -9,9 +9,9 @@
  *
  * Aufruf per GET oder POST mit:
  *   token   = geheimer Token (Pflicht)
- *   status  = "bereit"/"1" oder "nicht_bereit"/"0" (optional, hat Vorrang)
- *   message/text/body/sms = Freitext, wird nach "BEREIT"/"NICHT BEREIT"
- *             durchsucht, falls kein status-Feld angegeben ist
+ *   status  = "bereit"/"1", "nicht_bereit"/"0" oder "uebung" (optional, hat Vorrang)
+ *   message/text/body/sms = Freitext, wird nach "BEREIT"/"NICHT BEREIT"/
+ *             "ÜBUNG" durchsucht, falls kein status-Feld angegeben ist
  *   from/sender/msisdn = Absender-Rufnummer (optional, nur relevant, wenn
  *             unter Admin -> Einsatzbereitschaft erlaubte Nummern hinterlegt sind)
  *
@@ -56,9 +56,11 @@ $status = null;
 if (isset($input['status'])) {
     $raw = mb_strtolower(trim((string) $input['status']));
     if (in_array($raw, ['bereit', 'einsatzbereit', '1', 'ja', 'true'], true)) {
-        $status = true;
+        $status = 'bereit';
     } elseif (in_array($raw, ['nicht_bereit', 'nicht_einsatzbereit', '0', 'nein', 'false'], true)) {
-        $status = false;
+        $status = 'nicht_bereit';
+    } elseif (in_array($raw, ['uebung', 'übung'], true)) {
+        $status = 'uebung';
     }
 }
 
@@ -69,13 +71,14 @@ if ($status === null && $message !== '') {
 
 if ($status === null) {
     http_response_code(400);
-    echo 'Status nicht erkannt. Erwartet wird ein "status"-Feld oder eine Nachricht mit "BEREIT"/"NICHT BEREIT".';
+    echo 'Status nicht erkannt. Erwartet wird ein "status"-Feld oder eine Nachricht mit "BEREIT"/"NICHT BEREIT"/"UEBUNG".';
     exit;
 }
 
 $via = isset($input['from']) || isset($input['sender']) || isset($input['msisdn']) ? 'sms' : 'api';
 $note = $sender !== '' ? "Ausgelöst von $sender" : '';
 setEinsatzbereitschaft($status, $via, $note);
-logActivity($db, 'einsatzbereitschaft.change', ($status ? 'Einsatzbereit' : 'Nicht einsatzbereit') . " (via $via" . ($sender !== '' ? ", $sender" : '') . ')', 0, 'Webhook');
+$statusLabel = getEinsatzbereitschaftStatusLabels()[$status];
+logActivity($db, 'einsatzbereitschaft.change', "$statusLabel (via $via" . ($sender !== '' ? ", $sender" : '') . ')', 0, 'Webhook');
 
 echo 'OK';

@@ -7,7 +7,7 @@
     $heroDb = getDB();
     $heroImages = getActiveHeroImages($heroDb);
     $heroInterval = getHeroInterval($heroDb);
-    $einsatzbereit = isEinsatzbereit();
+    $bereitschaftStatus = getEinsatzbereitschaftStatus();
     ?>
     <section class="hero<?php echo $heroImages ? ' hero-has-images' : ''; ?>">
         <?php if ($heroImages): ?>
@@ -27,12 +27,16 @@
                 <a href="index.php?page=mannschaft" class="btn btn-outline"><i class="fas fa-info-circle"></i> <?php echo e(t('home.learn_more')); ?></a>
             </div>
 
-            <?php $readinessLabel = $einsatzbereit ? t('home.ready') : t('home.not_ready'); ?>
+            <?php
+            $readinessClass = ['bereit' => 'is-ready', 'nicht_bereit' => 'is-not-ready', 'uebung' => 'is-training'][$bereitschaftStatus];
+            $readinessIcon = ['bereit' => 'fa-check', 'nicht_bereit' => 'fa-xmark', 'uebung' => 'fa-dumbbell'][$bereitschaftStatus];
+            $readinessLabel = ['bereit' => t('home.ready'), 'nicht_bereit' => t('home.not_ready'), 'uebung' => t('home.training')][$bereitschaftStatus];
+            ?>
             <div class="hero-readiness" role="img" aria-label="<?php echo e(t('home.status_label', ['status' => $readinessLabel])); ?>">
-                <span class="hero-readiness-track <?php echo $einsatzbereit ? 'is-ready' : 'is-not-ready'; ?>">
-                    <span class="hero-readiness-thumb"><i class="fas <?php echo $einsatzbereit ? 'fa-check' : 'fa-xmark'; ?>"></i></span>
+                <span class="hero-readiness-track <?php echo $readinessClass; ?>">
+                    <span class="hero-readiness-thumb"><i class="fas <?php echo $readinessIcon; ?>"></i></span>
                 </span>
-                <span class="hero-readiness-label <?php echo $einsatzbereit ? 'is-ready' : 'is-not-ready'; ?>"><?php echo e($readinessLabel); ?></span>
+                <span class="hero-readiness-label <?php echo $readinessClass; ?>"><?php echo e($readinessLabel); ?></span>
             </div>
         </div>
     </section>

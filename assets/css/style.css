@@ -448,6 +448,11 @@ body.nav-open {
     border-color: rgba(213,0,28,0.85);
 }
 
+.hero-readiness-track.is-training {
+    background: rgba(230,126,34,0.9);
+    border-color: rgba(230,126,34,0.9);
+}
+
 .hero-readiness-thumb {
     position: absolute;
     top: 2px;
@@ -473,6 +478,11 @@ body.nav-open {
     color: var(--color-primary);
 }
 
+.hero-readiness-track.is-training .hero-readiness-thumb {
+    left: 15px;
+    color: #e67e22;
+}
+
 .hero-readiness-label {
     font-weight: 700;
     font-size: 1rem;
@@ -485,6 +495,10 @@ body.nav-open {
 
 .hero-readiness-label.is-not-ready {
     color: #ff8f8f;
+}
+
+.hero-readiness-label.is-training {
+    color: #ffb366;
 }
 
 /* --- Buttons --- */

@@ -324,6 +324,7 @@ return [
     'home.learn_more' => 'Learn More',
     'home.ready' => 'Ready for Action',
     'home.not_ready' => 'Not Ready for Action',
+    'home.training' => 'Training',
     'home.status_label' => 'Status: {{status}}',
     'home.hours_per_day' => 'Hours a Day',
     'home.days_per_week' => 'Days a Week',

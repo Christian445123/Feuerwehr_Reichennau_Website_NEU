@@ -324,6 +324,7 @@ return [
     'home.learn_more' => 'Mehr erfahren',
     'home.ready' => 'Einsatzbereit',
     'home.not_ready' => 'Nicht einsatzbereit',
+    'home.training' => 'Übung',
     'home.status_label' => 'Status: {{status}}',
     'home.hours_per_day' => 'Stunden am Tag',
     'home.days_per_week' => 'Tage die Woche',
