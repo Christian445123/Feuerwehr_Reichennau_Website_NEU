@@ -25,9 +25,13 @@
 
                 <div class="footer-col">
                     <h4><?php echo e(t('footer.weather_warnings')); ?></h4>
-                    <a href="https://warnungen.zamg.at/" target="_blank" rel="noopener" class="footer-warnwidget">
-                        <i class="fas fa-cloud-bolt"></i>
-                        <span><?php echo e(t('footer.weather_warnings_link')); ?></span>
+                    <div class="footer-warnlist" id="footerWarnlist">
+                        <div class="footer-warnlist-row footer-warnlist-loading">
+                            <span><i class="fas fa-spinner fa-spin"></i> <?php echo e(t('footer.weather_warnings_loading')); ?></span>
+                        </div>
+                    </div>
+                    <a href="https://warnungen.zamg.at/" target="_blank" rel="noopener" class="footer-warnlist-source">
+                        <?php echo e(t('footer.weather_warnings_link')); ?> <i class="fas fa-arrow-up-right-from-square"></i>
                     </a>
                 </div>
 

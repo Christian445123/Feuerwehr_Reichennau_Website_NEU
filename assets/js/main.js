@@ -287,3 +287,25 @@ document.addEventListener('DOMContentLoaded', function () {
         slides[current].classList.add('active');
     }, interval);
 })();
+
+// Wetterwarnungen Innsbruck/Tirol im Footer (siehe warnungen-tirol.php)
+(function () {
+    var box = document.getElementById('footerWarnlist');
+    if (!box) return;
+
+    fetch('warnungen-tirol.php').then(function (r) { return r.json(); }).then(function (data) {
+        if (!data || !Array.isArray(data.regions)) throw new Error('invalid response');
+
+        box.innerHTML = data.regions.map(function (region) {
+            var level = region.summary && region.summary.level > 0 ? region.summary.level : 0;
+            var type = (region.summary && region.summary.type) || '';
+            var statusText = level > 0 ? type : 'Keine Warnungen';
+            return '<div class="footer-warnlist-row">' +
+                '<span class="footer-warnlist-region"><span class="footer-warnlist-dot level-' + level + '"></span>' + region.name + '</span>' +
+                '<span class="footer-warnlist-type">' + statusText + '</span>' +
+                '</div>';
+        }).join('');
+    }).catch(function () {
+        box.innerHTML = '<div class="footer-warnlist-row footer-warnlist-error"><span><i class="fas fa-triangle-exclamation"></i> Warnungen gerade nicht abrufbar</span></div>';
+    });
+})();

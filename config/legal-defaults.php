@@ -155,8 +155,8 @@ EOT,
 <p>Diese Website nutzt zur Darstellung von Icons den Dienst Font Awesome, bereitgestellt von Fonticons, Inc. Beim Aufruf einer Seite lädt Ihr Browser die benötigten Icons von einem CDN (Content Delivery Network). Dabei wird Ihre IP-Adresse an den Betreiber des CDN übermittelt.</p>
 <p>Weitere Informationen finden Sie in der Datenschutzerklärung von Font Awesome: <a href="https://fontawesome.com/privacy" target="_blank" rel="noopener">fontawesome.com/privacy</a>.</p>
 
-<h4>Link zu Wetterwarnungen (GeoSphere Austria)</h4>
-<p>Im Footer der Website verlinken wir auf die Wetterwarnungen von GeoSphere Austria (warnungen.zamg.at). Es handelt sich um einen einfachen Hyperlink, der ohne Ihr Zutun keine Daten an GeoSphere Austria überträgt. Erst wenn Sie den Link anklicken und die Seite besuchen, gelten die Datenschutzbestimmungen von GeoSphere Austria.</p>
+<h4>Wetterwarnungen (GeoSphere Austria)</h4>
+<p>Im Footer der Website zeigen wir eine aktuelle Übersicht von Wetterwarnungen für Innsbruck und Tirol. Die Daten dafür ruft unser eigener Server im Hintergrund von der öffentlichen Schnittstelle von GeoSphere Austria (warnungen.zamg.at, Lizenz CC BY 4.0) ab und speichert sie kurzzeitig zwischen; Ihr Browser verbindet sich dabei nicht direkt mit GeoSphere Austria. Zusätzlich verlinken wir auf die Warnseite von GeoSphere Austria - das ist ein einfacher Hyperlink, der ohne Ihr Zutun keine Daten überträgt. Erst wenn Sie den Link anklicken, gelten die Datenschutzbestimmungen von GeoSphere Austria.</p>
 
 <h4>Facebook-Link</h4>
 <p>Unsere Website enthält einen Link zu unserer Facebook-Seite. Es handelt sich dabei um einen einfachen Hyperlink, der keine Daten an Facebook überträgt. Erst wenn Sie den Link anklicken und die Facebook-Seite besuchen, gelten die Datenschutzbestimmungen von Facebook (Meta Platforms Ireland Ltd.).</p>

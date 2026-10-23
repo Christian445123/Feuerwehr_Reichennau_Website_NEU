@@ -3925,27 +3925,70 @@ body.lightbox-open {
     }
 }
 
-.footer-warnwidget {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    padding: 12px 16px;
+.footer-warnlist {
     border-radius: var(--radius-md);
     background: rgba(255,255,255,0.06);
     border: 1px solid rgba(255,255,255,0.1);
-    color: rgba(255,255,255,0.8);
-    font-size: 0.9rem;
+    overflow: hidden;
+}
+
+.footer-warnlist-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 14px;
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.85);
+}
+
+.footer-warnlist-row + .footer-warnlist-row {
+    border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+.footer-warnlist-row.footer-warnlist-loading,
+.footer-warnlist-row.footer-warnlist-error {
+    justify-content: flex-start;
+    color: rgba(255,255,255,0.5);
+}
+
+.footer-warnlist-region {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+}
+
+.footer-warnlist-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    background: #27ae60;
+}
+
+.footer-warnlist-dot.level-1 { background: #f1c40f; }
+.footer-warnlist-dot.level-2 { background: #e67e22; }
+.footer-warnlist-dot.level-3 { background: #e74c3c; }
+
+.footer-warnlist-type {
+    color: rgba(255,255,255,0.6);
+    font-size: 0.8rem;
+    text-align: right;
+}
+
+.footer-warnlist-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 10px;
+    color: rgba(255,255,255,0.55);
+    font-size: 0.78rem;
     transition: var(--transition);
 }
 
-.footer-warnwidget i {
-    color: var(--color-primary-light);
-    font-size: 1.1rem;
-}
-
-.footer-warnwidget:hover {
-    background: rgba(255,255,255,0.1);
-    color: var(--color-white);
+.footer-warnlist-source:hover {
+    color: rgba(255,255,255,0.85);
 }
 
 /* Jugend-Seite: roter Hintergrund -> Navigationsleiste immer schwarz und deckend */
