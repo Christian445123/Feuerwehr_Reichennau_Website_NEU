@@ -121,6 +121,7 @@ return [
     'footer.org_name' => 'Freiwillige Feuerwehr Reichenau',
     'footer.org_location' => 'Innsbruck Stadt',
     'footer.weather_warnings' => 'Wetterwarnungen',
+    'footer.weather_warnings_link' => 'GeoSphere Austria ansehen',
     'footer.copyright_by' => 'Copyrights by',
     'footer.imprint' => 'Impressum',
     'footer.privacy' => 'Datenschutz',

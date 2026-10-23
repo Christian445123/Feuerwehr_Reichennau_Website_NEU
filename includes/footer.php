@@ -25,8 +25,9 @@
 
                 <div class="footer-col">
                     <h4><?php echo e(t('footer.weather_warnings')); ?></h4>
-                    <a href="https://warnungen.zamg.at/html/de/heute/alle/at/" target="_blank" rel="noopener" class="footer-warnwidget">
-                        <img src="https://warnungen.zamg.at/warnwidget/de/heute/alle/at/" alt="GeoSphere-Wetterwarnungen Österreich" title="GeoSphere-Wetterwarnungen" loading="lazy">
+                    <a href="https://warnungen.zamg.at/" target="_blank" rel="noopener" class="footer-warnwidget">
+                        <i class="fas fa-cloud-bolt"></i>
+                        <span><?php echo e(t('footer.weather_warnings_link')); ?></span>
                     </a>
                 </div>
 

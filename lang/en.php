@@ -121,6 +121,7 @@ return [
     'footer.org_name' => 'Reichenau Volunteer Fire Department',
     'footer.org_location' => 'Innsbruck City',
     'footer.weather_warnings' => 'Weather Warnings',
+    'footer.weather_warnings_link' => 'View GeoSphere Austria',
     'footer.copyright_by' => 'Copyrights by',
     'footer.imprint' => 'Legal Notice',
     'footer.privacy' => 'Privacy',
