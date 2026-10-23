@@ -122,7 +122,6 @@ return [
     'footer.org_location' => 'Innsbruck Stadt',
     'footer.weather_warnings' => 'Wetterwarnungen',
     'footer.weather_warnings_link' => 'Quelle: GeoSphere Austria',
-    'footer.weather_warning_popup_title' => 'Aktuelle Wetterwarnung für Innsbruck/Innsbruck-Land',
     'footer.weather_warnings_loading' => 'Lade Warnungen…',
     'footer.copyright_by' => 'Copyrights by',
     'footer.imprint' => 'Impressum',

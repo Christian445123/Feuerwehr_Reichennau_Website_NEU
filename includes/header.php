@@ -15,3 +15,45 @@
     <link rel="stylesheet" href="assets/css/style.css?v=<?php echo @filemtime(__DIR__ . '/../assets/css/style.css') ?: time(); ?>">
 </head>
 <body class="page-<?php echo htmlspecialchars($current_page ?? ""); ?>">
+<?php
+require_once __DIR__ . '/../config/site-alert.php';
+$siteAlert = getActiveSiteAlert();
+?>
+<?php if ($siteAlert !== null):
+    $siteAlertTypes = getSiteAlertTypes();
+    $siteAlertIcon = $siteAlertTypes[$siteAlert['type']]['icon'] ?? 'fa-triangle-exclamation';
+    $siteAlertLabel = $siteAlertTypes[$siteAlert['type']]['label'] ?? 'Hinweis';
+?>
+<div class="site-alert-banner" id="siteAlertBanner" style="border-color: <?php echo htmlspecialchars($siteAlert['color']); ?>;">
+    <div class="site-alert-banner-inner">
+        <i class="fas <?php echo htmlspecialchars($siteAlertIcon); ?> site-alert-banner-icon" style="color: <?php echo htmlspecialchars($siteAlert['color']); ?>;"></i>
+        <div class="site-alert-banner-text">
+            <strong><?php echo htmlspecialchars($siteAlertLabel); ?><?php echo $siteAlert['area'] !== '' ? ': ' . htmlspecialchars($siteAlert['area']) : ''; ?></strong>
+            <?php if ($siteAlert['text'] !== ''): ?>
+                <span><?php echo htmlspecialchars($siteAlert['text']); ?></span>
+            <?php endif; ?>
+        </div>
+        <button type="button" class="site-alert-banner-close" id="siteAlertBannerClose" aria-label="Hinweis schließen">&times;</button>
+    </div>
+</div>
+<script>
+(function () {
+    var banner = document.getElementById('siteAlertBanner');
+    var closeBtn = document.getElementById('siteAlertBannerClose');
+    if (!banner || !closeBtn) return;
+    var DISMISS_KEY = 'site_alert_dismissed_' + <?php echo json_encode(md5($siteAlert['type'] . '|' . $siteAlert['color'] . '|' . $siteAlert['area'] . '|' . $siteAlert['text'])); ?>;
+    var dismissed = false;
+    try { dismissed = sessionStorage.getItem(DISMISS_KEY) === '1'; } catch (e) {}
+    if (dismissed) {
+        banner.style.display = 'none';
+    } else {
+        document.body.classList.add('has-site-alert-banner');
+    }
+    closeBtn.addEventListener('click', function () {
+        banner.style.display = 'none';
+        document.body.classList.remove('has-site-alert-banner');
+        try { sessionStorage.setItem(DISMISS_KEY, '1'); } catch (e) {}
+    });
+})();
+</script>
+<?php endif; ?>

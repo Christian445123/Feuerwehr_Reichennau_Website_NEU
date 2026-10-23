@@ -3,7 +3,7 @@
  * Liefert die aktuell aktiven GeoSphere-Austria-Wetterwarnungen für
  * Innsbruck-Stadt und den Bezirk Innsbruck-Land (gefiltert aus der
  * öffentlichen Warn-API) als schlankes JSON - für die kleine Statusliste im
- * Footer sowie das Warn-Popup beim Seitenaufruf (siehe includes/footer.php).
+ * Footer (siehe includes/footer.php).
  *
  * Läuft nach demselben Muster wie tile-proxy.php/schutzgebiet-check.php:
  * serverseitiger Aufruf mit ordentlicher User-Agent-Kennung statt direktem
@@ -23,57 +23,16 @@
  * 6=Hitze, 7=Kälte. wlevel (Warnstufe): 1=gelb/Vorwarnung, 2=orange/Warnung,
  * 3=rot/Warnung (höchste Stufe).
  *
- * Zusätzlich gibt es im Admin-Bereich (Einstellungen) zwei unabhängige
- * Schalter, die das Popup unabhängig von der echten GeoSphere-Lage
- * erzwingen:
- * - Testmodus: zeigt das Popup mit einem festen Beispielinhalt (zum
- *   schnellen Prüfen, wie es aussieht, ohne eigene Texte einzugeben)
- * - Manuelle Warnung: zeigt das Popup mit frei eingegebenem Text, Bereich
- *   und Farbe (z.B. für einen Hinweis wie "Bereich X meiden")
- * Ist der Testmodus aktiv, hat er Vorrang vor der manuellen Warnung. Beides
- * wird bewusst NICHT mitgecacht, sondern bei jeder Anfrage frisch aus den
- * Website-Einstellungen gelesen, damit Ein-/Ausschalten sofort wirkt.
+ * Der allgemeine, admin-gesteuerte Seiten-Warnhinweis (Testmodus/manuell,
+ * beliebiger Typ, nicht an Wetter gebunden) ist davon unabhängig und wird
+ * direkt serverseitig in includes/header.php gerendert (siehe
+ * config/site-alert.php) - er hat nichts mehr mit dieser Datei zu tun.
  */
 
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/config/logging.php';
-require_once __DIR__ . '/config/settings.php';
 
 header('Content-Type: application/json; charset=utf-8');
-
-/**
- * Mischt die manuelle Test-/Hinweiswarnung aus den Website-Einstellungen in
- * die fertige Antwort ein, egal ob diese live abgerufen oder aus dem Cache
- * kam.
- */
-function applyManualWeatherWarning(string $jsonResponse): string {
-    $data = json_decode($jsonResponse, true);
-    if (!is_array($data)) {
-        return $jsonResponse;
-    }
-
-    if (getSiteSetting('weather_warning_test_mode', '0') === '1') {
-        $data['has_warning'] = true;
-        $data['manual'] = [
-            'enabled' => true,
-            'color' => '#e67e22',
-            'area' => 'Testbereich',
-            'text' => 'Dies ist ein Test des Warn-Popups (Testmodus in Admin -> Einstellungen aktiv) - keine echte Warnung.',
-        ];
-    } elseif (getSiteSetting('weather_warning_manual_enabled', '0') === '1') {
-        $data['has_warning'] = true;
-        $data['manual'] = [
-            'enabled' => true,
-            'color' => getSiteSetting('weather_warning_manual_color', '#e74c3c'),
-            'area' => getSiteSetting('weather_warning_manual_area', ''),
-            'text' => getSiteSetting('weather_warning_manual_text', ''),
-        ];
-    } else {
-        $data['manual'] = ['enabled' => false];
-    }
-
-    return json_encode($data, JSON_UNESCAPED_UNICODE);
-}
 
 $db = getDB();
 if (!checkRateLimit($db, 'warnungen_tirol', 30, 300)) {
@@ -88,7 +47,7 @@ $maxAge = 10 * 60; // 10 Minuten - Warnungen ändern sich nicht minütlich,
                     // aber auch nicht tagelang gleich.
 
 if (is_file($cacheFile) && (time() - filemtime($cacheFile)) < $maxAge) {
-    echo applyManualWeatherWarning(file_get_contents($cacheFile));
+    readfile($cacheFile);
     exit;
 }
 
@@ -108,7 +67,7 @@ if ($body === false || $status !== 200) {
     // Bei einem Fehler lieber die zuletzt bekannte (ggf. ältere) Fassung
     // ausliefern als eine Fehlermeldung, falls eine existiert.
     if (is_file($cacheFile)) {
-        echo applyManualWeatherWarning(file_get_contents($cacheFile));
+        readfile($cacheFile);
         exit;
     }
     http_response_code(502);
@@ -159,9 +118,6 @@ $regions = [
 
 $response = json_encode([
     'fetched_at' => date('c'),
-    'has_warning' => array_reduce($regions, function ($carry, $r) {
-        return $carry || $r['summary']['level'] > 0;
-    }, false),
     'regions' => $regions,
 ], JSON_UNESCAPED_UNICODE);
 
@@ -170,4 +126,4 @@ if (!is_dir($cacheDir)) {
 }
 file_put_contents($cacheFile, $response);
 
-echo applyManualWeatherWarning($response);
+echo $response;

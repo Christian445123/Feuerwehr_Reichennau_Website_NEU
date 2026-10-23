@@ -9,6 +9,7 @@ require_once __DIR__ . '/../config/env-writer.php';
 require_once __DIR__ . '/../config/mail.php';
 require_once __DIR__ . '/../config/translate.php';
 require_once __DIR__ . '/../config/settings.php';
+require_once __DIR__ . '/../config/site-alert.php';
 requireLogin();
 
 $pageTitle = 'Einstellungen';
@@ -278,45 +279,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    if ($action === 'toggle_weather_test_mode') {
+    if ($action === 'toggle_site_alert_test_mode') {
         if (!userHasPermission('settings.manage')) {
             flash('error', 'Dir fehlt die Berechtigung dafür.');
-            header('Location: settings.php#weather-warning');
+            header('Location: settings.php#site-alert');
             exit;
         }
         $enable = ($_POST['enable'] ?? '1') === '1';
-        setSiteSetting('weather_warning_test_mode', $enable ? '1' : '0');
-        logActivity($db, 'settings.weather_warning_test', $enable ? 'Testmodus aktiviert' : 'Testmodus deaktiviert');
+        setSiteSetting('site_alert_test_mode', $enable ? '1' : '0');
+        logActivity($db, 'settings.site_alert_test', $enable ? 'Testmodus aktiviert' : 'Testmodus deaktiviert');
         flash('success', $enable
-            ? 'Testmodus ist jetzt aktiv - das Warn-Popup mit Beispielinhalt erscheint ab sofort bei jedem Seitenaufruf.'
+            ? 'Testmodus ist jetzt aktiv - der Warnhinweis mit Beispielinhalt erscheint ab sofort oben auf jeder Seite.'
             : 'Testmodus wurde deaktiviert.');
-        header('Location: settings.php#weather-warning');
+        header('Location: settings.php#site-alert');
         exit;
     }
 
-    if ($action === 'save_weather_warning') {
+    if ($action === 'save_site_alert') {
         if (!userHasPermission('settings.manage')) {
-            flash('error', 'Dir fehlt die Berechtigung, die Wetterwarnung zu ändern.');
-            header('Location: settings.php#weather-warning');
+            flash('error', 'Dir fehlt die Berechtigung, den Warnhinweis zu ändern.');
+            header('Location: settings.php#site-alert-manual');
             exit;
         }
-        $enabled = ($_POST['weather_warning_manual_enabled'] ?? '0') === '1';
-        $color = trim($_POST['weather_warning_manual_color'] ?? '#e74c3c');
-        $area = trim($_POST['weather_warning_manual_area'] ?? '');
-        $text = trim($_POST['weather_warning_manual_text'] ?? '');
+        $enabled = ($_POST['site_alert_enabled'] ?? '0') === '1';
+        $type = trim($_POST['site_alert_type'] ?? 'sonstiges');
+        $color = trim($_POST['site_alert_color'] ?? '#e74c3c');
+        $area = trim($_POST['site_alert_area'] ?? '');
+        $text = trim($_POST['site_alert_text'] ?? '');
 
+        if (!array_key_exists($type, getSiteAlertTypes())) {
+            $type = 'sonstiges';
+        }
         if (!preg_match('/^#[0-9a-fA-F]{6}$/', $color)) {
             $color = '#e74c3c';
         }
 
-        setSiteSetting('weather_warning_manual_enabled', $enabled ? '1' : '0');
-        setSiteSetting('weather_warning_manual_color', $color);
-        setSiteSetting('weather_warning_manual_area', $area);
-        setSiteSetting('weather_warning_manual_text', $text);
+        setSiteSetting('site_alert_enabled', $enabled ? '1' : '0');
+        setSiteSetting('site_alert_type', $type);
+        setSiteSetting('site_alert_color', $color);
+        setSiteSetting('site_alert_area', $area);
+        setSiteSetting('site_alert_text', $text);
 
-        logActivity($db, 'settings.weather_warning', $enabled ? "Manuelle Wetterwarnung aktiviert (Bereich: $area)" : 'Manuelle Wetterwarnung deaktiviert');
-        flash('success', $enabled ? 'Die manuelle Wetterwarnung ist jetzt aktiv - das Popup erscheint ab sofort auf der Website.' : 'Die manuelle Wetterwarnung wurde deaktiviert.');
-        header('Location: settings.php#weather-warning');
+        logActivity($db, 'settings.site_alert', $enabled ? "Warnhinweis aktiviert (Typ: $type, Bereich: $area)" : 'Warnhinweis deaktiviert');
+        flash('success', $enabled ? 'Der Warnhinweis ist jetzt aktiv - er erscheint ab sofort oben auf jeder Seite.' : 'Der Warnhinweis wurde deaktiviert.');
+        header('Location: settings.php#site-alert-manual');
         exit;
     }
 
@@ -632,76 +638,87 @@ $deeplUsage = $deeplConfigured ? getDeepLUsage() : null;
 <?php endif; ?>
 
 <?php if (userHasPermission('settings.manage')):
-    $weatherTestModeEnabled = getSiteSetting('weather_warning_test_mode', '0') === '1';
-    $weatherWarningEnabled = getSiteSetting('weather_warning_manual_enabled', '0') === '1';
-    $weatherWarningColor = getSiteSetting('weather_warning_manual_color', '#e74c3c');
-    $weatherWarningArea = getSiteSetting('weather_warning_manual_area', '');
-    $weatherWarningText = getSiteSetting('weather_warning_manual_text', '');
+    $siteAlertTestModeEnabled = getSiteSetting('site_alert_test_mode', '0') === '1';
+    $siteAlertEnabled = getSiteSetting('site_alert_enabled', '0') === '1';
+    $siteAlertType = getSiteSetting('site_alert_type', 'sonstiges');
+    $siteAlertColor = getSiteSetting('site_alert_color', '#e74c3c');
+    $siteAlertArea = getSiteSetting('site_alert_area', '');
+    $siteAlertText = getSiteSetting('site_alert_text', '');
+    $siteAlertTypeOptions = getSiteAlertTypes();
 ?>
-<div class="admin-card" style="max-width: 600px; margin-top: 24px;" id="weather-warning">
-    <div class="admin-card-header"><h2><i class="fas fa-triangle-exclamation"></i> Wetterwarn-Popup: Testmodus</h2></div>
+<div class="admin-card" style="max-width: 600px; margin-top: 24px;" id="site-alert">
+    <div class="admin-card-header"><h2><i class="fas fa-triangle-exclamation"></i> Seiten-Warnhinweis: Testmodus</h2></div>
     <div class="admin-card-body">
-        <p style="margin-bottom: 16px; color: #6c757d;">Zeigt das Warn-Popup mit einem einfachen Beispielinhalt an, unabhängig von den echten GeoSphere-Austria-Daten - praktisch, um schnell zu prüfen, wie das Popup auf der Website aussieht, ohne extra Texte einzugeben. Die normale Übersicht im Footer (Innsbruck-Stadt/Land, Live-Daten von GeoSphere) läuft unabhängig davon weiter.</p>
+        <p style="margin-bottom: 16px; color: #6c757d;">Zeigt den Warnhinweis als Banner über die gesamte Seitenbreite ganz oben auf jeder Seite an, mit einem einfachen Beispielinhalt - praktisch, um schnell zu prüfen, wie er auf der Website aussieht, ohne extra Texte einzugeben. Die Wetterübersicht im Footer (Innsbruck-Stadt/Land, Live-Daten von GeoSphere) läuft unabhängig davon weiter.</p>
 
-        <div style="margin-bottom: 16px; padding: 14px 16px; background: <?php echo $weatherTestModeEnabled ? 'rgba(213,0,28,0.06)' : 'rgba(39,174,96,0.08)'; ?>; border-radius: var(--radius); display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;">
+        <div style="margin-bottom: 16px; padding: 14px 16px; background: <?php echo $siteAlertTestModeEnabled ? 'rgba(213,0,28,0.06)' : 'rgba(39,174,96,0.08)'; ?>; border-radius: var(--radius); display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;">
             <div>
-                <strong><?php echo $weatherTestModeEnabled ? 'Testmodus ist AKTIV' : 'Testmodus ist AUS'; ?></strong>
+                <strong><?php echo $siteAlertTestModeEnabled ? 'Testmodus ist AKTIV' : 'Testmodus ist AUS'; ?></strong>
                 <p style="margin: 4px 0 0; font-size: 0.85rem; color: #6c757d;">
-                    <?php echo $weatherTestModeEnabled
-                        ? 'Besucher sehen bei jedem Seitenaufruf das Warn-Popup mit Beispielinhalt.'
-                        : 'Das Popup erscheint nur bei einer echten Warnung oder der manuellen Warnung unten.'; ?>
+                    <?php echo $siteAlertTestModeEnabled
+                        ? 'Besucher sehen bei jedem Seitenaufruf den Warnhinweis mit Beispielinhalt.'
+                        : 'Der Banner erscheint nur bei der manuellen Warnung unten.'; ?>
                 </p>
             </div>
             <form method="POST">
                 <?php echo csrfField(); ?>
-                <input type="hidden" name="action" value="toggle_weather_test_mode">
-                <input type="hidden" name="enable" value="<?php echo $weatherTestModeEnabled ? '0' : '1'; ?>">
-                <button type="submit" class="btn <?php echo $weatherTestModeEnabled ? 'btn-secondary' : 'btn-primary'; ?>">
-                    <i class="fas fa-power-off"></i> <?php echo $weatherTestModeEnabled ? 'Deaktivieren' : 'Aktivieren'; ?>
+                <input type="hidden" name="action" value="toggle_site_alert_test_mode">
+                <input type="hidden" name="enable" value="<?php echo $siteAlertTestModeEnabled ? '0' : '1'; ?>">
+                <button type="submit" class="btn <?php echo $siteAlertTestModeEnabled ? 'btn-secondary' : 'btn-primary'; ?>">
+                    <i class="fas fa-power-off"></i> <?php echo $siteAlertTestModeEnabled ? 'Deaktivieren' : 'Aktivieren'; ?>
                 </button>
             </form>
         </div>
     </div>
 </div>
 
-<div class="admin-card" style="max-width: 600px; margin-top: 24px;" id="weather-warning-manual">
-    <div class="admin-card-header"><h2><i class="fas fa-pen"></i> Wetterwarn-Popup: manuell erzeugen</h2></div>
+<div class="admin-card" style="max-width: 600px; margin-top: 24px;" id="site-alert-manual">
+    <div class="admin-card-header"><h2><i class="fas fa-pen"></i> Seiten-Warnhinweis: manuell erzeugen</h2></div>
     <div class="admin-card-body">
-        <p style="margin-bottom: 16px; color: #6c757d;">Erzwingt das Warn-Popup mit einem eigenen Text, eigenem Bereich und eigener Farbe - z.B. für einen Hinweis wie "Bereich X meiden", der nichts mit dem Wetter zu tun haben muss.</p>
+        <p style="margin-bottom: 16px; color: #6c757d;">Zeigt einen eigenen Warnhinweis als Banner über die gesamte Seitenbreite ganz oben auf jeder Seite - mit frei wählbarem Typ, eigenem Text, eigenem Bereich und eigener Farbe. Nicht an Wetter gebunden - z.B. für einen Hinweis wie "Bereich X meiden".</p>
 
-        <div style="margin-bottom: 20px; padding: 14px 16px; background: <?php echo $weatherWarningEnabled ? 'rgba(213,0,28,0.06)' : 'rgba(39,174,96,0.08)'; ?>; border-radius: var(--radius);">
-            <strong><?php echo $weatherWarningEnabled ? 'Manuelle Warnung ist AKTIV' : 'Manuelle Warnung ist AUS'; ?></strong>
+        <div style="margin-bottom: 20px; padding: 14px 16px; background: <?php echo $siteAlertEnabled ? 'rgba(213,0,28,0.06)' : 'rgba(39,174,96,0.08)'; ?>; border-radius: var(--radius);">
+            <strong><?php echo $siteAlertEnabled ? 'Manueller Warnhinweis ist AKTIV' : 'Manueller Warnhinweis ist AUS'; ?></strong>
             <p style="margin: 4px 0 0; font-size: 0.85rem; color: #6c757d;">
-                <?php echo $weatherWarningEnabled
-                    ? 'Besucher sehen bei jedem Seitenaufruf das Warn-Popup mit dem unten eingetragenen Text.'
-                    : 'Das Popup erscheint nur, wenn für Innsbruck-Stadt oder Innsbruck-Land eine echte GeoSphere-Warnung aktiv ist (oder der Testmodus oben an ist).'; ?>
+                <?php echo $siteAlertEnabled
+                    ? 'Besucher sehen bei jedem Seitenaufruf den Warnhinweis mit den unten eingetragenen Angaben.'
+                    : 'Der Banner erscheint nur, wenn aktiviert (oder der Testmodus oben an ist).'; ?>
             </p>
         </div>
 
         <form method="POST" class="admin-form">
             <?php echo csrfField(); ?>
-            <input type="hidden" name="action" value="save_weather_warning">
+            <input type="hidden" name="action" value="save_site_alert">
 
             <div class="form-group">
                 <label>
-                    <input type="checkbox" name="weather_warning_manual_enabled" value="1" <?php echo $weatherWarningEnabled ? 'checked' : ''; ?>>
-                    Popup erzwingen (manuelle Warnung aktiv)
+                    <input type="checkbox" name="site_alert_enabled" value="1" <?php echo $siteAlertEnabled ? 'checked' : ''; ?>>
+                    Warnhinweis erzwingen (manuell aktiv)
                 </label>
             </div>
 
             <div class="form-group">
-                <label for="weather_warning_manual_color">Farbe (Rahmen/Markierung im Popup)</label>
-                <input type="color" id="weather_warning_manual_color" name="weather_warning_manual_color" value="<?php echo e($weatherWarningColor); ?>" style="width: 70px; height: 38px; padding: 2px; cursor: pointer;">
+                <label for="site_alert_type">Art der Warnung</label>
+                <select id="site_alert_type" name="site_alert_type">
+                    <?php foreach ($siteAlertTypeOptions as $key => $opt): ?>
+                        <option value="<?php echo e($key); ?>" <?php echo $siteAlertType === $key ? 'selected' : ''; ?>><?php echo e($opt['label']); ?></option>
+                    <?php endforeach; ?>
+                </select>
             </div>
 
             <div class="form-group">
-                <label for="weather_warning_manual_area">Betroffener Bereich / Gebiet</label>
-                <input type="text" id="weather_warning_manual_area" name="weather_warning_manual_area" value="<?php echo e($weatherWarningArea); ?>" placeholder="z.B. Reichenau, Sillufer - Unterführung meiden">
+                <label for="site_alert_color">Farbe (Rahmen/Markierung im Banner)</label>
+                <input type="color" id="site_alert_color" name="site_alert_color" value="<?php echo e($siteAlertColor); ?>" style="width: 70px; height: 38px; padding: 2px; cursor: pointer;">
             </div>
 
             <div class="form-group">
-                <label for="weather_warning_manual_text">Hinweistext</label>
-                <textarea id="weather_warning_manual_text" name="weather_warning_manual_text" rows="3" placeholder="z.B. Starkregen - Unterführung Sillufer ist überflutet, bitte Bereich meiden."><?php echo e($weatherWarningText); ?></textarea>
+                <label for="site_alert_area">Betroffener Bereich / Gebiet</label>
+                <input type="text" id="site_alert_area" name="site_alert_area" value="<?php echo e($siteAlertArea); ?>" placeholder="z.B. Reichenau, Sillufer - Unterführung meiden">
+            </div>
+
+            <div class="form-group">
+                <label for="site_alert_text">Hinweistext</label>
+                <textarea id="site_alert_text" name="site_alert_text" rows="3" placeholder="z.B. Starkregen - Unterführung Sillufer ist überflutet, bitte Bereich meiden."><?php echo e($siteAlertText); ?></textarea>
             </div>
 
             <button type="submit" class="btn btn-primary">

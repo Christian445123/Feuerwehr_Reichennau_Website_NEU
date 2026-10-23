@@ -4557,92 +4557,64 @@ body.lightbox-open {
     }
 }
 
-/* --- Wetterwarn-Popup (rechts unten, bei aktiver Warnung für Innsbruck/Innsbruck-Land) --- */
-.weather-warn-popup {
-    position: fixed;
-    right: 20px;
-    bottom: 20px;
-    z-index: 1000;
-    max-width: 340px;
+/* --- Seiten-Warnhinweis (volle Breite, ganz oben auf jeder Seite, siehe includes/header.php) --- */
+.site-alert-banner {
+    position: relative;
+    width: 100%;
     background: var(--color-white);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-xl);
-    border: 1px solid #f1c40f;
-    border-left: 4px solid #e74c3c;
-    padding: 18px;
-    opacity: 0;
-    transform: translateY(16px);
-    transition: opacity 0.3s ease, transform 0.3s ease;
+    border-bottom: 3px solid #e74c3c;
+    z-index: 1100;
 }
 
-.weather-warn-popup[hidden] {
-    display: none !important;
-}
-
-.weather-warn-popup.visible {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.weather-warn-popup-close {
-    position: absolute;
-    top: 8px;
-    right: 10px;
-    background: none;
-    border: none;
-    font-size: 1.3rem;
-    line-height: 1;
-    color: var(--color-gray-500, var(--color-gray-600));
-    cursor: pointer;
-    padding: 4px;
-}
-
-.weather-warn-popup-close:hover {
-    color: var(--color-dark);
-}
-
-.weather-warn-popup-head {
+.site-alert-banner-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 12px 20px;
     display: flex;
     align-items: center;
-    gap: 8px;
-    color: #e74c3c;
-    margin-bottom: 10px;
-    padding-right: 20px;
+    gap: 14px;
 }
 
-.weather-warn-popup-head strong {
+.site-alert-banner-icon {
+    font-size: 1.3rem;
+    flex-shrink: 0;
+}
+
+.site-alert-banner-text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-size: 0.92rem;
     color: var(--color-dark);
+}
+
+.site-alert-banner-text strong {
     font-size: 0.95rem;
 }
 
-.weather-warn-popup-body {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    font-size: 0.9rem;
-    color: var(--color-gray-700, var(--color-gray-600));
-    margin-bottom: 12px;
+.site-alert-banner-close {
+    background: none;
+    border: none;
+    font-size: 1.4rem;
+    line-height: 1;
+    color: var(--color-gray-500, var(--color-gray-600));
+    cursor: pointer;
+    padding: 4px 8px;
+    flex-shrink: 0;
 }
 
-.weather-warn-popup-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+.site-alert-banner-close:hover {
+    color: var(--color-dark);
 }
 
-.weather-warn-popup-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.85rem;
-    font-weight: 600;
-}
-
-@media (max-width: 480px) {
-    .weather-warn-popup {
-        left: 16px;
-        right: 16px;
-        max-width: none;
-        bottom: 16px;
+@media (max-width: 600px) {
+    .site-alert-banner-inner {
+        flex-wrap: wrap;
+        padding: 10px 16px;
+    }
+    .site-alert-banner-text {
+        order: 2;
+        flex-basis: 100%;
     }
 }

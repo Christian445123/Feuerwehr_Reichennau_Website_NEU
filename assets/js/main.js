@@ -288,12 +288,12 @@ document.addEventListener('DOMContentLoaded', function () {
     }, interval);
 })();
 
-// Wetterwarnungen Innsbruck-Stadt/Innsbruck-Land: Footer-Liste + Warn-Popup
-// beim Seitenaufruf (siehe warnungen-tirol.php)
+// Wetterwarnungen Innsbruck-Stadt/Innsbruck-Land im Footer (siehe warnungen-tirol.php)
+// Der allgemeine Seiten-Warnhinweis (Testmodus/manuell) ist davon unabhängig
+// und wird direkt serverseitig in includes/header.php gerendert.
 (function () {
     var box = document.getElementById('footerWarnlist');
-    var popup = document.getElementById('weatherWarnPopup');
-    if (!box && !popup) return;
+    if (!box) return;
 
     function escapeHtml(s) {
         return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
@@ -304,65 +304,16 @@ document.addEventListener('DOMContentLoaded', function () {
     fetch('warnungen-tirol.php').then(function (r) { return r.json(); }).then(function (data) {
         if (!data || !Array.isArray(data.regions)) throw new Error('invalid response');
 
-        if (box) {
-            box.innerHTML = data.regions.map(function (region) {
-                var level = region.summary && region.summary.level > 0 ? region.summary.level : 0;
-                var type = (region.summary && region.summary.type) || '';
-                var statusText = level > 0 ? type : 'Keine Warnungen';
-                return '<div class="footer-warnlist-row">' +
-                    '<span class="footer-warnlist-region"><span class="footer-warnlist-dot level-' + level + '"></span>' + escapeHtml(region.name) + '</span>' +
-                    '<span class="footer-warnlist-type">' + escapeHtml(statusText) + '</span>' +
-                    '</div>';
-            }).join('');
-        }
-
-        var manual = data.manual && data.manual.enabled ? data.manual : null;
-
-        if (popup && (data.has_warning || manual)) {
-            // einmal pro Browser-Sitzung anzeigen, nicht bei jedem Seitenwechsel erneut
-            // - bei einer manuell (im Admin-Bereich) erzwungenen Warnung dagegen
-            // bewusst JEDES Mal, damit ein Test sofort sichtbar ist.
-            var SEEN_KEY = 'weather_warn_popup_seen';
-            if (!manual) {
-                var alreadySeen = false;
-                try { alreadySeen = sessionStorage.getItem(SEEN_KEY) === '1'; } catch (e) {}
-                if (alreadySeen) return;
-            }
-
-            var body = popup.querySelector('.weather-warn-popup-body');
-            var accentColor = (manual && manual.color) || '#e74c3c';
-            popup.style.borderLeftColor = accentColor;
-
-            if (manual) {
-                body.innerHTML =
-                    (manual.area ? '<div class="weather-warn-popup-row"><strong>Bereich:</strong> ' + escapeHtml(manual.area) + '</div>' : '') +
-                    (manual.text ? '<div class="weather-warn-popup-row">' + escapeHtml(manual.text) + '</div>' : '');
-            } else {
-                var warned = data.regions.filter(function (r) { return r.summary && r.summary.level > 0; });
-                body.innerHTML = warned.map(function (region) {
-                    var level = region.summary.level;
-                    return '<div class="weather-warn-popup-row">' +
-                        '<span class="footer-warnlist-dot level-' + level + '"></span>' +
-                        '<strong>' + escapeHtml(region.name) + ':</strong> ' + escapeHtml(region.summary.type) +
-                        '</div>';
-                }).join('');
-            }
-
-            popup.hidden = false;
-            requestAnimationFrame(function () { popup.classList.add('visible'); });
-            try { sessionStorage.setItem(SEEN_KEY, '1'); } catch (e) {}
-
-            var close = popup.querySelector('.weather-warn-popup-close');
-            if (close) {
-                close.addEventListener('click', function () {
-                    popup.classList.remove('visible');
-                    setTimeout(function () { popup.hidden = true; }, 300);
-                });
-            }
-        }
+        box.innerHTML = data.regions.map(function (region) {
+            var level = region.summary && region.summary.level > 0 ? region.summary.level : 0;
+            var type = (region.summary && region.summary.type) || '';
+            var statusText = level > 0 ? type : 'Keine Warnungen';
+            return '<div class="footer-warnlist-row">' +
+                '<span class="footer-warnlist-region"><span class="footer-warnlist-dot level-' + level + '"></span>' + escapeHtml(region.name) + '</span>' +
+                '<span class="footer-warnlist-type">' + escapeHtml(statusText) + '</span>' +
+                '</div>';
+        }).join('');
     }).catch(function () {
-        if (box) {
-            box.innerHTML = '<div class="footer-warnlist-row footer-warnlist-error"><span><i class="fas fa-triangle-exclamation"></i> Warnungen gerade nicht abrufbar</span></div>';
-        }
+        box.innerHTML = '<div class="footer-warnlist-row footer-warnlist-error"><span><i class="fas fa-triangle-exclamation"></i> Warnungen gerade nicht abrufbar</span></div>';
     });
 })();
