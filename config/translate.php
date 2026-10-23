@@ -200,3 +200,117 @@ function checkDeepLUsageAndWarn(PDO $db): void {
         }
     }
 }
+
+/**
+ * Holt für bereits bestehende Berichte (angelegt, bevor es die automatische
+ * Übersetzung gab, oder deren Übersetzung zuletzt fehlgeschlagen ist) die
+ * englische Fassung nach - genau dieselbe Logik wie beim normalen Speichern
+ * in admin/report-edit.php, nur in einem Rutsch für mehrere Berichte.
+ *
+ * Läuft in Portionen ($limit Berichte pro Aufruf), damit ein einzelner
+ * Seitenaufruf nicht zu lange dauert und das DeepL-Kontingent nicht auf
+ * einen Schlag verbraucht wird - admin/settings.php zeigt dafür einen
+ * Button, auf den man bei Bedarf mehrfach klickt.
+ *
+ * @return array{done:int,remaining:int,failed:int}
+ */
+function backfillReportTranslations(PDO $db, int $limit = 20): array {
+    $done = 0;
+    $failed = 0;
+
+    $stmt = $db->prepare("SELECT * FROM reports WHERE (title_en IS NULL OR title_en = '') AND title != '' LIMIT ?");
+    $stmt->bindValue(1, $limit, PDO::PARAM_INT);
+    $stmt->execute();
+    $reports = $stmt->fetchAll();
+
+    foreach ($reports as $report) {
+        $linksArr = json_decode($report['links'] ?? '', true) ?: [];
+        $imgStmt = $db->prepare("SELECT id, caption FROM report_images WHERE report_id = ? AND (caption_en IS NULL OR caption_en = '') AND caption != ''");
+        $imgStmt->execute([$report['id']]);
+        $images = $imgStmt->fetchAll();
+
+        $toTranslate = ['title' => $report['title'], 'content' => $report['content'] ?? ''];
+        foreach ($linksArr as $i => $link) {
+            $toTranslate['link_' . $i] = is_array($link) ? ($link['label'] ?? '') : '';
+        }
+        foreach ($images as $i => $img) {
+            $toTranslate['caption_' . $i] = $img['caption'];
+        }
+
+        $translated = translateBatchToEnglish($toTranslate);
+        if ($translated === null) {
+            $failed++;
+            continue;
+        }
+
+        $linksEnArr = [];
+        foreach ($linksArr as $i => $link) {
+            $linksEnArr[] = ['url' => is_array($link) ? ($link['url'] ?? '') : '', 'label' => $translated['link_' . $i] ?? ''];
+        }
+        $linksEnJson = !empty($linksEnArr) ? json_encode($linksEnArr, JSON_UNESCAPED_UNICODE) : null;
+
+        $db->prepare("UPDATE reports SET title_en = ?, content_en = ?, links_en = ? WHERE id = ?")
+            ->execute([$translated['title'] ?? '', $translated['content'] ?? '', $linksEnJson, $report['id']]);
+
+        foreach ($images as $i => $img) {
+            $db->prepare("UPDATE report_images SET caption_en = ? WHERE id = ?")
+                ->execute([$translated['caption_' . $i] ?? '', $img['id']]);
+        }
+
+        $done++;
+    }
+
+    if ($done > 0) {
+        checkDeepLUsageAndWarn($db);
+    }
+
+    $remainingStmt = $db->query("SELECT COUNT(*) FROM reports WHERE (title_en IS NULL OR title_en = '') AND title != ''");
+    return ['done' => $done, 'remaining' => (int) $remainingStmt->fetchColumn(), 'failed' => $failed];
+}
+
+/**
+ * Dasselbe Prinzip wie backfillReportTranslations(), nur für Mitgliederprofile
+ * (Bio + Funktionsbezeichnungen).
+ *
+ * @return array{done:int,remaining:int,failed:int}
+ */
+function backfillMemberTranslations(PDO $db, int $limit = 20): array {
+    $done = 0;
+    $failed = 0;
+
+    $stmt = $db->prepare("SELECT * FROM members WHERE (bio_en IS NULL OR bio_en = '') AND bio IS NOT NULL AND bio != '' LIMIT ?");
+    $stmt->bindValue(1, $limit, PDO::PARAM_INT);
+    $stmt->execute();
+    $members = $stmt->fetchAll();
+
+    foreach ($members as $member) {
+        $funcs = json_decode($member['functions'] ?? '[]', true) ?: [];
+        $toTranslate = ['bio' => $member['bio'] ?? ''];
+        foreach ($funcs as $i => $f) {
+            $toTranslate['role_' . $i] = $f['role'] ?? '';
+        }
+
+        $translated = translateBatchToEnglish($toTranslate);
+        if ($translated === null) {
+            $failed++;
+            continue;
+        }
+
+        $funcsEn = [];
+        foreach ($funcs as $i => $f) {
+            $funcsEn[] = ['section' => $f['section'] ?? '', 'role' => $translated['role_' . $i] ?? ''];
+        }
+
+        $db->prepare("UPDATE members SET bio_en = ?, functions_en = ? WHERE id = ?")
+            ->execute([$translated['bio'] ?? '', json_encode($funcsEn, JSON_UNESCAPED_UNICODE), $member['id']]);
+
+        $done++;
+    }
+
+    if ($done > 0) {
+        checkDeepLUsageAndWarn($db);
+    }
+
+    $remainingStmt = $db->query("SELECT COUNT(*) FROM members WHERE (bio_en IS NULL OR bio_en = '') AND bio IS NOT NULL AND bio != ''");
+    return ['done' => $done, 'remaining' => (int) $remainingStmt->fetchColumn(), 'failed' => $failed];
+}

@@ -252,6 +252,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
+    if ($action === 'backfill_translations') {
+        if (!userHasPermission('settings.manage')) {
+            flash('error', 'Dir fehlt die Berechtigung dafür.');
+            header('Location: settings.php');
+            exit;
+        }
+        if (!isDeepLConfigured()) {
+            flash('error', 'Bitte zuerst einen DeepL-API-Key hinterlegen.');
+        } else {
+            $reportResult = backfillReportTranslations($db, 20);
+            $memberResult = backfillMemberTranslations($db, 20);
+            logActivity($db, 'translate.backfill', "Berichte: {$reportResult['done']} übersetzt, {$reportResult['remaining']} offen; Mitglieder: {$memberResult['done']} übersetzt, {$memberResult['remaining']} offen");
+
+            $parts = [];
+            $parts[] = "{$reportResult['done']} Bericht(e) übersetzt" . ($reportResult['remaining'] > 0 ? ", noch {$reportResult['remaining']} offen - Button erneut klicken" : '');
+            $parts[] = "{$memberResult['done']} Mitgliederprofil(e) übersetzt" . ($memberResult['remaining'] > 0 ? ", noch {$memberResult['remaining']} offen - Button erneut klicken" : '');
+            if ($reportResult['failed'] > 0 || $memberResult['failed'] > 0) {
+                $parts[] = ($reportResult['failed'] + $memberResult['failed']) . ' Übersetzung(en) fehlgeschlagen (DeepL nicht erreichbar oder Kontingent aufgebraucht) - später erneut versuchen';
+            }
+            flash('success', implode('. ', $parts) . '.');
+        }
+        header('Location: settings.php#deepl-backfill');
+        exit;
+    }
+
     header('Location: settings.php');
     exit;
 }
@@ -496,16 +521,43 @@ $deeplUsage = $deeplConfigured ? getDeepLUsage() : null;
             </button>
         </form>
         <?php if ($deeplConfigured): ?>
-        <form method="POST" style="margin-top: 12px;" onsubmit="return confirm('DeepL-API-Key wirklich entfernen? Automatische Übersetzungen werden dadurch deaktiviert.');">
+        <form method="POST" style="margin-top: 12px; display:inline-block;">
             <?php echo csrfField(); ?>
             <input type="hidden" name="action" value="remove_deepl_key">
-            <button type="submit" class="btn btn-secondary btn-sm">
+            <button type="submit" class="btn btn-secondary btn-sm" onclick="return confirm('DeepL-API-Key wirklich entfernen? Automatische Übersetzungen werden dadurch deaktiviert.');">
                 <i class="fas fa-trash"></i> Key entfernen
             </button>
         </form>
         <?php endif; ?>
     </div>
 </div>
+
+<?php if ($deeplConfigured):
+    $reportsMissingEn = (int) $db->query("SELECT COUNT(*) FROM reports WHERE (title_en IS NULL OR title_en = '') AND title != ''")->fetchColumn();
+    $membersMissingEn = (int) $db->query("SELECT COUNT(*) FROM members WHERE (bio_en IS NULL OR bio_en = '') AND bio IS NOT NULL AND bio != ''")->fetchColumn();
+?>
+<div class="admin-card" style="max-width: 600px; margin-top: 24px;" id="deepl-backfill">
+    <div class="admin-card-header"><h2><i class="fas fa-rotate"></i> Bestehende Inhalte nachübersetzen</h2></div>
+    <div class="admin-card-body">
+        <p style="margin-bottom: 16px; color: #6c757d;">Berichte und Mitgliederprofile, die es schon vor der automatischen Übersetzung gab (oder bei denen sie zuletzt fehlgeschlagen ist), bekommen beim nächsten Speichern automatisch eine englische Fassung. Mit diesem Button holst du das für alle bestehenden Inhalte auf einmal nach, ohne jeden einzeln öffnen und speichern zu müssen.</p>
+        <p style="margin-bottom: 16px;">
+            Noch ohne englische Fassung: <strong><?php echo $reportsMissingEn; ?></strong> Bericht(e), <strong><?php echo $membersMissingEn; ?></strong> Mitgliederprofil(e).
+        </p>
+        <?php if ($reportsMissingEn > 0 || $membersMissingEn > 0): ?>
+            <form method="POST">
+                <?php echo csrfField(); ?>
+                <input type="hidden" name="action" value="backfill_translations">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-language"></i> Jetzt übersetzen (bis zu 20 Berichte + 20 Mitglieder)
+                </button>
+            </form>
+            <p class="form-hint" style="margin-top: 10px;">Bei mehr als 20 offenen Einträgen je Bereich einfach erneut klicken, bis nichts mehr offen ist. Das schont das monatliche DeepL-Kontingent (siehe oben).</p>
+        <?php else: ?>
+            <p style="color: #27ae60;"><i class="fas fa-check-circle"></i> Alles bereits übersetzt.</p>
+        <?php endif; ?>
+    </div>
+</div>
+<?php endif; ?>
 <?php endif; ?>
 
 <?php if (userHasPermission('settings.manage')): ?>
