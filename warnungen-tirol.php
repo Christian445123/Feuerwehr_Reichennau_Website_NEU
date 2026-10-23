@@ -23,12 +23,16 @@
  * 6=Hitze, 7=Kälte. wlevel (Warnstufe): 1=gelb/Vorwarnung, 2=orange/Warnung,
  * 3=rot/Warnung (höchste Stufe).
  *
- * Zusätzlich kann im Admin-Bereich (Einstellungen -> Wetterwarnung Test) eine
- * manuelle Warnung hinterlegt werden, die das Popup unabhängig von der
- * echten GeoSphere-Lage erzwingt (z.B. zum Testen, oder für eigene Hinweise
- * wie "Bereich X meiden"). Diese wird bewusst NICHT mitgecacht, sondern bei
- * jeder Anfrage frisch aus den Website-Einstellungen gelesen, damit sie beim
- * Ein-/Ausschalten sofort wirkt.
+ * Zusätzlich gibt es im Admin-Bereich (Einstellungen) zwei unabhängige
+ * Schalter, die das Popup unabhängig von der echten GeoSphere-Lage
+ * erzwingen:
+ * - Testmodus: zeigt das Popup mit einem festen Beispielinhalt (zum
+ *   schnellen Prüfen, wie es aussieht, ohne eigene Texte einzugeben)
+ * - Manuelle Warnung: zeigt das Popup mit frei eingegebenem Text, Bereich
+ *   und Farbe (z.B. für einen Hinweis wie "Bereich X meiden")
+ * Ist der Testmodus aktiv, hat er Vorrang vor der manuellen Warnung. Beides
+ * wird bewusst NICHT mitgecacht, sondern bei jeder Anfrage frisch aus den
+ * Website-Einstellungen gelesen, damit Ein-/Ausschalten sofort wirkt.
  */
 
 require_once __DIR__ . '/config/database.php';
@@ -48,7 +52,15 @@ function applyManualWeatherWarning(string $jsonResponse): string {
         return $jsonResponse;
     }
 
-    if (getSiteSetting('weather_warning_manual_enabled', '0') === '1') {
+    if (getSiteSetting('weather_warning_test_mode', '0') === '1') {
+        $data['has_warning'] = true;
+        $data['manual'] = [
+            'enabled' => true,
+            'color' => '#e67e22',
+            'area' => 'Testbereich',
+            'text' => 'Dies ist ein Test des Warn-Popups (Testmodus in Admin -> Einstellungen aktiv) - keine echte Warnung.',
+        ];
+    } elseif (getSiteSetting('weather_warning_manual_enabled', '0') === '1') {
         $data['has_warning'] = true;
         $data['manual'] = [
             'enabled' => true,

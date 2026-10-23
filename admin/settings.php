@@ -278,6 +278,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
+    if ($action === 'toggle_weather_test_mode') {
+        if (!userHasPermission('settings.manage')) {
+            flash('error', 'Dir fehlt die Berechtigung dafür.');
+            header('Location: settings.php#weather-warning');
+            exit;
+        }
+        $enable = ($_POST['enable'] ?? '1') === '1';
+        setSiteSetting('weather_warning_test_mode', $enable ? '1' : '0');
+        logActivity($db, 'settings.weather_warning_test', $enable ? 'Testmodus aktiviert' : 'Testmodus deaktiviert');
+        flash('success', $enable
+            ? 'Testmodus ist jetzt aktiv - das Warn-Popup mit Beispielinhalt erscheint ab sofort bei jedem Seitenaufruf.'
+            : 'Testmodus wurde deaktiviert.');
+        header('Location: settings.php#weather-warning');
+        exit;
+    }
+
     if ($action === 'save_weather_warning') {
         if (!userHasPermission('settings.manage')) {
             flash('error', 'Dir fehlt die Berechtigung, die Wetterwarnung zu ändern.');
@@ -616,22 +632,49 @@ $deeplUsage = $deeplConfigured ? getDeepLUsage() : null;
 <?php endif; ?>
 
 <?php if (userHasPermission('settings.manage')):
+    $weatherTestModeEnabled = getSiteSetting('weather_warning_test_mode', '0') === '1';
     $weatherWarningEnabled = getSiteSetting('weather_warning_manual_enabled', '0') === '1';
     $weatherWarningColor = getSiteSetting('weather_warning_manual_color', '#e74c3c');
     $weatherWarningArea = getSiteSetting('weather_warning_manual_area', '');
     $weatherWarningText = getSiteSetting('weather_warning_manual_text', '');
 ?>
 <div class="admin-card" style="max-width: 600px; margin-top: 24px;" id="weather-warning">
-    <div class="admin-card-header"><h2><i class="fas fa-triangle-exclamation"></i> Wetterwarnung (manuell / Test)</h2></div>
+    <div class="admin-card-header"><h2><i class="fas fa-triangle-exclamation"></i> Wetterwarn-Popup: Testmodus</h2></div>
     <div class="admin-card-body">
-        <p style="margin-bottom: 16px; color: #6c757d;">Erzwingt unabhängig von den echten GeoSphere-Austria-Daten das Warn-Popup auf der Website (z.B. zum Testen, wie es aussieht, oder für einen eigenen Hinweis wie "Bereich X meiden"). Die normale Übersicht im Footer (Innsbruck-Stadt/Land, Live-Daten von GeoSphere) läuft unabhängig davon weiter.</p>
+        <p style="margin-bottom: 16px; color: #6c757d;">Zeigt das Warn-Popup mit einem einfachen Beispielinhalt an, unabhängig von den echten GeoSphere-Austria-Daten - praktisch, um schnell zu prüfen, wie das Popup auf der Website aussieht, ohne extra Texte einzugeben. Die normale Übersicht im Footer (Innsbruck-Stadt/Land, Live-Daten von GeoSphere) läuft unabhängig davon weiter.</p>
+
+        <div style="margin-bottom: 16px; padding: 14px 16px; background: <?php echo $weatherTestModeEnabled ? 'rgba(213,0,28,0.06)' : 'rgba(39,174,96,0.08)'; ?>; border-radius: var(--radius); display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;">
+            <div>
+                <strong><?php echo $weatherTestModeEnabled ? 'Testmodus ist AKTIV' : 'Testmodus ist AUS'; ?></strong>
+                <p style="margin: 4px 0 0; font-size: 0.85rem; color: #6c757d;">
+                    <?php echo $weatherTestModeEnabled
+                        ? 'Besucher sehen bei jedem Seitenaufruf das Warn-Popup mit Beispielinhalt.'
+                        : 'Das Popup erscheint nur bei einer echten Warnung oder der manuellen Warnung unten.'; ?>
+                </p>
+            </div>
+            <form method="POST">
+                <?php echo csrfField(); ?>
+                <input type="hidden" name="action" value="toggle_weather_test_mode">
+                <input type="hidden" name="enable" value="<?php echo $weatherTestModeEnabled ? '0' : '1'; ?>">
+                <button type="submit" class="btn <?php echo $weatherTestModeEnabled ? 'btn-secondary' : 'btn-primary'; ?>">
+                    <i class="fas fa-power-off"></i> <?php echo $weatherTestModeEnabled ? 'Deaktivieren' : 'Aktivieren'; ?>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="admin-card" style="max-width: 600px; margin-top: 24px;" id="weather-warning-manual">
+    <div class="admin-card-header"><h2><i class="fas fa-pen"></i> Wetterwarn-Popup: manuell erzeugen</h2></div>
+    <div class="admin-card-body">
+        <p style="margin-bottom: 16px; color: #6c757d;">Erzwingt das Warn-Popup mit einem eigenen Text, eigenem Bereich und eigener Farbe - z.B. für einen Hinweis wie "Bereich X meiden", der nichts mit dem Wetter zu tun haben muss.</p>
 
         <div style="margin-bottom: 20px; padding: 14px 16px; background: <?php echo $weatherWarningEnabled ? 'rgba(213,0,28,0.06)' : 'rgba(39,174,96,0.08)'; ?>; border-radius: var(--radius);">
             <strong><?php echo $weatherWarningEnabled ? 'Manuelle Warnung ist AKTIV' : 'Manuelle Warnung ist AUS'; ?></strong>
             <p style="margin: 4px 0 0; font-size: 0.85rem; color: #6c757d;">
                 <?php echo $weatherWarningEnabled
                     ? 'Besucher sehen bei jedem Seitenaufruf das Warn-Popup mit dem unten eingetragenen Text.'
-                    : 'Das Popup erscheint nur, wenn für Innsbruck-Stadt oder Innsbruck-Land eine echte GeoSphere-Warnung aktiv ist.'; ?>
+                    : 'Das Popup erscheint nur, wenn für Innsbruck-Stadt oder Innsbruck-Land eine echte GeoSphere-Warnung aktiv ist (oder der Testmodus oben an ist).'; ?>
             </p>
         </div>
 
