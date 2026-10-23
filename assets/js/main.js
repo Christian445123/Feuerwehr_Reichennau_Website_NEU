@@ -295,6 +295,12 @@ document.addEventListener('DOMContentLoaded', function () {
     var popup = document.getElementById('weatherWarnPopup');
     if (!box && !popup) return;
 
+    function escapeHtml(s) {
+        return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+        });
+    }
+
     fetch('warnungen-tirol.php').then(function (r) { return r.json(); }).then(function (data) {
         if (!data || !Array.isArray(data.regions)) throw new Error('invalid response');
 
@@ -304,28 +310,43 @@ document.addEventListener('DOMContentLoaded', function () {
                 var type = (region.summary && region.summary.type) || '';
                 var statusText = level > 0 ? type : 'Keine Warnungen';
                 return '<div class="footer-warnlist-row">' +
-                    '<span class="footer-warnlist-region"><span class="footer-warnlist-dot level-' + level + '"></span>' + region.name + '</span>' +
-                    '<span class="footer-warnlist-type">' + statusText + '</span>' +
+                    '<span class="footer-warnlist-region"><span class="footer-warnlist-dot level-' + level + '"></span>' + escapeHtml(region.name) + '</span>' +
+                    '<span class="footer-warnlist-type">' + escapeHtml(statusText) + '</span>' +
                     '</div>';
             }).join('');
         }
 
-        if (popup && data.has_warning) {
-            // einmal pro Browser-Sitzung anzeigen, nicht bei jedem Seitenwechsel erneut
-            var SEEN_KEY = 'weather_warn_popup_seen';
-            var alreadySeen = false;
-            try { alreadySeen = sessionStorage.getItem(SEEN_KEY) === '1'; } catch (e) {}
-            if (alreadySeen) return;
+        var manual = data.manual && data.manual.enabled ? data.manual : null;
 
-            var warned = data.regions.filter(function (r) { return r.summary && r.summary.level > 0; });
+        if (popup && (data.has_warning || manual)) {
+            // einmal pro Browser-Sitzung anzeigen, nicht bei jedem Seitenwechsel erneut
+            // - bei einer manuell (im Admin-Bereich) erzwungenen Warnung dagegen
+            // bewusst JEDES Mal, damit ein Test sofort sichtbar ist.
+            var SEEN_KEY = 'weather_warn_popup_seen';
+            if (!manual) {
+                var alreadySeen = false;
+                try { alreadySeen = sessionStorage.getItem(SEEN_KEY) === '1'; } catch (e) {}
+                if (alreadySeen) return;
+            }
+
             var body = popup.querySelector('.weather-warn-popup-body');
-            body.innerHTML = warned.map(function (region) {
-                var level = region.summary.level;
-                return '<div class="weather-warn-popup-row">' +
-                    '<span class="footer-warnlist-dot level-' + level + '"></span>' +
-                    '<strong>' + region.name + ':</strong> ' + region.summary.type +
-                    '</div>';
-            }).join('');
+            var accentColor = (manual && manual.color) || '#e74c3c';
+            popup.style.borderLeftColor = accentColor;
+
+            if (manual) {
+                body.innerHTML =
+                    (manual.area ? '<div class="weather-warn-popup-row"><strong>Bereich:</strong> ' + escapeHtml(manual.area) + '</div>' : '') +
+                    (manual.text ? '<div class="weather-warn-popup-row">' + escapeHtml(manual.text) + '</div>' : '');
+            } else {
+                var warned = data.regions.filter(function (r) { return r.summary && r.summary.level > 0; });
+                body.innerHTML = warned.map(function (region) {
+                    var level = region.summary.level;
+                    return '<div class="weather-warn-popup-row">' +
+                        '<span class="footer-warnlist-dot level-' + level + '"></span>' +
+                        '<strong>' + escapeHtml(region.name) + ':</strong> ' + escapeHtml(region.summary.type) +
+                        '</div>';
+                }).join('');
+            }
 
             popup.hidden = false;
             requestAnimationFrame(function () { popup.classList.add('visible'); });

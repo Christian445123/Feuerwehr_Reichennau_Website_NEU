@@ -8,6 +8,7 @@ require_once __DIR__ . '/../config/logging.php';
 require_once __DIR__ . '/../config/env-writer.php';
 require_once __DIR__ . '/../config/mail.php';
 require_once __DIR__ . '/../config/translate.php';
+require_once __DIR__ . '/../config/settings.php';
 requireLogin();
 
 $pageTitle = 'Einstellungen';
@@ -274,6 +275,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             flash('success', implode('. ', $parts) . '.');
         }
         header('Location: settings.php#deepl-backfill');
+        exit;
+    }
+
+    if ($action === 'save_weather_warning') {
+        if (!userHasPermission('settings.manage')) {
+            flash('error', 'Dir fehlt die Berechtigung, die Wetterwarnung zu ändern.');
+            header('Location: settings.php#weather-warning');
+            exit;
+        }
+        $enabled = ($_POST['weather_warning_manual_enabled'] ?? '0') === '1';
+        $color = trim($_POST['weather_warning_manual_color'] ?? '#e74c3c');
+        $area = trim($_POST['weather_warning_manual_area'] ?? '');
+        $text = trim($_POST['weather_warning_manual_text'] ?? '');
+
+        if (!preg_match('/^#[0-9a-fA-F]{6}$/', $color)) {
+            $color = '#e74c3c';
+        }
+
+        setSiteSetting('weather_warning_manual_enabled', $enabled ? '1' : '0');
+        setSiteSetting('weather_warning_manual_color', $color);
+        setSiteSetting('weather_warning_manual_area', $area);
+        setSiteSetting('weather_warning_manual_text', $text);
+
+        logActivity($db, 'settings.weather_warning', $enabled ? "Manuelle Wetterwarnung aktiviert (Bereich: $area)" : 'Manuelle Wetterwarnung deaktiviert');
+        flash('success', $enabled ? 'Die manuelle Wetterwarnung ist jetzt aktiv - das Popup erscheint ab sofort auf der Website.' : 'Die manuelle Wetterwarnung wurde deaktiviert.');
+        header('Location: settings.php#weather-warning');
         exit;
     }
 
@@ -578,6 +605,60 @@ $deeplUsage = $deeplConfigured ? getDeepLUsage() : null;
                     <label for="berichte_vorjahr">Vergangenes Jahr</label>
                     <input type="number" id="berichte_vorjahr" name="berichte_vorjahr" required min="2000" max="2100" value="<?php echo getBerichteVorjahr(); ?>">
                 </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i> Speichern
+            </button>
+        </form>
+    </div>
+</div>
+<?php endif; ?>
+
+<?php if (userHasPermission('settings.manage')):
+    $weatherWarningEnabled = getSiteSetting('weather_warning_manual_enabled', '0') === '1';
+    $weatherWarningColor = getSiteSetting('weather_warning_manual_color', '#e74c3c');
+    $weatherWarningArea = getSiteSetting('weather_warning_manual_area', '');
+    $weatherWarningText = getSiteSetting('weather_warning_manual_text', '');
+?>
+<div class="admin-card" style="max-width: 600px; margin-top: 24px;" id="weather-warning">
+    <div class="admin-card-header"><h2><i class="fas fa-triangle-exclamation"></i> Wetterwarnung (manuell / Test)</h2></div>
+    <div class="admin-card-body">
+        <p style="margin-bottom: 16px; color: #6c757d;">Erzwingt unabhängig von den echten GeoSphere-Austria-Daten das Warn-Popup auf der Website (z.B. zum Testen, wie es aussieht, oder für einen eigenen Hinweis wie "Bereich X meiden"). Die normale Übersicht im Footer (Innsbruck-Stadt/Land, Live-Daten von GeoSphere) läuft unabhängig davon weiter.</p>
+
+        <div style="margin-bottom: 20px; padding: 14px 16px; background: <?php echo $weatherWarningEnabled ? 'rgba(213,0,28,0.06)' : 'rgba(39,174,96,0.08)'; ?>; border-radius: var(--radius);">
+            <strong><?php echo $weatherWarningEnabled ? 'Manuelle Warnung ist AKTIV' : 'Manuelle Warnung ist AUS'; ?></strong>
+            <p style="margin: 4px 0 0; font-size: 0.85rem; color: #6c757d;">
+                <?php echo $weatherWarningEnabled
+                    ? 'Besucher sehen bei jedem Seitenaufruf das Warn-Popup mit dem unten eingetragenen Text.'
+                    : 'Das Popup erscheint nur, wenn für Innsbruck-Stadt oder Innsbruck-Land eine echte GeoSphere-Warnung aktiv ist.'; ?>
+            </p>
+        </div>
+
+        <form method="POST" class="admin-form">
+            <?php echo csrfField(); ?>
+            <input type="hidden" name="action" value="save_weather_warning">
+
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" name="weather_warning_manual_enabled" value="1" <?php echo $weatherWarningEnabled ? 'checked' : ''; ?>>
+                    Popup erzwingen (manuelle Warnung aktiv)
+                </label>
+            </div>
+
+            <div class="form-group">
+                <label for="weather_warning_manual_color">Farbe (Rahmen/Markierung im Popup)</label>
+                <input type="color" id="weather_warning_manual_color" name="weather_warning_manual_color" value="<?php echo e($weatherWarningColor); ?>" style="width: 70px; height: 38px; padding: 2px; cursor: pointer;">
+            </div>
+
+            <div class="form-group">
+                <label for="weather_warning_manual_area">Betroffener Bereich / Gebiet</label>
+                <input type="text" id="weather_warning_manual_area" name="weather_warning_manual_area" value="<?php echo e($weatherWarningArea); ?>" placeholder="z.B. Reichenau, Sillufer - Unterführung meiden">
+            </div>
+
+            <div class="form-group">
+                <label for="weather_warning_manual_text">Hinweistext</label>
+                <textarea id="weather_warning_manual_text" name="weather_warning_manual_text" rows="3" placeholder="z.B. Starkregen - Unterführung Sillufer ist überflutet, bitte Bereich meiden."><?php echo e($weatherWarningText); ?></textarea>
             </div>
 
             <button type="submit" class="btn btn-primary">

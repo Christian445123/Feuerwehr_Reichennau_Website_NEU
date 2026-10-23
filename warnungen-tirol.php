@@ -22,12 +22,46 @@
  * wtype (Warnart): 1=Sturm, 2=Regen, 3=Schnee, 4=Glatteis, 5=Gewitter,
  * 6=Hitze, 7=Kälte. wlevel (Warnstufe): 1=gelb/Vorwarnung, 2=orange/Warnung,
  * 3=rot/Warnung (höchste Stufe).
+ *
+ * Zusätzlich kann im Admin-Bereich (Einstellungen -> Wetterwarnung Test) eine
+ * manuelle Warnung hinterlegt werden, die das Popup unabhängig von der
+ * echten GeoSphere-Lage erzwingt (z.B. zum Testen, oder für eigene Hinweise
+ * wie "Bereich X meiden"). Diese wird bewusst NICHT mitgecacht, sondern bei
+ * jeder Anfrage frisch aus den Website-Einstellungen gelesen, damit sie beim
+ * Ein-/Ausschalten sofort wirkt.
  */
 
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/config/logging.php';
+require_once __DIR__ . '/config/settings.php';
 
 header('Content-Type: application/json; charset=utf-8');
+
+/**
+ * Mischt die manuelle Test-/Hinweiswarnung aus den Website-Einstellungen in
+ * die fertige Antwort ein, egal ob diese live abgerufen oder aus dem Cache
+ * kam.
+ */
+function applyManualWeatherWarning(string $jsonResponse): string {
+    $data = json_decode($jsonResponse, true);
+    if (!is_array($data)) {
+        return $jsonResponse;
+    }
+
+    if (getSiteSetting('weather_warning_manual_enabled', '0') === '1') {
+        $data['has_warning'] = true;
+        $data['manual'] = [
+            'enabled' => true,
+            'color' => getSiteSetting('weather_warning_manual_color', '#e74c3c'),
+            'area' => getSiteSetting('weather_warning_manual_area', ''),
+            'text' => getSiteSetting('weather_warning_manual_text', ''),
+        ];
+    } else {
+        $data['manual'] = ['enabled' => false];
+    }
+
+    return json_encode($data, JSON_UNESCAPED_UNICODE);
+}
 
 $db = getDB();
 if (!checkRateLimit($db, 'warnungen_tirol', 30, 300)) {
@@ -42,7 +76,7 @@ $maxAge = 10 * 60; // 10 Minuten - Warnungen ändern sich nicht minütlich,
                     // aber auch nicht tagelang gleich.
 
 if (is_file($cacheFile) && (time() - filemtime($cacheFile)) < $maxAge) {
-    readfile($cacheFile);
+    echo applyManualWeatherWarning(file_get_contents($cacheFile));
     exit;
 }
 
@@ -62,7 +96,7 @@ if ($body === false || $status !== 200) {
     // Bei einem Fehler lieber die zuletzt bekannte (ggf. ältere) Fassung
     // ausliefern als eine Fehlermeldung, falls eine existiert.
     if (is_file($cacheFile)) {
-        readfile($cacheFile);
+        echo applyManualWeatherWarning(file_get_contents($cacheFile));
         exit;
     }
     http_response_code(502);
@@ -124,4 +158,4 @@ if (!is_dir($cacheDir)) {
 }
 file_put_contents($cacheFile, $response);
 
-echo $response;
+echo applyManualWeatherWarning($response);
