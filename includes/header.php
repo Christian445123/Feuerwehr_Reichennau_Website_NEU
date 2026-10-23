@@ -27,32 +27,57 @@ $siteAlert = getActiveSiteAlert();
 <div class="site-alert-overlay" id="siteAlertBanner" hidden>
     <div class="site-alert-overlay-box" style="border-color: <?php echo htmlspecialchars($siteAlert['color']); ?>;">
         <i class="fas <?php echo htmlspecialchars($siteAlertIcon); ?> site-alert-overlay-icon" style="color: <?php echo htmlspecialchars($siteAlert['color']); ?>;"></i>
-        <strong class="site-alert-overlay-title"><?php echo htmlspecialchars($siteAlertLabel); ?><?php echo $siteAlert['area'] !== '' ? ': ' . htmlspecialchars($siteAlert['area']) : ''; ?></strong>
+        <strong class="site-alert-overlay-title"><?php echo htmlspecialchars($siteAlertLabel); ?><?php echo $siteAlert['location'] !== '' ? ' - ' . htmlspecialchars($siteAlert['location']) : ''; ?></strong>
         <?php if ($siteAlert['text'] !== ''): ?>
             <p class="site-alert-overlay-text"><?php echo htmlspecialchars($siteAlert['text']); ?></p>
+        <?php endif; ?>
+        <?php if ($siteAlert['area'] !== ''): ?>
+            <p class="site-alert-overlay-area"><i class="fas fa-ban"></i> Bitte meiden: <strong><?php echo htmlspecialchars($siteAlert['area']); ?></strong></p>
         <?php endif; ?>
         <button type="button" class="btn btn-primary site-alert-overlay-close" id="siteAlertBannerClose">
             <i class="fas fa-check"></i> Verstanden
         </button>
     </div>
 </div>
+
+<!-- Kleine, bleibende Markierung ganz links, erscheint nach dem Bestätigen
+     des Vollbild-Hinweises - Klick öffnet den Hinweis erneut -->
+<button type="button" class="site-alert-chip" id="siteAlertChip" style="border-color: <?php echo htmlspecialchars($siteAlert['color']); ?>; color: <?php echo htmlspecialchars($siteAlert['color']); ?>;" hidden aria-label="Warnhinweis erneut anzeigen">
+    <i class="fas <?php echo htmlspecialchars($siteAlertIcon); ?>"></i>
+</button>
+
 <script>
 (function () {
     var overlay = document.getElementById('siteAlertBanner');
     var closeBtn = document.getElementById('siteAlertBannerClose');
-    if (!overlay || !closeBtn) return;
-    var DISMISS_KEY = 'site_alert_dismissed_' + <?php echo json_encode(md5($siteAlert['type'] . '|' . $siteAlert['color'] . '|' . $siteAlert['area'] . '|' . $siteAlert['text'])); ?>;
-    var dismissed = false;
-    try { dismissed = sessionStorage.getItem(DISMISS_KEY) === '1'; } catch (e) {}
-    if (!dismissed) {
+    var chip = document.getElementById('siteAlertChip');
+    if (!overlay || !closeBtn || !chip) return;
+    var DISMISS_KEY = 'site_alert_dismissed_' + <?php echo json_encode(md5($siteAlert['type'] . '|' . $siteAlert['color'] . '|' . $siteAlert['location'] . '|' . $siteAlert['area'] . '|' . $siteAlert['text'])); ?>;
+
+    function showOverlay() {
         overlay.hidden = false;
+        chip.hidden = true;
         document.body.classList.add('site-alert-open');
     }
-    closeBtn.addEventListener('click', function () {
+    function showChip() {
         overlay.hidden = true;
+        chip.hidden = false;
         document.body.classList.remove('site-alert-open');
+    }
+
+    var dismissed = false;
+    try { dismissed = sessionStorage.getItem(DISMISS_KEY) === '1'; } catch (e) {}
+    if (dismissed) {
+        showChip();
+    } else {
+        showOverlay();
+    }
+
+    closeBtn.addEventListener('click', function () {
+        showChip();
         try { sessionStorage.setItem(DISMISS_KEY, '1'); } catch (e) {}
     });
+    chip.addEventListener('click', showOverlay);
 })();
 </script>
 <?php endif; ?>

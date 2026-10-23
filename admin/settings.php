@@ -304,6 +304,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $enabled = ($_POST['site_alert_enabled'] ?? '0') === '1';
         $type = trim($_POST['site_alert_type'] ?? 'sonstiges');
         $color = trim($_POST['site_alert_color'] ?? '#e74c3c');
+        $location = trim($_POST['site_alert_location'] ?? '');
         $area = trim($_POST['site_alert_area'] ?? '');
         $text = trim($_POST['site_alert_text'] ?? '');
 
@@ -317,10 +318,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         setSiteSetting('site_alert_enabled', $enabled ? '1' : '0');
         setSiteSetting('site_alert_type', $type);
         setSiteSetting('site_alert_color', $color);
+        setSiteSetting('site_alert_location', $location);
         setSiteSetting('site_alert_area', $area);
         setSiteSetting('site_alert_text', $text);
 
-        logActivity($db, 'settings.site_alert', $enabled ? "Warnhinweis aktiviert (Typ: $type, Bereich: $area)" : 'Warnhinweis deaktiviert');
+        logActivity($db, 'settings.site_alert', $enabled ? "Warnhinweis aktiviert (Typ: $type, Ort: $location, Bereich: $area)" : 'Warnhinweis deaktiviert');
         flash('success', $enabled ? 'Der Warnhinweis ist jetzt aktiv - er erscheint ab sofort oben auf jeder Seite.' : 'Der Warnhinweis wurde deaktiviert.');
         header('Location: settings.php#site-alert-manual');
         exit;
@@ -642,6 +644,7 @@ $deeplUsage = $deeplConfigured ? getDeepLUsage() : null;
     $siteAlertEnabled = getSiteSetting('site_alert_enabled', '0') === '1';
     $siteAlertType = getSiteSetting('site_alert_type', 'sonstiges');
     $siteAlertColor = getSiteSetting('site_alert_color', '#e74c3c');
+    $siteAlertLocation = getSiteSetting('site_alert_location', '');
     $siteAlertArea = getSiteSetting('site_alert_area', '');
     $siteAlertText = getSiteSetting('site_alert_text', '');
     $siteAlertTypeOptions = getSiteAlertTypes();
@@ -712,8 +715,13 @@ $deeplUsage = $deeplConfigured ? getDeepLUsage() : null;
             </div>
 
             <div class="form-group">
-                <label for="site_alert_area">Betroffener Bereich / Gebiet</label>
-                <input type="text" id="site_alert_area" name="site_alert_area" value="<?php echo e($siteAlertArea); ?>" placeholder="z.B. Reichenau, Sillufer - Unterführung meiden">
+                <label for="site_alert_location">Ort</label>
+                <input type="text" id="site_alert_location" name="site_alert_location" value="<?php echo e($siteAlertLocation); ?>" placeholder="z.B. Reichenau">
+            </div>
+
+            <div class="form-group">
+                <label for="site_alert_area">Bereich, der gemieden werden soll</label>
+                <input type="text" id="site_alert_area" name="site_alert_area" value="<?php echo e($siteAlertArea); ?>" placeholder="z.B. Sillufer - Unterführung meiden">
             </div>
 
             <div class="form-group">

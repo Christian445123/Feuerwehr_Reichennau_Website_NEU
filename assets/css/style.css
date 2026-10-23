@@ -4610,6 +4610,15 @@ body.site-alert-open {
     line-height: 1.5;
 }
 
+.site-alert-overlay-area {
+    background: rgba(0, 0, 0, 0.04);
+    border-radius: var(--radius);
+    padding: 10px 14px;
+    font-size: 0.92rem;
+    color: var(--color-dark);
+    width: 100%;
+}
+
 .site-alert-overlay-close {
     margin-top: 10px;
 }
@@ -4621,4 +4630,33 @@ body.site-alert-open {
     .site-alert-overlay-icon {
         font-size: 2.4rem;
     }
+}
+
+/* Kleine, bleibende Markierung ganz links nach dem Bestätigen - Klick öffnet den Hinweis erneut */
+.site-alert-chip {
+    position: fixed;
+    left: 16px;
+    bottom: 90px;
+    z-index: 900;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: var(--color-white);
+    border: 2px solid #e74c3c;
+    box-shadow: var(--shadow-lg, var(--shadow-xl));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    cursor: pointer;
+    animation: site-alert-chip-pulse 2.2s ease-in-out infinite;
+}
+
+.site-alert-chip[hidden] {
+    display: none !important;
+}
+
+@keyframes site-alert-chip-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.08); }
 }

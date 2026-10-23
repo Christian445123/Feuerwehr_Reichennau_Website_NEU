@@ -32,6 +32,7 @@ function getActiveSiteAlert(): ?array {
         return [
             'type' => 'sonstiges',
             'color' => '#e67e22',
+            'location' => 'Testort',
             'area' => 'Testbereich',
             'text' => 'Dies ist ein Test des Seiten-Warnhinweises (Testmodus in Admin -> Einstellungen aktiv) - kein echter Hinweis.',
         ];
@@ -41,6 +42,7 @@ function getActiveSiteAlert(): ?array {
         return [
             'type' => getSiteSetting('site_alert_type', 'sonstiges'),
             'color' => getSiteSetting('site_alert_color', '#e74c3c'),
+            'location' => getSiteSetting('site_alert_location', ''),
             'area' => getSiteSetting('site_alert_area', ''),
             'text' => getSiteSetting('site_alert_text', ''),
         ];
