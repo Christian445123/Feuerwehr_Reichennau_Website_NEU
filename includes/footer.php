@@ -26,9 +26,9 @@
             </div>
 
             <div class="footer-weather">
-                <div class="footer-weather-map">
-                    <iframe src="https://warnungen.zamg.at/wsapp/de/alle/heute/" title="GeoSphere Austria - Unwetterwarnungen Österreich" loading="lazy"></iframe>
-                </div>
+                <a href="https://www.uwz.at/de/r#autoplay" target="_blank" rel="noopener" class="footer-weather-map">
+                    <img src="uwz-map.php" alt="Unwetterwarnkarte Österreich (UWZ.AT)" loading="lazy">
+                </a>
                 <div class="footer-weather-list">
                     <h4><?php echo e(t('footer.weather_warnings')); ?></h4>
                     <div class="footer-warnlist" id="footerWarnlist">
