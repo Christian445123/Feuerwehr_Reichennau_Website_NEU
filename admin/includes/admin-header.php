@@ -30,6 +30,9 @@ require_once __DIR__ . '/../permissions.php';
                 <a href="einsatzbereitschaft.php" class="sidebar-link <?php echo ($activePage ?? '') === 'einsatzbereitschaft' ? 'active' : ''; ?>">
                     <i class="fas fa-truck-medical"></i> Einsatzbereitschaft
                 </a>
+                <a href="warnhinweis.php" class="sidebar-link <?php echo ($activePage ?? '') === 'warnhinweis' ? 'active' : ''; ?>">
+                    <i class="fas fa-triangle-exclamation"></i> Warnhinweis
+                </a>
             <?php endif; ?>
             <?php if (userHasPermission('schutzbereich.manage')): ?>
                 <a href="schutzbereich.php" class="sidebar-link <?php echo ($activePage ?? '') === 'schutzbereich' ? 'active' : ''; ?>">
