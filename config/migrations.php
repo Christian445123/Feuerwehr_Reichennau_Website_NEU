@@ -1018,6 +1018,30 @@ TIPS;
             },
         ],
 
+        [
+            'id' => '2026_10_24_add_muren_site_alert_category',
+            'run' => function (PDO $db) {
+                // Zusätzliche Warnhinweis-Kategorie "Muren" (Mure/Hangrutsch)
+                // - siehe config/site-alert.php.
+                $check = $db->prepare("SELECT COUNT(*) FROM site_alert_categories WHERE category_key = ?");
+                $check->execute(['muren']);
+                if ((int) $check->fetchColumn() > 0) return;
+
+                $tips = <<<'TIPS'
+- Warnungen und Anweisungen von Gemeinde und Einsatzkräften unbedingt befolgen, betroffene/gefährdete Bereiche sofort verlassen bzw. meiden.
+- Bei Anzeichen einer Mure (ungewöhnliches Grollen/Donnern, plötzlich trübes oder ansteigendes Bachwasser, Risse im Boden, umknickende Bäume): sofort rechtwinklig zur vermuteten Fließrichtung auf eine Anhöhe flüchten, nie murabwärts oder entlang des Bachbetts laufen.
+- Muren-/Wildbachbereiche, Hangfußzonen und Gräben nach starkem Regen oder Schneeschmelze meiden - auch Stunden nach dem Regenereignis kann eine Mure abgehen.
+- Keller, Erdgeschoße und Garagen in gefährdeten Lagen rechtzeitig räumen, Fahrzeuge aus gefährdeten Bereichen wegfahren.
+- Autofahrten in bekannten Muren-/Rutschgebieten bei starkem Regen vermeiden, auf herabfließendes Geröll/Schlamm auf der Fahrbahn achten und nicht hindurchfahren.
+- Nach einem Ereignis: beschädigte Gebäude nicht ohne Freigabe durch Einsatzkräfte/Behörde wieder betreten, da Nachrutschungen möglich sind.
+- Notruf 122 bei akuter Gefahr für Personen oder Gebäude.
+TIPS;
+
+                $db->prepare("INSERT INTO site_alert_categories (category_key, label, icon, sort_order, tips) VALUES (?,?,?,?,?)")
+                    ->execute(['muren', 'Muren', 'fa-mountain', 45, $tips]);
+            },
+        ],
+
     ];
 }
 
