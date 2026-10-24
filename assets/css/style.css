@@ -4380,7 +4380,7 @@ body.lightbox-open {
 /* --- Haussammlungs-Popup (unten links, siehe includes/footer.php) --- */
 .haussammlung-popup {
     position: fixed;
-    left: 20px;
+    right: 20px;
     bottom: 20px;
     z-index: 1000;
     max-width: 340px;
