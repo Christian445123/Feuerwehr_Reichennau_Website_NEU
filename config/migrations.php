@@ -967,6 +967,31 @@ TIPS
             },
         ],
 
+        [
+            'id' => '2026_10_24_add_wind_site_alert_category',
+            'run' => function (PDO $db) {
+                // Zusätzliche Warnhinweis-Kategorie "Wind" (Sturm/Orkan),
+                // eigenständig neben "Unwetter" - siehe config/site-alert.php.
+                $check = $db->prepare("SELECT COUNT(*) FROM site_alert_categories WHERE category_key = ?");
+                $check->execute(['wind']);
+                if ((int) $check->fetchColumn() > 0) return;
+
+                $tips = <<<'TIPS'
+- Aufenthalt im Freien möglichst vermeiden, besonders in der Nähe von Bäumen, Baustellen und losen Dachteilen.
+- Lose Gegenstände (Gartenmöbel, Trampoline, Blumentöpfe, Mülltonnen) sichern oder ins Haus/in die Garage bringen.
+- Fenster, Türen, Rollläden und Dachluken schließen.
+- Auto nach Möglichkeit nicht unter Bäumen oder in der Nähe von Gerüsten/Baustellen abstellen.
+- Beim Autofahren Seitenwind einkalkulieren, Geschwindigkeit anpassen, besonders auf Brücken und freien Strecken.
+- Fahrräder und Motorräder bei starkem Wind meiden oder besonders vorsichtig fahren.
+- Nach dem Sturm: Vorsicht vor herabhängenden Ästen und losen Dachteilen - Abstand halten und der Feuerwehr melden statt selbst beseitigen.
+- Bei umgestürzten Bäumen oder Gegenständen auf Straßen/Gehwegen: Bereich absperren/meiden und Notruf 122 verständigen.
+TIPS;
+
+                $db->prepare("INSERT INTO site_alert_categories (category_key, label, icon, sort_order, tips) VALUES (?,?,?,?,?)")
+                    ->execute(['wind', 'Wind', 'fa-wind', 25, $tips]);
+            },
+        ],
+
     ];
 }
 
