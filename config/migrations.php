@@ -992,6 +992,32 @@ TIPS;
             },
         ],
 
+        [
+            'id' => '2026_10_24_add_waldbrand_site_alert_category',
+            'run' => function (PDO $db) {
+                // Zusätzliche Warnhinweis-Kategorie "Waldbrand" - siehe
+                // config/site-alert.php.
+                $check = $db->prepare("SELECT COUNT(*) FROM site_alert_categories WHERE category_key = ?");
+                $check->execute(['waldbrand']);
+                if ((int) $check->fetchColumn() > 0) return;
+
+                $tips = <<<'TIPS'
+- Rauch, Flammen oder Brandgeruch im Wald/in Waldnähe sofort der Feuerwehr über Notruf 122 melden (Ort so genau wie möglich beschreiben).
+- Betroffenes Gebiet sofort verlassen - gegen die Windrichtung bzw. in die vom Feuer am weitesten entfernte Richtung, nie bergauf in Richtung des Feuers.
+- Anweisungen und Absperrungen der Einsatzkräfte unbedingt befolgen, auch wenn der Umweg lang erscheint.
+- Auf markierten Wegen bleiben und sich nicht in dichtes Unterholz oder unübersichtliches Gelände flüchten.
+- In der wärmeren Jahreszeit und bei Trockenheit: offenes Feuer, Grillen und Rauchen im und am Waldrand unterlassen, keine brennenden Zigaretten wegwerfen.
+- Fahrzeuge nicht auf trockenem Gras/Gestrüpp abstellen (heißer Katalysator kann Brände auslösen).
+- Autofahrten durch ein akut betroffenes Gebiet vermeiden, bei Rauch auf der Fahrbahn Geschwindigkeit deutlich reduzieren.
+- In der Nähe liegende Gebäude: Fenster und Türen schließen, Dachrinnen/Bereiche um das Haus nach Möglichkeit von brennbarem Material freihalten.
+- Nicht eigenmächtig versuchen, einen Waldbrand selbst zu löschen - das ist Aufgabe der Einsatzkräfte mit entsprechender Ausrüstung.
+TIPS;
+
+                $db->prepare("INSERT INTO site_alert_categories (category_key, label, icon, sort_order, tips) VALUES (?,?,?,?,?)")
+                    ->execute(['waldbrand', 'Waldbrand', 'fa-fire', 35, $tips]);
+            },
+        ],
+
     ];
 }
 
