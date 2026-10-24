@@ -501,6 +501,34 @@ body.nav-open {
     color: #ffb366;
 }
 
+/* --- Seiten-Warnhinweis, prominent im Hero wie die Einsatzbereitschaft - sofort sichtbar --- */
+.hero-alert {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 16px;
+    padding: 10px 20px;
+    border-radius: 50px;
+    background: rgba(255,255,255,0.12);
+    border: 2px solid #e74c3c;
+    color: var(--color-white);
+    font-weight: 700;
+    font-size: 0.92rem;
+    letter-spacing: 0.3px;
+    animation: fadeInUp 0.8s ease 0.8s both, hero-alert-pulse 2.2s ease-in-out infinite;
+    cursor: pointer;
+}
+
+.hero-alert:hover {
+    background: rgba(255,255,255,0.2);
+    color: var(--color-white);
+}
+
+@keyframes hero-alert-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(231,76,60,0.35); }
+    50% { box-shadow: 0 0 0 8px rgba(231,76,60,0); }
+}
+
 /* --- Buttons --- */
 .btn {
     display: inline-flex;
@@ -3977,6 +4005,7 @@ body.lightbox-open {
     color: rgba(255,255,255,0.6);
     font-size: 0.8rem;
     text-align: right;
+    white-space: nowrap;
 }
 
 .footer-warnlist-source {
@@ -4516,21 +4545,23 @@ body.lightbox-open {
     background: rgba(255, 255, 255, 0.1);
 }
 
-/* --- Wetterwarnungen-Bereich im Footer (Karte + Liste nebeneinander) --- */
+/* --- Wetterwarnungen-Bereich im Footer (Karte + Liste nebeneinander, immer in einer Reihe) --- */
 .footer-weather {
     display: flex;
     gap: 28px;
-    align-items: stretch;
+    align-items: flex-start;
     margin-top: 32px;
     padding-top: 32px;
     border-top: 1px solid rgba(255,255,255,0.08);
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
 }
 
 .footer-weather-map {
     display: block;
-    flex: 0 0 auto;
-    width: 220px;
+    flex: 0 0 300px;
+    width: 300px;
+    aspect-ratio: 600 / 310;
+    background: #fff;
     border-radius: var(--radius-md);
     overflow: hidden;
     border: 1px solid rgba(255,255,255,0.1);
@@ -4543,20 +4574,33 @@ body.lightbox-open {
 
 .footer-weather-map img {
     width: 100%;
-    height: auto;
+    height: 100%;
     display: block;
+    object-fit: contain;
 }
 
 .footer-weather-list {
-    flex: 0 1 280px;
+    flex: 1 1 auto;
+    min-width: 0;
 }
 
-@media (max-width: 768px) {
+.footer-warnlist-row {
+    flex-wrap: nowrap;
+    white-space: nowrap;
+    gap: 10px;
+}
+
+.footer-warnlist-region {
+    white-space: nowrap;
+}
+
+@media (max-width: 640px) {
     .footer-weather {
-        flex-direction: column;
+        flex-wrap: wrap;
     }
     .footer-weather-map {
-        width: 180px;
+        flex: 0 0 220px;
+        width: 220px;
     }
 }
 
