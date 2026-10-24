@@ -19,27 +19,23 @@
 require_once __DIR__ . '/../config/site-alert.php';
 $siteAlert = getActiveSiteAlert();
 ?>
-<?php if ($siteAlert !== null):
-    $siteAlertTypes = getSiteAlertTypes();
-    $siteAlertIcon = $siteAlertTypes[$siteAlert['type']]['icon'] ?? 'fa-triangle-exclamation';
-    $siteAlertLabel = $siteAlertTypes[$siteAlert['type']]['label'] ?? 'Hinweis';
-?>
+<?php if ($siteAlert !== null): ?>
 <div class="site-alert-overlay" id="siteAlertBanner" hidden>
     <div class="site-alert-overlay-box" style="border-color: <?php echo htmlspecialchars($siteAlert['color']); ?>;">
-        <i class="fas <?php echo htmlspecialchars($siteAlertIcon); ?> site-alert-overlay-icon" style="color: <?php echo htmlspecialchars($siteAlert['color']); ?>;"></i>
-        <strong class="site-alert-overlay-title"><?php echo htmlspecialchars($siteAlertLabel); ?><?php echo $siteAlert['location'] !== '' ? ' - ' . htmlspecialchars($siteAlert['location']) : ''; ?></strong>
+        <i class="fas <?php echo htmlspecialchars($siteAlert['icon']); ?> site-alert-overlay-icon" style="color: <?php echo htmlspecialchars($siteAlert['color']); ?>;"></i>
+        <strong class="site-alert-overlay-title"><?php echo htmlspecialchars($siteAlert['label']); ?><?php echo $siteAlert['location'] !== '' ? ' - ' . htmlspecialchars($siteAlert['location']) : ''; ?></strong>
         <?php if ($siteAlert['text'] !== ''): ?>
             <p class="site-alert-overlay-text"><?php echo htmlspecialchars($siteAlert['text']); ?></p>
         <?php endif; ?>
         <?php if ($siteAlert['area'] !== ''): ?>
-            <p class="site-alert-overlay-area"><i class="fas fa-ban"></i> Bitte meiden: <strong><?php echo htmlspecialchars($siteAlert['area']); ?></strong></p>
+            <p class="site-alert-overlay-area"><i class="fas fa-ban"></i> <?php echo e(t('site_alert.avoid')); ?> <strong><?php echo htmlspecialchars($siteAlert['area']); ?></strong></p>
         <?php endif; ?>
         <?php
         $siteAlertTipLines = array_values(array_filter(array_map('trim', explode("\n", (string) ($siteAlert['tips'] ?? '')))));
         ?>
         <?php if (!empty($siteAlertTipLines)): ?>
         <div class="site-alert-overlay-tips">
-            <strong><i class="fas fa-circle-info"></i> Verhaltenstipps:</strong>
+            <strong><i class="fas fa-circle-info"></i> <?php echo e(t('site_alert.tips_heading')); ?></strong>
             <ul>
                 <?php foreach ($siteAlertTipLines as $tip): ?>
                     <li><?php echo htmlspecialchars(ltrim($tip, '-• ')); ?></li>
@@ -48,15 +44,15 @@ $siteAlert = getActiveSiteAlert();
         </div>
         <?php endif; ?>
         <button type="button" class="btn btn-primary site-alert-overlay-close" id="siteAlertBannerClose">
-            <i class="fas fa-check"></i> Verstanden
+            <i class="fas fa-check"></i> <?php echo e(t('site_alert.understood')); ?>
         </button>
     </div>
 </div>
 
 <!-- Kleine, bleibende Markierung ganz links, erscheint nach dem Bestätigen
      des Vollbild-Hinweises - Klick öffnet den Hinweis erneut -->
-<button type="button" class="site-alert-chip" id="siteAlertChip" style="border-color: <?php echo htmlspecialchars($siteAlert['color']); ?>; color: <?php echo htmlspecialchars($siteAlert['color']); ?>;" hidden aria-label="Warnhinweis erneut anzeigen">
-    <i class="fas <?php echo htmlspecialchars($siteAlertIcon); ?>"></i>
+<button type="button" class="site-alert-chip" id="siteAlertChip" style="border-color: <?php echo htmlspecialchars($siteAlert['color']); ?>; color: <?php echo htmlspecialchars($siteAlert['color']); ?>;" hidden aria-label="<?php echo e(t('site_alert.reopen')); ?>">
+    <i class="fas <?php echo htmlspecialchars($siteAlert['icon']); ?>"></i>
 </button>
 
 <script>

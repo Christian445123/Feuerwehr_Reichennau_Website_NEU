@@ -61,29 +61,37 @@ function getGeoSphereInnsbruckWarnings(): ?array {
     }
 
     $wtypeLabels = [1 => 'Sturm', 2 => 'Regen', 3 => 'Schnee', 4 => 'Glatteis', 5 => 'Gewitter', 6 => 'Hitze', 7 => 'Kälte'];
+    $wtypeLabelsEn = [1 => 'Storm', 2 => 'Rain', 3 => 'Snow', 4 => 'Freezing rain', 5 => 'Thunderstorm', 6 => 'Heat', 7 => 'Cold'];
 
     /**
      * Verdichtet eine Liste von Gemeinde-Features auf die schlimmste
      * aktuell aktive Warnung (höchste Stufe) - mehrere gleich hohe
-     * Warnarten werden mit "/" zusammengefasst, z.B. "Sturm / Regen".
+     * Warnarten werden mit "/" zusammengefasst, z.B. "Sturm / Regen". Liefert
+     * sowohl die deutsche ('type') als auch die englische ('type_en')
+     * Fassung, für die mehrsprachige Anzeige im Seiten-Warnhinweis (siehe
+     * config/site-alert.php).
      */
-    $summarize = function (array $features) use ($wtypeLabels): array {
+    $summarize = function (array $features) use ($wtypeLabels, $wtypeLabelsEn): array {
         $maxLevel = 0;
-        $types = [];
+        $wtypeCodes = [];
         foreach ($features as $f) {
             foreach (($f['properties']['warnings'] ?? []) as $w) {
                 $level = (int) ($w['wlevel'] ?? 0);
-                $type = $wtypeLabels[(int) ($w['wtype'] ?? 0)] ?? null;
-                if ($level <= 0 || $type === null) continue;
+                $code = (int) ($w['wtype'] ?? 0);
+                if ($level <= 0 || !isset($wtypeLabels[$code])) continue;
                 if ($level > $maxLevel) {
                     $maxLevel = $level;
-                    $types = [$type];
-                } elseif ($level === $maxLevel && !in_array($type, $types, true)) {
-                    $types[] = $type;
+                    $wtypeCodes = [$code];
+                } elseif ($level === $maxLevel && !in_array($code, $wtypeCodes, true)) {
+                    $wtypeCodes[] = $code;
                 }
             }
         }
-        return ['level' => $maxLevel, 'type' => implode(' / ', $types)];
+        return [
+            'level' => $maxLevel,
+            'type' => implode(' / ', array_map(fn($c) => $wtypeLabels[$c], $wtypeCodes)),
+            'type_en' => implode(' / ', array_map(fn($c) => $wtypeLabelsEn[$c], $wtypeCodes)),
+        ];
     };
 
     $data = json_decode($body, true);
@@ -135,6 +143,7 @@ function getWorstGeoSphereInnsbruckWarning(): ?array {
             $worst = [
                 'level' => $level,
                 'type' => $region['summary']['type'] ?? '',
+                'type_en' => $region['summary']['type_en'] ?? '',
                 'region' => $region['name'] ?? '',
             ];
         }

@@ -33,6 +33,12 @@ return [
 
     // Common
     'common.close' => 'Close',
+    'site_alert.avoid' => 'Please avoid:',
+    'site_alert.tips_heading' => 'Safety tips:',
+    'site_alert.understood' => 'Understood',
+    'site_alert.reopen' => 'Show alert again',
+    'sicherheitstipps.hazards_heading' => 'What to do in special hazard situations',
+    'sicherheitstipps.hazards_text' => 'These tips apply regardless of whether an alert is currently active, and are maintained by the Reichenau fire department.',
 
     // Members (crew/committee, config/members.php)
     'members.since' => 'Since',

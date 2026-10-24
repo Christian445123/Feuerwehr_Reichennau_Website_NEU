@@ -10,7 +10,6 @@
     $heroInterval = getHeroInterval($heroDb);
     $bereitschaftStatus = getEinsatzbereitschaftStatus();
     $homeSiteAlert = getActiveSiteAlert();
-    $homeSiteAlertTypes = getSiteAlertTypes();
     ?>
     <section class="hero<?php echo $heroImages ? ' hero-has-images' : ''; ?>">
         <?php if ($heroImages): ?>
@@ -42,13 +41,10 @@
                 <span class="hero-readiness-label <?php echo $readinessClass; ?>"><?php echo e($readinessLabel); ?></span>
             </div>
 
-            <?php if ($homeSiteAlert !== null):
-                $homeSiteAlertIcon = $homeSiteAlertTypes[$homeSiteAlert['type']]['icon'] ?? 'fa-triangle-exclamation';
-                $homeSiteAlertLabel = $homeSiteAlertTypes[$homeSiteAlert['type']]['label'] ?? 'Hinweis';
-            ?>
+            <?php if ($homeSiteAlert !== null): ?>
             <a href="#" class="hero-alert" onclick="var c=document.getElementById('siteAlertChip'); if(c){c.click();} return false;" style="border-color: <?php echo htmlspecialchars($homeSiteAlert['color']); ?>;">
-                <i class="fas <?php echo htmlspecialchars($homeSiteAlertIcon); ?>" style="color: <?php echo htmlspecialchars($homeSiteAlert['color']); ?>;"></i>
-                <span><?php echo htmlspecialchars($homeSiteAlertLabel); ?><?php echo $homeSiteAlert['location'] !== '' ? ' - ' . htmlspecialchars($homeSiteAlert['location']) : ''; ?></span>
+                <i class="fas <?php echo htmlspecialchars($homeSiteAlert['icon']); ?>" style="color: <?php echo htmlspecialchars($homeSiteAlert['color']); ?>;"></i>
+                <span><?php echo htmlspecialchars($homeSiteAlert['label']); ?><?php echo $homeSiteAlert['location'] !== '' ? ' - ' . htmlspecialchars($homeSiteAlert['location']) : ''; ?></span>
             </a>
             <?php endif; ?>
         </div>

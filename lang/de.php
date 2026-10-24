@@ -33,6 +33,12 @@ return [
 
     // Allgemein
     'common.close' => 'Schließen',
+    'site_alert.avoid' => 'Bitte meiden:',
+    'site_alert.tips_heading' => 'Verhaltenstipps:',
+    'site_alert.understood' => 'Verstanden',
+    'site_alert.reopen' => 'Warnhinweis erneut anzeigen',
+    'sicherheitstipps.hazards_heading' => 'Verhalten bei besonderen Gefahrenlagen',
+    'sicherheitstipps.hazards_text' => 'Diese Tipps gelten unabhängig davon, ob gerade ein Warnhinweis aktiv ist, und werden von der Feuerwehr Reichenau gepflegt.',
 
     // Mitglieder (Mannschaft/Ausschuss, config/members.php)
     'members.since' => 'Seit',

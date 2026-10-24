@@ -12,6 +12,8 @@
  */
 
 require_once __DIR__ . '/settings.php';
+require_once __DIR__ . '/i18n.php';
+require_once __DIR__ . '/translate.php';
 
 function getHaussammlungSettings(): array {
     return [
@@ -19,12 +21,34 @@ function getHaussammlungSettings(): array {
         'von' => getSiteSetting('haussammlung_von', ''),
         'bis' => getSiteSetting('haussammlung_bis', ''),
         'titel' => getSiteSetting('haussammlung_titel', 'Haussammlung 2026'),
+        'titel_en' => getSiteSetting('haussammlung_titel_en', ''),
         'kurztext' => getSiteSetting('haussammlung_kurztext', 'Scanne den QR-Code oder spende direkt - vielen Dank für deine Unterstützung!'),
+        'kurztext_en' => getSiteSetting('haussammlung_kurztext_en', ''),
         'infotext' => getSiteSetting('haussammlung_infotext', ''),
+        'infotext_en' => getSiteSetting('haussammlung_infotext_en', ''),
         'qr_image' => getSiteSetting('haussammlung_qr_image', ''),
     ];
 }
 
+/**
+ * Titel/Kurztext/Infotext in der aktuellen Besuchersprache, mit Rückfall
+ * auf die deutsche Fassung, falls (noch) keine Übersetzung vorliegt.
+ */
+function localizeHaussammlungSettings(array $settings): array {
+    $en = isEnglish();
+    return [
+        'titel' => $en && $settings['titel_en'] !== '' ? $settings['titel_en'] : $settings['titel'],
+        'kurztext' => $en && $settings['kurztext_en'] !== '' ? $settings['kurztext_en'] : $settings['kurztext'],
+        'infotext' => $en && $settings['infotext_en'] !== '' ? $settings['infotext_en'] : $settings['infotext'],
+    ];
+}
+
+/**
+ * Speichert die Einstellungen und übersetzt Titel/Kurztext/Infotext
+ * automatisch per DeepL ins Englische (siehe config/translate.php) - bei
+ * fehlendem Key oder Fehler bleiben die *_en-Werte einfach leer (Anzeige
+ * fällt dann auf Deutsch zurück).
+ */
 function saveHaussammlungSettings(array $data): void {
     $map = [
         'enabled' => $data['enabled'] ? '1' : '0',
@@ -39,6 +63,17 @@ function saveHaussammlungSettings(array $data): void {
     }
     if (isset($data['qr_image'])) {
         setSiteSetting('haussammlung_qr_image', $data['qr_image']);
+    }
+
+    $translated = translateBatchToEnglish([
+        'titel' => $data['titel'] ?? '',
+        'kurztext' => $data['kurztext'] ?? '',
+        'infotext' => $data['infotext'] ?? '',
+    ]);
+    if ($translated !== null) {
+        setSiteSetting('haussammlung_titel_en', $translated['titel'] ?? '');
+        setSiteSetting('haussammlung_kurztext_en', $translated['kurztext'] ?? '');
+        setSiteSetting('haussammlung_infotext_en', $translated['infotext'] ?? '');
     }
 }
 

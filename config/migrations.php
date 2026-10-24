@@ -1042,6 +1042,72 @@ TIPS;
             },
         ],
 
+        [
+            'id' => '2026_10_25_add_site_alert_category_en_columns',
+            'run' => function (PDO $db) {
+                // Englische Fassung je Kategorie (Label + Tipps), siehe
+                // config/site-alert.php - wird ab jetzt beim Speichern
+                // automatisch per DeepL mitübersetzt. Bereits bestehende
+                // Kategorien (aus früheren Migrationen) werden hier einmalig
+                // nachübersetzt, falls ein DeepL-Key hinterlegt ist.
+                addColumnIfMissing($db, 'site_alert_categories', 'label_en', 'VARCHAR(100) DEFAULT NULL');
+                addColumnIfMissing($db, 'site_alert_categories', 'tips_en', 'TEXT DEFAULT NULL');
+
+                require_once __DIR__ . '/translate.php';
+                if (!isDeepLConfigured()) return;
+
+                $rows = $db->query("SELECT id, label, tips FROM site_alert_categories WHERE label_en IS NULL OR label_en = ''")->fetchAll();
+                foreach ($rows as $row) {
+                    $translated = translateBatchToEnglish(['label' => $row['label'], 'tips' => $row['tips'] ?? '']);
+                    if ($translated === null) continue;
+                    $db->prepare("UPDATE site_alert_categories SET label_en = ?, tips_en = ? WHERE id = ?")
+                        ->execute([$translated['label'] ?? '', $translated['tips'] ?? '', $row['id']]);
+                }
+            },
+        ],
+
+        [
+            'id' => '2026_10_25_translate_haussammlung_to_english',
+            'run' => function (PDO $db) {
+                // Einmaliges Nachübersetzen der bestehenden Haussammlungs-
+                // Texte (Titel/Kurztext/Infotext) ins Englische, falls ein
+                // DeepL-Key hinterlegt ist - ab jetzt übersetzt
+                // admin/haussammlung.php jede Änderung automatisch mit
+                // (site_settings-Schlüssel haussammlung_*_en, siehe
+                // config/haussammlung.php).
+                require_once __DIR__ . '/translate.php';
+                if (!isDeepLConfigured()) return;
+
+                $get = function (string $key) use ($db) {
+                    $stmt = $db->prepare("SELECT value FROM site_settings WHERE setting_key = ?");
+                    $stmt->execute([$key]);
+                    $v = $stmt->fetchColumn();
+                    return $v !== false ? (string) $v : '';
+                };
+                $titel = $get('haussammlung_titel');
+                $kurztext = $get('haussammlung_kurztext');
+                $infotext = $get('haussammlung_infotext');
+                if ($titel === '' && $kurztext === '' && $infotext === '') return;
+                if ($get('haussammlung_titel_en') !== '') return;
+
+                $translated = translateBatchToEnglish(['titel' => $titel, 'kurztext' => $kurztext, 'infotext' => $infotext]);
+                if ($translated === null) return;
+
+                $set = function (string $key, string $value) use ($db) {
+                    $stmt = $db->prepare("SELECT COUNT(*) FROM site_settings WHERE setting_key = ?");
+                    $stmt->execute([$key]);
+                    if ($stmt->fetchColumn() > 0) {
+                        $db->prepare("UPDATE site_settings SET value = ? WHERE setting_key = ?")->execute([$value, $key]);
+                    } else {
+                        $db->prepare("INSERT INTO site_settings (setting_key, value) VALUES (?, ?)")->execute([$key, $value]);
+                    }
+                };
+                $set('haussammlung_titel_en', $translated['titel'] ?? '');
+                $set('haussammlung_kurztext_en', $translated['kurztext'] ?? '');
+                $set('haussammlung_infotext_en', $translated['infotext'] ?? '');
+            },
+        ],
+
     ];
 }
 

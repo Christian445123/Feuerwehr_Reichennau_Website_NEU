@@ -47,12 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $color = '#e74c3c';
         }
 
-        setSiteSetting('site_alert_enabled', $enabled ? '1' : '0');
-        setSiteSetting('site_alert_type', $type);
-        setSiteSetting('site_alert_color', $color);
-        setSiteSetting('site_alert_location', $location);
-        setSiteSetting('site_alert_area', $area);
-        setSiteSetting('site_alert_text', $text);
+        saveManualSiteAlert($enabled, $type, $color, $location, $area, $text);
 
         logActivity($db, 'settings.site_alert', $enabled ? "Warnhinweis aktiviert (Typ: $type, Ort: $location, Bereich: $area)" : 'Warnhinweis deaktiviert');
         flash('success', $enabled ? 'Der Warnhinweis ist jetzt aktiv - er erscheint ab sofort oben auf jeder Seite.' : 'Der Warnhinweis wurde deaktiviert.');

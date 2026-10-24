@@ -63,9 +63,10 @@
     <?php
     require_once __DIR__ . '/../config/haussammlung.php';
     $haussammlungSettings = getHaussammlungSettings();
+    $haussammlungLocalized = localizeHaussammlungSettings($haussammlungSettings);
     ?>
     <?php if (($current_page ?? '') !== 'haussammlung' && isHaussammlungActive($haussammlungSettings)): ?>
-    <!-- Haussammlungs-Popup (unten links, einmal pro Besuch, siehe Admin -> Haussammlung) -->
+    <!-- Haussammlungs-Popup (unten rechts, einmal pro Besuch, siehe Admin -> Haussammlung) -->
     <div class="haussammlung-popup" id="haussammlungPopup" hidden>
         <button type="button" class="haussammlung-popup-close" id="haussammlungPopupClose" aria-label="<?php echo e(t('common.close')); ?>">&times;</button>
         <div class="haussammlung-popup-body">
@@ -73,8 +74,8 @@
                 <img src="<?php echo htmlspecialchars($haussammlungSettings['qr_image']); ?>" alt="QR-Code zur Haussammlung" class="haussammlung-popup-qr">
             <?php endif; ?>
             <div class="haussammlung-popup-text">
-                <strong><?php echo htmlspecialchars($haussammlungSettings['titel']); ?></strong>
-                <p><?php echo nl2br(htmlspecialchars(formatHaussammlungText($haussammlungSettings['kurztext'], $haussammlungSettings))); ?></p>
+                <strong><?php echo htmlspecialchars($haussammlungLocalized['titel']); ?></strong>
+                <p><?php echo nl2br(htmlspecialchars(formatHaussammlungText($haussammlungLocalized['kurztext'], $haussammlungSettings))); ?></p>
                 <a href="index.php?page=haussammlung" class="btn btn-primary btn-sm"><i class="fas fa-circle-info"></i> <?php echo e(t('footer.more_info')); ?></a>
             </div>
         </div>

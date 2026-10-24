@@ -57,8 +57,9 @@ require_once __DIR__ . '/includes/admin-header.php';
 
 <p style="margin-bottom:16px; color: var(--gray-600);">
     Blendet im eingestellten Zeitraum auf der ganzen Website ein kleines Popup mit QR-Code zur Haussammlung ein
-    (unten links, schließbar, einmal pro Besuch). Ein Klick darauf führt zu einer eigenen Infoseite, die sonst
-    nirgends verlinkt ist. Aktueller Status:
+    (unten rechts, schließbar, einmal pro Besuch). Ein Klick darauf führt zu einer eigenen Infoseite, die sonst
+    nirgends verlinkt ist. Titel/Kurztext/Infotext werden beim Speichern automatisch ins Englische mitübersetzt
+    (siehe Admin -> Einstellungen -> DeepL), damit sie auch bei umgeschalteter Sprache angezeigt werden. Aktueller Status:
     <strong><?php echo isHaussammlungActive($settings) ? 'Popup ist gerade aktiv' : 'Popup ist gerade nicht sichtbar'; ?></strong>.
 </p>
 

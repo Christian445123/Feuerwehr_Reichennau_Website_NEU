@@ -1,9 +1,9 @@
 <?php
 require_once __DIR__ . '/../config/gate.php'; requireSiteAccess();
 require_once __DIR__ . '/../config/site-alert.php';
-$alertCategoryTips = array_filter(getSiteAlertTypes(), function ($cat) {
+$alertCategoryTips = array_map('localizeSiteAlertCategory', array_filter(getSiteAlertTypes(), function ($cat) {
     return trim((string) ($cat['tips'] ?? '')) !== '';
-});
+}));
 ?>
     <!-- Page Header -->
     <section class="page-header">
@@ -81,8 +81,8 @@ $alertCategoryTips = array_filter(getSiteAlertTypes(), function ($cat) {
             </div>
 
             <?php if (!empty($alertCategoryTips)): ?>
-            <h2 style="margin-top:48px; margin-bottom:20px;"><i class="fas fa-triangle-exclamation"></i> Verhalten bei besonderen Gefahrenlagen</h2>
-            <p style="margin-bottom: 24px; color: var(--color-gray-600);">Diese Tipps gelten unabhängig davon, ob gerade ein Warnhinweis aktiv ist, und werden von der Feuerwehr Reichenau gepflegt.</p>
+            <h2 style="margin-top:48px; margin-bottom:20px;"><i class="fas fa-triangle-exclamation"></i> <?php echo e(t('sicherheitstipps.hazards_heading')); ?></h2>
+            <p style="margin-bottom: 24px; color: var(--color-gray-600);"><?php echo e(t('sicherheitstipps.hazards_text')); ?></p>
             <div class="content-grid">
                 <?php foreach ($alertCategoryTips as $cat): ?>
                 <div class="content-card">

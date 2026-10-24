@@ -10,11 +10,12 @@ $db = getDB();
 // die URL trotzdem für jeden aufrufbar, das ist bei einer öffentlichen
 // Spendenaktion gewollt.
 $settings = getHaussammlungSettings();
+$localized = localizeHaussammlungSettings($settings);
 ?>
     <!-- Page Header -->
     <section class="page-header">
         <div class="container">
-            <h1 class="page-title"><?php echo htmlspecialchars($settings['titel']); ?></h1>
+            <h1 class="page-title"><?php echo htmlspecialchars($localized['titel']); ?></h1>
         </div>
     </section>
 
@@ -29,10 +30,10 @@ $settings = getHaussammlungSettings();
                 <?php endif; ?>
                 <div class="content-card haussammlung-info-text">
                     <div class="content-card-body">
-                        <?php if ($settings['infotext'] !== ''): ?>
-                            <?php echo renderHaussammlungInfotext(formatHaussammlungText($settings['infotext'], $settings)); ?>
+                        <?php if ($localized['infotext'] !== ''): ?>
+                            <?php echo renderHaussammlungInfotext(formatHaussammlungText($localized['infotext'], $settings)); ?>
                         <?php else: ?>
-                            <p><?php echo nl2br(htmlspecialchars(formatHaussammlungText($settings['kurztext'], $settings))); ?></p>
+                            <p><?php echo nl2br(htmlspecialchars(formatHaussammlungText($localized['kurztext'], $settings))); ?></p>
                         <?php endif; ?>
                     </div>
                 </div>
