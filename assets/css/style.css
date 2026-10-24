@@ -4545,27 +4545,18 @@ body.lightbox-open {
     background: rgba(255, 255, 255, 0.1);
 }
 
-/* --- Wetterwarnungen-Bereich im Footer (Karte + Liste nebeneinander, immer in einer Reihe) --- */
-.footer-weather {
-    display: flex;
-    gap: 28px;
-    align-items: flex-start;
-    margin-top: 32px;
-    padding-top: 32px;
-    border-top: 1px solid rgba(255,255,255,0.08);
-    flex-wrap: nowrap;
-}
-
+/* --- Wetterwarnungen-Spalte im Footer (dritte Spalte neben Logo/Kontakt, alles in einer Reihe) --- */
 .footer-weather-map {
     display: block;
-    flex: 0 0 300px;
-    width: 300px;
+    width: 100%;
+    max-width: 260px;
     aspect-ratio: 600 / 310;
     background: #fff;
     border-radius: var(--radius-md);
     overflow: hidden;
     border: 1px solid rgba(255,255,255,0.1);
     transition: opacity 0.2s ease;
+    margin-bottom: 16px;
 }
 
 .footer-weather-map:hover {
@@ -4579,9 +4570,8 @@ body.lightbox-open {
     object-fit: contain;
 }
 
-.footer-weather-list {
-    flex: 1 1 auto;
-    min-width: 0;
+.footer-warnlist {
+    max-width: 260px;
 }
 
 .footer-warnlist-row {
@@ -4592,16 +4582,6 @@ body.lightbox-open {
 
 .footer-warnlist-region {
     white-space: nowrap;
-}
-
-@media (max-width: 640px) {
-    .footer-weather {
-        flex-wrap: wrap;
-    }
-    .footer-weather-map {
-        flex: 0 0 220px;
-        width: 220px;
-    }
 }
 
 /* --- Seiten-Warnhinweis (Vollbild-Overlay über die gesamte Website/den

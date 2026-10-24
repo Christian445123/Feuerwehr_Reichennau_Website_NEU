@@ -23,14 +23,11 @@
                     </ul>
                 </div>
 
-            </div>
-
-            <div class="footer-weather">
-                <a href="https://www.uwz.at/de/r#autoplay" target="_blank" rel="noopener" class="footer-weather-map">
-                    <img src="uwz-map.php" alt="Unwetterwarnkarte Österreich (UWZ.AT)" loading="lazy">
-                </a>
-                <div class="footer-weather-list">
+                <div class="footer-col footer-weather">
                     <h4><?php echo e(t('footer.weather_warnings')); ?></h4>
+                    <a href="https://www.uwz.at/de/r#autoplay" target="_blank" rel="noopener" class="footer-weather-map">
+                        <img src="uwz-map.php" alt="Unwetterwarnkarte Österreich (UWZ.AT)" loading="lazy">
+                    </a>
                     <div class="footer-warnlist" id="footerWarnlist">
                         <div class="footer-warnlist-row footer-warnlist-loading">
                             <span><i class="fas fa-spinner fa-spin"></i> <?php echo e(t('footer.weather_warnings_loading')); ?></span>
@@ -40,6 +37,7 @@
                         <?php echo e(t('footer.weather_warnings_link')); ?> <i class="fas fa-arrow-up-right-from-square"></i>
                     </a>
                 </div>
+
             </div>
 
             <div class="footer-bottom footer-bottom-split">
