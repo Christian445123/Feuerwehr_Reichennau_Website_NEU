@@ -13,7 +13,8 @@
  * Innsbruck-Stadt ist Bezirk "01" (Gemeinde Innsbruck selbst = 70101),
  * Innsbruck-Land ist Bezirk "03" (GKZ-Präfix "703", z.B. Hall in Tirol
  * 70354, Zirl 70369 - per Live-Abfrage gegen getWarningsForCoords
- * verifiziert). Nur diese beiden Gebiete werden ausgewertet.
+ * verifiziert). Zusätzlich wird "Tirol" als Bundesland insgesamt
+ * ausgewertet (GKZ-Präfix "7").
  *
  * wtype (Warnart): 1=Sturm, 2=Regen, 3=Schnee, 4=Glatteis, 5=Gewitter,
  * 6=Hitze, 7=Kälte. wlevel (Warnstufe): 1=gelb/Vorwarnung, 2=orange/Warnung,
@@ -94,12 +95,16 @@ function getGeoSphereInnsbruckWarnings(): ?array {
     $innsbruckLandFeatures = array_values(array_filter($allFeatures, function ($f) {
         return str_starts_with((string) ($f['properties']['location']['gemeindenr'] ?? ''), '703');
     }));
+    $tirolFeatures = array_values(array_filter($allFeatures, function ($f) {
+        return str_starts_with((string) ($f['properties']['location']['gemeindenr'] ?? ''), '7');
+    }));
 
     $result = [
         'fetched_at' => date('c'),
         'regions' => [
             ['name' => 'Innsbruck Stadt', 'summary' => $summarize($innsbruckStadtFeatures)],
             ['name' => 'Innsbruck Land', 'summary' => $summarize($innsbruckLandFeatures)],
+            ['name' => 'Tirol', 'summary' => $summarize($tirolFeatures)],
         ],
     ];
 
@@ -112,9 +117,9 @@ function getGeoSphereInnsbruckWarnings(): ?array {
 }
 
 /**
- * Höchste aktuell aktive Warnstufe/-art über Innsbruck-Stadt und
- * Innsbruck-Land zusammen, oder null, wenn gerade keine Warnung aktiv ist
- * (oder die Daten nicht abrufbar sind).
+ * Höchste aktuell aktive Warnstufe/-art über Innsbruck-Stadt,
+ * Innsbruck-Land und Tirol insgesamt, oder null, wenn gerade keine Warnung
+ * aktiv ist (oder die Daten nicht abrufbar sind).
  */
 function getWorstGeoSphereInnsbruckWarning(): ?array {
     $data = getGeoSphereInnsbruckWarnings();

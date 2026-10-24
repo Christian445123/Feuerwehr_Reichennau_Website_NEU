@@ -868,6 +868,105 @@ TEXT;
             },
         ],
 
+        [
+            'id' => '2026_10_24_create_site_alert_categories',
+            'run' => function (PDO $db) {
+                // Frei erweiterbare Kategorien für den Seiten-Warnhinweis
+                // (siehe config/site-alert.php, Admin -> Einstellungen).
+                // Jede Kategorie hat eigene Verhaltenstipps, die im
+                // Vollbild-Hinweis zusätzlich zum freien Hinweistext
+                // angezeigt werden. Admins können weitere Kategorien
+                // anlegen und bestehende (auch die unten vorbefüllten)
+                // jederzeit umbenennen/bearbeiten - category_key bleibt
+                // dabei stabil, damit eine aktive Auswahl
+                // (site_alert_type) nicht ins Leere läuft.
+                $db->exec("CREATE TABLE IF NOT EXISTS site_alert_categories (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    category_key VARCHAR(50) UNIQUE NOT NULL,
+                    label VARCHAR(100) NOT NULL,
+                    icon VARCHAR(50) NOT NULL DEFAULT 'fa-triangle-exclamation',
+                    tips TEXT,
+                    sort_order INT DEFAULT 0,
+                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
+                $defaults = [
+                    ['erdbeben', 'Erdbeben', 'fa-house-crack', 10, <<<'TIPS'
+- Ruhe bewahren, nicht in Panik aus dem Gebäude rennen.
+- In Gebäuden: Schutz unter einem stabilen Tisch/Schreibtisch suchen oder sich an eine tragende Innenwand stellen, Kopf und Nacken schützen.
+- Abstand zu Fenstern, Glasfronten, Regalen und hängenden Gegenständen halten.
+- Aufzüge nicht benutzen.
+- Im Freien: von Gebäuden, Masten, Bäumen und Hängen wegbewegen.
+- Nach dem Beben: Gebäude auf sichtbare Schäden prüfen, bei Gasgeruch sofort ins Freie und Fenster öffnen, Hauptschalter/-hahn für Gas, Strom und Wasser bei Bedarf abdrehen.
+- Mit Nachbeben rechnen - Gebäude mit sichtbaren Schäden nicht wieder betreten.
+- Notruf 122 nur bei akuter Gefahr wählen, Leitungen für echte Notfälle freihalten.
+TIPS
+                    ],
+                    ['hochwasser', 'Hochwasser', 'fa-water', 20, <<<'TIPS'
+- Lokale Pegel- und Wetterwarnungen sowie Anweisungen von Einsatzkräften und Gemeinde beachten.
+- Keller, Tiefgaragen und Unterführungen rechtzeitig verlassen bzw. meiden.
+- Wertgegenstände, Chemikalien und wichtige Dokumente aus gefährdeten Kellerräumen in höhere Stockwerke bringen.
+- Strom in gefährdeten Räumen rechtzeitig abschalten (Stromschlaggefahr durch eindringendes Wasser).
+- Keinesfalls zu Fuß oder mit dem Auto durch überflutete Straßen oder Unterführungen fahren/gehen - bereits 30 cm Wasser können ein Auto wegschwemmen.
+- Fahrzeuge aus gefährdeten Bereichen (Tiefgaragen, Flussnähe) rechtzeitig wegfahren.
+- Sandsäcke/mobile Hochwasserschutzsysteme nur einsetzen, wenn dabei keine Eigengefährdung entsteht.
+- Notruf 122 bei akuter Gefahr für Personen, sonst die eingerichtete Hotline der Gemeinde nutzen, um Einsatzkräfte zu entlasten.
+TIPS
+                    ],
+                    ['unwetter', 'Unwetter', 'fa-cloud-bolt', 30, <<<'TIPS'
+- Aufenthalt im Freien möglichst vermeiden, Gebäude aufsuchen.
+- Lose Gegenstände (Gartenmöbel, Trampoline, Blumentöpfe) sichern oder ins Haus bringen.
+- Fenster und Türen schließen, Rollläden/Fensterläden herunterlassen.
+- Bei Gewitter: Bäume, freistehende Masten und offene Flächen meiden, Metallgegenstände (Fahrrad, Wanderstöcke) nicht am Körper tragen.
+- Autofahrt bei Sturm/Hagel wenn möglich verschieben oder an sicherer Stelle (nicht unter Bäumen) anhalten.
+- Elektrogeräte bei Gewitter nach Möglichkeit vom Netz trennen.
+- Nach dem Unwetter: Vorsicht vor herabhängenden Ästen, losen Dachteilen und abgerissenen Stromleitungen - Abstand halten und melden statt selbst beseitigen.
+- Notruf 122 bei akuter Gefahr, Strom-Notruf der Netzbetreiber bei freiliegenden Leitungen.
+TIPS
+                    ],
+                    ['verkehr', 'Verkehr', 'fa-car-burst', 40, <<<'TIPS'
+- Betroffenen Bereich wenn möglich weiträumig umfahren, Anweisungen der Einsatzkräfte und Verkehrsregelung befolgen.
+- Bei einer Panne/einem Unfall: Warnblinkanlage einschalten, Warnweste anziehen, Fahrzeug hinter der Leitplanke/auf dem Pannenstreifen verlassen.
+- Warndreieck in ausreichendem Abstand aufstellen (Freiland ca. 100 m, Autobahn ca. 150-400 m).
+- Rettungsgasse bei Stau auf Autobahnen/Schnellstraßen sofort und rechtzeitig bilden (zwischen den beiden am weitesten links fahrenden Spuren).
+- Nicht an einer Unfallstelle anhalten, um zuzusehen - das behindert Einsatzkräfte und gefährdet weitere Verkehrsteilnehmer.
+- Erste Hilfe leisten, soweit man sich dabei nicht selbst gefährdet, Notruf 122 bzw. 144 absetzen.
+- Bei winterlichen Verhältnissen (Glatteis, Schnee) Geschwindigkeit anpassen und größeren Abstand halten.
+TIPS
+                    ],
+                    ['chemieunfall', 'Chemieunfall', 'fa-flask', 50, <<<'TIPS'
+- Unfallbereich sofort verlassen bzw. weiträumig meiden, Anweisungen der Einsatzkräfte unbedingt befolgen.
+- Bei Warnung "Fenster und Türen schließen" (Lüftung/Klimaanlage ausschalten) im Gebäude bleiben, nicht ins Freie gehen.
+- Keine offenen Flammen, nicht rauchen, elektrische Geräte mit Funkenbildung vermeiden, falls ein Brand-/Explosionsrisiko besteht.
+- Kontaminierte Kleidung ablegen und in einem verschlossenen Beutel/Behälter von anderen Gegenständen trennen, Haut/Augen bei Kontakt gründlich mit Wasser spülen.
+- Nicht in tiefer liegende Bereiche (Keller, Unterführungen) flüchten - manche Gase sind schwerer als Luft und sammeln sich dort.
+- Kinder, ältere und kranke Personen in der Nachbarschaft nötigenfalls mitwarnen.
+- Keine eigenmächtigen Rettungs-/Aufräumversuche im Gefahrenbereich - das ist Aufgabe der Einsatzkräfte mit Schutzausrüstung.
+- Notruf 122 bzw. 144, bei Bedarf Hinweise der Behörden (z.B. Rundfunk, Warn-Apps) weiter verfolgen.
+TIPS
+                    ],
+                ];
+
+                $check = $db->prepare("SELECT COUNT(*) FROM site_alert_categories WHERE category_key = ?");
+                $insert = $db->prepare("INSERT INTO site_alert_categories (category_key, label, icon, sort_order, tips) VALUES (?,?,?,?,?)");
+                foreach ($defaults as [$key, $label, $icon, $order, $tips]) {
+                    $check->execute([$key]);
+                    if ($check->fetchColumn() > 0) continue;
+                    $insert->execute([$key, $label, $icon, $order, $tips]);
+                }
+
+                // Die bisherige, fest im Code stehende Kategorie "Sonstiges"
+                // (siehe altes getSiteAlertTypes() in config/site-alert.php)
+                // wird als Kategorie ohne Tipps ergänzt, damit bereits
+                // gespeicherte Warnhinweise mit diesem Typ weiterhin
+                // funktionieren.
+                $check->execute(['sonstiges']);
+                if ((int) $check->fetchColumn() === 0) {
+                    $insert->execute(['sonstiges', 'Sonstiges', 'fa-triangle-exclamation', 60, '']);
+                }
+            },
+        ],
+
     ];
 }
 

@@ -328,6 +328,57 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
+    if ($action === 'save_site_alert_category') {
+        if (!userHasPermission('settings.manage')) {
+            flash('error', 'Dir fehlt die Berechtigung, Warnhinweis-Kategorien zu ändern.');
+            header('Location: settings.php#site-alert-categories');
+            exit;
+        }
+        $existingKey = trim($_POST['category_key'] ?? '');
+        $label = trim($_POST['category_label'] ?? '');
+        $icon = trim($_POST['category_icon'] ?? 'fa-triangle-exclamation');
+        $tips = trim($_POST['category_tips'] ?? '');
+
+        if ($existingKey !== '') {
+            $key = $existingKey;
+        } else {
+            // Neue Kategorie: Schlüssel automatisch aus dem Label ableiten
+            // (klein geschrieben, nur a-z/0-9/_), damit Admins keinen
+            // technischen Schlüssel von Hand eingeben müssen.
+            $key = strtolower(trim($label));
+            $key = preg_replace('/[^a-z0-9]+/', '_', $key);
+            $key = trim($key, '_');
+        }
+
+        if ($label === '' || $key === '') {
+            flash('error', 'Bitte einen Namen für die Kategorie angeben.');
+        } elseif (!preg_match('/^fa-[a-z0-9-]+$/', $icon)) {
+            flash('error', 'Ungültiges Icon-Kürzel (muss mit "fa-" beginnen, z.B. fa-water).');
+        } else {
+            saveSiteAlertCategory($key, $label, $icon, $tips);
+            logActivity($db, 'settings.site_alert_category', "Kategorie \"$label\" ($key) gespeichert");
+            flash('success', "Kategorie \"$label\" wurde gespeichert.");
+        }
+        header('Location: settings.php#site-alert-categories');
+        exit;
+    }
+
+    if ($action === 'delete_site_alert_category') {
+        if (!userHasPermission('settings.manage')) {
+            flash('error', 'Dir fehlt die Berechtigung, Warnhinweis-Kategorien zu ändern.');
+            header('Location: settings.php#site-alert-categories');
+            exit;
+        }
+        $key = trim($_POST['category_key'] ?? '');
+        if ($key !== '') {
+            deleteSiteAlertCategory($key);
+            logActivity($db, 'settings.site_alert_category', "Kategorie \"$key\" gelöscht");
+            flash('success', 'Kategorie wurde gelöscht.');
+        }
+        header('Location: settings.php#site-alert-categories');
+        exit;
+    }
+
     header('Location: settings.php');
     exit;
 }
@@ -733,6 +784,83 @@ $deeplUsage = $deeplConfigured ? getDeepLUsage() : null;
                 <i class="fas fa-save"></i> Speichern
             </button>
         </form>
+    </div>
+</div>
+
+<div class="admin-card" style="max-width: 700px; margin-top: 24px;" id="site-alert-categories">
+    <div class="admin-card-header"><h2><i class="fas fa-list-check"></i> Warnhinweis-Kategorien & Tipps</h2></div>
+    <div class="admin-card-body">
+        <p style="margin-bottom: 20px; color: #6c757d;">Jede Kategorie hat eigene Verhaltenstipps, die im Vollbild-Warnhinweis zusätzlich zum freien Hinweistext angezeigt werden. Bestehende Kategorien lassen sich hier bearbeiten (Name, Icon, Tipps), eigene weitere Kategorien lassen sich unten hinzufügen.</p>
+
+        <?php foreach ($siteAlertTypeOptions as $catKey => $cat): ?>
+        <details style="margin-bottom: 12px; border: 1px solid var(--color-gray-200); border-radius: var(--radius); padding: 0;">
+            <summary style="padding: 12px 16px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 10px;">
+                <i class="fas <?php echo e($cat['icon']); ?>"></i> <?php echo e($cat['label']); ?>
+            </summary>
+            <div style="padding: 16px; border-top: 1px solid var(--color-gray-200);">
+                <form method="POST" class="admin-form">
+                    <?php echo csrfField(); ?>
+                    <input type="hidden" name="action" value="save_site_alert_category">
+                    <input type="hidden" name="category_key" value="<?php echo e($catKey); ?>">
+
+                    <div class="form-group">
+                        <label>Name</label>
+                        <input type="text" name="category_label" value="<?php echo e($cat['label']); ?>" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Icon (Font Awesome Kürzel)</label>
+                        <input type="text" name="category_icon" value="<?php echo e($cat['icon']); ?>" placeholder="z.B. fa-water">
+                    </div>
+                    <div class="form-group">
+                        <label>Verhaltenstipps (eine Zeile = ein Tipp, Zeilen mit "- " werden als Liste angezeigt)</label>
+                        <textarea name="category_tips" rows="8"><?php echo e($cat['tips'] ?? ''); ?></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-sm">
+                        <i class="fas fa-save"></i> Speichern
+                    </button>
+                </form>
+                <form method="POST" style="margin-top: 10px;">
+                    <?php echo csrfField(); ?>
+                    <input type="hidden" name="action" value="delete_site_alert_category">
+                    <input type="hidden" name="category_key" value="<?php echo e($catKey); ?>">
+                    <button type="submit" class="btn btn-secondary btn-sm" data-confirm-title="Kategorie löschen?" data-confirm-text="Die Kategorie &quot;<?php echo e($cat['label']); ?>&quot; inkl. ihrer Tipps wird endgültig gelöscht. Ist sie gerade als manueller Warnhinweis aktiv, wird dieser automatisch deaktiviert." data-confirm-ok="Löschen">
+                        <i class="fas fa-trash"></i> Kategorie löschen
+                    </button>
+                </form>
+            </div>
+        </details>
+        <?php endforeach; ?>
+
+        <details style="margin-top: 20px; border: 1px dashed var(--color-gray-300, var(--color-gray-200)); border-radius: var(--radius);">
+            <summary style="padding: 12px 16px; cursor: pointer; font-weight: 600;">
+                <i class="fas fa-plus"></i> Neue Kategorie hinzufügen
+            </summary>
+            <div style="padding: 16px; border-top: 1px solid var(--color-gray-200);">
+                <form method="POST" class="admin-form">
+                    <?php echo csrfField(); ?>
+                    <input type="hidden" name="action" value="save_site_alert_category">
+                    <input type="hidden" name="category_key" value="">
+
+                    <div class="form-group">
+                        <label>Name</label>
+                        <input type="text" name="category_label" placeholder="z.B. Lawine" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Icon (Font Awesome Kürzel)</label>
+                        <input type="text" name="category_icon" value="fa-triangle-exclamation" placeholder="z.B. fa-mountain">
+                    </div>
+                    <div class="form-group">
+                        <label>Verhaltenstipps</label>
+                        <textarea name="category_tips" rows="6" placeholder="- Tipp 1&#10;- Tipp 2"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus"></i> Kategorie anlegen
+                    </button>
+                </form>
+            </div>
+        </details>
     </div>
 </div>
 <?php endif; ?>

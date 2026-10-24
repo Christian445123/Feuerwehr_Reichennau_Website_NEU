@@ -34,6 +34,19 @@ $siteAlert = getActiveSiteAlert();
         <?php if ($siteAlert['area'] !== ''): ?>
             <p class="site-alert-overlay-area"><i class="fas fa-ban"></i> Bitte meiden: <strong><?php echo htmlspecialchars($siteAlert['area']); ?></strong></p>
         <?php endif; ?>
+        <?php
+        $siteAlertTipLines = array_values(array_filter(array_map('trim', explode("\n", (string) ($siteAlert['tips'] ?? '')))));
+        ?>
+        <?php if (!empty($siteAlertTipLines)): ?>
+        <div class="site-alert-overlay-tips">
+            <strong><i class="fas fa-circle-info"></i> Verhaltenstipps:</strong>
+            <ul>
+                <?php foreach ($siteAlertTipLines as $tip): ?>
+                    <li><?php echo htmlspecialchars(ltrim($tip, '-• ')); ?></li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+        <?php endif; ?>
         <button type="button" class="btn btn-primary site-alert-overlay-close" id="siteAlertBannerClose">
             <i class="fas fa-check"></i> Verstanden
         </button>
