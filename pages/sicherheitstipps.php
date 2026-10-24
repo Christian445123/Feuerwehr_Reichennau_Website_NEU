@@ -1,4 +1,10 @@
-<?php require_once __DIR__ . '/../config/gate.php'; requireSiteAccess(); ?>
+<?php
+require_once __DIR__ . '/../config/gate.php'; requireSiteAccess();
+require_once __DIR__ . '/../config/site-alert.php';
+$alertCategoryTips = array_filter(getSiteAlertTypes(), function ($cat) {
+    return trim((string) ($cat['tips'] ?? '')) !== '';
+});
+?>
     <!-- Page Header -->
     <section class="page-header">
         <div class="container">
@@ -73,6 +79,28 @@
                 </div>
 
             </div>
+
+            <?php if (!empty($alertCategoryTips)): ?>
+            <h2 style="margin-top:48px; margin-bottom:20px;"><i class="fas fa-triangle-exclamation"></i> Verhalten bei besonderen Gefahrenlagen</h2>
+            <p style="margin-bottom: 24px; color: var(--color-gray-600);">Diese Tipps gelten unabhängig davon, ob gerade ein Warnhinweis aktiv ist, und werden von der Feuerwehr Reichenau gepflegt.</p>
+            <div class="content-grid">
+                <?php foreach ($alertCategoryTips as $cat): ?>
+                <div class="content-card">
+                    <div class="content-card-header">
+                        <div class="content-card-icon"><i class="fas <?php echo e($cat['icon']); ?>"></i></div>
+                        <h2><?php echo e($cat['label']); ?></h2>
+                    </div>
+                    <div class="content-card-body">
+                        <ul>
+                            <?php foreach (array_filter(array_map('trim', explode("\n", $cat['tips']))) as $tip): ?>
+                                <li><?php echo e(ltrim($tip, '-• ')); ?></li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+            </div>
+            <?php endif; ?>
 
             <div class="cta-box" style="margin-top:40px;">
                 <div class="cta-icon"><i class="fas fa-question-circle"></i></div>
